@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="職棒GM" />
+<meta name="theme-color" content="#142B22" />
+<meta name="mobile-web-app-capable" content="yes" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="apple-touch-icon" href="icon-180.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<title>職棒GM經營模擬</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <div id="__preboot" style="padding:26px 20px;color:#F3EFE2;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;line-height:1.75;max-width:520px;margin:0 auto;">
+    <div style="font-size:13px;letter-spacing:2px;opacity:.7;">LOADING</div>
+    <h2 style="margin:6px 0 10px;font-size:20px;">載入中…</h2>
+    <p style="opacity:.92;font-size:14px;">若<b>持續</b>停在這行字、遊戲沒出現，代表目前開啟方式<b>沒有執行 JavaScript</b>（常見於用 iOS「檔案」App 直接預覽）。請改用 <b>Safari</b> 開啟，或放到網頁空間用 Safari 開網址。</p>
+  </div>
+</div>
+<script>
+(function(){function show(m){try{var el=document.getElementById("app");if(!el)return;el.innerHTML='<div style="padding:24px 20px;color:#F3EFE2;font-family:-apple-system,sans-serif;line-height:1.7;max-width:520px;margin:0 auto;"><div style="font-size:13px;letter-spacing:2px;color:#E5484D;">START-UP ERROR</div><h2 style="margin:6px 0 10px;font-size:19px;">啟動時發生錯誤</h2><p style="opacity:.9;font-size:14px;">請將下面訊息截圖回報給開發者：</p><pre style="white-space:pre-wrap;word-break:break-all;background:rgba(0,0,0,.28);padding:12px;border-radius:8px;font-size:12px;">'+String(m).replace(/</g,"&lt;")+'</pre></div>';}catch(_){}}
+window.addEventListener("error",function(e){show((e&&e.message?e.message:e)+(e&&e.filename?("\n@ "+String(e.filename).split("/").pop()+":"+e.lineno):""));});
+window.addEventListener("unhandledrejection",function(e){show("未處理的 Promise 例外："+((e&&e.reason&&e.reason.message)||(e&&e.reason)||e));});})();
+</script>
+<script src="01-data-engine.js"></script>
+<script src="02-finance.js"></script>
+<script src="03-simulation.js"></script>
+<script src="04-state-core.js"></script>
+<script src="05-ui-dashboard.js"></script>
+<script src="06-ui-roster.js"></script>
+<script>
+/* v37 第11階段 PWA：Service Worker 註冊（僅在 http/https 且瀏覽器支援時嘗試）。
+   以 file:// 直接開檔或不支援時「靜默略過」，絕不影響遊戲啟動（沿用開機防護原則：PWA 是加分、不是前提）。 */
+(function(){
+  try{
+    if(!("serviceWorker" in navigator)) return;
+    if(location.protocol !== "http:" && location.protocol !== "https:") return; // file:// 無法註冊，略過
+    window.addEventListener("load", function(){
+      navigator.serviceWorker.register("sw.js").catch(function(){ /* 註冊失敗不影響遊戲 */ });
+    });
+  }catch(_){ /* 任何例外都不得阻擋遊戲 */ }
+})();
+</script>
+</body>
+</html>

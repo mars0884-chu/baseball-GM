@@ -1,0 +1,16 @@
+{
+  "name": "職棒GM經營模擬",
+  "short_name": "職棒GM",
+  "description": "瀏覽器單機職業棒球GM經營模擬遊戲（繁體中文）",
+  "lang": "zh-Hant",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#142B22",
+  "theme_color": "#142B22",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

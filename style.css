@@ -1,0 +1,497 @@
+:root{
+  --ink:#1B3A2F;
+  --ink-2:#142B22;
+  --surface:#2C5142;
+  --surface-2:#3C6C57;
+  --paper:#F3EFE2;
+  --paper-2:#E8E2CC;
+  --gold:#D9A441;
+  --gold-2:#B9852E;
+  --chalk:#F5F1E6;
+  --redline:#A23B2E;
+  --line:#C9C2AC;
+  --green-text:#2F5B48;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--ink);
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 26px);
+  color:var(--chalk);
+  font-family:'Libre Franklin', -apple-system, sans-serif;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:520px;margin:0 auto;padding:20px 16px 48px;}
+
+.eyebrow{
+  font-family:'Oswald',sans-serif;
+  font-size:12px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:4px;
+}
+h1{
+  font-family:'Oswald',sans-serif;
+  font-weight:600;
+  font-size:28px;
+  letter-spacing:.01em;
+  margin:0 0 6px;
+  color:var(--chalk);
+}
+.hero{padding:8px 4px 20px;}
+.sub{color:var(--paper-2);font-size:14px;margin:0;line-height:1.6;}
+
+.card{
+  background:var(--paper);
+  color:var(--ink);
+  border-radius:6px;
+  padding:20px;
+  margin-bottom:16px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.28);
+  border:1px solid var(--paper-2);
+}
+.field{display:block;margin-bottom:16px;}
+.field span{
+  display:block;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--green-text);
+  margin-bottom:6px;
+}
+.field input{
+  width:100%;
+  padding:12px 12px;
+  font-size:16px;
+  font-family:'Libre Franklin',sans-serif;
+  border:1px solid var(--line);
+  border-radius:4px;
+  background:var(--chalk);
+  color:var(--ink);
+}
+.field input:focus{outline:2px solid var(--gold-2);outline-offset:1px;}
+
+.btn-primary,.btn-secondary,.btn-outline,.btn-danger{
+  font-family:'Oswald',sans-serif;
+  font-weight:600;
+  font-size:15px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  padding:14px 16px;
+  border-radius:4px;
+  border:none;
+  cursor:pointer;
+  width:100%;
+}
+.btn-primary{background:var(--gold);color:var(--ink-2);}
+.btn-primary:active{background:var(--gold-2);}
+.btn-secondary{background:var(--paper);color:var(--ink);border:1px solid var(--line);}
+.btn-outline{background:var(--surface);color:var(--chalk);border:1.5px solid var(--surface-2);}
+.btn-outline:active{background:var(--surface-2);}
+.btn-danger{background:rgba(162,59,46,0.22);color:#FFDDD6;border:1.5px solid var(--redline);}
+.btn-danger:active{background:rgba(162,59,46,0.4);}
+button:disabled{opacity:.4;cursor:not-allowed;}
+.btnrow{display:flex;gap:10px;margin-bottom:10px;}
+.btnrow > *{flex:1;}
+
+.divblock{margin-bottom:18px;}
+.divlabel{
+  font-family:'Oswald',sans-serif;
+  font-size:13px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border-bottom:1px solid var(--paper-2);
+  padding-bottom:6px;
+  margin-bottom:8px;
+}
+.teamgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.teamcard{
+  background:var(--paper);
+  color:var(--ink);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:12px 10px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  text-align:left;
+  cursor:pointer;
+}
+.teamcard:active{background:var(--gold);}
+
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.teamname{font-family:'Oswald',sans-serif;font-size:22px;font-weight:600;color:var(--chalk);}
+.gmtag{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  color:var(--chalk);
+  background:var(--surface);
+  border:1px solid var(--surface-2);
+  border-radius:3px;
+  padding:4px 8px;
+  align-self:center;
+  white-space:nowrap;
+}
+
+.scoreboard{
+  background:var(--ink-2);
+  border:1px solid #2C5142;
+  border-radius:6px;
+  padding:16px 18px;
+  margin-bottom:16px;
+}
+.sb-row{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px dashed #2C5142;}
+.sb-row:last-child{border-bottom:none;}
+.sb-label{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--paper-2);letter-spacing:.05em;}
+.sb-value{font-family:'Oswald',sans-serif;font-size:34px;color:var(--gold);font-weight:600;}
+.sb-value.small{font-size:16px;color:var(--chalk);}
+.sb-dash{color:var(--paper-2);margin:0 4px;font-size:24px;}
+
+.flash{
+  background:var(--gold);
+  color:var(--ink-2);
+  padding:12px 14px;
+  border-radius:4px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  margin-bottom:14px;
+}
+
+.lastgame{padding:16px 18px;}
+.lg-row{display:flex;align-items:center;justify-content:space-between;margin:8px 0;}
+.lg-team{font-family:'Oswald',sans-serif;font-size:15px;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+.lg-score{font-size:28px;font-weight:600;color:var(--green-text);}
+.lg-vs{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--green-text);opacity:.7;padding:0 6px;text-align:center;}
+.lg-result{text-align:center;font-family:'Oswald',sans-serif;letter-spacing:.1em;font-size:13px;text-transform:uppercase;margin-top:4px;}
+.lg-result.win{color:var(--green-text);}
+.lg-result.lose{color:var(--redline);}
+
+.stattable{width:100%;border-collapse:collapse;margin-bottom:18px;background:var(--paper);border-radius:4px;overflow:hidden;}
+.stattable th,.stattable td{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;
+  padding:8px 8px;
+  text-align:left;
+  color:var(--ink);
+  border-bottom:1px solid var(--paper-2);
+}
+.stattable th{
+  background:var(--paper-2);
+  font-size:11px;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  color:var(--green-text);
+}
+.stattable tr.me{background:#EFE0BA;}
+
+.tabrow{display:flex;gap:8px;margin-bottom:14px;}
+.tab{
+  flex:1;
+  font-family:'Oswald',sans-serif;
+  font-size:13px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  padding:10px;
+  background:var(--surface);
+  color:var(--chalk);
+  border:1.5px solid var(--surface-2);
+  border-radius:4px;
+  cursor:pointer;
+}
+.tab.active{background:var(--gold);color:var(--ink-2);border-color:var(--gold);}
+
+.attrgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;}
+.attr{
+  background:var(--paper);
+  border:1px solid var(--paper-2);
+  border-radius:4px;
+  padding:10px 12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.attr span{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  color:var(--green-text);
+  text-transform:uppercase;
+  letter-spacing:.03em;
+}
+.attr b{font-family:'Oswald',sans-serif;font-size:18px;color:var(--ink);}
+.stattable tr.rowlink{cursor:pointer;}
+.stattable tr.rowlink:active{background:var(--paper-2);}
+.stattable td.rowlink{cursor:pointer;text-decoration:underline;text-decoration-color:var(--paper-2);}
+.movebtn{
+  font-family:'Oswald',sans-serif;
+  font-size:10px;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+  padding:5px 8px;
+  background:transparent;
+  color:var(--green-text);
+  border:1px solid var(--green-text);
+  border-radius:3px;
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.issuecard{border:1.5px solid var(--redline);}
+.issuelist{margin:8px 0 12px;padding-left:20px;color:var(--redline);font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.7;}
+.specialabilitytag{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gold-2);}
+.coachassign{display:flex;gap:8px;margin-top:10px;align-items:center;}
+.coachassign select{flex:1;margin-bottom:0;}
+.coachassign button{white-space:nowrap;padding:10px 12px;font-size:12px;}
+.movebtn:active{background:var(--paper-2);}
+
+.resetcard{border:1px solid var(--redline);}
+.sub.dark{color:var(--green-text);}
+.btn-danger-solid{
+  font-family:'Oswald',sans-serif;
+  font-weight:600;
+  font-size:14px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  padding:14px 16px;
+  border-radius:4px;
+  border:none;
+  cursor:pointer;
+  width:100%;
+  background:var(--redline);
+  color:var(--chalk);
+}
+.btn-danger-solid:active{background:#822F24;}
+
+.seasonover{text-align:center;}
+.seasonover .sub{margin-bottom:14px;}
+
+.champcard{text-align:center;border:1px solid var(--gold);}
+.champname{
+  font-family:'Oswald',sans-serif;
+  font-size:26px;
+  font-weight:700;
+  color:var(--ink);
+  margin:6px 0;
+}
+.champlabel{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  color:var(--green-text);
+  margin-bottom:16px;
+}
+
+.matchupcard{padding:14px 16px;margin-bottom:10px;}
+.matchupcard.me{border:1px solid var(--gold-2);}
+
+.gradebadge{
+  display:inline-block;
+  font-family:'Oswald',sans-serif;
+  font-weight:700;
+  font-size:13px;
+  width:24px;
+  height:24px;
+  line-height:24px;
+  text-align:center;
+  border-radius:50%;
+  color:var(--chalk);
+}
+.grade-S{background:var(--gold-2);}
+.grade-A{background:var(--green-text);}
+.grade-B{background:#5C7A6C;}
+.grade-C{background:#8A8368;}
+.grade-D{background:var(--redline);}
+.statusbadge{
+  display:inline-block;
+  font-family:'Oswald',sans-serif;
+  font-weight:600;
+  font-size:11px;
+  letter-spacing:.03em;
+  padding:5px 10px;
+  border-radius:12px;
+  background:var(--green-text);
+  color:var(--chalk);
+  white-space:nowrap;
+}
+.pickbtn{
+  font-family:'Oswald',sans-serif;
+  font-size:11px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  padding:6px 10px;
+  background:var(--gold);
+  color:var(--ink-2);
+  border:none;
+  border-radius:3px;
+  cursor:pointer;
+}
+.pickbtn:active{background:var(--gold-2);}
+
+.awardcard{text-align:center;padding:16px;}
+.awardcard.me{border:1px solid var(--gold-2);}
+.awardname{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:var(--ink);margin:4px 0;}
+.awardteam{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--green-text);margin-bottom:6px;}
+.awardstat{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);}
+
+.sortselect{
+  width:100%;
+  padding:10px 12px;
+  margin-bottom:12px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;
+  background:var(--paper);
+  color:var(--ink);
+  border:1px solid var(--line);
+  border-radius:4px;
+}
+
+.draftcard{padding:14px 16px;margin-bottom:10px;}
+.draftcard-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.draftname{font-family:'Oswald',sans-serif;font-size:17px;font-weight:600;color:var(--ink);}
+.draftmeta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--green-text);}
+.draftgrades{display:flex;gap:8px;margin-bottom:8px;}
+.draftgrades .gradebadge{border-radius:4px;width:auto;padding:3px 8px;font-size:11px;}
+.draftnote{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink);margin-top:2px;}
+.draftnote.muted{color:#8A8368;}
+
+/* ⑤受傷機制 */
+.injurytag{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  color:var(--redline);
+}
+.injurycard{border:1.5px solid var(--redline);}
+.injurybar{
+  height:6px;border-radius:3px;background:var(--paper-2);overflow:hidden;margin-top:6px;
+}
+.injurybar > div{height:100%;background:var(--redline);}
+
+/* ⑥硬體建設擴充 */
+.facilityrow{
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
+  padding:10px 0;border-bottom:1px dashed var(--paper-2);
+}
+.facilityrow:last-child{border-bottom:none;}
+.facilityinfo{flex:1;}
+.facilityname{font-family:'Oswald',sans-serif;font-size:15px;font-weight:600;color:var(--ink);}
+.facilitydesc{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--green-text);line-height:1.5;}
+.facilitylv{
+  font-family:'Oswald',sans-serif;font-weight:700;font-size:13px;
+  background:var(--green-text);color:var(--chalk);border-radius:3px;padding:3px 8px;white-space:nowrap;
+}
+.facilitylv.max{background:var(--gold-2);}
+.upbtn{
+  font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.03em;text-transform:uppercase;
+  padding:8px 10px;background:var(--gold);color:var(--ink-2);border:none;border-radius:3px;cursor:pointer;white-space:nowrap;
+}
+.upbtn:disabled{opacity:.35;}
+
+/* ⑦球探獨家人才 */
+.exclusivetag{
+  display:inline-block;font-family:'Oswald',sans-serif;font-weight:600;font-size:10px;letter-spacing:.05em;
+  background:var(--gold-2);color:var(--chalk);border-radius:3px;padding:2px 7px;margin-left:6px;vertical-align:middle;
+}
+
+/* ===== v25 新增樣式 ===== */
+.traittag { display:inline-block; background:#4a3f6b; color:#e8e2ff; font-size:11px; padding:2px 8px; border-radius:10px; margin-left:5px; vertical-align:middle; }
+.nationtag { display:inline-block; background:#2c4a5e; color:#cfe8f7; font-size:11px; padding:2px 8px; border-radius:10px; margin-left:5px; vertical-align:middle; }
+.condtag { display:inline-block; font-weight:800; font-size:15px; width:22px; text-align:center; border-radius:6px; }
+.cond2 { color:#e74c3c; }   /* 絕好調 ↑ */
+.cond1 { color:#e67e22; }   /* 好調 ↗ */
+.cond0 { color:#95a5a6; }   /* 普通 → */
+.cond-1 { color:#5dade2; }  /* 低迷 ↘ */
+.cond-2 { color:#2e86c1; }  /* 絕不調 ↓ */
+.newscard { border-left:4px solid #c9a86a; }
+.newsitem { margin:5px 0; font-size:13px; line-height:1.5; color:#3b3b3b; }
+.newstime { display:inline-block; background:#efe8d8; color:#8a7448; font-size:11px; padding:1px 6px; border-radius:6px; margin-right:6px; }
+
+/* ===== v26 新增樣式 ===== */
+.traintag { display:inline-block; font-size:12px; margin-left:4px; vertical-align:middle; }
+.pronetag { display:inline-block; background:#7a4a2c; color:#ffe3cf; font-size:11px; padding:2px 8px; border-radius:10px; margin-left:5px; vertical-align:middle; }
+.injurybar.slim { height:6px; margin:2px 0 8px; }
+.trainbar > div { background:#3f7a4a; }
+.rehabpct { display:inline-block; background:#efe8d8; color:#8a7448; font-size:11px; padding:1px 6px; border-radius:6px; margin-left:6px; }
+
+/* ================= v27新增樣式 ================= */
+/* 經紀人標籤（沿用traittag視覺、換色系） */
+.agenttag { display:inline-block; padding:1px 7px; border-radius:10px; font-size:11px; font-weight:700;
+  background:#efe6f7; color:#6b3fa0; border:1px solid #d9c2ee; margin-left:4px; vertical-align:middle; }
+.agentquote { font-size:12px; color:#8a7f74; font-style:italic; }
+/* 球團個性與交情標籤 */
+.personatag { display:inline-block; padding:1px 7px; border-radius:10px; font-size:11px; font-weight:700;
+  background:#e7f0e7; color:#2f6b3a; border:1px solid #c6dfc9; margin-right:4px; }
+.afftag { display:inline-block; padding:1px 7px; border-radius:10px; font-size:11px; font-weight:700; border:1px solid transparent; }
+.afftag.affgood { background:#e3f2ea; color:#1e7a46; border-color:#bfe3cf; }
+.afftag.affmid  { background:#f0ede8; color:#7a7268; border-color:#ddd6cc; }
+.afftag.affbad  { background:#fbe7e4; color:#b03a2e; border-color:#f2c4bd; }
+.teamcardsub { display:block; margin-top:4px; font-size:11px; font-weight:400; }
+/* 高層目標卡與信任度條 */
+.kpicard { border-left:4px solid #6b3fa0; }
+.kpigoal { margin:6px 0 2px; }
+.kpiprog { display:block; font-size:12px; color:#8a7f74; margin-left:24px; }
+.trustbar { height:8px; border-radius:6px; background:#eee5d8; overflow:hidden; margin:6px 0 10px; }
+.trustfill { height:100%; border-radius:6px; transition:width .3s; }
+.trustfill.good { background:linear-gradient(90deg,#2f9e5f,#5cc98a); }
+.trustfill.mid  { background:linear-gradient(90deg,#d9a441,#e8c476); }
+.trustfill.bad  { background:linear-gradient(90deg,#c0392b,#e07a6d); }
+/* Game Over畫面 */
+.gameoverhero { background:linear-gradient(135deg,#3a2b2b,#1f1414); }
+.gameoverhero h1, .gameoverhero .sub, .gameoverhero .eyebrow { color:#f3e9dd; }
+
+/* ================= v28新增樣式 ================= */
+/* 東山再起：聘僱邀約卡 */
+.joboffer { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; margin:6px 0;
+  border:1px solid #d9c9b0; border-radius:10px; background:#fbf6ec; }
+.joboffer-info { display:flex; flex-direction:column; }
+.joboffer-sub { font-size:12px; color:#8a7f74; margin-top:2px; }
+.offer-btn { flex-shrink:0; }
+/* 東山再起：新東家歡迎卡 */
+.rehirecard { border-left:4px solid #2f9e5f; background:#eef8f0; }
+/* 代理人事務所：情蒐卡與人脈列 */
+.agencycard { border-left:4px solid #b07a2e; background:#fbf4e8; }
+.agencyrel-row { display:flex; align-items:center; justify-content:space-between; padding:5px 0; border-bottom:1px solid #efe6d6; }
+.agencyrel-row:last-child { border-bottom:none; }
+.agencyrel-name { font-size:14px; }
+.agencyrel-perk { font-size:12px; color:#8a7f74; }
+
+/* ==================== v29 新增樣式 ==================== */
+/* 真・新聞跑馬燈：水平無縫循環捲動，觸摸/滑鼠懸停時暫停方便閱讀 */
+.tickerwrap{overflow:hidden;white-space:nowrap;border:1px solid var(--line);border-radius:8px;background:rgba(0,0,0,.18);padding:6px 0;margin:6px 0 10px;position:relative;}
+.tickertrack{display:inline-block;white-space:nowrap;animation:tickerscroll linear infinite;will-change:transform;}
+.tickerwrap:hover .tickertrack,.tickerwrap:active .tickertrack{animation-play-state:paused;}
+.tickeritem{display:inline-block;padding:0 10px;font-size:13px;color:var(--ink);}
+.tickersep{display:inline-block;color:var(--gold-2);font-size:10px;padding:0 2px;opacity:.7;}
+@keyframes tickerscroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+@media (prefers-reduced-motion: reduce){.tickertrack{animation:none;}}
+
+/* 轉播/贊助/行銷方案卡 */
+.dealcard{border-left:3px solid var(--line);}
+.dealcard.dealchosen{border-left:3px solid var(--gold-2);box-shadow:0 0 0 1px var(--gold-2) inset;}
+
+/* 談約畫面：生涯階段標籤 */
+.phasegrow{color:#5ec26a;}
+.phasepeak{color:var(--gold-2);}
+.phasedecline{color:#e2794f;}
+
+/* 打線棒次調整按鈕 */
+.lineup-actions{white-space:nowrap;}
+.lineup-actions .lineup-order-btn{padding:2px 7px;margin-right:2px;}
+.lineup-actions .lineup-order-btn:disabled{opacity:.3;}
+
+/* 春訓能力現況欄：小字避免表格爆版 */
+.springattrs{font-size:11.5px;color:var(--ink);line-height:1.5;max-width:150px;white-space:normal;}
+
+/* v34：自由球員市場前瞻評估標籤 */
+.draftnote.trend-up { color: #2e7d32; font-weight: 600; }
+.draftnote.trend-flat { color: #5c6bc0; }
+.draftnote.trend-down { color: #c62828; }
+
+/* ==================== v37 新增樣式 ==================== */
+.attr2 b .proj{font-family:'Oswald',sans-serif;font-size:14px;color:var(--green-text);opacity:.9;font-weight:600;}
+.captagline{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--gold-2);}
+.captag{display:inline-block;background:var(--gold-2);color:#2a1e00;font-size:11px;font-weight:800;border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:middle;}
+.benchrole-tag{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:4px;padding:1px 6px;margin-left:6px;color:var(--green-text);}
+.kpinego-card{border-left:3px solid var(--gold-2);}
+.cdact-card{border-left:3px solid #5ea0c2;}
