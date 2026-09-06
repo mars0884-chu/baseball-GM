@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src blob:; connect-src 'none'; font-src 'none';">
+<title>咸康（台灣）分支｜族人簡易填報工具 v0.3</title>
+<style>
+:root{
+  --bg:#f6f1eb;--card:#fff;--ink:#2b2522;--muted:#6f655f;--line:#ded5ce;
+  --brand:#742b39;--brand2:#9a4655;--ok:#266342;--warn:#8d5a18;--soft:#f7ecee;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Microsoft JhengHei",sans-serif;font-size:18px;line-height:1.55}
+main{max-width:860px;margin:auto;padding:18px 14px 70px}
+h1{font-size:28px;line-height:1.25;margin:8px 0}
+h2{font-size:23px;margin:0 0 10px}
+h3{font-size:20px;margin:12px 0 6px}
+p{margin:8px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.035)}
+.notice{background:#fff8ea;border-left:6px solid #d3912a}
+.privacy{background:#eef7f1;border-left:6px solid var(--ok)}
+.small{font-size:15px;color:var(--muted)}
+.muted{color:var(--muted)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.row{grid-template-columns:1fr}body{font-size:17px}h1{font-size:25px}.card{padding:15px}}
+label{display:block;font-weight:700;margin:14px 0 5px}
+input,select,textarea{width:100%;font:inherit;padding:13px;border:1.5px solid #bdb2aa;border-radius:12px;background:#fff;color:var(--ink)}
+textarea{min-height:86px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:3px solid #ead5da;border-color:var(--brand)}
+button{font:inherit;font-weight:800;border:0;border-radius:13px;padding:13px 17px;cursor:pointer}
+.primary{background:var(--brand);color:#fff}
+.secondary{background:#ece5df;color:var(--ink)}
+.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.danger{background:#f6e4e6;color:#822632}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.actions button{flex:1 1 180px}
+.pill{display:inline-block;padding:5px 10px;border-radius:999px;background:#efe8e2;font-size:14px;margin-right:6px}
+.person{border:1px solid var(--line);border-radius:15px;padding:14px;margin:10px 0;background:#fff}
+.personHead{display:flex;gap:8px;align-items:flex-start;justify-content:space-between}
+.personName{font-weight:900;font-size:20px}
+.personBtns{display:flex;gap:6px;flex-wrap:wrap}
+.personBtns button{padding:8px 10px;font-size:14px}
+.hidden{display:none!important}
+hr{border:none;border-top:1px solid var(--line);margin:18px 0}
+details{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:10px 0;background:#fffdfb}
+summary{font-weight:800;cursor:pointer}
+.example{background:#f6f2ff;border-left:5px solid #8068a7;padding:10px 12px;border-radius:8px;margin-top:8px}
+.badge{font-size:13px;font-weight:800;border-radius:999px;padding:4px 8px;background:#f2ece7;color:#5b504a}
+.ok{color:var(--ok);font-weight:800}
+.warn{color:var(--warn);font-weight:800}
+.modal{position:fixed;inset:0;background:rgba(30,24,22,.55);z-index:50;overflow:auto;padding:14px}
+.modalBox{max-width:780px;margin:10px auto;background:var(--bg);border-radius:20px;padding:10px}
+.modalTop{position:sticky;top:0;background:var(--bg);z-index:2;padding:8px 8px 4px;display:flex;justify-content:space-between;align-items:center;border-radius:18px}
+.modalTop button{padding:8px 12px}
+.photoItem{border:1px solid var(--line);border-radius:12px;padding:10px;margin:8px 0;background:#fff}
+.photoMeta{font-size:14px;color:var(--muted)}
+.fileline{word-break:break-all;font-size:15px}
+.progress{display:flex;gap:6px;margin:8px 0 14px}
+.progress span{height:7px;border-radius:99px;background:#d8cec7;flex:1}
+.progress span.on{background:var(--brand)}
+.bigChoice{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.bigChoice button{background:#fff;border:1px solid var(--line);min-height:56px}
+.bigChoice button.active{background:var(--soft);border:2px solid var(--brand);color:var(--brand)}
+@media(max-width:520px){.bigChoice{grid-template-columns:1fr}}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#2e2926;color:#fff;padding:10px 16px;border-radius:999px;z-index:100;display:none;max-width:90%;text-align:center}
+</style>
+</head>
+<body>
+<main>
+  <div class="card">
+    <div class="pill">第三版測試 v0.3</div>
+    <h1>咸康（台灣）分支｜族人簡易填報工具</h1>
+    <p>不用 Excel、不用帳號、不用收件匣。一次可填多人；最後按一個按鈕，手機現場產生 Excel（有照片則產生 ZIP），並叫出原生分享選單，請直接選 LINE 傳給 Mars。</p>
+  </div>
+
+  <div class="card privacy">
+    <strong>隱私設計：</strong>這個工具完全離線，不會自動上傳任何資料，也沒有連線到 Google、Microsoft 或其他伺服器。只有在你按下「分享回傳檔」或「儲存檔案」後，資料才會離開目前裝置。
+  </div>
+
+  <div id="shareCap" class="card notice">
+    <strong>手機分享能力檢查中…</strong><br><span class="small">這一版專門測試：從 LINE 點網址後，是否能直接產生 Excel／ZIP 並叫出手機分享選單。</span>
+  </div>
+
+  <section id="stepProvider" class="card">
+    <div class="progress"><span class="on"></span><span></span><span></span></div>
+    <h2>第一步｜這次是誰在填？</h2>
+    <label for="providerName">填寫人姓名 *</label>
+    <input id="providerName" autocomplete="name" placeholder="例如：王大明">
+    <label for="providerRel">你和這批資料的關係 *</label>
+    <input id="providerRel" placeholder="例如：本人、父親、姑姑、表叔">
+    <p class="small">這個姓名會自動放進檔名，方便 Mars 收到後分類。</p>
+    <div class="actions"><button class="primary" id="toPeople">下一步：開始填家人</button></div>
+  </section>
+
+  <section id="stepPeople" class="card hidden">
+    <div class="progress"><span class="on"></span><span class="on"></span><span></span></div>
+    <h2>第二步｜新增要提供資料的人</h2>
+    <p>可以一次填自己、父母、配偶、子女或其他親人。每個人都是一張簡單卡片。</p>
+    <div id="peopleList"></div>
+    <div class="actions">
+      <button class="primary" id="addPerson">＋ 新增一位家人</button>
+      <button class="secondary" id="backProvider">返回填寫人</button>
+      <button class="primary" id="toFinish">完成，檢查資料</button>
+    </div>
+  </section>
+
+  <section id="stepFinish" class="card hidden">
+    <div class="progress"><span class="on"></span><span class="on"></span><span class="on"></span></div>
+    <h2>第三步｜確認並回傳</h2>
+    <div id="summary"></div>
+    <div id="validation"></div>
+    <div class="actions">
+      <button class="secondary" id="backPeople">返回修改</button>
+      <button class="primary" id="shareBtn">完成並分享給 Mars</button>
+      <button class="ghost" id="downloadBtn">只儲存檔案</button>
+    </div>
+    <p class="small">按「完成並分享給 Mars」後，若手機支援檔案分享，會直接跳出原生分享選單；請選 LINE → Mars。系統不能替您自動選聯絡人或自動送出。</p>
+    <p id="resultName" class="ok"></p>
+  </section>
+</main>
+
+<div id="personModal" class="modal hidden">
+  <div class="modalBox">
+    <div class="modalTop">
+      <strong id="modalTitle">新增一位家人</strong>
+      <button class="secondary" id="closeModal">關閉</button>
+    </div>
+    <div class="card">
+      <h2>這個人是誰？</h2>
+      <div class="row">
+        <div>
+          <label for="pName">姓名 *</label>
+          <input id="pName" placeholder="不知道真名可填「姓名待補」">
+        </div>
+        <div>
+          <label for="pGender">性別 *</label>
+          <select id="pGender">
+            <option value="">請選擇</option>
+            <option>男</option><option>女</option><option>其他／不詳</option>
+          </select>
+        </div>
+      </div>
+
+      <label>這個人和朱家是什麼關係？ *</label>
+      <div class="bigChoice" id="relChoices">
+        <button type="button" data-rel="朱家血緣後代（不論姓氏）">朱家血緣後代</button>
+        <button type="button" data-rel="配偶／伴侶">配偶／伴侶</button>
+        <button type="button" data-rel="姻親">其他姻親</button>
+        <button type="button" data-rel="上游直系先祖">上游直系先祖</button>
+      </div>
+      <input id="pRel" type="hidden">
+
+      <details>
+        <summary>這題怎麼選？看完全虛構例子</summary>
+        <div class="example">例如「朱甲」是朱家本人或後代，就選「朱家血緣後代」；「王乙」是朱甲的配偶，就選「配偶／伴侶」。這些名字全部是虛構示範。</div>
+      </details>
+
+      <div class="row">
+        <div>
+          <label for="pLife">目前生歿狀態 *</label>
+          <select id="pLife">
+            <option value="">請選擇</option>
+            <option>在世</option>
+            <option>歿</option>
+            <option>歿（日期不詳）</option>
+            <option>不詳</option>
+          </select>
+        </div>
+        <div>
+          <label for="pBirth">出生日期（民國或西元皆可）</label>
+          <input id="pBirth" inputmode="text" placeholder="例如：民國108年10月18日，或2019-10-18">
+          <p class="small">不用換算；匯出時能辨識的日期會自動統一成民國格式。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>他的父母、配偶是誰？</h2>
+      <datalist id="knownNames"></datalist>
+      <div class="row">
+        <div><label for="pFather">父親姓名</label><input id="pFather" list="knownNames" placeholder="不知道可留白"></div>
+        <div><label for="pMother">母親姓名</label><input id="pMother" list="knownNames" placeholder="不知道可留白"></div>
+      </div>
+      <label for="pSpouse">主要配偶／伴侶姓名</label>
+      <input id="pSpouse" list="knownNames" placeholder="知道就填，不知道可留白">
+      <label for="pMarriage">婚姻狀態</label>
+      <select id="pMarriage">
+        <option value="">不詳／不填</option>
+        <option>婚姻</option><option>婚姻／伴侶</option><option>離婚</option><option>喪偶</option>
+      </select>
+
+      <details>
+        <summary>有再婚或多任配偶？按這裡</summary>
+        <p class="small">第一版可再補其他配偶；不知道姓名時可只寫「第一任配偶姓名未詳」等說明。</p>
+        <div id="extraSpouses"></div>
+        <button type="button" class="ghost" id="addSpouse">＋ 再新增一段婚姻／伴侶</button>
+      </details>
+    </div>
+
+    <div class="card">
+      <h2>排行用白話填</h2>
+      <div class="row">
+        <div>
+          <label for="pTotalRank">他在父母所有孩子中排行第幾？</label>
+          <select id="pTotalRank"><option value="不詳">不知道</option></select>
+          <details><summary>看例子</summary><div class="example">某父母共有三個孩子，不分男女：最早出生填 1，第二位填 2，第三位填 3。再婚也不重新從 1 開始。</div></details>
+        </div>
+        <div>
+          <label for="pTradRank">他是第幾個兒子／女兒？</label>
+          <select id="pTradRank">
+            <option value="不詳">不知道</option>
+            <option>長子</option><option>次子</option><option>三子</option><option>四子</option><option>五子</option>
+            <option>長女</option><option>次女</option><option>三女</option><option>四女</option><option>五女</option>
+            <option>不適用</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>其他基本資料</h2>
+      <div class="row">
+        <div><label for="pLineage">譜名／字派名</label><input id="pLineage" placeholder="不知道可留白，系統會填「不詳」"></div>
+        <div><label for="pAlias">曾用名／其他名字</label><input id="pAlias" placeholder="不知道可留白"></div>
+        <div><label for="pOrigin">籍貫</label><input id="pOrigin" placeholder="例如：湖南慈利；不知道可留白"></div>
+        <div><label for="pResidence">目前居住地</label><input id="pResidence" placeholder="只填國家／縣市，不填門牌"></div>
+      </div>
+
+      <div id="deathFields" class="hidden">
+        <div class="row">
+          <div><label for="pDeath">辭世日期</label><input id="pDeath" placeholder="知道再填"></div>
+          <div><label for="pResting">安奉地</label><input id="pResting" placeholder="不知道可留白，系統會填「不詳」"></div>
+        </div>
+        <label for="pDeathReason">辭世緣由（選填）</label>
+        <input id="pDeathReason">
+      </div>
+
+      <label for="pNote">其他備註（選填）</label>
+      <textarea id="pNote" placeholder="例如：旅居國外、姓名待確認等"></textarea>
+    </div>
+
+    <details class="card">
+      <summary>＋ 學歷／工作／重要事蹟（選填）</summary>
+      <div class="row">
+        <div><label for="pSchool">學校</label><input id="pSchool"></div>
+        <div><label for="pDegree">學歷／科系／學位</label><input id="pDegree"></div>
+        <div><label for="pJob">職務／職稱</label><input id="pJob"></div>
+        <div><label for="pPublicJob">軍職／公職</label><input id="pPublicJob"></div>
+      </div>
+      <label for="pAchievement">重大事蹟</label>
+      <textarea id="pAchievement"></textarea>
+    </details>
+
+    <details class="card">
+      <summary>＋ 照片（選填）</summary>
+      <p><strong>第一版照片規格：</strong>JPG／JPEG、PNG、HEIC／HEIF、WebP；每張最多 15 MB，最多 10 張，全部照片合計最多 50 MB。</p>
+      <p class="small">工具不壓縮、不縮圖、不改畫質，保留原始檔。HEIC/HEIF 若瀏覽器無法預覽，仍可保留並回傳。</p>
+      <label for="photoInput">選擇照片</label>
+      <input id="photoInput" type="file" multiple accept="image/jpeg,image/png,image/heic,image/heif,image/webp,.jpg,.jpeg,.png,.heic,.heif,.webp">
+      <div id="photoList"></div>
+    </details>
+
+    <div class="card">
+      <div class="actions">
+        <button class="secondary" id="cancelPerson">取消</button>
+        <button class="primary" id="savePerson">儲存這個人</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+'use strict';
+
+var state={providerName:'',providerRel:'',people:[],editing:-1,lastOutput:null};
+var MAX_PHOTO_EACH=15*1024*1024, MAX_PHOTO_TOTAL=50*1024*1024, MAX_PHOTO_COUNT=10;
+var PHOTO_EXT=/\.(jpe?g|png|heic|heif|webp)$/i;
+
+function $(id){return document.getElementById(id)}
+function show(id){$(id).classList.remove('hidden')}
+function hide(id){$(id).classList.add('hidden')}
+function toast(msg){var t=$('toast');t.textContent=msg;t.style.display='block';setTimeout(function(){t.style.display='none'},2200)}
+function cleanName(s){return (s||'').trim()}
+function safeFilePart(s){return cleanName(s).replace(/[\\/:*?"<>|]/g,'_').replace(/\s+/g,'_').slice(0,40)||'未具名'}
+function pad(n){return String(n).padStart(2,'0')}
+function stamp(){var d=new Date();return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'_'+pad(d.getHours())+pad(d.getMinutes())}
+function date8(){var d=new Date();return ''+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())}
+function setStep(n){['stepProvider','stepPeople','stepFinish'].forEach(function(x){hide(x)});show(n===1?'stepProvider':n===2?'stepPeople':'stepFinish');window.scrollTo({top:0,behavior:'smooth'})}
+
+(function(){var sel=$('pTotalRank');for(var i=1;i<=20;i++){var o=document.createElement('option');o.value=String(i);o.textContent=String(i);sel.appendChild(o)}})();
+Array.prototype.forEach.call(document.querySelectorAll('#relChoices button'),function(btn){btn.addEventListener('click',function(){$('pRel').value=btn.getAttribute('data-rel');Array.prototype.forEach.call(document.querySelectorAll('#relChoices button'),function(b){b.classList.remove('active')});btn.classList.add('active')})});
+$('pLife').addEventListener('change',function(){if(/^歿/.test(this.value))show('deathFields');else hide('deathFields')});
+
+function refreshKnownNames(){var dl=$('knownNames');dl.innerHTML='';state.people.forEach(function(p){var o=document.createElement('option');o.value=p.name;dl.appendChild(o)})}
+function blankPerson(){return {name:'',gender:'',rel:'',life:'',birth:'',father:'',mother:'',spouse:'',marriage:'',extraSpouses:[],totalRank:'不詳',tradRank:'不詳',lineage:'',alias:'',origin:'',residence:'',death:'',resting:'',deathReason:'',note:'',school:'',degree:'',job:'',publicJob:'',achievement:'',photos:[]}}
+var draft=blankPerson();
+
+function renderExtraSpouses(){var box=$('extraSpouses');box.innerHTML='';draft.extraSpouses.forEach(function(sp,i){var d=document.createElement('div');d.className='photoItem';d.innerHTML='<label>其他配偶／伴侶 '+(i+1)+'</label><input data-sp-name="'+i+'" placeholder="姓名；未知可留白" value="'+escAttr(sp.name||'')+'"><label>關係狀態</label><select data-sp-status="'+i+'"><option>婚姻／伴侶</option><option>婚姻</option><option>離婚</option><option>喪偶</option></select><label>姓名未知時的說明</label><input data-sp-desc="'+i+'" placeholder="例如：第一任配偶姓名未詳" value="'+escAttr(sp.desc||'')+'"><button type="button" class="danger" data-sp-del="'+i+'">移除</button>';box.appendChild(d);d.querySelector('[data-sp-status="'+i+'"]').value=sp.status||'婚姻／伴侶'})}
+$('extraSpouses').addEventListener('input',function(e){var i;if(e.target.hasAttribute('data-sp-name')){i=+e.target.getAttribute('data-sp-name');draft.extraSpouses[i].name=e.target.value}if(e.target.hasAttribute('data-sp-desc')){i=+e.target.getAttribute('data-sp-desc');draft.extraSpouses[i].desc=e.target.value}});
+$('extraSpouses').addEventListener('change',function(e){if(e.target.hasAttribute('data-sp-status')){var i=+e.target.getAttribute('data-sp-status');draft.extraSpouses[i].status=e.target.value}});
+$('extraSpouses').addEventListener('click',function(e){if(e.target.hasAttribute('data-sp-del')){draft.extraSpouses.splice(+e.target.getAttribute('data-sp-del'),1);renderExtraSpouses()}});
+$('addSpouse').addEventListener('click',function(){draft.extraSpouses.push({name:'',status:'婚姻／伴侶',desc:''});renderExtraSpouses()});
+function escHtml(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function escAttr(s){return escHtml(s)}
+function photoTotalCount(excludeDraft){var n=0;state.people.forEach(function(p){n+=p.photos.length});if(!excludeDraft)n+=draft.photos.length;return n}
+function photoTotalBytes(excludeDraft){var n=0;state.people.forEach(function(p){p.photos.forEach(function(x){n+=x.file.size})});if(!excludeDraft)draft.photos.forEach(function(x){n+=x.file.size});return n}
+function humanSize(n){if(n<1024*1024)return (n/1024).toFixed(0)+' KB';return (n/1024/1024).toFixed(1)+' MB'}
+$('photoInput').addEventListener('change',function(){var files=Array.prototype.slice.call(this.files||[]);for(var k=0;k<files.length;k++){var f=files[k];if(!PHOTO_EXT.test(f.name)){toast('不支援的照片格式：'+f.name);continue}if(f.size>MAX_PHOTO_EACH){toast('照片超過15MB：'+f.name);continue}if(photoTotalCount(false)>=MAX_PHOTO_COUNT){toast('最多10張照片');break}if(photoTotalBytes(false)+f.size>MAX_PHOTO_TOTAL){toast('照片總量超過50MB');break}draft.photos.push({file:f,date:'',place:'',desc:'',holder:state.providerName||'',publish:'不允許刊載',note:''})}this.value='';renderPhotos()});
+function renderPhotos(){var box=$('photoList');box.innerHTML='';draft.photos.forEach(function(ph,i){var d=document.createElement('div');d.className='photoItem';d.innerHTML='<div class="fileline"><strong>'+escHtml(ph.file.name)+'</strong> <span class="badge">'+humanSize(ph.file.size)+'</span></div><div class="row"><div><label>年代／日期</label><input data-photo-date="'+i+'" value="'+escAttr(ph.date)+'"></div><div><label>地點</label><input data-photo-place="'+i+'" value="'+escAttr(ph.place)+'"></div></div><label>場合／照片說明</label><input data-photo-desc="'+i+'" value="'+escAttr(ph.desc)+'"><label>來源／持有人</label><input data-photo-holder="'+i+'" value="'+escAttr(ph.holder)+'"><label>是否允許閱讀版刊載</label><select data-photo-publish="'+i+'"><option>不允許刊載</option><option>允許刊載</option></select><button type="button" class="danger" data-photo-del="'+i+'">移除照片</button>';box.appendChild(d);d.querySelector('[data-photo-publish="'+i+'"]').value=ph.publish})}
+$('photoList').addEventListener('input',function(e){['date','place','desc','holder'].forEach(function(a){var key='data-photo-'+a;if(e.target.hasAttribute(key)){draft.photos[+e.target.getAttribute(key)][a]=e.target.value}})});
+$('photoList').addEventListener('change',function(e){if(e.target.hasAttribute('data-photo-publish'))draft.photos[+e.target.getAttribute('data-photo-publish')].publish=e.target.value});
+$('photoList').addEventListener('click',function(e){if(e.target.hasAttribute('data-photo-del')){draft.photos.splice(+e.target.getAttribute('data-photo-del'),1);renderPhotos()}});
+
+function openPerson(i){state.editing=typeof i==='number'?i:-1;draft=state.editing>=0?clonePerson(state.people[state.editing]):blankPerson();$('modalTitle').textContent=state.editing>=0?'編輯：'+draft.name:'新增一位家人';refreshKnownNames();setVal('pName',draft.name);setVal('pGender',draft.gender);setVal('pRel',draft.rel);setVal('pLife',draft.life);setVal('pBirth',draft.birth);setVal('pFather',draft.father);setVal('pMother',draft.mother);setVal('pSpouse',draft.spouse);setVal('pMarriage',draft.marriage);setVal('pTotalRank',draft.totalRank||'不詳');setVal('pTradRank',draft.tradRank||'不詳');setVal('pLineage',draft.lineage);setVal('pAlias',draft.alias);setVal('pOrigin',draft.origin);setVal('pResidence',draft.residence);setVal('pDeath',draft.death);setVal('pResting',draft.resting);setVal('pDeathReason',draft.deathReason);setVal('pNote',draft.note);setVal('pSchool',draft.school);setVal('pDegree',draft.degree);setVal('pJob',draft.job);setVal('pPublicJob',draft.publicJob);setVal('pAchievement',draft.achievement);Array.prototype.forEach.call(document.querySelectorAll('#relChoices button'),function(b){b.classList.toggle('active',b.getAttribute('data-rel')===draft.rel)});if(/^歿/.test(draft.life))show('deathFields');else hide('deathFields');renderExtraSpouses();renderPhotos();show('personModal');document.body.style.overflow='hidden'}
+function clonePerson(p){var x=JSON.parse(JSON.stringify(p,function(k,v){return k==='file'?undefined:v}));x.photos=p.photos.map(function(ph){return {file:ph.file,date:ph.date,place:ph.place,desc:ph.desc,holder:ph.holder,publish:ph.publish,note:ph.note}});return x}
+function setVal(id,v){$(id).value=v||''}
+function closePerson(){hide('personModal');document.body.style.overflow=''}
+function collectDraft(){draft.name=cleanName($('pName').value);draft.gender=$('pGender').value;draft.rel=$('pRel').value;draft.life=$('pLife').value;draft.birth=cleanName($('pBirth').value);draft.father=cleanName($('pFather').value);draft.mother=cleanName($('pMother').value);draft.spouse=cleanName($('pSpouse').value);draft.marriage=$('pMarriage').value;draft.totalRank=$('pTotalRank').value||'不詳';draft.tradRank=$('pTradRank').value||'不詳';draft.lineage=cleanName($('pLineage').value);draft.alias=cleanName($('pAlias').value);draft.origin=cleanName($('pOrigin').value);draft.residence=cleanName($('pResidence').value);draft.death=cleanName($('pDeath').value);draft.resting=cleanName($('pResting').value);draft.deathReason=cleanName($('pDeathReason').value);draft.note=cleanName($('pNote').value);draft.school=cleanName($('pSchool').value);draft.degree=cleanName($('pDegree').value);draft.job=cleanName($('pJob').value);draft.publicJob=cleanName($('pPublicJob').value);draft.achievement=cleanName($('pAchievement').value)}
+function validateDraft(){collectDraft();var miss=[];if(!draft.name)miss.push('姓名');if(!draft.gender)miss.push('性別');if(!draft.rel)miss.push('與朱家關係');if(!draft.life)miss.push('生歿狀態');return miss}
+$('savePerson').addEventListener('click',function(){var miss=validateDraft();if(miss.length){toast('請先填：'+miss.join('、'));return}var dup=state.people.some(function(p,i){return i!==state.editing&&p.name===draft.name});if(dup&&!confirm('已經有同名「'+draft.name+'」。仍要儲存嗎？'))return;if(state.editing>=0)state.people[state.editing]=clonePerson(draft);else state.people.push(clonePerson(draft));closePerson();renderPeople()});
+$('addPerson').addEventListener('click',function(){openPerson(-1)});$('closeModal').addEventListener('click',closePerson);$('cancelPerson').addEventListener('click',closePerson);
+function renderPeople(){var box=$('peopleList');box.innerHTML='';if(!state.people.length){box.innerHTML='<p class="muted">還沒有新增人物。</p>';return}state.people.forEach(function(p,i){var d=document.createElement('div');d.className='person';var photoN=p.photos.length?'<span class="badge">照片 '+p.photos.length+'</span>':'';d.innerHTML='<div class="personHead"><div><div class="personName">'+escHtml(p.name)+'</div><div class="small">'+escHtml(p.rel)+'｜'+escHtml(p.gender)+'｜'+escHtml(p.life)+' '+photoN+'</div></div><div class="personBtns"><button class="ghost" data-edit="'+i+'">編輯</button><button class="danger" data-del="'+i+'">刪除</button></div></div><div class="small">父：'+escHtml(p.father||'未填')+'｜母：'+escHtml(p.mother||'未填')+'｜配偶：'+escHtml(p.spouse||'未填')+'</div>';box.appendChild(d)})}
+$('peopleList').addEventListener('click',function(e){if(e.target.hasAttribute('data-edit'))openPerson(+e.target.getAttribute('data-edit'));if(e.target.hasAttribute('data-del')){var i=+e.target.getAttribute('data-del');if(confirm('確定刪除「'+state.people[i].name+'」？')){state.people.splice(i,1);renderPeople()}}});
+$('toPeople').addEventListener('click',function(){state.providerName=cleanName($('providerName').value);state.providerRel=cleanName($('providerRel').value);if(!state.providerName||!state.providerRel){toast('請先填寫「填寫人姓名」與「關係」');return}setStep(2);renderPeople()});
+$('backProvider').addEventListener('click',function(){setStep(1)});$('toFinish').addEventListener('click',function(){if(!state.people.length){toast('請至少新增一位人物');return}renderSummary();setStep(3)});$('backPeople').addEventListener('click',function(){setStep(2)});
+function renderSummary(){var photos=0,bytes=0;state.people.forEach(function(p){photos+=p.photos.length;p.photos.forEach(function(x){bytes+=x.file.size})});$('summary').innerHTML='<p><strong>填寫人：</strong>'+escHtml(state.providerName)+'</p><p><strong>共填寫：</strong>'+state.people.length+' 人</p><p><strong>照片：</strong>'+photos+' 張'+(photos?'（'+humanSize(bytes)+'）':'')+'</p><p><strong>預計檔名：</strong><br><span class="fileline">'+escHtml(baseFilename()+(photos?'.zip':'.xlsx'))+'</span></p>';var problems=[];state.people.forEach(function(p){if(!p.name||!p.gender||!p.rel||!p.life)problems.push(p.name||'未命名人物')});$('validation').innerHTML=problems.length?'<p class="warn">尚有未完成人物：'+escHtml(problems.join('、'))+'</p>':'<p class="ok">基本必填項目已完成，可以產生回傳檔。</p>'}
+function baseFilename(){return '族人資料填報_'+safeFilePart(state.providerName)+'_'+stamp()}
+
+var crcTable=null;
+function makeCrcTable(){var table=new Uint32Array(256);for(var n=0;n<256;n++){var c=n;for(var k=0;k<8;k++)c=(c&1)?(0xedb88320^(c>>>1)):(c>>>1);table[n]=c>>>0}return table}
+function crc32(bytes){if(!crcTable)crcTable=makeCrcTable();var c=0xffffffff;for(var i=0;i<bytes.length;i++)c=crcTable[(c^bytes[i])&255]^(c>>>8);return(c^0xffffffff)>>>0}
+function u8(s){return new TextEncoder().encode(s)}
+function put16(a,o,v){a[o]=v&255;a[o+1]=(v>>>8)&255}function put32(a,o,v){a[o]=v&255;a[o+1]=(v>>>8)&255;a[o+2]=(v>>>16)&255;a[o+3]=(v>>>24)&255}
+function dosDT(d){var time=((d.getHours()&31)<<11)|((d.getMinutes()&63)<<5)|((Math.floor(d.getSeconds()/2))&31);var year=Math.max(1980,d.getFullYear());var date=(((year-1980)&127)<<9)|(((d.getMonth()+1)&15)<<5)|(d.getDate()&31);return{time:time,date:date}}
+async function toBytes(data){if(data instanceof Uint8Array)return data;if(data instanceof ArrayBuffer)return new Uint8Array(data);if(data instanceof Blob)return new Uint8Array(await data.arrayBuffer());if(typeof data==='string')return u8(data);throw new Error('不支援的資料類型')}
+async function zipBlob(entries,type){var locals=[],centrals=[],offset=0,now=dosDT(new Date());for(var i=0;i<entries.length;i++){var nameBytes=u8(entries[i].name),data=await toBytes(entries[i].data),crc=crc32(data);var lh=new Uint8Array(30+nameBytes.length);put32(lh,0,0x04034b50);put16(lh,4,20);put16(lh,6,0x0800);put16(lh,8,0);put16(lh,10,now.time);put16(lh,12,now.date);put32(lh,14,crc);put32(lh,18,data.length);put32(lh,22,data.length);put16(lh,26,nameBytes.length);put16(lh,28,0);lh.set(nameBytes,30);locals.push(lh,data);var ch=new Uint8Array(46+nameBytes.length);put32(ch,0,0x02014b50);put16(ch,4,20);put16(ch,6,20);put16(ch,8,0x0800);put16(ch,10,0);put16(ch,12,now.time);put16(ch,14,now.date);put32(ch,16,crc);put32(ch,20,data.length);put32(ch,24,data.length);put16(ch,28,nameBytes.length);put16(ch,30,0);put16(ch,32,0);put16(ch,34,0);put16(ch,36,0);put32(ch,38,0);put32(ch,42,offset);ch.set(nameBytes,46);centrals.push(ch);offset+=lh.length+data.length}var csize=centrals.reduce(function(n,x){return n+x.length},0),eocd=new Uint8Array(22);put32(eocd,0,0x06054b50);put16(eocd,4,0);put16(eocd,6,0);put16(eocd,8,entries.length);put16(eocd,10,entries.length);put32(eocd,12,csize);put32(eocd,16,offset);put16(eocd,20,0);return new Blob(locals.concat(centrals).concat([eocd]),{type:type||'application/zip'})}
+function xmlEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;')}
+function colName(n){var s='';while(n){n--;s=String.fromCharCode(65+n%26)+s;n=Math.floor(n/26)}return s}
+function sheetXml(rows,widths,headerRow){var out=['<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'];if(widths&&widths.length){out.push('<cols>');for(var wi=0;wi<widths.length;wi++)out.push('<col min="'+(wi+1)+'" max="'+(wi+1)+'" width="'+widths[wi]+'" customWidth="1"/>');out.push('</cols>')}out.push('<sheetData>');for(var r=0;r<rows.length;r++){var cells=[],row=rows[r]||[],style=(r===0?1:(r===headerRow?3:4)),ht=(r===0?28:(r===headerRow?38:26));for(var c=0;c<row.length;c++){var v=row[c];if(v===null||v===undefined||v==='')continue;cells.push('<c r="'+colName(c+1)+(r+1)+'" t="inlineStr" s="'+style+'"><is><t xml:space="preserve">'+xmlEsc(v)+'</t></is></c>')}out.push('<row r="'+(r+1)+'" ht="'+ht+'" customHeight="1">'+cells.join('')+'</row>')}out.push('</sheetData></worksheet>');return out.join('')}
+function normalizeDateInput(s){s=cleanName(s);if(!s)return'';var m=s.match(/^民國\s*(\d{1,3})\s*[年\-\/.]\s*(\d{1,2})\s*[月\-\/.]\s*(\d{1,2})\s*日?$/);if(m)return'民國 '+parseInt(m[1],10)+' 年 '+pad(parseInt(m[2],10))+' 月 '+pad(parseInt(m[3],10))+' 日';m=s.match(/^(\d{4})\s*[\-\/.]\s*(\d{1,2})\s*[\-\/.]\s*(\d{1,2})$/);if(m){var y=parseInt(m[1],10);if(y>=1912)return'民國 '+(y-1911)+' 年 '+pad(parseInt(m[2],10))+' 月 '+pad(parseInt(m[3],10))+' 日';return s}m=s.match(/^(\d{1,3})\s*[\-\/.]\s*(\d{1,2})\s*[\-\/.]\s*(\d{1,2})$/);if(m)return'民國 '+parseInt(m[1],10)+' 年 '+pad(parseInt(m[2],10))+' 月 '+pad(parseInt(m[3],10))+' 日';return s}
+function workbookRows(){var mainHeaders=['姓名*','同名／辨識補充','這位成員與朱家關係*','父親姓名','母親姓名','配偶／伴侶姓名','婚姻狀態','傳統排行／稱謂*','家中子女總排行*','性別*','生歿狀態*','譜名／字派名*','曾用名／其他名字*','出生日期','辭世日期','辭世緣由','籍貫*','居住地*','安奉地','安奉位置補充','備註'];var main=[['房系成員資料｜由族人簡易填報工具 v0.3 自動產生'],['請勿自行改工作表名稱；此檔可直接交給 Mars 使用既有匯入工具分析。'],mainHeaders];state.people.forEach(function(p){main.push([p.name,'',p.rel,p.father,p.mother,p.spouse,p.marriage,p.tradRank||'不詳',p.totalRank||'不詳',p.gender==='其他／不詳'?'不詳':p.gender,p.life,p.lineage||'不詳',p.alias||'不詳',normalizeDateInput(p.birth),normalizeDateInput(p.death),p.deathReason,p.origin||'不詳',p.residence||'不詳',/^歿/.test(p.life)?(p.resting||'不詳'):'','',p.note])});var special=[['特殊關係補充｜由簡易填報工具自動產生'],['一般家庭可不填；以下只列多任婚姻／未具名配偶。'],['A. 額外婚姻／伴侶關係'],['人物姓名*','另一位人物姓名','關係狀態*','開始日期','結束日期','同名／辨識補充或未具名伴侶說明','備註','資料來源補充']];state.people.forEach(function(p){p.extraSpouses.forEach(function(sp){special.push([p.name,sp.name||'',sp.status||'婚姻／伴侶','','',sp.name?'':(sp.desc||'配偶姓名未詳'),'',''])})});special.push([],['B. 特殊親子關係'],['子女姓名*','父親姓名','母親姓名','關係類型*','同名／辨識補充','未具名家長說明','備註','資料來源補充']);var edu=[['學歷、經歷、事蹟、血型與健康｜由簡易填報工具自動產生'],['健康資料本測試版未開放，避免長輩誤填敏感資訊。'],['姓名*','同名／辨識補充','學校','學歷／科系／學位','職務／職稱','軍職／公職','重大事蹟','ABO血型','特殊血型／血型註記','健康與疾病史（填寫即公開）','資料來源補充','補充說明']];state.people.forEach(function(p){if(p.school||p.degree||p.job||p.publicJob||p.achievement)edu.push([p.name,'',p.school,p.degree,p.job,p.publicJob,p.achievement,'','','',state.providerName,''])});var disclosure=[['揭露設定｜簡易填報工具 v0.3'],['本測試版不另外要求族人處理揭露覆寫；維持既有預設規則。'],['姓名*','同名／辨識補充','出生日期','辭世日期','辭世緣由','安奉位置補充','血型','學校／學歷','職務／軍公職','重大事蹟']];var photo=[['照片與附件索引｜照片原檔會與此 Excel 一起放入回傳 ZIP'],['未勾選允許刊載的照片預設為「不允許刊載」。'],['人物姓名*','檔名*','年代／日期','地點','場合／照片說明','來源／持有人','是否允許閱讀版刊載*','備註']];var seq=1;state.people.forEach(function(p){p.photos.forEach(function(ph){var archiveName=photoArchiveName(seq++,p.name,ph.file.name);ph.archiveName=archiveName;photo.push([p.name,archiveName,ph.date,ph.place,ph.desc,ph.holder||state.providerName,ph.publish,'原始檔名：'+ph.file.name])})});var intro=[['咸康（台灣）分支｜族人簡易填報工具 v0.3 輸出檔'],['資料提供者姓名*',state.providerName],['與這批資料的關係*',state.providerRel],['填寫日期*',date8()],['填寫工具','族人簡易填報工具 v0.3'],['說明','此 Excel 由行動填報工具 v0.3 在族人手機本機產生；範例資料不會寫入正式人物資料。']];var guide=[['欄位說明｜簡易填報工具自動輸出'],['項目','說明'],['家中子女總排行','同一位父母／朱氏血緣家長所有子女的實際出生順序，不分男女；不知道就填不詳。'],['傳統排行','長子、次子、長女、次女等；不知道就填不詳。'],['照片','原始照片不壓縮、不改畫質；索引檔名與回傳 ZIP 內照片名稱一致。']];var fict=[['⚠ 完全虛構範例｜以下內容不會匯入正式資料'],['姓名','關係','父親','母親','配偶','說明'],['朱甲','朱家血緣後代（不論姓氏）','朱祖','林祖','王乙','一般人物示範'],['王乙','配偶／伴侶','','','朱甲','配偶示範']];return{'00_先看這裡':intro,'01_房系成員':main,'02_特殊關係補充':special,'03_學經歷健康':edu,'04_揭露設定_通常不用填':disclosure,'05_照片附件':photo,'98_欄位說明':guide,'99_完全虛構範例':fict}}
+async function makeXlsx(){var sheets=workbookRows(),names=Object.keys(sheets),entries=[];var widthsMap={'00_先看這裡':[28,72],'01_房系成員':[18,18,26,18,18,20,16,18,18,12,16,18,20,22,22,24,20,20,22,24,36],'02_特殊關係補充':[20,20,18,18,18,34,30,28],'03_學經歷健康':[18,18,24,28,24,24,34,16,20,34,24,28],'04_揭露設定_通常不用填':[18,18,18,18,18,20,18,20,22,22],'05_照片附件':[18,34,20,22,38,28,22,36],'98_欄位說明':[24,70],'99_完全虛構範例':[18,26,18,18,18,40]};var headerMap={'00_先看這裡':-1,'01_房系成員':2,'02_特殊關係補充':4,'03_學經歷健康':2,'04_揭露設定_通常不用填':2,'05_照片附件':2,'98_欄位說明':1,'99_完全虛構範例':1};var ct=['<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">','<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>','<Default Extension="xml" ContentType="application/xml"/>','<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>','<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'];names.forEach(function(n,i){ct.push('<Override PartName="/xl/worksheets/sheet'+(i+1)+'.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>')});ct.push('</Types>');entries.push({name:'[Content_Types].xml',data:ct.join('')});entries.push({name:'xl/styles.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Microsoft JhengHei"/></font><font><b/><color rgb="FFFFFFFF"/><sz val="12"/><name val="Microsoft JhengHei"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF7A1F2E"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="5"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment wrapText="1" vertical="center"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment wrapText="1" vertical="center"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment wrapText="1" vertical="top"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>'});entries.push({name:'_rels/.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'});var wb=['<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>'];var rel=['<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'];names.forEach(function(n,i){wb.push('<sheet name="'+xmlEsc(n)+'" sheetId="'+(i+1)+'" r:id="rId'+(i+1)+'"/>');rel.push('<Relationship Id="rId'+(i+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet'+(i+1)+'.xml"/>');entries.push({name:'xl/worksheets/sheet'+(i+1)+'.xml',data:sheetXml(sheets[n],widthsMap[n]||[],headerMap[n])})});wb.push('</sheets></workbook>');rel.push('<Relationship Id="rId'+(names.length+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>');entries.push({name:'xl/workbook.xml',data:wb.join('')});entries.push({name:'xl/_rels/workbook.xml.rels',data:rel.join('')});return await zipBlob(entries,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')}
+function photoArchiveName(seq,person,original){var ext=(original.match(/(\.[A-Za-z0-9]+)$/)||['',''])[1].toLowerCase();var stem=original.replace(/\.[^.]+$/,'');return String(seq).padStart(3,'0')+'_'+safeFilePart(person)+'_'+safeFilePart(stem)+ext}
+async function buildOutput(){var base=baseFilename(),xlsxName=base+'.xlsx',xlsx=await makeXlsx();var photoEntries=[],seq=1;state.people.forEach(function(p){p.photos.forEach(function(ph){var nm=ph.archiveName||photoArchiveName(seq,p.name,ph.file.name);ph.archiveName=nm;seq++;photoEntries.push({name:'照片/'+nm,data:ph.file})})});if(photoEntries.length){var readme='族譜資料回傳包\n填寫人：'+state.providerName+'\n人物數：'+state.people.length+'\n照片數：'+photoEntries.length+'\nExcel：'+xlsxName+'\n照片均為原始檔，未壓縮、未改畫質。\n';var entries=[{name:xlsxName,data:xlsx},{name:'回傳說明.txt',data:readme}].concat(photoEntries);var zip=await zipBlob(entries,'application/zip');return{blob:zip,name:base+'.zip',type:'application/zip',xlsx:xlsx,xlsxName:xlsxName}}return{blob:xlsx,name:xlsxName,type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',xlsx:xlsx,xlsxName:xlsxName}}
+function downloadBlob(blob,name){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},2000)}
+async function prepareOutput(){$('shareBtn').disabled=true;$('downloadBtn').disabled=true;$('resultName').textContent='正在產生檔案…';try{state.lastOutput=await buildOutput();$('resultName').textContent='檔案已產生：'+state.lastOutput.name;return state.lastOutput}finally{$('shareBtn').disabled=false;$('downloadBtn').disabled=false}}
+$('downloadBtn').addEventListener('click',async function(){var out=await prepareOutput();downloadBlob(out.blob,out.name);toast('已產生 '+out.name)});
+$('shareBtn').addEventListener('click',async function(){var out=await prepareOutput(),file=new File([out.blob],out.name,{type:out.type});try{if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){$('resultName').textContent='分享視窗即將開啟：請選 LINE → Mars。';await navigator.share({files:[file],title:'族譜資料填報',text:'族譜資料填報｜填寫人：'+state.providerName});$('resultName').textContent='✅ 分享動作已完成。檔名：'+out.name}else{$('resultName').textContent='⚠️ 此瀏覽器不能直接分享這個檔案，請改按「只儲存檔案」。';toast('此瀏覽器不支援直接檔案分享')}}catch(e){if(e&&e.name==='AbortError'){$('resultName').textContent='已取消分享，資料仍留在這個頁面，可再次按分享。'}else{$('resultName').textContent='⚠️ 分享沒有完成，請改按「只儲存檔案」。';toast('分享未完成')}}});
+function checkShareCapability(){var box=$('shareCap');try{var f=new File([new Blob(['test'])],'測試.xlsx',{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[f]})){box.className='card privacy';box.innerHTML='<strong>✅ 這個瀏覽器支援直接分享檔案。</strong><br><span class="small">填完後可直接叫出手機分享選單；請選 LINE → Mars。</span>'}else{box.className='card notice';box.innerHTML='<strong>⚠️ 這個瀏覽器目前沒有回報可直接分享 Excel。</strong><br><span class="small">仍可填寫；完成時會提供儲存檔案。這一項正是本版要實機測的相容性。</span>'}}catch(e){box.className='card notice';box.innerHTML='<strong>⚠️ 無法預先確認分享能力。</strong><br><span class="small">請照常測試到最後一步。</span>'}}
+$('providerName').addEventListener('input',function(){state.providerName=this.value});$('providerRel').addEventListener('input',function(){state.providerRel=this.value});renderPeople();checkShareCapability();
+</script>
+</body>
+</html>
