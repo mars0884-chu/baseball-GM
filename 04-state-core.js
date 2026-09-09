@@ -110,39 +110,59 @@ let S = null;
 let UI = { screen: "loading", rosterTab: "1軍", flash: null, selectedPlayerId: null, confirmReset: false };
 const app = document.getElementById("app");
 
-function newGame(gmNameInput, teamNameInput, leagueNameInput) {
+function newGame(gmNameInput) {
   ID_SEQ = 1;
-  const gmName = gmNameInput.trim() || generateChineseName();
-  const leagueName = leagueNameInput.trim() || (choice(LEAGUE_PREFIX) + "職業棒球聯盟");
-  const userTeamName = teamNameInput.trim();
-  const { teams, players, coaches } = buildLeague(userTeamName || null);
+  const gmName = (gmNameInput || "").trim() || generateChineseName();
+  // v491：保留原 RNG 呼叫維持共用亂數序列，結果丟棄；聯盟名改用固定品牌
+  choice(LEAGUE_PREFIX);
+  const leagueName = LEAGUE_BRAND.fullName;
+  const { teams, players, coaches } = buildLeague();
   const schedule = buildSeasonSchedule(teams);
   S = {
     gmName, leagueName, teams, players, coaches, schedule,
     currentDay: 0, seasonYear: 1, resultsLog: [], playoffs: null, retiredPlayers: {}, lastAwards: null,
     draft: null, offseasonSummary: null, pendingCoachHires: [], freeAgents: {},
-    userTeamId: userTeamName ? "T0" : null, idSeq: ID_SEQ,
+    userTeamId: null, idSeq: ID_SEQ, // v491：一律由 pickTeam() 設定 userTeamId
     gameStarted: false, pendingContractRenewals: [], forcedCutRequired: false,
     // v25新增狀態
     newsFeed: [], springCampDoneYear: 0, springCamp: null, sponsorMission: null,
-    intlTournament: null, intlBoost: null, nationFriendship: null, traitsSeeded: true,
+    intlTournament: null, intlBoost: null, nationFriendship: null, nationBonds: {}, eventChains: [], traitsSeeded: true, // v38④國家友好度容器／v38②連鎖事件佇列
     // v27新增狀態
     gmCareer: { trust: 50, startYear: 1, seasons: [], championships: 0, fired: false, firedYear: null, stints: [], teamName: null },
     seasonKPI: null, jobOffers: null,
     // v28新增狀態：代理人事務所（球員經紀人情蒐揭露 + GM與經紀人關係）
     agency: { scouted: {}, rel: {} },
     // v31新增狀態：教練/球探到期續約佇列、自主訓練窗報告、上季均衡池
-    pendingStaffRenewals: [], selfTrainingReport: null, lastBalancePool: 0
+    pendingStaffRenewals: [], selfTrainingReport: null, lastBalancePool: 0,
+    // v41新增狀態：開局身分模式/接管/需求單/百年史冊/GM聲望標籤/球迷耐心（北極星第一梯次）
+    gameMode: "gm_coach", takeover: null, demands: [], demandSeq: 1,
+    chronicle: [], gmTags: [], fanPatience: 60, demandRejects: 0, demandIgnored: 0, takeoverTipsSeen: false,
+    // v45新增狀態：球迷三維度（期待/認同，耐心沿用 fanPatience）／選秀權歸屬／教練需求求購市場
+    v45: { ver: 45 }, fanExpect: 50, fanIdentify: 55, pickOwnership: {}, v45Wants: [],
+    // v55球迷演化：數據素養（0-100，第1年≈8）＋交易記憶（送走門面球星，球迷記三年）
+    fanDataLiteracy: 8, fanTradeMemory: [],
+    // v491新增標記
+    v491: { ver: 491 },
+    // v50：美術接口定案
+    v50: { ver: 50 },
+    v51: { ver: 51 },  // v51：新開局的統計欄位由 freshBatterStats/freshPitcherStats 直接建齊，無須補值
+    v52: { ver: 52 },  // v52：逐打席引擎欄位與 A5 捕手六項由產生器直接建齊，無須補值
+    v55: { ver: 55 },  // v55：L3 進階數據引擎＋分析主管＋文化＋城市
+    culture: { history: [], labels: [], scores: { rookieDev: 0, faBigSpend: 0, trust: 0, handsOn: 0 }, faSpendThisYear: 0 },
+    cityState: {}      // v55：城市狀態（由 ensureCityState 補齊各隊初始值）
   };
+  /* v55 Phase 3：新開局直接初始化分析主管（避免 ensureV55 後續擲骰偏移 RNG） */
+  if (typeof v55EnsureAnalysisDirector === "function") {
+    Object.values(S.teams).forEach(function(t) { v55EnsureAnalysisDirector(t); });
+  }
+  /* v55 Culture & City：初始化城市狀態 */
+  if (typeof v55EnsureCityState === "function") v55EnsureCityState();
   ensureAllFinance();
   Object.values(S.teams).forEach(t => refreshPayroll(t, S.players));
-  if (userTeamName) {
-    beginInitialOffseason();
-  } else {
-    UI.screen = "teamSelect";
-    persist();
-    render();
-  }
+  // v491：一律進選隊畫面，由玩家從20隊中選一隊經營
+  UI.screen = "teamSelect";
+  persist();
+  render();
 }
 
 // 新開局的起點代表「西元2025年10月，上一任GM的球季剛結束」，
@@ -422,7 +442,7 @@ function generateSeasonKPI() {
   }
   if (streak.fail >= 2) {
     S.seasonKPI.probation = true;
-    pushNews("高層", "⚠️ 連續兩年目標全數落空，高層宣布你進入「留校察看」狀態——今年再失敗，信任將加重扣減。");
+    pushNews("高層", ""+icon('warn')+" 連續兩年目標全數落空，高層宣布你進入「留校察看」狀態——今年再失敗，信任將加重扣減。");
   }
   pushNews("高層", `高層公布第${S.seasonYear}年球季目標：${goals.map(g => g.label).join("、")}。（目前信任度 ${S.gmCareer.trust}）`);
 }
@@ -635,6 +655,7 @@ function settleSeasonKPI(financeReports) {
   if (regular.length > 0 && regular.every(r => r.achieved)) { S.kpiStreak.pass++; S.kpiStreak.fail = 0; }
   else if (regular.length > 0 && regular.every(r => !r.achieved)) { S.kpiStreak.fail++; S.kpiStreak.pass = 0; }
   else { S.kpiStreak.pass = 0; S.kpiStreak.fail = 0; }
+  if (trustDelta < 0 && typeof fanPatienceOwnerMult === "function") trustDelta = Math.round(trustDelta * fanPatienceOwnerMult()); // v41⑧：球迷耐心的唯一出口＝老闆耐心乘數（低耐心→高層對失敗更沒耐性）
   career.trust = clamp(trustBefore + trustDelta, 0, 100);
   career.seasons.push({ year: S.seasonYear, wins: team.wins, losses: team.losses, madePlayoffs, champion: champ, results, trustAfter: career.trust });
   S.seasonKPI.settled = true;
@@ -648,7 +669,7 @@ function settleSeasonKPI(financeReports) {
     career.teamName = career.teamName || team.name; // v28：記下遭解職時的隊名
     pushNews("高層", `震撼彈！高層對球隊表現徹底失去耐心，GM ${S.gmName} 遭到解職。`);
   } else {
-    pushNews("高層", `年度考核：${results.map(r => `${r.label}${r.achieved ? "✅" : "❌"}`).join("、")}${champ ? "、奪冠紅利+8" : ""}，信任度 ${trustBefore} → ${career.trust}。`);
+    pushNews("高層", `年度考核：${results.map(r => `${r.label}${r.achieved ? ""+icon('check')+"" : ""+icon('cross')+""}`).join("、")}${champ ? "、奪冠紅利+8" : ""}，信任度 ${trustBefore} → ${career.trust}。`);
   }
   persist();
   return { results, trustDelta, trustBefore, trustAfter: career.trust, fired, champ };
@@ -840,7 +861,12 @@ function ensureV33() {
 function pickTeam(teamId) {
   S.teams[teamId].isUser = true;
   S.userTeamId = teamId;
+  // v40修正：newGame 在選隊前已對全聯盟擲過性格起始設施，玩家選中的球隊須歸零回「白手起家」（球場維持Lv1）
+  if (typeof resetUserFacilities === "function") resetUserFacilities(S.teams[teamId]);
   beginInitialOffseason();
+  // v41①：選隊後同樣先選開局身分模式
+  UI.screen = "gameModePick";
+  render();
 }
 
 /* ---------- v34：季中事件暫停時程 ----------
@@ -863,7 +889,7 @@ function doSimulateDay() {
   const results = simulateDay(S);
   if (!results) { UI.flash = "本季賽事已全部結束！"; }
   const ints = consumeSimInterrupts();
-  if (ints.length > 0) UI.flash = `⏸️ ${ints.join("；")}`;
+  if (ints.length > 0) UI.flash = `${icon('pause')} ${ints.join("；")}`;
   persist();
   render();
 }
@@ -874,7 +900,7 @@ function doSimulateWeek() {
     if (S.simInterrupts && S.simInterrupts.length > 0) break; // v34：事件中斷
   }
   const ints = consumeSimInterrupts();
-  if (ints.length > 0) UI.flash = `⏸️ 時程暫停：${ints.join("；")}處置完成後可繼續模擬。`;
+  if (ints.length > 0) UI.flash = `${icon('pause')} 時程暫停：${ints.join("；")}處置完成後可繼續模擬。`;
   persist();
   render();
 }
@@ -886,7 +912,7 @@ function doSimulateToEnd() {
     if (S.simInterrupts && S.simInterrupts.length > 0) break; // v34：事件中斷
   }
   const ints = consumeSimInterrupts();
-  if (ints.length > 0) UI.flash = `⏸️ 時程暫停：${ints.join("；")}處置完成後可繼續模擬。`;
+  if (ints.length > 0) UI.flash = `${icon('pause')} 時程暫停：${ints.join("；")}處置完成後可繼續模擬。`;
   persist();
   render();
 }
@@ -1078,56 +1104,55 @@ function primaryPositionGroup(p) {
 function compositeScore(p) { return battingScore(p) + p.fielding * 1.5; }
 
 function computeSeasonAwards() {
-  const allPlayers = Object.values(S.players);
-  const batters = allPlayers.filter(p => !p.isPitcher && p.seasonStats.AB > 0);
-  const pitchers = allPlayers.filter(p => p.isPitcher && p.seasonStats.IP > 0);
-  const pitchersAny = allPlayers.filter(p => p.isPitcher && p.seasonStats.G > 0); // v34：救援王/中繼王候選池改依出賽數（後援過去因IP=0被排除）
-  const qualifiedBatters = batters.filter(p => p.seasonStats.AB >= 250);
-  const qualifiedPitchers = pitchers.filter(p => p.seasonStats.IP >= 80);
-
-  const mvpCandidates = allPlayers.filter(p => (!p.isPitcher && p.seasonStats.AB > 0) || (p.isPitcher && p.seasonStats.IP > 0));
-  const mvp = topBy(mvpCandidates, p => p.isPitcher ? pitchingScore(p) : battingScore(p));
-  const rookies = mvpCandidates.filter(p => p.age <= 21);
-  const rookieOfYear = topBy(rookies, p => p.isPitcher ? pitchingScore(p) : battingScore(p));
-
-  const goldenBat = {}, goldenArm = {};
-  const bestNine = { A: {}, B: {} }, goldenGlove = { A: {}, B: {} };
-  const allBattersAnyStats = allPlayers.filter(p => !p.isPitcher);
+  /* v56：所有獎項按聯盟（A/B）分別計算，頒獎典禮以分頁呈現 */
+  const result = { year: S.seasonYear };
   ["A", "B"].forEach(region => {
-    const inRegionBat = batters.filter(p => S.teams[p.team] && S.teams[p.team].league === region);
-    goldenBat[region] = idOf(topBy(inRegionBat, p => battingScore(p)));
-    const inRegionPitch = pitchers.filter(p => S.teams[p.team] && S.teams[p.team].league === region);
-    goldenArm[region] = idOf(topBy(inRegionPitch, p => pitchingScore(p)));
+    const regionPlayers = Object.values(S.players).filter(p => p.team && S.teams[p.team] && S.teams[p.team].league === region);
+    const batters = regionPlayers.filter(p => !p.isPitcher && p.seasonStats.AB > 0);
+    const pitchers = regionPlayers.filter(p => p.isPitcher && p.seasonStats.IP > 0);
+    const pitchersAny = regionPlayers.filter(p => p.isPitcher && p.seasonStats.G > 0);
+    const qualifiedBatters = batters.filter(p => p.seasonStats.AB >= 250);
+    const qualifiedPitchers = pitchers.filter(p => p.seasonStats.IP >= 80);
+
+    const mvpCandidates = regionPlayers.filter(p => (!p.isPitcher && p.seasonStats.AB > 0) || (p.isPitcher && p.seasonStats.IP > 0));
+    const mvp = topBy(mvpCandidates, p => p.isPitcher ? pitchingScore(p) : battingScore(p));
+    const rookies = mvpCandidates.filter(p => p.age <= 21);
+    const rookieOfYear = topBy(rookies, p => p.isPitcher ? pitchingScore(p) : battingScore(p));
+
+    const goldenBat = idOf(topBy(batters, p => battingScore(p)));
+    const goldenArm = idOf(topBy(pitchers, p => pitchingScore(p)));
+
+    const bestNine = {}, goldenGlove = {};
+    const allBattersAnyStats = regionPlayers.filter(p => !p.isPitcher);
     const usedForBestNine = new Set();
     GOLDGLOVE_GROUPS.forEach(g => {
-      const inGroupAll = allBattersAnyStats.filter(p => primaryPositionGroup(p) === g && S.teams[p.team] && S.teams[p.team].league === region);
-      const inGroupBat = batters.filter(p => primaryPositionGroup(p) === g && S.teams[p.team] && S.teams[p.team].league === region);
+      const inGroupAll = allBattersAnyStats.filter(p => primaryPositionGroup(p) === g);
+      const inGroupBat = batters.filter(p => primaryPositionGroup(p) === g);
       const winner = topBy(inGroupBat.length ? inGroupBat : inGroupAll, p => compositeScore(p));
-      bestNine[region][g] = idOf(winner);
+      bestNine[g] = idOf(winner);
       if (winner) usedForBestNine.add(winner.id);
-      goldenGlove[region][g] = idOf(topBy(inGroupAll, p => p.fielding));
+      goldenGlove[g] = idOf(topBy(inGroupAll, p => p.fielding));
     });
-    // 指定打擊（DH）：區內打擊分數最高、且尚未獲得其他守位最佳9人的球員
-    const dhPool = inRegionBat.filter(p => !usedForBestNine.has(p.id));
-    bestNine[region]["指定打擊"] = idOf(topBy(dhPool.length ? dhPool : inRegionBat, p => battingScore(p)));
-  });
+    const dhPool = batters.filter(p => !usedForBestNine.has(p.id));
+    bestNine["指定打擊"] = idOf(topBy(dhPool.length ? dhPool : batters, p => battingScore(p)));
 
-  return {
-    year: S.seasonYear,
-    mvp: mvp ? mvp.id : null,
-    battingTitle: idOf(topBy(qualifiedBatters.length ? qualifiedBatters : batters, p => battingAvg(p.seasonStats))),
-    homeRunTitle: idOf(topBy(batters, p => p.seasonStats.HR)),
-    hitsTitle: idOf(topBy(batters, p => p.seasonStats.H)),
-    rbiTitle: idOf(topBy(batters, p => p.seasonStats.RBI)),
-    stolenBaseTitle: idOf(topBy(batters, p => p.seasonStats.SB)),
-    eraTitle: idOf(bottomBy(qualifiedPitchers.length ? qualifiedPitchers : pitchers, p => era(p.seasonStats))),
-    winsTitle: idOf(topBy(pitchers, p => p.seasonStats.W)),
-    strikeoutTitle: idOf(topBy(pitchers, p => p.seasonStats.SO)),
-    saveTitle: idOf(topBy(pitchersAny.filter(p => p.seasonStats.SV > 0), p => p.seasonStats.SV)),
-    holdTitle: idOf(topBy(pitchersAny.filter(p => p.seasonStats.HD > 0), p => p.seasonStats.HD)),
-    rookieOfYear: rookieOfYear ? rookieOfYear.id : null,
-    goldenBat, goldenArm, bestNine, goldenGlove
-  };
+    result[region] = {
+      mvp: mvp ? mvp.id : null,
+      battingTitle: idOf(topBy(qualifiedBatters.length ? qualifiedBatters : batters, p => battingAvg(p.seasonStats))),
+      homeRunTitle: idOf(topBy(batters, p => p.seasonStats.HR)),
+      hitsTitle: idOf(topBy(batters, p => p.seasonStats.H)),
+      rbiTitle: idOf(topBy(batters, p => p.seasonStats.RBI)),
+      stolenBaseTitle: idOf(topBy(batters, p => p.seasonStats.SB)),
+      eraTitle: idOf(bottomBy(qualifiedPitchers.length ? qualifiedPitchers : pitchers, p => era(p.seasonStats))),
+      winsTitle: idOf(topBy(pitchers, p => p.seasonStats.W)),
+      strikeoutTitle: idOf(topBy(pitchers, p => p.seasonStats.SO)),
+      saveTitle: idOf(topBy(pitchersAny.filter(p => p.seasonStats.SV > 0), p => p.seasonStats.SV)),
+      holdTitle: idOf(topBy(pitchersAny.filter(p => p.seasonStats.HD > 0), p => p.seasonStats.HD)),
+      rookieOfYear: rookieOfYear ? rookieOfYear.id : null,
+      goldenBat, goldenArm, bestNine, goldenGlove
+    };
+  });
+  return result;
 }
 
 function doSimulatePlayoffRound() {
@@ -1159,6 +1184,58 @@ function doSimulatePlayoffsToEnd() {
    - 母國成績影響：奪冠/4強 → 全聯盟人氣↑、隔年贊助與周邊收入加成；
      小組未出線 → 入選國手背負罵名，開季背負「低迷鎖」數場＋負面新聞
    ==================================================================== */
+/* ====================================================================
+   v38③：國際賽「逐場化」＋玩家兼任母國代表隊管理層（選人＋排陣）
+   ------------------------------------------------------------------
+   v37 之前：runIntlTournament() 一次跑完 40 國——小組賽只用實力值擲勝負（沒有比分、
+   沒有任何球員成績），淘汰賽的比分是亂數湊出來的，玩家從頭到尾只拿到一張結果報告。
+   v38（Mars 拍板：選人＋排陣）：
+     ① 玩家親自挑 30 人母國代表隊（v39①擴編）（本土球員全聯盟可選，非只有自家球員）；
+     ② 玩家排先發打線＋守位＋先發輪值；
+     ③ 母國的每一場（小組賽4場＋淘汰賽最多3場）都用既有 simulateGame 引擎逐場打，
+        產生真實比分與逐場個人成績（記在 intlStats／intlCareer 專軌，不汙染聯盟成績）；
+     ④ 其餘 39 國之間的比賽維持實力值快速結算（逐場化只針對「玩家看得到的那條線」）。
+   對手陣容以「影子球員」即時生成（依該國實力值校準能力），僅存活於本屆賽會物件中。
+   ==================================================================== */
+const INTL_SQUAD_SIZE = 30;            // v39①：24→30（Mars 真機回饋：24 人太綁）
+const INTL_SQUAD_MIN_PITCHERS = 14;    // v39①：投手至少 14
+const INTL_SQUAD_MIN_CATCHERS = 2;     // 捕手至少 2；其餘名額不設限
+const INTL_ROUND_LABELS = { 8: "八強", 4: "四強", 2: "冠軍戰" };
+
+function freshIntlStats(isPitcher) {
+  return isPitcher ? { G: 0, W: 0, L: 0, IP: 0, ER: 0, SO: 0, BB: 0, H: 0 }
+    : { G: 0, AB: 0, H: 0, HR: 0, RBI: 0, BB: 0, SO: 0, SB: 0 };
+}
+// 母國代表隊候選：全聯盟本土（非外籍）、未退休、健康的現役球員
+function intlCandidatePool() {
+  return Object.values(S.players)
+    .filter(p => p && !p.foreign && !p.retired && p.team && S.teams[p.team] && !isInjured(p))
+    .sort((a, b) => trueOverall(b) - trueOverall(a));
+}
+// 自動推薦名單（v39①）：14 投手＋2 捕手＋野手保底 9 人，剩餘名額全池擇優（不分守位取能力最好的）
+function intlSuggestSquad() {
+  const pool = intlCandidatePool();
+  const picked = [];
+  const has = p => picked.some(x => x.id === p.id);
+  const take = (list, n) => { for (const p of list) { if (picked.length >= INTL_SQUAD_SIZE) return; if (!has(p)) { picked.push(p); if (--n <= 0) return; } } };
+  take(pool.filter(p => p.isPitcher), INTL_SQUAD_MIN_PITCHERS);                                         // 投手底線 14
+  take(pool.filter(p => !p.isPitcher && p.positions && p.positions.some(x => x.pos === "C")), INTL_SQUAD_MIN_CATCHERS); // 捕手底線 2
+  take(pool.filter(p => !p.isPitcher), 9);                                                              // 野手保底 9（確保打線湊得出來）
+  take(pool, INTL_SQUAD_SIZE);                                                                          // 其餘名額全池擇優
+  return picked.slice(0, INTL_SQUAD_SIZE).map(p => p.id);
+}
+function intlSquadIssues(ids) {
+  const ps = ids.map(id => S.players[id]).filter(Boolean);
+  const issues = [];
+  if (ps.length !== INTL_SQUAD_SIZE) issues.push(`代表隊必須剛好 ${INTL_SQUAD_SIZE} 人（目前 ${ps.length} 人）`);
+  const pit = ps.filter(p => p.isPitcher).length;
+  if (pit < INTL_SQUAD_MIN_PITCHERS) issues.push(`投手至少 ${INTL_SQUAD_MIN_PITCHERS} 人（目前 ${pit} 人）`);
+  const cat = ps.filter(p => !p.isPitcher && p.positions && p.positions.some(x => x.pos === "C")).length;
+  if (cat < INTL_SQUAD_MIN_CATCHERS) issues.push(`捕手至少 ${INTL_SQUAD_MIN_CATCHERS} 人（目前 ${cat} 人）`);
+  if (ps.length - pit < 9) issues.push("野手不足9人，無法組成打線");
+  return issues;
+}
+
 function isIntlYear(y) { return y >= 5 && (y - 5) % 4 === 0; } // 第5、9、13…年（2030、2034…）
 
 function nationBaseStrength(nation) {
@@ -1166,70 +1243,330 @@ function nationBaseStrength(nation) {
   return base + randInt(-4, 4);
 }
 
+/* 影子球員：對手國家的陣容——依該國實力值校準能力值後生成，僅存在於本屆賽會物件（不進 S.players） */
+function intlGhostSquad(t, nationName) {
+  t.ghosts = t.ghosts || {};
+  if (t.ghosts[nationName]) return t.ghosts[nationName];
+  const entry = (t.entries || []).find(e => e.name === nationName);
+  const st = entry ? entry.strength : 65;
+  const nation = nationByName(nationName);
+  const arr = [];
+  for (let i = 0; i < 10; i++) {
+    const b = generateBatter("NAT_" + nationName, "1軍");
+    b.name = nation ? generateForeignName(nation) : b.name;
+    b.nationality = nationName; b.foreign = true; b.age = randInt(21, 33);
+    ["contact", "power", "eye"].forEach(k => { b[k] = clamp(Math.round(genRating(st, 6)), 20, 99); });
+    b.fielding = clamp(Math.round(genRating(st - 2, 8)), 20, 99);
+    b.arm = clamp(Math.round(genRating(st - 2, 8)), 20, 99);
+    b.composure = clamp(Math.round(genRating(st, 8)), 20, 99);
+    b.condition = 0;
+    arr.push(b);
+  }
+  for (let i = 0; i < 5; i++) {
+    const p = generatePitcher("NAT_" + nationName, "1軍");
+    p.name = nation ? generateForeignName(nation) : p.name;
+    p.nationality = nationName; p.foreign = true; p.age = randInt(21, 33); p.role = "先發";
+    p.velocity = clamp(Math.round(genRating(st, 6)), 20, 99);
+    p.control = clamp(Math.round(genRating(st, 6)), 20, 99);
+    p.pitches.forEach(pt => { pt.stuff = clamp(Math.round(genRating(st, 6)), 20, 99); pt.control = clamp(Math.round(genRating(st, 6)), 20, 99); });
+    p.stamina = clamp(Math.round(genRating(st, 8)), 20, 99);
+    p.composure = clamp(Math.round(genRating(st, 8)), 20, 99);
+    p.condition = 0; p.fatigue = 0;
+    arr.push(p);
+  }
+  t.ghosts[nationName] = arr;
+  return arr;
+}
+// 對手國家的合成球隊物件（facilities 先給滿0，避免 ensureFacilities 依性格擲骰）
+function intlGhostTeam(t, nationName) {
+  const squad = intlGhostSquad(t, nationName);
+  const map = {}; squad.forEach(p => { map[p.id] = p; });
+  const team = {
+    id: "NAT_" + nationName, name: nationName + "代表隊",
+    roster1: squad.map(p => p.id), roster2: [],
+    facilities: { training: {}, medical: 0, scoutOffice: 0, dorm: 0, analysisRoom: 0, rehabCenter: 0 },
+    starterIndex: 0
+  };
+  team.lineup = autoLineup(team, map);
+  team.rotation = autoRotation(team, map);
+  return { team, map };
+}
+// 母國代表隊的合成球隊物件（打線／輪值由玩家排定，存在賽會物件內）
+function intlHomeTeam() {
+  const t = S.intlTournament;
+  const ids = (t.squadIds || []).filter(id => S.players[id]);
+  const team = {
+    id: "NAT_HOME", name: HOME_NATION_NAME + "代表隊",
+    roster1: ids.slice(), roster2: [],
+    facilities: { training: {}, medical: 0, scoutOffice: 0, dorm: 0, analysisRoom: 0, rehabCenter: 0 },
+    lineup: (t.natLineup || []).filter(sl => ids.includes(sl.playerId)),
+    rotation: (t.natRotation || []).filter(id => ids.includes(id)),
+    starterIndex: t.starterIndex || 0
+  };
+  if (!team.lineup.length) team.lineup = autoLineup(team, S.players);
+  if (!team.rotation.length) team.rotation = autoRotation(team, S.players);
+  return team;
+}
+// 逐場個人成績（國際賽專軌）：只記本國國手，影子球員不入帳
+function intlCreditStats(t, team, pmap, runsScored, runsAllowed, won) {
+  const bump = (p, key, d) => {
+    if (!S.players[p.id]) return; // 影子球員不入帳
+    if (!t.stats[p.id]) t.stats[p.id] = freshIntlStats(p.isPitcher);
+    t.stats[p.id][key] = (t.stats[p.id][key] || 0) + d;
+    if (!p.intlCareer) p.intlCareer = freshIntlStats(p.isPitcher);
+    p.intlCareer[key] = (p.intlCareer[key] || 0) + d;
+  };
+  const batters = getLineupBatters(team, pmap);
+  if (batters.length) {
+    const weights = batters.map(b => Math.max(5, b.contact * 0.5 + b.power * 0.3 + b.eye * 0.2));
+    batters.forEach(b => { bump(b, "G", 1); bump(b, "AB", randInt(3, 5)); });
+    const hits = clamp(Math.round(runsScored * 1.6 + randInt(-1, 2)), 0, 18);
+    for (let i = 0; i < hits; i++) {
+      const pick = weightedPick(batters, weights);
+      bump(pick, "H", 1);
+      if (Math.random() < pick.power / 380) { bump(pick, "HR", 1); bump(pick, "RBI", randInt(1, 3)); }
+      else if (Math.random() < 0.35) bump(pick, "RBI", 1);
+      if (Math.random() < pick.steal / 450) bump(pick, "SB", 1);
+    }
+    for (let i = 0; i < randInt(1, 4); i++) bump(weightedPick(batters, batters.map(b => Math.max(5, b.eye))), "BB", 1);
+    for (let i = 0; i < randInt(3, 9); i++) bump(weightedPick(batters, batters.map(b => Math.max(5, 100 - b.contact))), "SO", 1);
+  }
+  const rotation = getRotationPitchers(team, pmap);
+  if (rotation.length) {
+    const starter = rotation[(team.starterIndex || 0) % rotation.length];
+    if (starter) {
+      const ip = clamp(Math.round((4 + starter.stamina / 25) * 10) / 10, 3, 9);
+      bump(starter, "G", 1); bump(starter, "IP", ip);
+      bump(starter, "ER", clamp(Math.round(runsAllowed * 0.7), 0, 12));
+      bump(starter, "SO", randInt(2, 9)); bump(starter, "BB", randInt(0, 4)); bump(starter, "H", randInt(3, 9));
+      if (won) bump(starter, "W", 1); else bump(starter, "L", 1);
+    }
+  }
+}
+
+/* 建構賽會：40國實力值 → 8組×5隊；母國以外的所有小組賽即時快速結算，
+   母國的4場小組賽留給玩家逐場打（stage 由 squad → lineup → play → report）。 */
 function runIntlTournament() {
   if (S.intlTournament && S.intlTournament.year === S.seasonYear) return; // 已辦過
-  // 1) 組出40國實力值
-  const homeNation = nationByName(HOME_NATION_NAME);
-  // 母國國家隊＝聯盟本土球員最強24人
-  const domestic = Object.values(S.players).filter(p => !p.foreign).sort((a, b) => trueOverall(b) - trueOverall(a));
-  const squad = domestic.slice(0, 24);
-  const squadIds = new Set(squad.map(p => p.id));
-  const homeStrength = squad.length ? squad.reduce((a, p) => a + trueOverall(p), 0) / squad.length + 5 : 70;
-  // 在本聯盟效力的外籍球員，會小幅提升母國代表隊實力（+2）
+  const domestic = Object.values(S.players).filter(p => !p.foreign && !p.retired).sort((a, b) => trueOverall(b) - trueOverall(a));
+  const bestSquad = domestic.slice(0, 24);
+  const homeStrength = bestSquad.length ? bestSquad.reduce((a, p) => a + trueOverall(p), 0) / bestSquad.length + 5 : 70;
   const foreignNationsInLeague = new Set(Object.values(S.players).filter(p => p.foreign).map(p => p.nationality));
   const entries = NATIONS.map(n => ({
     name: n.name, grade: n.grade,
     strength: n.name === HOME_NATION_NAME ? homeStrength : nationBaseStrength(n) + (foreignNationsInLeague.has(n.name) ? 2 : 0),
     isHome: n.name === HOME_NATION_NAME
   }));
-  // 2) 分8組（每組5隊）循環：勝率以實力差邏輯機率決定
   const shuffled = shuffle(entries);
   const groups = [];
+  let homeGroupIdx = 0;
   for (let g = 0; g < 8; g++) {
-    const teams = shuffled.slice(g * 5, g * 5 + 5).map(t => ({ ...t, w: 0, l: 0 }));
+    const teams = shuffled.slice(g * 5, g * 5 + 5).map(x => ({ ...x, w: 0, l: 0 }));
+    if (teams.some(x => x.isHome)) homeGroupIdx = g;
     for (let i = 0; i < teams.length; i++) {
       for (let j = i + 1; j < teams.length; j++) {
+        if (teams[i].isHome || teams[j].isHome) continue; // 母國的4場由玩家逐場打
         const pWin = 1 / (1 + Math.pow(10, (teams[j].strength - teams[i].strength) / 18));
         if (Math.random() < pWin) { teams[i].w++; teams[j].l++; } else { teams[j].w++; teams[i].l++; }
       }
     }
-    teams.sort((a, b) => b.w - a.w || b.strength - a.strength);
     groups.push(teams);
   }
-  // 3) 8強單淘汰
-  let knockout = groups.map(g => g[0]);
-  const rounds = [];
-  const playRound = (list, label) => {
-    const winners = [];
-    const games = [];
-    for (let i = 0; i < list.length; i += 2) {
-      const a = list[i], b = list[i + 1];
-      const pWin = 1 / (1 + Math.pow(10, (b.strength - a.strength) / 18));
-      const aw = Math.random() < pWin;
-      const sa = randInt(2, 8), sb = clamp(sa + (aw ? -randInt(1, 4) : randInt(1, 4)), 0, 12);
-      games.push({ a: a.name, b: b.name, sa: aw ? Math.max(sa, sb + 1) : sa, sb: aw ? Math.min(sb, sa - 1) : Math.max(sb, sa + 1), winner: aw ? a.name : b.name });
-      winners.push(aw ? a : b);
-    }
-    rounds.push({ label, games });
-    return winners;
+  // 非母國組別直接排名（母國組要等玩家打完4場才排）
+  groups.forEach((teams, i) => { if (i !== homeGroupIdx) teams.sort((a, b) => b.w - a.w || b.strength - a.strength); });
+  const homeGroup = groups[homeGroupIdx];
+  const schedule = homeGroup.filter(x => !x.isHome).map((opp, i) => ({
+    round: "小組賽", opp: opp.name, oppGrade: opp.grade, strength: opp.strength,
+    home: i % 2 === 0, played: false, myScore: 0, oppScore: 0, win: false
+  }));
+  S.intlTournament = {
+    year: S.seasonYear, stage: "squad", groups, homeGroupIdx, entries,
+    squadIds: [], natLineup: [], natRotation: [], starterIndex: 0,
+    schedule, gameIndex: 0, stats: {}, ghosts: {}, knockList: null, knockPending: null,
+    rounds: [], champion: null, homeFinish: null, effects: [], squadNames: [], myNationalIds: [],
+    done: false
   };
-  let sf = playRound(knockout, "八強");
-  let fin = playRound(sf, "四強");
-  const champArr = playRound(fin, "冠軍戰");
-  const champion = champArr[0].name;
-  // 4) 母國成績判定與效果
-  const homeGroup = groups.find(g => g.some(t => t.isHome));
-  const homeAdvanced = homeGroup[0].isHome;
-  let homeFinish; // champion / final4 / top8 / groupOut
-  if (champion === HOME_NATION_NAME) homeFinish = "champion";
-  else if (fin.some(t => t.isHome) || champArr.some(t => t.isHome)) homeFinish = "final4";
+  if (typeof pushNews === "function") pushNews("國際賽", `世界棒球錦標賽開幕在即，${HOME_NATION_NAME}代表隊等待你召集${INTL_SQUAD_SIZE}人名單。`);
+  persist();
+}
+
+/* v40⑤：國際賽玩家不選人——名單由「國家隊教練依選手數據擇優」自動入選（沿用 v39 的 30人/14投/2捕約束＝intlSuggestSquad），
+   玩家隊有人入選時於畫面明確提示；國家隊配教練＝借調全聯盟教學評價最高的一軍總教練（僅敘事與名單責任歸屬，無額外數值加成，記入已知簡化）。
+   原手動選人介面保留為「進階：手動調整名單」備援路徑。 */
+function pickNationalCoach() {
+  let best = null;
+  Object.values(S.coaches || {}).forEach(c => {
+    if (!c || c.level !== "1軍" || c.role !== "總教練") return;
+    if (!best || (c.teaching || 0) > (best.teaching || 0)) best = c;
+  });
+  if (!best) return { name: "聯盟推派教練", from: "聯盟", teaching: 60 };
+  const tm = S.teams[best.team];
+  return { name: best.name, from: tm ? tm.name : "聯盟", teaching: best.teaching || 60 };
+}
+function intlAutoSelectSquad() {
+  const t = S.intlTournament; if (!t || t.stage !== "squad") return { ok: false, msg: "目前不在選人階段。" };
+  t.natCoach = pickNationalCoach();
+  const r = intlSetSquad(intlSuggestSquad());
+  if (r.ok) r.msg = `國家隊總教練 ${t.natCoach.name}（借調自${t.natCoach.from}）已依選手數據敲定30人名單；${r.msg}`;
+  return r;
+}
+function intlSetSquad(ids) {
+  const t = S.intlTournament; if (!t) return { ok: false, msg: "目前沒有進行中的賽事。" };
+  const issues = intlSquadIssues(ids);
+  if (issues.length) return { ok: false, msg: issues.join("；") };
+  t.squadIds = ids.slice();
+  t.squadNames = ids.map(id => S.players[id]).filter(Boolean).slice(0, 12).map(p => p.name);
+  t.myNationalIds = ids.filter(id => S.players[id] && S.players[id].team === S.userTeamId);
+  // 預設打線／輪值先自動排好，玩家再微調
+  const tm = intlHomeTeam();
+  t.natLineup = autoLineup(tm, S.players);
+  t.natRotation = autoRotation(tm, S.players);
+  t.stage = "lineup";
+  persist();
+  return { ok: true, msg: `代表隊名單確定（${INTL_SQUAD_SIZE}人），其中 ${t.myNationalIds.length} 位是你的球員。接著排出先發打線與輪值。` };
+}
+function intlSetLineupSlot(idx, playerId, position) {
+  const t = S.intlTournament; if (!t || t.stage !== "lineup") return;
+  t.natLineup = t.natLineup || [];
+  while (t.natLineup.length <= idx) t.natLineup.push({ playerId: null, position: "DH" });
+  if (playerId) t.natLineup[idx].playerId = playerId;
+  if (position) t.natLineup[idx].position = position;
+  persist();
+}
+function intlLineupIssues() {
+  const t = S.intlTournament; if (!t) return ["無賽事"];
+  const issues = [];
+  const lu = (t.natLineup || []).filter(sl => sl && sl.playerId);
+  if (lu.length < 9) issues.push("先發打線需排滿9棒");
+  const ids = lu.map(sl => sl.playerId);
+  if (new Set(ids).size !== ids.length) issues.push("同一名球員不可佔兩個棒次");
+  const positions = lu.map(sl => sl.position).filter(p => p !== "DH");
+  if (new Set(positions).size !== positions.length) issues.push("同一守位不可安排兩人");
+  if (!lu.some(sl => sl.position === "C")) issues.push("必須排出捕手(C)");
+  if (lu.some(sl => { const p = S.players[sl.playerId]; return p && p.isPitcher; })) issues.push("投手不可排入先發打線");
+  if (!(t.natRotation || []).length) issues.push("至少需指定1名先發投手");
+  if ((t.natRotation || []).some(id => { const p = S.players[id]; return !p || !p.isPitcher; })) issues.push("輪值只能放投手");
+  return issues;
+}
+function intlConfirmLineup() {
+  const t = S.intlTournament; if (!t) return { ok: false, msg: "無賽事" };
+  const issues = intlLineupIssues();
+  if (issues.length) return { ok: false, msg: issues.join("；") };
+  t.stage = "play";
+  persist();
+  return { ok: true, msg: "打線與輪值確定，代表隊出征！" };
+}
+
+/* 逐場推進：打下一場母國比賽（小組賽或淘汰賽），回傳該場結果 */
+function intlPlayNextGame() {
+  const t = S.intlTournament;
+  if (!t || t.stage !== "play") return null;
+  const g = t.schedule.find(x => !x.played);
+  if (!g) return null;
+  const homeTeam = intlHomeTeam();
+  const ghost = intlGhostTeam(t, g.opp);
+  const pmap = Object.assign({}, S.players, ghost.map);
+  const res = g.home ? simulateGame(homeTeam, ghost.team, pmap) : simulateGame(ghost.team, homeTeam, pmap);
+  const my = g.home ? res.homeScore : res.awayScore;
+  const opp = g.home ? res.awayScore : res.homeScore;
+  g.myScore = my; g.oppScore = opp; g.win = my > opp; g.played = true;
+  intlCreditStats(t, homeTeam, pmap, my, opp, g.win);
+  t.starterIndex = (t.starterIndex || 0) + 1; // 先發輪值往下輪一位
+  if (typeof pushNews === "function") pushNews("國際賽", `世界賽${g.round}：${HOME_NATION_NAME} ${my}：${opp} ${g.opp}（${g.win ? "勝" : "敗"}）`);
+  // 更新賽會進度
+  if (g.round === "小組賽") {
+    const grp = t.groups[t.homeGroupIdx];
+    const me = grp.find(x => x.isHome), them = grp.find(x => x.name === g.opp);
+    if (me && them) { if (g.win) { me.w++; them.l++; } else { me.l++; them.w++; } }
+    if (!t.schedule.some(x => x.round === "小組賽" && !x.played)) intlAfterGroupStage();
+  } else {
+    intlFinishKnockRound(g.win);
+  }
+  persist();
+  return g;
+}
+function intlAfterGroupStage() {
+  const t = S.intlTournament;
+  const grp = t.groups[t.homeGroupIdx];
+  grp.sort((a, b) => b.w - a.w || b.strength - a.strength);
+  t.knockList = t.groups.map(gp => ({ ...gp[0] }));
+  intlStartKnockRound();
+}
+function intlAutoRound(list, label, t) {
+  const winners = [], games = [];
+  for (let i = 0; i < list.length; i += 2) {
+    const a = list[i], b = list[i + 1];
+    const pWin = 1 / (1 + Math.pow(10, (b.strength - a.strength) / 18));
+    const aw = Math.random() < pWin;
+    const sa = randInt(2, 8), sb = clamp(sa + (aw ? -randInt(1, 4) : randInt(1, 4)), 0, 12);
+    games.push({ a: a.name, b: b.name, sa: aw ? Math.max(sa, sb + 1) : sa, sb: aw ? Math.min(sb, sa - 1) : Math.max(sb, sa + 1), winner: aw ? a.name : b.name });
+    winners.push(aw ? a : b);
+  }
+  t.rounds.push({ label, games });
+  return winners;
+}
+// 開始一輪淘汰賽：母國在其中→排一場玩家比賽；母國不在→其餘全部快速結算到冠軍出爐
+function intlStartKnockRound() {
+  const t = S.intlTournament;
+  let list = t.knockList;
+  const hi = list.findIndex(x => x.isHome);
+  if (hi < 0) {
+    while (list.length > 1) list = intlAutoRound(list, INTL_ROUND_LABELS[list.length] || "淘汰賽", t);
+    t.champion = list[0].name;
+    intlFinalizeTournament();
+    return;
+  }
+  const label = INTL_ROUND_LABELS[list.length] || "淘汰賽";
+  const pairStart = hi - (hi % 2);
+  const opp = list[pairStart === hi ? hi + 1 : pairStart];
+  t.knockPending = { label, pairStart };
+  t.schedule.push({ round: label, opp: opp.name, oppGrade: opp.grade, strength: opp.strength, home: t.schedule.length % 2 === 0, played: false, myScore: 0, oppScore: 0, win: false });
+}
+// 玩家打完該輪比賽後：補完同輪其他對戰，決定下一輪
+function intlFinishKnockRound(homeWon) {
+  const t = S.intlTournament;
+  const list = t.knockList, pend = t.knockPending;
+  if (!list || !pend) return;
+  const g = t.schedule[t.schedule.length - 1];
+  const winners = [], games = [];
+  for (let i = 0; i < list.length; i += 2) {
+    const a = list[i], b = list[i + 1];
+    if (i === pend.pairStart) {
+      const homeEntry = a.isHome ? a : b, oppEntry = a.isHome ? b : a;
+      const winner = homeWon ? homeEntry : oppEntry;
+      games.push({ a: a.name, b: b.name, sa: a.isHome ? g.myScore : g.oppScore, sb: b.isHome ? g.myScore : g.oppScore, winner: winner.name });
+      winners.push(winner);
+      continue;
+    }
+    const pWin = 1 / (1 + Math.pow(10, (b.strength - a.strength) / 18));
+    const aw = Math.random() < pWin;
+    const sa = randInt(2, 8), sb = clamp(sa + (aw ? -randInt(1, 4) : randInt(1, 4)), 0, 12);
+    games.push({ a: a.name, b: b.name, sa: aw ? Math.max(sa, sb + 1) : sa, sb: aw ? Math.min(sb, sa - 1) : Math.max(sb, sa + 1), winner: aw ? a.name : b.name });
+    winners.push(aw ? a : b);
+  }
+  t.rounds.push({ label: pend.label, games });
+  t.knockList = winners;
+  t.knockPending = null;
+  if (winners.length === 1) { t.champion = winners[0].name; intlFinalizeTournament(); return; }
+  intlStartKnockRound();
+}
+// 賽會結算：母國名次判定與效果（沿用 v25/v36 的獎懲規則，改由逐場結果推得）
+function intlFinalizeTournament() {
+  const t = S.intlTournament;
+  const squad = (t.squadIds || []).map(id => S.players[id]).filter(Boolean);
+  const homeGroup = t.groups[t.homeGroupIdx];
+  const homeAdvanced = !!(homeGroup[0] && homeGroup[0].isHome);
+  const inRound = label => (t.rounds.find(r => r.label === label) || { games: [] }).games.some(gm => gm.a === HOME_NATION_NAME || gm.b === HOME_NATION_NAME);
+  let homeFinish;
+  if (t.champion === HOME_NATION_NAME) homeFinish = "champion";
+  else if (inRound("冠軍戰") || inRound("四強")) homeFinish = "final4";
   else if (homeAdvanced) homeFinish = "top8";
   else homeFinish = "groupOut";
   const myNationalPlayers = squad.filter(p => p.team === S.userTeamId);
   const effects = [];
   if (homeFinish === "champion" || homeFinish === "final4") {
     const champTitle = homeFinish === "champion";
-    Object.values(S.teams).forEach(t => { ensureFinance(t); t.finance.popularity = clamp(t.finance.popularity + (champTitle ? 6 : 3), 10, 99); });
+    Object.values(S.teams).forEach(tm => { ensureFinance(tm); tm.finance.popularity = clamp(tm.finance.popularity + (champTitle ? 6 : 3), 10, 99); });
     S.intlBoost = { year: S.seasonYear + 1, sponsorMult: champTitle ? 1.15 : 1.1, merchMult: champTitle ? 1.15 : 1.1 };
     squad.forEach(p => { p.composure = clamp(p.composure + randInt(2, 3), 20, 99); });
     // v36 ⑤ 國際賽奪冠加碼：母國奪世界冠軍→玩家隊額外獎金＋全隊士氣
@@ -1259,18 +1596,36 @@ function runIntlTournament() {
     effects.push(`你的球隊共有 ${myNationalPlayers.length} 位球員入選國家隊：${myNationalPlayers.map(p => p.name).join("、")}。`);
     pushNews("國際賽", `本隊 ${myNationalPlayers.map(p => p.name).join("、")} 入選${HOME_NATION_NAME}國家隊出戰世界賽。`);
   }
-  S.intlTournament = {
-    year: S.seasonYear,
-    groups: groups.map(g => g.map(t => ({ name: t.name, grade: t.grade, w: t.w, l: t.l, isHome: t.isHome }))),
-    rounds, champion, homeFinish, effects,
-    squadNames: squad.slice(0, 12).map(p => p.name),
-    myNationalIds: myNationalPlayers.map(p => p.id),
-    done: false
-  };
+  // v38④：同組交手過的國家＝實際往來，友好度+1（C/D 互動的另一條自然管道）
+  if (typeof addNationBond === "function") {
+    t.schedule.filter(x => x.played).forEach(x => addNationBond(x.opp, 1));
+  }
+  t.homeFinish = homeFinish;
+  t.effects = effects;
+  t.myNationalIds = myNationalPlayers.map(p => p.id);
+  t.squadNames = squad.slice(0, 12).map(p => p.name);
+  t.ghosts = {}; // 影子球員用完即丟，不留在存檔裡
+  t.stage = "report";
   persist();
+}
+/* 一鍵把剩下的比賽全部模擬完（玩家可跳過逐場推進；smoke/自動化亦用此路徑） */
+function intlAutoResolveAll() {
+  const t = S.intlTournament;
+  if (!t || t.stage === "report") return;
+  if (t.stage === "squad") { const r = intlSetSquad(intlSuggestSquad()); if (!r.ok) return; }
+  if (t.stage === "lineup") { const tm = intlHomeTeam(); t.natLineup = autoLineup(tm, S.players); t.natRotation = autoRotation(tm, S.players); t.stage = "play"; }
+  let guard = 0;
+  while (t.stage === "play" && guard++ < 30) { if (!intlPlayNextGame()) break; }
+  if (t.stage !== "report") { // 極端情況（無人可打）→ 直接快速結算避免卡住
+    if (!t.knockList) intlAfterGroupStage();
+    else if (t.stage !== "report") intlStartKnockRound();
+  }
 }
 
 function finishIntlTournament() {
+  const t = S.intlTournament;
+  if (t && t.stage !== "report") intlAutoResolveAll(); // 未打完就想離開＝自動模擬到落幕，絕不卡關
   if (S.intlTournament) S.intlTournament.done = true;
   enterOffseason();
 }
+

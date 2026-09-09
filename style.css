@@ -335,6 +335,12 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .awardteam{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--green-text);margin-bottom:6px;}
 .awardstat{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);}
 
+/* v55 位置篩選分頁 */
+.pos-filter-bar{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+.pos-filter-btn{flex:1;min-width:52px;padding:7px 4px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-card);color:var(--ink);font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;text-align:center;cursor:pointer;transition:background .15s,border-color .15s;}
+.pos-filter-btn.active{background:var(--gold-1);border-color:var(--gold-2);color:#1a1300;}
+.pos-filter-btn .pos-count{display:block;font-size:10px;font-weight:400;opacity:.65;margin-top:1px;}
+
 .sortselect{
   width:100%;
   padding:10px 12px;
@@ -495,3 +501,493 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .benchrole-tag{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:4px;padding:1px 6px;margin-left:6px;color:var(--green-text);}
 .kpinego-card{border-left:3px solid var(--gold-2);}
 .cdact-card{border-left:3px solid #5ea0c2;}
+
+/* ==================== v38 新增樣式 ==================== */
+/* 國際賽選人/排陣：單列資訊＋控制項（手機優先，允許換行不擠爆） */
+.rowline{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:14px;}
+.rowline .muted{font-size:12px;}
+.intl-picked{border-left:3px solid var(--gold-2);}
+
+/* ===== v39⑥：次要說明摺疊 ===== */
+details.fold{margin:6px 0 4px;}
+details.fold>summary{cursor:pointer;font-size:12px;color:inherit;opacity:.62;user-select:none;list-style:none;display:inline-block;padding:1px 0;}
+details.fold>summary::-webkit-details-marker{display:none;}
+details.fold>summary::before{content:"▸ ";}
+details.fold[open]>summary::before{content:"▾ ";}
+details.fold>p{margin-top:4px;}
+
+/* ===== v40：輕量分頁（uiTabs）——所有面板同時存在DOM，CSS切換顯示，不重繪不掉表單狀態 ===== */
+.uitab-bar{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 12px;border-bottom:2px solid var(--line);padding-bottom:0;}
+.uitab-btn{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.04em;padding:8px 14px;background:transparent;color:var(--ink);border:1px solid var(--line);border-bottom:none;border-radius:6px 6px 0 0;cursor:pointer;opacity:.65;}
+.uitab-btn.active{background:var(--paper);opacity:1;border-color:var(--gold-2);border-bottom:2px solid var(--paper);margin-bottom:-2px;font-weight:700;color:var(--green-text);}
+.uitab-badge{display:inline-block;min-width:16px;padding:0 4px;margin-left:4px;border-radius:8px;background:var(--redline);color:var(--chalk);font-size:11px;line-height:16px;text-align:center;}
+.uitab-panel{display:none;}
+.uitab-panel.active{display:block;}
+/* v40：教練排線卡 */
+.tacticrow{display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap;}
+.tacticrow>span:first-child{font-family:'Oswald',sans-serif;font-size:12px;min-width:72px;color:var(--green-text);}
+.tacticrow select{flex:1;min-width:160px;padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:4px;}
+
+/* ===== v43：完整球員資料卡／交易現金／掛牌／郵件中樞 ===== */
+.v43pcard{border:1px solid var(--line);border-radius:6px;padding:8px 10px;margin:6px 0;background:var(--paper);}
+.v43pcard-head{font-size:14px;color:var(--green-text);}
+.v43pcard-head .muted{font-size:12px;font-weight:400;}
+.v43pcard-meta{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink);opacity:.85;margin-top:2px;}
+.v43pcard-abil{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink);margin-top:2px;}
+.v43pcard-traits{margin-top:4px;}
+.divlabel.small{font-size:11px;opacity:.8;margin-top:8px;}
+.v43tradetable th,.v43tradetable td{font-size:12px;padding:5px 6px;}
+.v43cashcard{border:1px solid var(--gold-2);}
+.v43cashinputrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0;font-size:13px;}
+.v43cashinput{width:150px;padding:7px 9px;font-family:'IBM Plex Mono',monospace;font-size:13px;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:4px;}
+.v43cashrow{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--green-text);margin:8px 0;}
+.v43offercard{border:1.5px solid var(--gold-2);}
+.v43injprop{border:1.5px solid var(--gold-2);}
+.v43listedtag{display:inline-block;padding:1px 8px;border-radius:8px;background:var(--gold-2);color:var(--green-text);font-size:11px;font-weight:700;}
+/* 郵件中樞 */
+.v43maillist{margin:8px 0;}
+.v43mailitem{border:1px solid var(--line);border-radius:6px;margin:6px 0;overflow:hidden;}
+.v43mailitem.unread{border-left:3px solid var(--gold-2);}
+.v43mailitem.open{border-color:var(--gold-2);}
+.v43mail-head{width:100%;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 11px;background:var(--paper);color:var(--ink);border:none;cursor:pointer;text-align:left;}
+.v43mail-cat{font-family:'Oswald',sans-serif;font-size:11px;padding:1px 7px;border-radius:8px;background:var(--line);color:var(--green-text);}
+.v43mail-title{flex:1;font-size:13px;min-width:120px;}
+.v43mail-day{font-size:11px;}
+.v43mail-body{padding:4px 12px 12px;border-top:1px solid var(--line);}
+
+/* ---------- v46 全能力完整卡（各介面共用；行動優先） ---------- */
+.v46card{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:8px 0;background:var(--paper);}
+.v46card-head{font-size:15px;font-weight:600;color:var(--green-text);line-height:1.4;}
+.v46card-head .muted{font-size:12px;font-weight:400;color:var(--ink);opacity:.8;}
+.v46card-meta{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink);opacity:.9;margin:3px 0 6px;}
+.v46sect{font-size:12px;font-weight:600;color:var(--green-text);margin:6px 0 3px;letter-spacing:.5px;}
+.v46grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;}
+.v46grid.g4{grid-template-columns:repeat(4,1fr);}
+.v46cell{background:rgba(0,0,0,.03);border:1px solid var(--line);border-radius:5px;padding:4px 6px;}
+.v46cell .lb{display:block;font-size:10px;color:var(--ink);opacity:.7;}
+.v46cell .vl{font-family:'Oswald','IBM Plex Mono',sans-serif;font-size:15px;font-weight:600;color:var(--ink);}
+.v46cell.hot .vl{color:#c0392b;}
+.v46pitch{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink);margin:2px 0;padding:3px 6px;background:rgba(0,0,0,.03);border-radius:5px;}
+.v46note{font-size:11px;color:var(--ink);opacity:.65;margin-top:5px;line-height:1.4;}
+.v46cands{border:1px dashed var(--line);border-radius:6px;padding:6px 8px;margin:6px 0;background:rgba(0,0,0,.02);}
+.v46cand-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--ink);padding:3px 0;border-bottom:1px solid rgba(0,0,0,.05);}
+.v46cand-row:last-child{border-bottom:none;}
+.v46meet{color:#1e824c;font-weight:600;}
+.v46short{color:#b8860b;}
+
+/* ==================================================================
+   v47 可導入美術：圖示標記樣式 ＋ 槽位變數（未導入資產包時＝沿用現行外觀）
+   ================================================================== */
+:root{
+  /* 槽位預設一律留空；applyThemeSlots() 於導入資產包時才寫入對應 --pack-* 變數 */
+  --pack-bg-image:none;
+  --pack-card-texture:none;
+}
+.ico{
+  display:inline-block; width:1.12em; height:1.12em;
+  vertical-align:-0.16em; object-fit:contain; line-height:1;
+}
+.ico svg{width:100%; height:100%; display:block;}
+/* 全域背景／卡片材質：以 var(…, 現行值) 疊加，未導入時與現況位元一致 */
+body{ background-image: var(--pack-bg-image,none), repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 26px); background-size:cover, auto; background-attachment:fixed, scroll; }
+.card{ background-image: var(--pack-card-texture,none); }
+
+/* ---- v47 槽位接線：主視覺hero／分頁背景／按鍵四型／分頁圖示條（未導入資產包時全為 none，外觀不變） ---- */
+.v47hero{
+  background-image: var(--pack-hero-image,none);
+  background-size:cover; background-position:center;
+  width:100%; aspect-ratio:16/5; border-radius:10px; margin-bottom:14px;
+}
+body[data-screen="dashboard"] #app{ background-image: var(--pack-screen-dashboard,none); }
+body[data-screen="finance"]   #app{ background-image: var(--pack-screen-finance,none); }
+body[data-screen="roster"]    #app{ background-image: var(--pack-screen-roster,none); }
+body[data-screen="trade"]     #app{ background-image: var(--pack-screen-trade,none); }
+body[data-screen="coach"]     #app{ background-image: var(--pack-screen-coach,none); }
+body[data-screen="mail"]      #app{ background-image: var(--pack-screen-mail,none); }
+#app{ background-repeat:no-repeat; background-size:cover; background-attachment:fixed; }
+.btn-primary  { background-image: var(--pack-btn-primary-image,none);   background-size:100% 100%; }
+.btn-secondary{ background-image: var(--pack-btn-secondary-image,none); background-size:100% 100%; }
+.btn-outline  { background-image: var(--pack-btn-outline-image,none);   background-size:100% 100%; }
+.btn-danger   { background-image: var(--pack-btn-danger-image,none);    background-size:100% 100%; }
+.tabrow{ background-image: var(--pack-tabbar-image,none); background-size:100% 100%; }
+
+/* ====================================================================
+   v48：雷達圖 / 球員照片 / 榮譽殿堂 / 里程碑
+   ==================================================================== */
+
+/* 雷達圖 */
+.v48radar{ width:120px; height:120px; display:block; flex-shrink:0; }
+.v48card-visual{ display:flex; align-items:center; gap:10px; justify-content:center; margin-bottom:8px; padding:6px 0; }
+
+/* 球員照片槽位 */
+.v48photo{ width:64px; height:64px; border-radius:8px; overflow:hidden; background:var(--surface-2,#2a2a2a); display:flex; align-items:center; justify-content:center; flex-shrink:0; border:1.5px solid var(--line,#3a3a3a); }
+.v48photo img{ width:100%; height:100%; object-fit:cover; }
+.v48photo > .v49portrait{ width:100% !important; height:100% !important; }
+.v48photo-empty{ font-size:24px; opacity:0.35; }
+
+/* 里程碑事件卡 */
+.v48milestone-card{ border-left:4px solid var(--gold,#D9A441); }
+.v48milestone-card .eyebrow{ color:var(--gold,#D9A441); }
+
+/* 殿堂提名卡 */
+.v48hof-card{ border-left:4px solid var(--gold,#D9A441); }
+.v48hof-card .eyebrow{ color:var(--gold,#D9A441); }
+.v48hof-head{ font-size:16px; font-weight:700; margin:4px 0 2px; }
+.v48hof-meta{ font-size:12px; color:var(--ink-2,#aaa); margin-bottom:4px; }
+.v48hof-stat{ font-size:13px; margin:4px 0; }
+.v48hof-criteria{ font-size:12px; margin:4px 0; display:flex; flex-wrap:wrap; gap:4px; align-items:center; }
+.v48hof-crit{ background:rgba(217,164,65,0.15); color:var(--gold,#D9A441); padding:2px 6px; border-radius:4px; font-size:11px; }
+
+/* 殿堂成員卡 */
+.v48hof-member{ padding:10px; }
+.v48hof-member-head{ display:flex; gap:10px; align-items:center; }
+.v48hof-name{ font-size:15px; font-weight:700; }
+.v48hof-role{ font-size:12px; color:var(--ink-2,#aaa); }
+.v48hof-inducted{ font-size:11px; color:var(--ink-2,#aaa); }
+.v48hof-statline{ font-size:13px; margin:6px 0 0; padding:4px 8px; background:var(--surface-2,#2a2a2a); border-radius:4px; }
+
+/* 退休背號 */
+.v48retired-num{ display:inline-block; background:rgba(217,164,65,0.15); color:var(--gold,#D9A441); padding:1px 6px; border-radius:4px; font-size:11px; margin-left:4px; }
+.v48retired-nums-row{ display:flex; flex-wrap:wrap; gap:8px; margin:6px 0; }
+.v48retired-num-badge{ display:flex; flex-direction:column; align-items:center; background:var(--surface-2,#2a2a2a); border:1.5px solid var(--gold,#D9A441); border-radius:8px; padding:6px 12px; min-width:56px; }
+.v48retired-num-badge .num{ font-size:20px; font-weight:700; color:var(--gold,#D9A441); }
+.v48retired-num-badge .nm{ font-size:10px; color:var(--ink-2,#aaa); margin-top:2px; }
+
+/* ====== v49 美術接口擴充 CSS ====== */
+
+/* 組合式肖像容器 */
+.v49portrait{ position:relative; overflow:hidden; border-radius:8px; background:var(--surface-2,#2a2a2a); }
+.v49portrait .v49layer{ position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; }
+
+/* 隊徽 */
+.v49team-logo{ display:inline-block; vertical-align:middle; border-radius:4px; }
+
+/* 國旗 */
+.v49nation-flag{ display:inline-block; vertical-align:middle; border-radius:2px; border:1px solid rgba(255,255,255,0.1); }
+
+/* 品牌色 CSS 變數預設值（未導入主題包時沿用原始設定；導入後覆蓋） */
+:root{
+  --pack-brand-primary: #1769D2;
+  --pack-brand-accent: #FF4F87;
+  --pack-brand-dark: #102949;
+  --pack-brand-positive: #59C78B;
+}
+
+/* ====== v50 選隊卡片樣式 ====== */
+.v50-teamgrid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.v50-teamcard{
+  display:flex; align-items:center; gap:8px;
+  padding:12px 14px; border-radius:10px;
+  background:var(--surface-2,#2a2a2a); border:2px solid transparent;
+  color:var(--ink,#e8dcc8); font-size:14px; font-weight:600;
+  cursor:pointer; transition:border-color .2s, box-shadow .2s;
+  text-align:left;
+}
+.v50-teamcard:hover, .v50-teamcard:focus{
+  border-color:var(--tc-primary,#555);
+  box-shadow:0 0 12px color-mix(in srgb, var(--tc-primary,#555) 40%, transparent);
+}
+.v50-teamcard:active{ transform:scale(0.97); }
+.v50-team-dot{
+  flex-shrink:0; width:14px; height:14px; border-radius:50%;
+}
+.v50-team-name{ flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* ====== v50 比賽情境肖像 ====== */
+.lg-portrait{ display:flex; justify-content:center; margin:6px 0 4px; }
+.lg-portrait .v49portrait{ border-radius:8px; overflow:hidden; }
+
+/* ---------- v51 A1 進階數據區塊 ---------- */
+.v51adv-tier { margin: 8px 0 10px; }
+.v51adv-tierlabel {
+  font-size: 12px; letter-spacing: .08em; opacity: .7;
+  margin-bottom: 5px; text-transform: none;
+}
+.v51adv-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 6px;
+}
+.v51adv-item {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 6px 8px; border-radius: 8px;
+  background: rgba(255, 255, 255, .045);
+  border: 1px solid rgba(255, 255, 255, .07);
+}
+.v51adv-k { font-size: 11px; opacity: .62; }
+.v51adv-v { font-size: 15px; font-variant-numeric: tabular-nums; font-weight: 600; }
+
+/* ---------- v53 渲染出口 CSS ---------- */
+/* 交易畫面小肖像欄 */
+.v53-trade-portrait { width: 36px; padding: 2px !important; text-align: center; }
+.v53-trade-portrait .v49portrait { border-radius: 6px; }
+.v53-trade-portrait .v48photo { width: 32px; height: 32px; border-radius: 6px; }
+
+/* 隊徽在文字行內對齊 */
+.v49team-logo { margin-right: 4px; }
+/* 國旗在文字行內對齊 */
+.v49nation-flag { margin-right: 3px; }
+
+/* 球員詳情頁肖像 */
+.v53-detail-portrait .v48photo { width: 80px; height: 80px; border-radius: 10px; margin-bottom: 8px; }
+.v53-detail-portrait .v49portrait { border-radius: 10px; }
+
+/* 選秀/自由球員/國際市場卡片肖像 */
+.draftcard-head .v48photo { width: 48px; height: 48px; border-radius: 8px; margin-right: 10px; flex-shrink: 0; }
+.draftcard-head .v49portrait { border-radius: 8px; }
+
+/* 戰績榜隊徽對齊 */
+.stattable .v49team-logo { vertical-align: -4px; }
+
+/* ====================================================================
+   v55 L3 Phase 2：數據中心 + 樣本數信心 + 運氣校正
+   ==================================================================== */
+
+/* 樣本數信心徽章 */
+.v55sample-badge {
+  display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px;
+  margin-left: 8px; font-weight: 500; vertical-align: middle;
+}
+.v55conf-ok { background: #d4edda; color: #155724; }
+.v55conf-mid { background: #fff3cd; color: #856404; }
+.v55conf-low { background: #f8d7da; color: #721c24; }
+.v55conf-dot {
+  display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+  margin-right: 4px; vertical-align: middle;
+}
+.v55conf-dot.v55conf-ok { background: #28a745; }
+.v55conf-dot.v55conf-mid { background: #ffc107; }
+.v55conf-dot.v55conf-low { background: #dc3545; }
+
+/* 運氣校正面板 */
+.v55luck-panel {
+  margin: 10px 0; padding: 10px 12px; border-radius: 8px;
+  background: var(--bg2, #f6f8fa); border: 1px solid var(--border, #e1e4e8);
+}
+.v55luck-title { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+.v55luck-tag {
+  display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 10px;
+  font-weight: 600; vertical-align: middle; margin-left: 6px;
+}
+.v55luck-lucky { background: #d4edda; color: #155724; }
+.v55luck-unlucky { background: #f8d7da; color: #721c24; }
+.v55luck-neutral { background: #e2e3e5; color: #383d41; }
+.v55luck-table td:nth-child(4),
+.v55luck-table td:nth-child(6) { font-weight: 600; font-variant-numeric: tabular-nums; }
+.v55luck-insight { margin-top: 6px; font-size: 13px; line-height: 1.5; }
+
+/* 數據中心表格 */
+.v55dc-table-wrap { overflow-x: auto; margin: 8px 0; }
+.v55dc-table { font-size: 13px; }
+.v55dc-table th { white-space: nowrap; }
+.v55dc-table td { font-variant-numeric: tabular-nums; }
+.v55dc-sortable { cursor: pointer; user-select: none; }
+.v55dc-sortable:hover { text-decoration: underline; }
+.v55dc-row { cursor: pointer; }
+.v55dc-row:hover { background: var(--hover, rgba(0,0,0,0.04)); }
+.v55dc-scope.active { font-weight: 700; border-color: var(--accent, #0366d6); color: var(--accent, #0366d6); }
+
+/* v55 L3 Phase 3：分析主管警訊 */
+.v55alert-card { border-left: 3px solid var(--accent, #0366d6); }
+.v55alert-item { padding: 4px 0; cursor: pointer; }
+.v55alert-item:hover { opacity: .8; }
+.v55alert-warn { border-left: 3px solid #e36209; padding-left: 8px; }
+.v55alert-opp { border-left: 3px solid #28a745; padding-left: 8px; }
+.v55alert-info { border-left: 3px solid #0366d6; padding-left: 8px; }
+
+/* v55 Culture & City */
+.culture-tag { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 8px; margin-right: 3px; font-weight: 500; }
+.culture-neutral { background: #e8e8e8; color: #666; }
+.culture-rookieDev { background: #d4edda; color: #155724; }
+.culture-faBigSpend { background: #fff3cd; color: #856404; }
+.culture-trust { background: #cce5ff; color: #004085; }
+.culture-handsOn { background: #f8d7da; color: #721c24; }
+
+/* v55 Team Select enhancements */
+.v55-teamcard-ext { display: flex; flex-direction: column; align-items: center; min-height: 88px; gap: 3px; padding-bottom: 8px !important; }
+.v55-team-tags { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
+.v55-city-tier { font-size: 10px; padding: 1px 6px; border-radius: 6px; background: rgba(0,0,0,0.08); color: #555; }
+.v55-persona-tag { font-size: 10px; padding: 1px 6px; border-radius: 6px; background: rgba(30,90,160,0.12); color: #1e5aa0; }
+.v55-city-flavor { font-size: 10px; color: #888; line-height: 1.3; text-align: center; max-width: 140px; }
+
+/* ====================================================================
+   M9 staging-only bright visual adapter
+   依 M2/M3 已核准的 Stadium Sticker token；不進 production，不改 r011 renderer。
+   ==================================================================== */
+:root{
+  --ink:#17233B;
+  --ink-2:#143CFF;
+  --surface:#FFFFFF;
+  --surface-2:#EAF5FF;
+  --paper:#FFFFFF;
+  --paper-2:#F2F8FF;
+  --gold:#FFE552;
+  --gold-2:#F2C900;
+  --chalk:#17233B;
+  --redline:#FF3D4F;
+  --line:#B7D3F5;
+  --green-text:#1459B8;
+  --bg-card:#FFFFFF;
+  --bg2:#F2F8FF;
+  --border:#B7D3F5;
+  --accent:#143CFF;
+  --hover:#EAF5FF;
+}
+html,body,#app{background:#EAF5FF;color:#17233B;}
+body{background-image:radial-gradient(circle at 8% 0,rgba(255,255,255,.95) 0 12%,transparent 38%),linear-gradient(135deg,#EAF5FF 0%,#F9FCFF 48%,#EAF5FF 100%);}
+.topbar .teamname{color:#17233B;}
+.eyebrow,.divlabel{color:#143CFF;}
+.sub{color:#4A6386;}
+.card{background:#FFFFFF;color:#17233B;border-color:#B7D3F5;box-shadow:0 8px 24px rgba(20,60,255,.12);}
+.card .sub,.card .muted{color:#4A6386;}
+.scoreboard{background:linear-gradient(135deg,#143CFF,#1976FF);border-color:#26D9E8;box-shadow:0 8px 20px rgba(20,60,255,.2);}
+.sb-row{border-color:rgba(255,255,255,.34);}
+.sb-label,.sb-value.small,.teamname{color:#FFFFFF;}
+.sb-value{color:#FFE552;}
+.sb-dash{color:#EAF5FF;}
+.gmtag{background:#26D9E8;color:#17233B;border-color:#FFFFFF;}
+.btn-primary{background:#FF3D4F;color:#FFFFFF;}
+.btn-primary:active{background:#D92D3D;}
+.btn-secondary{background:#FFFFFF;color:#17233B;border-color:#B7D3F5;}
+.btn-outline{background:#26D9E8;color:#17233B;border-color:#1976FF;}
+.btn-outline:active{background:#9AF3F7;}
+.btn-danger{background:#FFE5E8;color:#B42332;border-color:#FF3D4F;}
+.flash{background:#FFE552;color:#17233B;}
+.tab{background:#FFFFFF;color:#17233B;border-color:#B7D3F5;}
+.tab.active{background:#143CFF;color:#FFFFFF;border-color:#143CFF;}
+.issuecard{border-color:#FF3D4F;}
+.issuelist{color:#B42332;}
+.newscard{border-left-color:#26D9E8;}
+.newsitem{color:#17233B;}
+.newstime{background:#EAF5FF;color:#1459B8;}
+.tickerwrap{background:#FFFFFF;border-color:#B7D3F5;}
+.tickeritem{color:#17233B;}
+.tickersep{color:#FF3D4F;}
+.statusbadge{background:#1976FF;color:#FFFFFF;}
+.grade-A{background:#1976FF;}
+.grade-B{background:#26D9E8;color:#17233B;}
+.grade-C{background:#FFE552;color:#17233B;}
+.grade-D{background:#FF3D4F;}
+.grade-S{background:#143CFF;}
+.facilitylv{background:#1976FF;color:#FFFFFF;}
+.facilitylv.max{background:#FFE552;color:#17233B;}
+.upbtn,.pickbtn{background:#FF3D4F;color:#FFFFFF;}
+.v43mailitem.unread{border-left-color:#FF3D4F;}
+.v43mailitem.open{border-color:#26D9E8;}
+.v43mail-head{background:#FFFFFF;color:#17233B;}
+.v48milestone-card,.v48hof-card{border-left-color:#26D9E8;}
+.v48milestone-card .eyebrow,.v48hof-card .eyebrow{color:#143CFF;}
+.v48hof-statline{background:#EAF5FF;color:#17233B;}
+.v48retired-num-badge{background:#143CFF;border-color:#26D9E8;}
+.v48retired-num-badge .num{color:#FFE552;}
+
+/* v56-001：正式候選的內容圖像化摘要；用內容優先 scene 對齊 proof，完整原卡片與文字不隱藏。 */
+.v56-live-summary{display:grid;grid-template-columns:minmax(132px,.8fr) minmax(0,1.2fr);gap:12px;align-items:center;margin:0 0 12px;padding:10px;border:2px solid #26D9E8;border-radius:14px;background:linear-gradient(145deg,#EAF5FF,#FFFFFF);}
+.v56-live-summary-art{display:flex;align-items:center;justify-content:center;width:100%;min-height:116px;border-radius:12px;background:linear-gradient(145deg,#F7FCFF,#FFFFFF);border:1px solid #D4E7FA;overflow:hidden;}
+.v56-live-summary-art svg{display:block;width:100%;height:auto;max-height:130px;}
+.v56-live-summary-copy{min-width:0;line-height:1.5;}
+.v56-live-summary-kicker{display:block;color:#1459B8;font-size:11px;font-weight:900;letter-spacing:.08em;}
+.v56-live-summary-copy strong{display:block;color:#143CFF;font-size:17px;line-height:1.35;margin-bottom:4px;}
+.v56-live-summary-copy>span:not(.v56-live-summary-kicker){display:block;color:#36577F;font-size:13px;line-height:1.55;}
+.v56-live-summary-copy small{display:block;margin-top:6px;color:#36577F;font-size:11px;line-height:1.45;}
+.v56-live-summary:focus-within{outline:3px solid #FFE552;outline-offset:2px;}
+@media(max-width:620px){.v56-live-summary{grid-template-columns:1fr;gap:8px;padding:9px;}.v56-live-summary-art{min-height:100px;}.v56-live-summary-art svg{max-height:112px;}.v56-live-summary-copy strong{font-size:15px;}.v56-live-summary-copy>span:not(.v56-live-summary-kicker){font-size:12px;}}
+
+/* ====================================================================
+   v57-001 設施／球場視覺 staging
+   M6 base scene + state overlay；presentation-only，不改既有資料出口。
+   ==================================================================== */
+.v57-dashboard-hero{margin:0 0 16px;padding:14px;border:2px solid #143CFF;border-radius:18px;background:linear-gradient(135deg,#4B73E8 0%,#143CFF 100%);box-shadow:0 10px 24px rgba(20,60,255,.18);color:#FFFFFF;}
+.v57-dashboard-hero-heading{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 4px 11px;}
+.v57-dashboard-hero-heading .v57-facility-kicker{color:#FFE552;}
+.v57-dashboard-hero-heading h2{margin:0;color:#FFFFFF;font-size:23px;line-height:1.2;}
+.v57-dashboard-hero-heading>span:last-child{font-size:12px;color:#EAF5FF;}
+.v57-dashboard-stage-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;}
+.v57-dashboard-stage{min-width:0;padding:7px;border:2px solid #B7D3F5;border-radius:13px;background:#FFFFFF;color:#17233B;box-shadow:0 4px 0 rgba(10,30,90,.18);}
+.v57-dashboard-stage.active{border-color:#FFE552;box-shadow:0 0 0 3px rgba(255,229,82,.48),0 4px 0 rgba(10,30,90,.18);}
+.v57-dashboard-stage.locked{filter:saturate(.66);}
+.v57-dashboard-stage-label{display:flex;align-items:center;gap:5px;min-height:28px;}
+.v57-dashboard-stage-label b{padding:3px 7px;border-radius:8px;background:#143CFF;color:#FFFFFF;font-size:14px;}
+.v57-dashboard-stage:nth-child(3) .v57-dashboard-stage-label b,.v57-dashboard-stage:nth-child(4) .v57-dashboard-stage-label b{background:#FFE552;color:#17233B;}
+.v57-dashboard-stage-label span{font-size:12px;font-weight:900;line-height:1.15;}
+.v57-dashboard-stage img{display:block;width:100%;height:112px;object-fit:contain;margin:2px 0;background:#FFFFFF;border-radius:8px;}
+.v57-dashboard-stage-state{padding-top:4px;border-top:1px solid #B7D3F5;color:#1459B8;font-size:12px;font-weight:900;text-align:center;}
+.v57-dashboard-stage.locked .v57-dashboard-stage-state{color:#C92A3A;}
+.v57-dashboard-art-missing{height:112px;display:grid;place-items:center;color:#C92A3A;font-size:12px;font-weight:900;}
+.v57-facility-tabs{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));align-items:stretch;}
+.v57-facility-tabs .tab{min-width:0;line-height:1.25;overflow-wrap:anywhere;}
+.v57-facility-hero{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:14px;align-items:stretch;margin:0 0 16px;padding:14px;border:2px solid #26D9E8;border-radius:18px;background:linear-gradient(135deg,#FFFFFF 0%,#EAF5FF 100%);box-shadow:0 10px 24px rgba(20,60,255,.12);overflow:hidden;}
+.v57-facility-hero-copy{display:flex;flex-direction:column;justify-content:center;min-width:0;padding:5px 4px 5px 2px;}
+.v57-facility-kicker{color:#143CFF;font-size:11px;font-weight:900;letter-spacing:.1em;}
+.v57-facility-hero h2{margin:5px 0 7px;color:#17233B;font-size:24px;line-height:1.2;}
+.v57-facility-hero-copy p{margin:0;color:#36577F;font-size:13px;line-height:1.55;}
+.v57-facility-status-row{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 10px;}
+.v57-state-badge,.v57-level-badge,.v57-facility-tab-chip{display:inline-flex;align-items:center;min-height:28px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:900;}
+.v57-state-badge{background:#26D9E8;color:#17233B;}
+.v57-state-badge.upgrade{background:#FFE552;}
+.v57-state-badge.aged{background:#FF3D4F;color:#FFFFFF;}
+.v57-state-badge.locked{background:#EAF5FF;color:#1459B8;border:1px solid #B7D3F5;}
+.v57-level-badge{background:#143CFF;color:#FFFFFF;}
+.v57-facility-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:0 0 12px;}
+.v57-facility-facts div{padding:8px 7px;border:1px solid #B7D3F5;border-radius:11px;background:#FFFFFF;}
+.v57-facility-facts strong,.v57-facility-facts span{display:block;}
+.v57-facility-facts strong{color:#143CFF;font-size:16px;line-height:1.2;}
+.v57-facility-facts span{margin-top:3px;color:#4A6386;font-size:10px;}
+.v57-slot-legend{display:flex;flex-wrap:wrap;gap:5px;align-items:center;min-height:28px;}
+.v57-slot-pill{display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;border-radius:8px;border:2px solid #B7D3F5;background:#FFFFFF;color:#B7D3F5;font-size:13px;font-weight:900;}
+.v57-slot-pill.filled{border-color:#143CFF;background:#26D9E8;color:#17233B;}
+.v57-facility-tab-chip{background:#EAF5FF;color:#1459B8;border:1px solid #B7D3F5;}
+.v57-facility-hero-scene{display:flex;flex-direction:column;justify-content:center;min-width:0;}
+.v57-facility-scene-frame{position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:270px;border:2px solid #B7D3F5;border-radius:15px;background:#F8FBFF;overflow:hidden;}
+.v57-confirmed-art-image{display:block;width:100%;height:100%;padding:8px;object-fit:contain;}
+.v57-visual-status{position:absolute;right:10px;top:10px;z-index:2;display:inline-flex;align-items:center;gap:4px;max-width:calc(100% - 20px);padding:6px 9px;border:2px solid #143CFF;border-radius:999px;background:#FFFFFF;color:#143CFF;font-size:11px;font-weight:900;line-height:1;box-shadow:0 3px 0 rgba(23,35,59,.18);white-space:nowrap;}
+.v57-visual-status.upgrade{border-color:#D1A900;background:#FFE552;color:#17233B;}
+.v57-visual-status.locked{border-color:#B7D3F5;background:#EAF5FF;color:#1459B8;}
+.v57-visual-status.aged{border-color:#FF3D4F;background:#FFF1F2;color:#C92A3A;}
+.v57-art-missing{padding:48px 16px;color:#C92A3A;font-size:14px;font-weight:900;text-align:center;}
+.v57-scene-caption{margin-top:5px;color:#36577F;font-size:10px;text-align:right;letter-spacing:.04em;}
+@media(max-width:820px){.v57-dashboard-stage-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.v57-dashboard-stage img{height:128px;}.v57-facility-hero{grid-template-columns:1fr;}.v57-facility-hero-scene{order:-1;}.v57-facility-scene-frame{height:250px;}.v57-scene-caption{text-align:left;}}
+@media(max-width:520px){.v57-dashboard-hero{padding:9px;border-radius:14px;}.v57-dashboard-hero-heading{gap:5px;margin-bottom:7px;}.v57-dashboard-hero-heading h2{font-size:20px;}.v57-dashboard-stage-grid{grid-template-columns:1fr 1fr;gap:6px;}.v57-dashboard-stage{padding:5px;}.v57-dashboard-stage-label span{font-size:10px;}.v57-dashboard-stage img{height:92px;}.v57-dashboard-stage-state{font-size:10px;}.v57-facility-tabs{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;}.v57-facility-tabs .tab{padding:8px 4px;font-size:12px;line-height:1.2;word-break:break-all;}.v57-facility-hero{gap:9px;padding:9px;border-radius:14px;}.v57-facility-hero h2{font-size:20px;}.v57-facility-facts{gap:5px;}.v57-facility-facts div{padding:7px 5px;}.v57-facility-facts strong{font-size:14px;}.v57-slot-pill{width:22px;height:22px;font-size:11px;}.v57-facility-scene-frame{height:220px;}.v57-visual-status{right:7px;top:7px;max-width:calc(100% - 14px);font-size:10px;padding:5px 7px;}}
+
+/* ====================================================================
+   v58 內容場景視覺
+   完整獨立 PNG 只作 presentation layer；既有文字、數值、按鈕與資料出口保留。
+   ==================================================================== */
+.v58-visual-scene{display:grid;grid-template-columns:minmax(0,1.28fr) minmax(220px,.72fr);gap:14px;align-items:center;margin:0 0 16px;padding:12px;border:2px solid #26D9E8;border-radius:18px;background:linear-gradient(135deg,#FFFFFF 0%,#EAF5FF 100%);box-shadow:0 10px 24px rgba(20,60,255,.12);overflow:hidden;}
+.v58-visual-scene-art{display:flex;align-items:center;justify-content:center;min-width:0;min-height:250px;border:2px solid #B7D3F5;border-radius:15px;background:#F8FBFF;overflow:hidden;}
+.v58-visual-scene-art img{display:block;width:100%;height:100%;max-height:360px;padding:8px;object-fit:contain;}
+.v58-visual-scene-copy{display:flex;flex-direction:column;gap:6px;min-width:0;padding:8px 6px;}
+.v58-visual-kicker{color:#143CFF;font-size:11px;font-weight:900;letter-spacing:.1em;}
+.v58-visual-scene-copy strong{color:#17233B;font-size:22px;line-height:1.2;}
+.v58-visual-scene-copy>span:last-child{color:#36577F;font-size:13px;line-height:1.55;}
+.v58-dual-scene-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:10px 0 12px;}
+.v58-compact-scene{grid-template-columns:1fr;margin:0;padding:8px;border-radius:14px;}
+.v58-compact-scene .v58-visual-scene-art{min-height:170px;border-radius:11px;}
+.v58-compact-scene .v58-visual-scene-art img{max-height:210px;padding:4px;}
+.v58-compact-scene .v58-visual-scene-copy{padding:3px 3px 1px;gap:3px;}
+.v58-compact-scene .v58-visual-scene-copy strong{font-size:16px;}
+.v58-compact-scene .v58-visual-scene-copy>span:last-child{font-size:11px;line-height:1.4;}
+@media(max-width:820px){.v58-visual-scene{grid-template-columns:1fr;}.v58-visual-scene-copy{padding:3px 4px 5px;}.v58-visual-scene-art{min-height:220px;}.v58-dual-scene-row{grid-template-columns:1fr 1fr;}}
+@media(max-width:520px){.v58-visual-scene{gap:8px;margin-bottom:10px;padding:8px;border-radius:14px;}.v58-visual-scene-art{min-height:190px;border-radius:11px;}.v58-visual-scene-copy strong{font-size:19px;}.v58-visual-scene-copy>span:last-child{font-size:12px;}.v58-dual-scene-row{gap:6px;margin:7px 0 9px;}.v58-compact-scene{padding:5px;}.v58-compact-scene .v58-visual-scene-art{min-height:118px;}.v58-compact-scene .v58-visual-kicker{font-size:9px;letter-spacing:.04em;}.v58-compact-scene .v58-visual-scene-copy strong{font-size:14px;}.v58-compact-scene .v58-visual-scene-copy>span:last-child{font-size:10px;}}
+
+/* ====================================================================
+   v59 文字密度降低：首屏資訊分層，不以縮小字體換取空間
+   ==================================================================== */
+.v59-visual-scene{display:grid;grid-template-columns:minmax(0,1.28fr) minmax(220px,.72fr);gap:14px;align-items:center;margin:0 0 16px;padding:12px;border:2px solid #26D9E8;border-radius:18px;background:linear-gradient(135deg,#FFFFFF 0%,#EAF5FF 100%);box-shadow:0 10px 24px rgba(20,60,255,.12);overflow:hidden;}
+.v59-visual-scene-art{display:flex;align-items:center;justify-content:center;min-width:0;min-height:250px;border:2px solid #B7D3F5;border-radius:15px;background:#F8FBFF;overflow:hidden;}
+.v59-visual-scene-art img{display:block;width:100%;height:100%;max-height:360px;padding:8px;object-fit:contain;}
+.v59-visual-scene-copy{display:flex;flex-direction:column;gap:8px;min-width:0;padding:8px 6px;}
+.v59-visual-kicker{color:#143CFF;font-size:11px;font-weight:900;letter-spacing:.1em;}
+.v59-visual-scene-copy strong{color:#17233B;font-size:22px;line-height:1.2;}
+details.fold[data-v59-text-density="1"]{margin:0;}
+details.fold[data-v59-text-density="1"]>summary{font-size:14px;color:#36577F;cursor:pointer;}
+details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size:14px;line-height:1.55;}
+.v59-compact-line{margin:6px 0 10px;color:#36577F;font-size:14px;line-height:1.4;}
+.v59-compact-card-copy{margin:4px 0;color:#36577F;font-size:14px;line-height:1.45;}
+.v59-news-ticker{margin-top:8px;}
+.v59-nav-fold{margin:8px 0 12px;}
+.v59-nav-current{display:inline-block;padding:8px 14px;border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--green-text);font-weight:700;cursor:pointer;}
+.v59-nav-options{margin-top:8px;}
+.v59-scene-info>summary{font-size:14px;color:#36577F;cursor:pointer;display:inline-block;min-width:30px;text-align:center;}
+.v59-scene-info>p{margin:5px 0 0;color:#36577F;font-size:14px;line-height:1.55;}
+@media(max-width:820px){.v59-visual-scene{grid-template-columns:1fr;}.v59-visual-scene-copy{padding:3px 4px 5px;}.v59-visual-scene-art{min-height:220px;}}
+@media(max-width:520px){.v59-visual-scene{gap:8px;margin-bottom:10px;padding:8px;border-radius:14px;}.v59-visual-scene-art{min-height:190px;border-radius:11px;}.v59-visual-scene-copy strong{font-size:19px;}.v59-visual-kicker{font-size:10px;}details.fold[data-v59-text-density="1"]>summary,details.fold[data-v59-text-density="1"]>p,.v59-compact-line,.v59-compact-card-copy{font-size:14px;}.v59-dual-scene-row .v59-visual-scene{grid-template-columns:1fr;}.v59-dual-scene-row .v59-visual-scene-art{min-height:118px;}.v59-dual-scene-row .v59-visual-kicker{font-size:9px;letter-spacing:.04em;}.v59-dual-scene-row .v59-visual-scene-copy strong{font-size:14px;}}

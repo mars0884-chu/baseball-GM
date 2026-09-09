@@ -40,18 +40,18 @@ const FACILITY_LEVELS = [
    spendPct＝人均消費%（消費/體驗）、attPct＝主場進場率%（舒適）、popBoost＝季末人氣成長（同類多座不疊加）。
    可重複建造同類設施（效果線性疊加，popBoost除外）；每座每年收取「建設費×maintPct」維護費。 */
 const STADIUM_FACILITY_TYPES = [
-  { key: "vendor",   label: "販賣部",       icon: "🛒", cost: 4000 * 10000,  maintPct: 0.10, spendPct: 0.18, attPct: 0,     popBoost: 0, desc: "球場基本盤，飲食與應援小物的主要銷售據點。" },
-  { key: "food",     label: "小吃街",       icon: "🍜", cost: 5000 * 10000,  maintPct: 0.10, spendPct: 0.22, attPct: 0,     popBoost: 0, desc: "在地美食進駐，看球配美食讓人均消費明顯提升。" },
-  { key: "drink",    label: "飲料吧",       icon: "🥤", cost: 3000 * 10000,  maintPct: 0.09, spendPct: 0.14, attPct: 0,     popBoost: 0, desc: "冷飲與特調專門吧台，翻桌快、毛利高。" },
-  { key: "toilet",   label: "廁所擴建",     icon: "🚻", cost: 3500 * 10000,  maintPct: 0.08, spendPct: 0,    attPct: 0.015, popBoost: 0, desc: "減少排隊之苦，觀賽舒適度直接反映在進場意願。" },
-  { key: "nursing",  label: "哺乳室",       icon: "🍼", cost: 3000 * 10000,  maintPct: 0.08, spendPct: 0,    attPct: 0.01,  popBoost: 0, desc: "友善親子設施，吸引家庭客層安心進場。" },
-  { key: "vip",      label: "VIP包廂",      icon: "💺", cost: 20000 * 10000, maintPct: 0.20, spendPct: 0.45, attPct: 0,     popBoost: 0, desc: "頂級視野與專屬服務，企業招待需求強勁的高消費艙等。" },
-  { key: "screen",   label: "大型計分螢幕", icon: "📺", cost: 8000 * 10000,  maintPct: 0.10, spendPct: 0.15, attPct: 0.01,  popBoost: 0, desc: "沉浸式重播與應援互動，觀賽體驗全面升級。" },
-  { key: "kidzone",  label: "兒童遊樂區",   icon: "🎠", cost: 5000 * 10000,  maintPct: 0.09, spendPct: 0.08, attPct: 0.015, popBoost: 0, desc: "小朋友放電、大人安心看球，家庭票房的秘密武器。" },
-  { key: "flagship", label: "球隊旗艦店",   icon: "🧢", cost: 15000 * 10000, maintPct: 0.20, spendPct: 0.40, attPct: 0,     popBoost: 0, desc: "全品項周邊旗艦門市，球衣公仔限定品一次滿足。" },
-  { key: "parking",  label: "立體停車場",   icon: "🅿️", cost: 12000 * 10000, maintPct: 0.08, spendPct: 0,    attPct: 0.03,  popBoost: 0, desc: "解決最大進場痛點，開車族從此不再過門不入。" },
-  { key: "museum",   label: "球隊博物館",   icon: "🏛️", cost: 10000 * 10000, maintPct: 0.10, spendPct: 0.12, attPct: 0,     popBoost: 1, desc: "隊史榮光與名人堂展區，深化球迷認同（人氣成長+1，多座不疊加）。" },
-  { key: "beer",     label: "啤酒花園",     icon: "🍺", cost: 6000 * 10000,  maintPct: 0.11, spendPct: 0.25, attPct: 0,     popBoost: 0, desc: "露天暢飲區，夜場票房與人均消費的雙引擎。" }
+  { key: "vendor",   label: "販賣部",       icon: "fac-vendor", cost: 4000 * 10000,  maintPct: 0.10, spendPct: 0.18, attPct: 0,     popBoost: 0, desc: "球場基本盤，飲食與應援小物的主要銷售據點。" },
+  { key: "food",     label: "小吃街",       icon: "fac-food", cost: 5000 * 10000,  maintPct: 0.10, spendPct: 0.22, attPct: 0,     popBoost: 0, desc: "在地美食進駐，看球配美食讓人均消費明顯提升。" },
+  { key: "drink",    label: "飲料吧",       icon: "fac-drink", cost: 3000 * 10000,  maintPct: 0.09, spendPct: 0.14, attPct: 0,     popBoost: 0, desc: "冷飲與特調專門吧台，翻桌快、毛利高。" },
+  { key: "toilet",   label: "廁所擴建",     icon: "fac-toilet", cost: 3500 * 10000,  maintPct: 0.08, spendPct: 0,    attPct: 0.015, popBoost: 0, desc: "減少排隊之苦，觀賽舒適度直接反映在進場意願。" },
+  { key: "nursing",  label: "哺乳室",       icon: "fac-nursing", cost: 3000 * 10000,  maintPct: 0.08, spendPct: 0,    attPct: 0.01,  popBoost: 0, desc: "友善親子設施，吸引家庭客層安心進場。" },
+  { key: "vip",      label: "VIP包廂",      icon: "fac-vip", cost: 20000 * 10000, maintPct: 0.20, spendPct: 0.45, attPct: 0,     popBoost: 0, desc: "頂級視野與專屬服務，企業招待需求強勁的高消費艙等。" },
+  { key: "screen",   label: "大型計分螢幕", icon: "screen", cost: 8000 * 10000,  maintPct: 0.10, spendPct: 0.15, attPct: 0.01,  popBoost: 0, desc: "沉浸式重播與應援互動，觀賽體驗全面升級。" },
+  { key: "kidzone",  label: "兒童遊樂區",   icon: "fac-kidzone", cost: 5000 * 10000,  maintPct: 0.09, spendPct: 0.08, attPct: 0.015, popBoost: 0, desc: "小朋友放電、大人安心看球，家庭票房的秘密武器。" },
+  { key: "flagship", label: "球隊旗艦店",   icon: "cap", cost: 15000 * 10000, maintPct: 0.20, spendPct: 0.40, attPct: 0,     popBoost: 0, desc: "全品項周邊旗艦門市，球衣公仔限定品一次滿足。" },
+  { key: "parking",  label: "立體停車場",   icon: "fac-parking", cost: 12000 * 10000, maintPct: 0.08, spendPct: 0,    attPct: 0.03,  popBoost: 0, desc: "解決最大進場痛點，開車族從此不再過門不入。" },
+  { key: "museum",   label: "球隊博物館",   icon: "museum", cost: 10000 * 10000, maintPct: 0.10, spendPct: 0.12, attPct: 0,     popBoost: 1, desc: "隊史榮光與名人堂展區，深化球迷認同（人氣成長+1，多座不疊加）。" },
+  { key: "beer",     label: "啤酒花園",     icon: "fac-beer", cost: 6000 * 10000,  maintPct: 0.11, spendPct: 0.25, attPct: 0,     popBoost: 0, desc: "露天暢飲區，夜場票房與人均消費的雙引擎。" }
 ];
 const MERCH_BASE_SPEND = 12; // 人均基礎消費（元）；實際人均＝(12＋人氣×0.06)×(1＋設施加成)×(1＋行銷%)
 function ensureFacility(team) {
@@ -122,7 +122,7 @@ function applyChampionshipRewards(team, streak) {
   team.champBanners.push(S.seasonYear);
   const hasMuseum = (team.facility && team.facility.stadiumSlots || []).includes("museum");
   if (typeof pushNews === "function") {
-    pushNews("冠軍", `🏆 ${team.name}奪下${S.seasonYear}年總冠軍${streak >= 2 ? `（${streak}連霸！）` : ""}！奪冠獎金 ${formatMoney(prize)} 入帳，全隊士氣＋${moraleGain}、忠誠＋${loyaltyGain}${hasMuseum ? `；冠軍旗進駐球隊博物館（隊史第${team.champBanners.length}面，館的人氣效應隨旗數放大）` : `（蓋一座球隊博物館可讓冠軍旗發揮人氣效應）`}。`);
+    pushNews("冠軍", `${icon('trophy')} ${team.name}奪下${S.seasonYear}年總冠軍${streak >= 2 ? `（${streak}連霸！）` : ""}！奪冠獎金 ${formatMoney(prize)} 入帳，全隊士氣＋${moraleGain}、忠誠＋${loyaltyGain}${hasMuseum ? `；冠軍旗進駐球隊博物館（隊史第${team.champBanners.length}面，館的人氣效應隨旗數放大）` : `（蓋一座球隊博物館可讓冠軍旗發揮人氣效應）`}。`);
   }
   return { prize, moraleGain, loyaltyGain, banners: team.champBanners.length, hasMuseum };
 }
@@ -177,7 +177,7 @@ function buildStadiumFacility(key) {
   team.finance.budget -= t.cost;
   team.facility.stadiumSlots.push(key);
   pushStadiumSlotBuilt(team); // v31：記錄建成年（屋齡起算）
-  UI.flash = `「${t.icon}${t.label}」建造完成！每年維護費 ${formatMoney(Math.round(t.cost * t.maintPct))}。`;
+  UI.flash = `「${iconVal(t.icon)}${t.label}」建造完成！每年維護費 ${formatMoney(Math.round(t.cost * t.maintPct))}。`;
   persist(); render();
 }
 /* v30 主場帳（gate ledger）：逐場累計主場場次/進場人次/門票收入/分潤收支，季末結算採用實帳。
@@ -198,7 +198,14 @@ const GATE_SHARE_WIN = 0.08, GATE_SHARE_LOSE = 0.02;
 function applyGateEconomy(home, away, homeWon) {
   ensureHomeAwayLedger(home); ensureHomeAwayLedger(away);
   const visitors = Math.round(facilityCapacity(home) * teamAttendanceRate(home));
-  const gate = visitors * home.finance.ticketPrice;
+  let gate = visitors * home.finance.ticketPrice;
+  // v48：里程碑票房加成（玩家隊主場逐場消耗）
+  try {
+    if (home.id === S.userTeamId && S.v48 && S.v48.milestoneTicketBoost > 0) {
+      gate = Math.round(gate * (1 + S.v48.milestoneTicketBoost / 100));
+      S.v48.milestoneTicketBoost = Math.max(0, S.v48.milestoneTicketBoost - 3); // 每場消耗3%，約5場內消耗完
+    }
+  } catch (_) {}
   const share = Math.round(gate * (homeWon ? GATE_SHARE_LOSE : GATE_SHARE_WIN));
   const hl = home.finance.gateLedger;
   hl.homeGames++; hl.visitors += visitors; hl.gateRevenue += gate; hl.sharePaid += share;
@@ -219,7 +226,7 @@ function demolishStadiumFacility(slotIndex) {
   team.facility.slotBuilt.splice(slotIndex, 1); // v31：同步移除屋齡
   const refund = Math.round(t.cost * STADIUM_DEMOLISH_REFUND);
   team.finance.budget += refund;
-  UI.flash = `已拆除「${t.icon}${t.label}」，退回部分建材費 ${formatMoney(refund)}（${Math.round(STADIUM_DEMOLISH_REFUND * 100)}%）。`;
+  UI.flash = `已拆除「${iconVal(t.icon)}${t.label}」，退回部分建材費 ${formatMoney(refund)}（${Math.round(STADIUM_DEMOLISH_REFUND * 100)}%）。`;
   persist(); render();
 }
 /* v31：重建老舊設施——費用＝原建設費×0.6，屋齡歸零、效果恢復。每隊每年重建上限1座（玩家由UI逐座操作，
@@ -238,7 +245,7 @@ function rebuildStadiumFacility(slotIndex) {
   team.finance.budget -= cost;
   team.facility.slotBuilt[slotIndex] = S.seasonYear; // 屋齡歸零
   team.facility.rebuiltYear = S.seasonYear;
-  UI.flash = `「${t.icon}${t.label}」重建完成（${formatMoney(cost)}），效果已恢復、屋齡歸零。`;
+  UI.flash = `「${iconVal(t.icon)}${t.label}」重建完成（${formatMoney(cost)}），效果已恢復、屋齡歸零。`;
   persist(); render();
 }
 function upgradeFacility(targetLevel) {
@@ -283,7 +290,7 @@ const TRAINING_ITEMS = [
   { key: "batPower", label: "長打訓練", group: "打者項目", desc: "提升「長打力」的年度成長幅度" },
   { key: "batEye", label: "選球訓練", group: "打者項目", desc: "提升「選球眼」的年度成長幅度" },
   { key: "bunting", label: "觸擊訓練", group: "打者項目", desc: "提升「觸擊」的年度成長幅度（v25新增觸擊屬性）" },
-  { key: "catcher", label: "捕手訓練室", group: "捕手項目", desc: "提升「配球引導/接捕框架/阻殺跑壘」的年度成長幅度" },
+  { key: "catcher", label: "捕手訓練室", group: "捕手項目", desc: "提升「配球引導/接捕框架/阻殺跑壘/阻擋/傳球時間/投手調教」的年度成長幅度" },
   { key: "defense", label: "守備訓練場", group: "守備項目", desc: "提升「守備成功率」與「臂力」的年度成長幅度" },
   { key: "baserunning", label: "跑壘訓練場", group: "跑壘項目", desc: "提升「跑壘速度」與「盜壘」的年度成長幅度" },
   { key: "composure", label: "心理抗壓中心", group: "心理項目", desc: "提升「抗壓性」的年度成長幅度" }
@@ -336,6 +343,22 @@ function ensureFacilities(team) {
   if (team.facilities.dorm === undefined) team.facilities.dorm = personaFacilityRoll(team, "dorm");
   if (team.facilities.analysisRoom === undefined) team.facilities.analysisRoom = personaFacilityRoll(team, "analysisRoom");
   if (team.facilities.rehabCenter === undefined) team.facilities.rehabCenter = personaFacilityRoll(team, "rehabCenter");
+}
+/* v40修正：teamSelect 流程的設施歸零。根因：newGame() 在玩家選隊「之前」就呼叫 ensureAllFinance()→ensureFacilities()，
+   當下 userTeamId 尚為 null，personaFacilityRoll 的玩家判定不成立，全聯盟（含玩家日後選中的那隊）都被依性格擲了 0~2 級起始設施。
+   自訂隊名路徑（userTeamId 開局即為 T0）不受影響。修法：pickTeam() 選定球隊後呼叫本函式把該隊設施全部歸零（球場維持 Lv1），
+   確保「玩家白手起家」語意。舊存檔不回溯歸零（無法區分免費擲骰與玩家付費升級，記入已知簡化）。 */
+function resetUserFacilities(team) {
+  if (!team) return;
+  ensureFacilities(team);
+  TRAINING_ITEMS.forEach(it => { team.facilities.training[it.key] = 0; });
+  team.facilities.medical = 0;
+  team.facilities.scoutOffice = 0;
+  team.facilities.dorm = 0;
+  team.facilities.analysisRoom = 0;
+  team.facilities.rehabCenter = 0;
+  ensureFacility(team);
+  team.facility.level = Math.max(1, Math.min(team.facility.level || 1, 1)); // 球場一律 Lv1 起步
 }
 function trainingLevel(team, key) { ensureFacilities(team); return team.facilities.training[key] || 0; }
 // 訓練加成走 developPlayer 的 coachBonus 通道（與教練加成同質、可疊加）：每級+0.06，Lv5=+0.30
@@ -478,6 +501,102 @@ function upgradeRehabCenter() {
   render();
 }
 const FACILITY_TABS = ["球場", "訓練基地", "醫療室", "球探辦公室", "宿舍", "情蒐分析室", "復健中心"];
+/* v57-001：設施／球場 presentation-only 視覺層。
+   只讀既有 facility／S／UI；不新增 state、不改數值、不呼叫亂數。
+   M6 已核准的 Lv1／Lv3／Lv5／Lv7 是四個視覺錨點，偶數級距使用同一語彙作中間級距。 */
+function v57FacilityVisualProfile(level) {
+  const lv = Math.max(1, Math.min(7, Number(level) || 1));
+  if (lv === 1) return { level: lv, key: "local", artKey: "stadium_lv1_generated", stage: "在地開放球場", roof: "open", skyline: false };
+  if (lv === 2) return { level: lv, key: "community", artKey: "stadium_lv1_generated", stage: "社區擴張球場", roof: "open", skyline: false };
+  if (lv === 3) return { level: lv, key: "city", artKey: "stadium_lv3_generated", stage: "小型開放城市球場", roof: "open", skyline: true };
+  if (lv === 4) return { level: lv, key: "city-plus", artKey: "stadium_lv3_generated", stage: "現代化城市球場", roof: "partial", skyline: true };
+  if (lv === 5) return { level: lv, key: "flagship", artKey: "stadium_lv5_generated", stage: "大型屋架旗艦球場", roof: "partial", skyline: true };
+  if (lv === 6) return { level: lv, key: "flagship-plus", artKey: "stadium_lv5_generated", stage: "旗艦擴建球場", roof: "partial", skyline: true };
+  return { level: lv, key: "dome", artKey: "stadium_lv7_generated", stage: "全罩式巨蛋", roof: "dome", skyline: true };
+}
+function v57FacilityAgedCount(team) {
+  const slots = team && team.facility && Array.isArray(team.facility.stadiumSlots) ? team.facility.stadiumSlots : [];
+  const built = team && team.facility && Array.isArray(team.facility.slotBuilt) ? team.facility.slotBuilt : [];
+  const year = typeof S !== "undefined" && S && typeof S.seasonYear === "number" ? S.seasonYear : 1;
+  return slots.reduce((n, key, i) => n + (stadiumFacilityType(key) && typeof built[i] === "number" && year - built[i] >= STADIUM_LIFE ? 1 : 0), 0);
+}
+function v57FacilityTabSummary(team, ftab) {
+  if (ftab === "球場") return "球場等級、容量、格位與周邊收入出口";
+  if (ftab === "訓練基地") {
+    const lv = Math.max(0, ...TRAINING_ITEMS.map(it => trainingLevel(team, it.key)));
+    return `訓練項目最高 Lv.${lv}・年度成長出口`;
+  }
+  if (ftab === "醫療室") return `醫療室 Lv.${medicalLevel(team)}・受傷與恢復出口`;
+  if (ftab === "球探辦公室") return `球探辦公室 Lv.${scoutOfficeLevel(team)}・評估精準度出口`;
+  if (ftab === "宿舍") return `選手宿舍 Lv.${dormLevel(team)}・休養與成長出口`;
+  if (ftab === "情蒐分析室") return `情蒐分析室 Lv.${analysisRoomLevel(team)}・情報出口`;
+  return `復健中心 Lv.${rehabCenterLevel(team)}・傷病恢復出口`;
+}
+function v57FacilityStateOverlay(state) {
+  const kind = state && state.locked ? "locked" : state && state.agedCount > 0 ? "aged" : state && state.upgradeReady ? "upgrade" : "";
+  if (!kind) return "";
+  const label = kind === "locked" ? "尚未開放" : kind === "aged" ? "老舊／重建狀態" : "可升級";
+  const glyph = kind === "locked" ? "🔒" : kind === "aged" ? "⚠" : "↗";
+  return `<span class="v57-visual-status ${kind}" aria-label="${label}"><span aria-hidden="true">${glyph}</span><span>${label}</span></span>`;
+}
+function v57StadiumVisual(profile, state) {
+  const src = typeof v57ArtDataUrl === "function" ? v57ArtDataUrl(profile.artKey) : "";
+  const fallback = src ? `<img class="v57-confirmed-art-image" src="${src}" alt="Lv.${profile.level} ${profile.stage}">` : `<div class="v57-art-missing">已核准素材尚未載入</div>`;
+  return `<div class="v57-facility-scene-frame v57-scene-${profile.key}" role="img" aria-label="Lv.${profile.level} ${profile.stage}">${fallback}${v57FacilityStateOverlay(state)}</div>`;
+}
+function v57FacilityTabArtKey(ftab) {
+  if (ftab === "訓練基地") return "training_base_generated";
+  if (ftab === "醫療室") return "medical_base_generated";
+  if (ftab === "球探辦公室") return "scouting_base_generated";
+  if (ftab === "宿舍") return "dorm_base_generated";
+  if (ftab === "情蒐分析室") return "analysis_rehab_base_generated";
+  if (ftab === "復健中心") return "rehab_base_generated";
+  return "";
+}
+function v57FacilityTabVisualData(team, ftab, cur) {
+  if (ftab === "球場") return { level: cur.level, label: cur.label, artKey: "", facts: [[cur.capacity.toLocaleString(), "容量"], [String((team.facility.stadiumSlots || []).length) + "/" + cur.slots, "球場格位"], [S.currentDay === 0 ? "春訓" : "球季中", "操作窗口"]] };
+  if (ftab === "訓練基地") {
+    const lv = Math.max(0, ...TRAINING_ITEMS.map(it => trainingLevel(team, it.key)));
+    return { level: lv, label: "訓練基地", artKey: "training_base_generated", facts: [["Lv." + lv, "最高訓練等級"], [String(TRAINING_ITEMS.length), "訓練項目"], [S.currentDay === 0 ? "春訓" : "球季中", "操作窗口"]] };
+  }
+  if (ftab === "醫療室") { const lv = medicalLevel(team); return { level: lv, label: "醫療室", artKey: "medical_base_generated", facts: [["Lv." + lv, "設施等級"], ["-" + (lv * 8) + "%", "受傷機率"], ["-" + (lv * 6) + "%", "恢復天數"]] }; }
+  if (ftab === "球探辦公室") { const lv = scoutOfficeLevel(team); return { level: lv, label: "球探辦公室", artKey: "scouting_base_generated", facts: [["Lv." + lv, "設施等級"], ["+" + (lv * 2), "評估精準度"], [S.currentDay === 0 ? "可升級" : "球季中", "操作窗口"]] }; }
+  if (ftab === "宿舍") { const lv = dormLevel(team); return { level: lv, label: "宿舍", artKey: "dorm_base_generated", facts: [["Lv." + lv, "設施等級"], ["+" + (lv * 2), "疲勞恢復"], [S.currentDay === 0 ? "可升級" : "球季中", "操作窗口"]] }; }
+  if (ftab === "情蒐分析室") { const lv = analysisRoomLevel(team); return { level: lv, label: "情蒐分析室", artKey: "analysis_rehab_base_generated", facts: [["Lv." + lv, "設施等級"], ["+" + lv, "情報加成"], [S.currentDay === 0 ? "可升級" : "球季中", "操作窗口"]] }; }
+  const lv = rehabCenterLevel(team);
+  return { level: lv, label: "復健中心", artKey: "rehab_base_generated", facts: [["Lv." + lv, "設施等級"], ["-" + (lv * 8) + "%", "恢復天數"], [S.currentDay === 0 ? "可升級" : "球季中", "操作窗口"]] };
+}
+function v57FacilityTabArtVisual(ftab, profile, view, state) {
+  if (ftab === "球場") return v57StadiumVisual(profile, state);
+  const src = typeof v57ArtDataUrl === "function" ? v57ArtDataUrl(view.artKey) : "";
+  const fallback = src ? `<img class="v57-confirmed-art-image" src="${src}" alt="${view.label}">` : `<div class="v57-art-missing">已核准素材尚未載入</div>`;
+  return `<div class="v57-facility-scene-frame v57-facility-scene" role="img" aria-label="${view.label} Lv.${view.level}">${fallback}${v57FacilityStateOverlay(state)}</div>`;
+}
+function renderV57FacilityVisual(team, cur, next, canUpgrade, ftab) {
+  const view = v57FacilityTabVisualData(team, ftab, cur);
+  const profile = v57FacilityVisualProfile(ftab === "球場" ? cur.level : 1);
+  const slots = team && team.facility && Array.isArray(team.facility.stadiumSlots) ? team.facility.stadiumSlots : [];
+  const agedCount = ftab === "球場" ? v57FacilityAgedCount(team) : 0;
+  const upgradeReady = ftab === "球場" ? !!(next && canUpgrade && team.finance && team.finance.budget >= next.upgradeCost) : !!(view.level < (ftab === "訓練基地" ? TRAINING_MAX_LEVEL : ftab === "醫療室" ? MEDICAL_MAX_LEVEL : ftab === "宿舍" ? DORM_MAX_LEVEL : ftab === "情蒐分析室" ? ANALYSIS_MAX_LEVEL : ftab === "復健中心" ? REHAB_MAX_LEVEL : 5) && canUpgrade);
+  const locked = ftab !== "球場" && view.level <= 0;
+  const statusLabel = agedCount > 0 ? `老舊 ${agedCount} 座` : locked ? "尚未開放" : upgradeReady ? "可升級" : (ftab === "球場" && !next) ? "最高級" : "營運中";
+  const pills = ftab === "球場" ? Array.from({ length: Math.min(cur.slots, 15) }, function (_, i) {
+    const filled = !!slots[i];
+    return `<span class="v57-slot-pill ${filled ? "filled" : "empty"}" aria-label="${filled ? "已建設施" : "空格位"}">${filled ? "●" : "＋"}</span>`;
+  }).join("") : `<span class="v57-facility-tab-chip">${ftab}</span>`;
+  const facts = view.facts.map(function (item) { return `<div><strong>${item[0]}</strong><span>${item[1]}</span></div>`; }).join("");
+  return `<section class="v57-facility-hero" data-v57-facility-visual="true" data-facility-level="${view.level}" data-facility-stage="${ftab === "球場" ? profile.key : view.artKey}">
+    <div class="v57-facility-hero-copy">
+      <span class="v57-facility-kicker">FACILITY VISUAL・${ftab}</span>
+      <h2>${ftab === "球場" ? profile.stage : view.label}</h2>
+      <p>${v57FacilityTabSummary(team, ftab)}。視覺先呈現目前狀態，完整數值與既有操作保留在下方。</p>
+      <div class="v57-facility-status-row"><span class="v57-state-badge ${agedCount > 0 ? "aged" : locked ? "locked" : upgradeReady ? "upgrade" : "stable"}">${statusLabel}</span><span class="v57-level-badge">Lv.${view.level}・${view.label}</span></div>
+      <div class="v57-facility-facts">${facts}</div>
+      <div class="v57-slot-legend" aria-label="設施格位視覺摘要">${pills}</div>
+    </div>
+    <div class="v57-facility-hero-scene">${v57FacilityTabArtVisual(ftab, profile, view, { agedCount, upgradeReady, locked })}<div class="v57-scene-caption">${ftab === "球場" ? profile.stage : view.label}・standalone facility art</div></div>
+  </section>`;
+}
 function renderFacilities() {
   const team = S.teams[S.userTeamId];
   ensureFinance(team); ensureFacility(team); ensureFacilities(team);
@@ -500,10 +619,10 @@ function renderFacilities() {
         <div class="sb-row small"><div class="sb-label">設施效果合計</div><div class="sb-value small">人均消費 +${Math.round(eff.spendPct * 100)}%・進場率 +${(eff.attPct * 100).toFixed(1)}%${eff.popBoost ? `・人氣成長 +${eff.popBoost}` : ""}</div></div>
         <div class="sb-row small"><div class="sb-label">觀眾人均消費</div><div class="sb-value small">${perCap.toFixed(1)} 元/人次</div></div>
         <div class="sb-row small"><div class="sb-label">年度維護費合計</div><div class="sb-value small">${formatMoney(eff.maintenance)}</div></div>
-        <div class="sb-row small"><div class="sb-label">球場完備度</div><div class="sb-value small">${(stadiumCompleteness(team) * 100).toFixed(1)}%${eff.aged > 0 ? `・⚠${eff.aged}座老舊` : ""}</div></div>
+        <div class="sb-row small"><div class="sb-label">球場完備度</div><div class="sb-value small">${(stadiumCompleteness(team) * 100).toFixed(1)}%${eff.aged > 0 ? `・${icon('warn')}${eff.aged}座老舊` : ""}</div></div>
       </div>
       <div class="divlabel">已建設施（${built.length}/${slotMax}格）${canUpgrade ? "" : "・春訓期間才能建造/拆除/重建"}</div>
-      ${eff.aged > 0 ? `<p class="sub dark">⚠ 有 ${eff.aged} 座設施屋齡達 ${STADIUM_LIFE} 年老舊化（效果減半、維護費照收），可花「建設費×${Math.round(STADIUM_REBUILD_COST * 100)}%」重建復原（每個休賽季限 1 座）。</p>` : ""}
+      ${eff.aged > 0 ? `<p class="sub dark">${icon('warn')} 有 ${eff.aged} 座設施屋齡達 ${STADIUM_LIFE} 年老舊化（效果減半、維護費照收），可花「建設費×${Math.round(STADIUM_REBUILD_COST * 100)}%」重建復原（每個休賽季限 1 座）。</p>` : ""}
       ${built.length === 0 ? `<p class="sub dark">目前沒有任何格位設施。周邊收入＝主場進場人次×人均消費，蓋設施可以拉高人均消費與進場率。</p>` : `
       <table class="stattable">
         <thead><tr><th>設施</th><th>屋齡</th><th>效果</th><th>年維護費</th><th></th></tr></thead>
@@ -514,7 +633,7 @@ function renderFacilities() {
           const age = stadiumSlotAge(team, i);
           const fx = [t.spendPct ? `消費+${Math.round(t.spendPct * 100 * (aged ? STADIUM_DECAY_MULT : 1))}%` : "", t.attPct ? `進場+${(t.attPct * 100 * (aged ? STADIUM_DECAY_MULT : 1)).toFixed(1)}%` : "", t.popBoost ? `人氣+${t.popBoost}` : ""].filter(Boolean).join("・");
           const rebuildCost = Math.round(t.cost * STADIUM_REBUILD_COST);
-          return `<tr><td>${t.icon}${t.label}${aged ? " ⚠老舊" : ""}</td><td>${age}年</td><td>${fx}</td><td>${formatMoney(Math.round(t.cost * t.maintPct))}</td>
+          return `<tr><td>${iconVal(t.icon)}${t.label}${aged ? " "+icon('warn')+"老舊" : ""}</td><td>${age}年</td><td>${fx}</td><td>${formatMoney(Math.round(t.cost * t.maintPct))}</td>
             <td>${aged ? `<button class="pickbtn btn-rebuild-stadium" data-idx="${i}" ${canUpgrade ? "" : "disabled"}>重建 ${formatMoney(rebuildCost)}</button>` : `<button class="pickbtn warn btn-demolish-stadium" data-idx="${i}" ${canUpgrade ? "" : "disabled"}>拆除</button>`}</td></tr>`;
         }).join("")}</tbody>
       </table>
@@ -526,7 +645,7 @@ function renderFacilities() {
         const fx = [t.spendPct ? `人均消費 +${Math.round(t.spendPct * 100)}%` : "", t.attPct ? `進場率 +${(t.attPct * 100).toFixed(1)}%` : "", t.popBoost ? `季末人氣 +${t.popBoost}` : ""].filter(Boolean).join("・");
         const affordable = team.finance.budget >= t.cost;
         return `<div class="card">
-          <div class="eyebrow">${t.icon} ${t.label}${owned > 0 ? `・已建 ${owned} 座` : ""}</div>
+          <div class="eyebrow">${iconVal(t.icon)} ${t.label}${owned > 0 ? `・已建 ${owned} 座` : ""}</div>
           <p class="sub dark" style="margin:4px 0;">${t.desc}</p>
           <p class="sub dark" style="margin:4px 0;">${fx}｜建設費 ${formatMoney(t.cost)}・年維護 ${formatMoney(Math.round(t.cost * t.maintPct))}（${Math.round(t.maintPct * 100)}%）</p>
           <button class="pickbtn btn-build-stadium" data-key="${t.key}" ${canUpgrade && affordable && built.length < slotMax ? "" : "disabled"}>建造</button>
@@ -653,14 +772,17 @@ function renderFacilities() {
         <div class="btnrow"><button id="btn-upgrade-scoutoffice" class="btn-primary" ${canUpgrade && team.finance.budget >= cost ? "" : "disabled"}>升級球探辦公室</button></div>`}
       </div>`;
   }
+  if (ftab === "球場") ensureStadiumSlots(team);
+  const v57Visual = renderV57FacilityVisual(team, cur, next, canUpgrade, ftab);
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${team.name}</div><h1>硬體建設</h1></div>
       ${renderRosterNav("facilities")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      <div class="tabrow">
+      <div class="tabrow v57-facility-tabs">
         ${FACILITY_TABS.map(t => `<button class="tab fac-tab ${ftab === t ? "active" : ""}" data-factab="${t}">${t}</button>`).join("")}
       </div>
+      ${v57Visual}
       <p class="sub dark" style="margin-bottom:10px;">${canUpgrade ? "現在是春訓期間，可以投資升級硬體設施。" : "本季已開打，硬體升級要等下個休賽季開幕前（春訓期間）才能進行。"}目前預算：<b>${formatMoney(team.finance.budget)}</b></p>
       ${body}
       <div class="btnrow"><button id="btn-back" class="btn-secondary">返回主控台</button></div>
@@ -888,15 +1010,70 @@ function refreshPayroll(team, players) {
     }
     total += p.salary;
   });
+  /* v54 A2：育成球員薪資（底薪 V54_DEV_MIN_SALARY = 80000） */
+  if (team.rosterDev) {
+    team.rosterDev.forEach(id => {
+      const p = players[id];
+      if (!p) return;
+      if (p.salary === undefined) p.salary = (typeof V54_DEV_MIN_SALARY !== "undefined") ? V54_DEV_MIN_SALARY : 80000;
+      total += p.salary;
+    });
+  }
   ["1軍", "2軍"].forEach(level => {
     COACH_ROLES.forEach(role => {
       const c = S.coaches[team.coachStaff[level][role]];
       if (c) total += c.salary;
     });
   });
+  /* v54 A2：育成教練薪資 */
+  if (team.coachStaff && team.coachStaff["育成"]) {
+    Object.values(team.coachStaff["育成"]).forEach(cId => {
+      const c = S.coaches[cId];
+      if (c) total += c.salary;
+    });
+  }
   if (team.scouts) Object.values(team.scouts).forEach(s => { if (s) total += s.salary; });
   team.finance.payroll = total;
   return total;
+}
+
+/* r008：薪資分層明細——依 1軍/2軍/育成球員/教練/球探/主管 分類小計 */
+function payBreakdownHtml(team, players) {
+  var r1 = 0, r2 = 0, dev = 0, coach = 0, scout = 0, director = 0;
+  team.roster1.forEach(function(id) { var p = players[id]; if (p) r1 += (p.salary || 0); });
+  team.roster2.forEach(function(id) { var p = players[id]; if (p) r2 += (p.salary || 0); });
+  if (team.rosterDev) team.rosterDev.forEach(function(id) { var p = players[id]; if (p) dev += (p.salary || 0); });
+  ["1軍", "2軍"].forEach(function(level) {
+    if (team.coachStaff && team.coachStaff[level]) {
+      COACH_ROLES.forEach(function(role) {
+        var c = S.coaches[team.coachStaff[level][role]];
+        if (c) coach += (c.salary || 0);
+      });
+    }
+  });
+  if (team.coachStaff && team.coachStaff["育成"]) {
+    Object.values(team.coachStaff["育成"]).forEach(function(cId) {
+      var c = S.coaches[cId];
+      if (c) coach += (c.salary || 0);
+    });
+  }
+  if (team.scouts) Object.values(team.scouts).forEach(function(s) { if (s) scout += (s.salary || 0); });
+  if (team.analysisDirector) director = team.analysisDirector.salary || 0;
+  var total = r1 + r2 + dev + coach + scout + director;
+  return '<div class="divlabel">薪資分層明細</div>' +
+    '<table class="stattable"><thead><tr><th>類別</th><th>金額</th><th>佔比</th></tr></thead><tbody>' +
+    '<tr><td>一軍球員（' + team.roster1.length + '人）</td><td>' + formatMoney(r1) + '</td><td>' + (total > 0 ? Math.round(r1/total*100) : 0) + '%</td></tr>' +
+    '<tr><td>二軍球員（' + team.roster2.length + '人）</td><td>' + formatMoney(r2) + '</td><td>' + (total > 0 ? Math.round(r2/total*100) : 0) + '%</td></tr>' +
+    '<tr><td>育成球員（' + (team.rosterDev ? team.rosterDev.length : 0) + '人）</td><td>' + formatMoney(dev) + '</td><td>' + (total > 0 ? Math.round(dev/total*100) : 0) + '%</td></tr>' +
+    '<tr><td>教練團</td><td>' + formatMoney(coach) + '</td><td>' + (total > 0 ? Math.round(coach/total*100) : 0) + '%</td></tr>' +
+    '<tr><td>球探室</td><td>' + formatMoney(scout) + '</td><td>' + (total > 0 ? Math.round(scout/total*100) : 0) + '%</td></tr>' +
+    (director > 0 ? '<tr><td>分析主管</td><td>' + formatMoney(director) + '</td><td>' + (total > 0 ? Math.round(director/total*100) : 0) + '%</td></tr>' : '') +
+    '<tr class="me"><td>合計</td><td>' + formatMoney(total) + '</td><td>100%</td></tr>' +
+    '</tbody></table>';
+}
+function v54DevConversionCost(player) {
+  const baseSalary = (player && player.salary) ? player.salary : ((typeof V54_DEV_MIN_SALARY !== "undefined") ? V54_DEV_MIN_SALARY : 80000);
+  return Math.round(baseSalary * 0.5);
 }
 
 // 球季結束的球員合約到期處理。
@@ -997,13 +1174,72 @@ function refillInternationalMarket() {
   // v25名門友誼：春訓在該國結下名門友誼後，隔年獨家名額+1、且必有一位來自該國的獨家菁英
   const friendship = (S.nationFriendship && S.nationFriendship.untilYear >= S.seasonYear) ? S.nationFriendship : null;
   if (friendship) slots += 1;
+  /* v38④：國家友好度回饋——「友好(5)」以上的每個國家各+1獨家名額，
+     且該名額必定出自該國；「莫逆之交(10)」則保證是該國菁英（generateForeignPlayer(true) 本就是菁英，
+     故此處以「必額」形式呈現，等同每季穩定供輸）。 */
+  const bondNations = (typeof bondedNations === "function") ? bondedNations(BOND_TIER_SLOT) : [];
+  const forcedList = [];
+  if (friendship) forcedList.push(nationByName(friendship.nation));
+  bondNations.forEach(n => { slots += 1; forcedList.push(n); });
   for (let i = 0; i < slots; i++) {
-    const forced = (friendship && i === 0) ? nationByName(friendship.nation) : null;
+    const forced = forcedList[i] || null;
     const p = generateForeignPlayer(true, forced);
     p.exclusive = true;
     S.internationalFreeAgents[p.id] = p;
   }
   attachScoutedEstimates(Object.values(S.internationalFreeAgents), team.scouts.international);
+}
+
+/* ====================================================================
+   v38④：國家友好度（C/D 國家互動補足）
+   ------------------------------------------------------------------
+   v37 的 C/D 活動（交流賽／行銷企劃）是「一次性擲骰」，辦完就沒了；
+   而 `S.nationFriendship`（名門友誼）只有 B 級以上海外春訓的 eliteFriendship 拿得到、
+   單一國家、效期一年——C/D 國家完全沾不到長線經營。
+   v38：導入持久累積的「國家友好度」0~10，交流賽／行銷企劃成功即累積，分級解鎖實質好處，
+   讓 C/D 從一次性活動變成長線耕耘（Mars：不要春訓，補足與 C/D 國家的互動即可）。
+   ==================================================================== */
+const NATION_BOND_MAX = 10;
+const BOND_TIER_PROSPECT = 3;   // 交流賽發掘當地潛力股機率提升
+const BOND_TIER_SLOT = 5;       // 國際市場該國獨家名額+1
+const BOND_TIER_DISCOUNT = 7;   // C/D 活動成本 -25%
+const BOND_TIER_SWORN = 10;     // 莫逆之交：每季必有一位該國菁英獨家人選
+function ensureNationBonds() {
+  if (!S.nationBonds) S.nationBonds = {};
+  return S.nationBonds;
+}
+function nationBondLevel(nationName) {
+  if (!nationName) return 0;
+  const b = ensureNationBonds();
+  return clamp(b[nationName] || 0, 0, NATION_BOND_MAX);
+}
+function addNationBond(nationName, d) {
+  if (!nationName || !d) return 0;
+  const b = ensureNationBonds();
+  b[nationName] = clamp((b[nationName] || 0) + d, 0, NATION_BOND_MAX);
+  return b[nationName];
+}
+function nationBondLabel(lv) {
+  if (lv >= BOND_TIER_SWORN) return "莫逆之交";
+  if (lv >= BOND_TIER_DISCOUNT) return "深厚友誼";
+  if (lv >= BOND_TIER_SLOT) return "友好";
+  if (lv >= BOND_TIER_PROSPECT) return "有交情";
+  if (lv >= 1) return "初識";
+  return "無往來";
+}
+// 友好度已解鎖的好處說明（UI 用）
+function nationBondPerks(lv) {
+  const perks = [];
+  if (lv >= BOND_TIER_PROSPECT) perks.push("交流賽發掘當地潛力股機率提升（35%→55%）");
+  if (lv >= BOND_TIER_SLOT) perks.push("國際市場該國獨家名額＋1");
+  if (lv >= BOND_TIER_DISCOUNT) perks.push("該國交流賽／行銷企劃成本 -25%");
+  if (lv >= BOND_TIER_SWORN) perks.push("莫逆之交：每季必有一位該國菁英獨家人選");
+  return perks;
+}
+// 友好度達門檻的國家清單（供國際市場產生獨家名額用）
+function bondedNations(minLv) {
+  const b = ensureNationBonds();
+  return Object.keys(b).filter(n => b[n] >= minLv && n !== HOME_NATION_NAME).map(n => nationByName(n)).filter(Boolean);
 }
 
 /* v37① C/D 級國家平行活動：海外春訓僅開放B級以上，這裡補上 C/D（與母國）的用途——
@@ -1020,7 +1256,10 @@ function cdActNations() {
 }
 function cdCostFor(nation, kind) {
   const g = nation.name === HOME_NATION_NAME ? "HOME" : nation.grade;
-  return ((kind === "marketing" ? CD_MARKETING_COST_WAN : CD_EXCHANGE_COST_WAN)[g] || 800) * 10000;
+  const base = ((kind === "marketing" ? CD_MARKETING_COST_WAN : CD_EXCHANGE_COST_WAN)[g] || 800) * 10000;
+  // v38④：友好度達「深厚友誼」→ 該國活動成本 -25%（在地人脈把場地/通路成本壓下來）
+  const disc = nationBondLevel(nation.name) >= BOND_TIER_DISCOUNT ? 0.75 : 1;
+  return Math.round(base * disc);
 }
 function runCdExchange(nationName) {
   const st = ensureCdActivities();
@@ -1033,11 +1272,14 @@ function runCdExchange(nationName) {
   team.finance.budget -= cost;
   st.exchangeDone = true;
   let msg;
+  const bondLv0 = nationBondLevel(nation.name);
+  // v38④：友好度達「有交情」→ 當地人脈把潛力股帶到你面前的機率明顯提高
+  const prospectChance = bondLv0 >= BOND_TIER_PROSPECT ? 0.55 : 0.35;
   if (Math.random() < 0.7) {
     team.finance.popularity = clamp(team.finance.popularity + 4, 10, 99);
     team.roster1.concat(team.roster2).forEach(id => { const p = S.players[id]; if (p) p.morale = clamp((p.morale || 70) + 2, 0, 100); });
     let signNote = "";
-    if (Math.random() < 0.35 && typeof generateForeignPlayer === "function") {
+    if (Math.random() < prospectChance && typeof generateForeignPlayer === "function") {
       const prospect = generateForeignPlayer(true, nation);
       prospect.exclusive = true;
       S.internationalFreeAgents = S.internationalFreeAgents || {};
@@ -1045,10 +1287,12 @@ function runCdExchange(nationName) {
       if (typeof attachScoutedEstimates === "function" && team.scouts) attachScoutedEstimates([prospect], team.scouts.international);
       signNote = `　球探在當地發掘了潛力股 ${prospect.name}，已列入你的國際市場獨家名單！`;
     }
-    msg = `國際交流賽（${nation.name}）圓滿（-${formatMoney(cost)}）：人氣+4、全隊士氣+2。${signNote}`;
+    const lv = addNationBond(nation.name, 2); // v38④：成功交流＝友好度+2
+    msg = `國際交流賽（${nation.name}）圓滿（-${formatMoney(cost)}）：人氣+4、全隊士氣+2；與${nation.name}友好度+2（${lv}／${NATION_BOND_MAX}・${nationBondLabel(lv)}）。${signNote}`;
   } else {
     team.finance.popularity = clamp(team.finance.popularity + 1, 10, 99);
-    msg = `國際交流賽（${nation.name}）遇上水土不服，成效平平（-${formatMoney(cost)}）：人氣僅+1。`;
+    const lv = addNationBond(nation.name, 1); // 就算打得普通，交情還是留下了
+    msg = `國際交流賽（${nation.name}）遇上水土不服，成效平平（-${formatMoney(cost)}）：人氣僅+1；友好度+1（${lv}／${NATION_BOND_MAX}・${nationBondLabel(lv)}）。`;
   }
   if (typeof pushNews === "function") pushNews("國際", msg);
   UI.flash = msg; persist(); render();
@@ -1068,8 +1312,10 @@ function runCdMarketing(nationName) {
   team.finance.budget += ret;
   const pop = success ? 3 : 1;
   team.finance.popularity = clamp(team.finance.popularity + pop, 10, 99);
+  const lv = addNationBond(nation.name, success ? 1 : 0); // v38④：成功的行銷企劃＝在當地留下品牌，友好度+1
+  const bondNote = success ? `；與${nation.name}友好度+1（${lv}／${NATION_BOND_MAX}・${nationBondLabel(lv)}）` : "";
   const msg = success
-    ? `海外行銷企劃（${nation.name}）成功：投入${formatMoney(cost)}、回收${formatMoney(ret)}（淨${formatMoney(ret - cost)}），人氣+${pop}。`
+    ? `海外行銷企劃（${nation.name}）成功：投入${formatMoney(cost)}、回收${formatMoney(ret)}（淨${formatMoney(ret - cost)}），人氣+${pop}${bondNote}。`
     : `海外行銷企劃（${nation.name}）反應冷淡：投入${formatMoney(cost)}、僅回收${formatMoney(ret)}（淨${formatMoney(ret - cost)}），人氣+${pop}。`;
   if (typeof pushNews === "function") pushNews("國際", msg);
   UI.flash = msg; persist(); render();
@@ -1136,7 +1382,8 @@ function teamAttendanceRate(team) {
   const winPct = gp > 0 ? team.wins / gp : 0.5;
   const mktAtt = (team.finance.marketingYear === S.seasonYear) ? (team.finance.marketingAttPct || 0) : 0; // v29行銷活動直接拉抬進場率
   const comfortAtt = stadiumEffects(team).attPct; // v30舒適設施（廁所/停車場/親子等）直接拉抬進場率
-  const base = 0.32 + (team.finance.popularity / 100) * 0.38 + (winPct - 0.5) * 0.55 + mktAtt + comfortAtt;
+  var cityAtt = (typeof v55CityAttendanceMult === "function") ? v55CityAttendanceMult(team.id) : 1;
+  const base = (0.32 + (team.finance.popularity / 100) * 0.38 + (winPct - 0.5) * 0.55 + mktAtt + comfortAtt) * cityAtt;
   return clamp(base * ticketDemandRate(team.finance.ticketPrice, team.finance.ticketPriceCap, team.finance.popularity), 0.06, 0.98);
 }
 
@@ -1171,7 +1418,10 @@ function settleSeasonFinance(team, taxThreshold) {
   // v25國際賽事紅利：母國代表隊前一年打出好成績，全聯盟隔年贊助/周邊收入乘上加成
   const intlMult = (S.intlBoost && S.intlBoost.year === S.seasonYear) ? S.intlBoost : { sponsorMult: 1, merchMult: 1 };
   const sDeal = dealSeasonRevenue(team.finance.sponsorDeal, winPct, madePlayoffs);
-  const sponsorRevenue = Math.max(0, Math.round((sDeal != null ? sDeal : ((1500 + team.finance.popularity * 26) * 10000 + (winPct - 0.5) * 4200 * 10000 + (madePlayoffs ? 12000000 : 0))) * intlMult.sponsorMult));
+  // v45：球迷認同是贊助的出口之一（僅玩家隊；高認同＝品牌價值→贊助商埋單）
+  const fanSpMult = (team.id === S.userTeamId && typeof fanIdentifySponsorMult === "function") ? fanIdentifySponsorMult() : 1;
+  var citySpMult = (typeof v55CitySponsorMult === "function") ? v55CitySponsorMult(team.id) : 1;
+  const sponsorRevenue = Math.max(0, Math.round((sDeal != null ? sDeal : ((1500 + team.finance.popularity * 26) * 10000 + (winPct - 0.5) * 4200 * 10000 + (madePlayoffs ? 12000000 : 0))) * intlMult.sponsorMult * fanSpMult * citySpMult));
   // v30周邊重構：主場總進場人次 × 人均消費（基礎＋人氣微加成，乘設施/行銷/國際賽加成）
   const merchRevenue = Math.round(homeVisitors * stadiumPerCapitaSpend(team, intlMult.merchMult));
   // v31聯盟均衡稅：補貼計入收入、繳稅計入支出（由 runLeagueBalanceTax 預先算好存在 finance 上）
@@ -1188,7 +1438,8 @@ function settleSeasonFinance(team, taxThreshold) {
   team.finance.balanceTaxReceived = 0; team.finance.balanceTaxPaid = 0; // 折入後歸零，避免重複計入
 
   const priceRatio = (team.finance.ticketPrice - TICKET_PRICE_FLOOR) / Math.max(1, team.finance.ticketPriceCap - TICKET_PRICE_FLOOR);
-  const popDelta = (winPct - 0.5) * 9 + (priceRatio < 0.25 ? 1 : (priceRatio > 0.75 ? -1.5 : 0)) + (madePlayoffs ? 2 : 0) + (team.finance.marketingPopBoost || 0) + stadiumEffects(team).popBoost; // v30博物館人氣加成
+  const fanPopBond = (team.id === S.userTeamId && typeof fanIdentifyPopBond === "function") ? fanIdentifyPopBond() : 0; // v45：認同→票房/人氣的綁定出口
+  const popDelta = (winPct - 0.5) * 9 + (priceRatio < 0.25 ? 1 : (priceRatio > 0.75 ? -1.5 : 0)) + (madePlayoffs ? 2 : 0) + (team.finance.marketingPopBoost || 0) + stadiumEffects(team).popBoost + fanPopBond + (team.id === S.userTeamId && typeof v48HofPopBoost === "function" ? v48HofPopBoost() : 0); // v30博物館人氣加成／v45認同綁定／v48殿堂人氣
   team.finance.popularity = clamp(Math.round(team.finance.popularity + popDelta + (Math.random() * 4 - 2)), 10, 99);
 
   // 逐年票價上限成長機制（v34放寬）：只要季均上座率≥90%（代表市場供不應求），
@@ -1429,13 +1680,13 @@ function projectSeasonFinance(team) {
 // 春訓期間可隨時勾選/取消（取消即退費），效果加總後套用整季。
 // 效果三軸：popBoost＝季末人氣成長加成、merchPct＝周邊/販賣部收入%、attPct＝主場進場率%。
 const MARKETING_CAMPAIGNS = [
-  { key: "social", label: "社群經營", icon: "📱", cost: 3000000, popBoost: 2, merchPct: 0.03, attPct: 0, desc: "全年經營官方社群與短影音，穩定累積球迷基本盤。" },
-  { key: "ads", label: "電視／網路廣告", icon: "📺", cost: 8000000, popBoost: 4, merchPct: 0, attPct: 0.01, desc: "大量投放形象廣告，直接拉抬球隊知名度。" },
-  { key: "endorse", label: "明星球員代言", icon: "🌟", cost: 15000000, popBoost: 6, merchPct: 0.08, attPct: 0, desc: "推派看板球星接代言與綜藝通告；隊上有「人氣王」特質球員時人氣加成再+2。" },
-  { key: "merchdev", label: "周邊商品開發", icon: "🧢", cost: 6000000, popBoost: 0, merchPct: 0.15, attPct: 0, desc: "開發新款球衣、公仔與應援商品，直接提升周邊銷售。" },
-  { key: "collab", label: "跨界聯名企劃", icon: "🤝", cost: 12000000, popBoost: 2, merchPct: 0.25, attPct: 0, desc: "與知名品牌聯名限定商品，周邊收入大幅提升、也帶進新客群。" },
-  { key: "themeday", label: "主題日活動", icon: "🎆", cost: 5000000, popBoost: 1, merchPct: 0.03, attPct: 0.03, desc: "煙火夜、動漫日、啦啦隊應援日等主場企劃，直接提高進場意願。" },
-  { key: "familyday", label: "家庭日／球迷回饋季", icon: "👨‍👩‍👧", cost: 9000000, popBoost: 2, merchPct: 0.04, attPct: 0.05, desc: "親子套票與球迷回饋活動，培養闔家觀賽習慣，進場率提升最多。" }
+  { key: "social", label: "社群經營", icon: "mk-social", cost: 3000000, popBoost: 2, merchPct: 0.03, attPct: 0, desc: "全年經營官方社群與短影音，穩定累積球迷基本盤。" },
+  { key: "ads", label: "電視／網路廣告", icon: "screen", cost: 8000000, popBoost: 4, merchPct: 0, attPct: 0.01, desc: "大量投放形象廣告，直接拉抬球隊知名度。" },
+  { key: "endorse", label: "明星球員代言", icon: "star-glow", cost: 15000000, popBoost: 6, merchPct: 0.08, attPct: 0, desc: "推派看板球星接代言與綜藝通告；隊上有「人氣王」特質球員時人氣加成再+2。" },
+  { key: "merchdev", label: "周邊商品開發", icon: "cap", cost: 6000000, popBoost: 0, merchPct: 0.15, attPct: 0, desc: "開發新款球衣、公仔與應援商品，直接提升周邊銷售。" },
+  { key: "collab", label: "跨界聯名企劃", icon: "handshake", cost: 12000000, popBoost: 2, merchPct: 0.25, attPct: 0, desc: "與知名品牌聯名限定商品，周邊收入大幅提升、也帶進新客群。" },
+  { key: "themeday", label: "主題日活動", icon: "mk-themeday", cost: 5000000, popBoost: 1, merchPct: 0.03, attPct: 0.03, desc: "煙火夜、動漫日、啦啦隊應援日等主場企劃，直接提高進場意願。" },
+  { key: "familyday", label: "家庭日／球迷回饋季", icon: "family", cost: 9000000, popBoost: 2, merchPct: 0.04, attPct: 0.05, desc: "親子套票與球迷回饋活動，培養闔家觀賽習慣，進場率提升最多。" }
 ];
 // 舊版三方案 → 新版活動組合的對應（v29升級鏈用）
 const LEGACY_MARKETING_MAP = { none: [], basic: ["social"], standard: ["social", "ads", "merchdev"], premium: ["social", "ads", "endorse", "collab", "themeday"] };
@@ -1578,6 +1829,14 @@ function startNegotiation(kind, playerId, opts) {
         desiredSalary = Math.round(desiredSalary * famMult / 1000) * 1000; // 愛名氣：強豪名門可砍價、弱隊要加錢
       }
     }
+    // v45：本土自由球員向玩家隊開價時，球迷認同是「FA意願」出口——高認同球隊球員更想來、開價更客氣
+    if (kind === "freeAgent" && (opts.teamId || S.userTeamId) === S.userTeamId && typeof fanIdentifyFaMult === "function") {
+      desiredSalary = Math.round(desiredSalary * fanIdentifyFaMult() / 1000) * 1000;
+    }
+    // v55：文化薪資效果——「信任」全體折扣 ×0.97、「贏球至上」老將願來 ×0.96
+    if ((opts.teamId || S.userTeamId) === S.userTeamId && typeof v55CultureSalaryMult === "function") {
+      desiredSalary = Math.round(desiredSalary * v55CultureSalaryMult() / 1000) * 1000;
+    }
     // v29：新秀薪資上限鎖死——不論特質（大物志向）或經紀人個性怎麼墊高期望，最終期望絕不超過等級上限
     if (kind === "rookie") desiredSalary = Math.min(desiredSalary, rookieSalaryCap(opts.round, p));
     p.negoDesired = { year: S.seasonYear, market: marketSalary, salary: desiredSalary, years: desiredYears };
@@ -1666,6 +1925,8 @@ function finalizeNegotiation(neg, salary, years) {
     team.finance.budget -= bonus;
     if (p.level === "1軍") team.roster1.push(p.id); else team.roster2.push(p.id);
     delete S.freeAgents[neg.playerId];
+    /* v55 文化訊號追蹤：FA 支出累計（季末快照用） */
+    if (typeof v55EnsureCulture === "function") { v55EnsureCulture(); S.culture.faSpendThisYear = (S.culture.faSpendThisYear || 0) + salary * years; }
     UI.flash = `已簽下自由球員 ${p.name}（${years}年・${formatMoney(salary)}，簽約金${formatMoney(bonus)}）。`;
     UI.negotiation = null;
     UI.screen = "freeAgents";
@@ -1761,6 +2022,7 @@ function staffMarketSalary(item, staff) {
   if (item.kind === "coach") {
     let s = 30 + (staff.teaching - 40) * 1.7;
     if (staff.specialAbility) s *= 1.2;
+    if (typeof v42RenewTrustMult === "function") s *= v42RenewTrustMult(staff); // v42④：一軍總教練續約要價受信任影響（≥60打折／40~60加價15%／<40獅子大開口35%）
     return clamp(Math.round(s), 30, 150) * 10000;
   } else {
     let s = 50 + (staff.accuracy - 40) * 2.3;
@@ -1832,11 +2094,13 @@ function finalizeStaffRenewal(neg, salary, years) {
   const team = S.teams[S.userTeamId];
   if (item.kind === "coach") setCoachVacancy(team, item.level, item.role, false);
   else setScoutVacancy(team, item.area, false);
+  if (item.kind === "coach" && item.level === "1軍" && item.role === "總教練" && staff && typeof chronicle === "function") try { chronicle("coach", `與總教練${staff.name}完成續約（${years}年）`); } catch (e) {} // v42④
   UI.flash = `已完成續約：${neg.label}（${years}年・${formatMoney(salary)}）。`;
   UI.negotiation = null;
   advanceStaffRenewalQueue();
 }
 function failStaffRenewal(neg) {
+  if (neg.staffItem && neg.staffItem.kind === "coach" && typeof chronicle === "function") try { chronicle("coach", `與${neg.label}續約談判破局，職位懸缺`); } catch (e) {} // v42④：教練來去入史冊（補S9）
   vacateStaff(neg.staffItem, `與 ${neg.label} 續約談判破局，該職位暫時空缺（加成歸零），請到自由市場補人。`);
   UI.negotiation = null;
   advanceStaffRenewalQueue();
@@ -1866,6 +2130,7 @@ function declineStaffRenewal() {
   const staff = staffRef(item);
   // v35：staffRef 驗不到人（殘留舊隊項目或資料異常）→ 純略過佇列，絕不 vacateStaff 誤刪現任
   if (!staff) { advanceStaffRenewalQueue(); return; }
+  if (item.kind === "coach" && typeof chronicle === "function") try { chronicle("coach", `${item.level}${item.role}${staff.name}約滿離任，職位懸缺`); } catch (e) {} // v42④：教練來去入史冊（補v41已知簡化S9）
   vacateStaff(item, `未與 ${item.kind === "coach" ? `${item.level}${item.role}` : "球探"} ${staff.name} 續約，該職位暫時空缺（加成歸零），請到自由市場補人。`);
   advanceStaffRenewalQueue();
 }
@@ -1952,19 +2217,43 @@ function negoStatLine(p, s) {
    預估值由 scoutedAttrProjection 依總成長空間推估；資料不足時只顯示現在值。 */
 function scoutedAttrRows(p) {
   if (!p || !p.scouted) return "";
-  const proj = (cur) => scoutedAttrProjection(cur, p.scoutedOverall, p.scoutedCeilingVal);
-  const row = (label, cur, isVel) => {
+  /* v38①：優先採用逐屬性天花板評估（p.scoutedPots，每屬性各自霧化，真差異化）；
+     舊存檔的球員若尚無 scoutedPots，退回 v37 的等位移推估，畫面不會開天窗。 */
+  const proj = (cur, key) => {
+    if (p.scoutedPots && typeof p.scoutedPots[key] === "number") return p.scoutedPots[key];
+    return scoutedAttrProjection(cur, p.scoutedOverall, p.scoutedCeilingVal);
+  };
+  const row = (label, cur, isVel, key) => {
     if (cur == null) return "";
-    const pv = proj(cur);
+    const pv = proj(cur, key);
     const curTxt = isVel ? (velocityKmh(cur) + "km/h") : cur;
     const projTxt = (pv == null) ? "" : (isVel ? ("~" + velocityKmh(pv) + "km/h") : ("~" + pv));
     return `<div class="attr attr2"><span>${label}</span><b>${curTxt}${projTxt ? `<span class="proj"> → ${projTxt}</span>` : ""}</b></div>`;
   };
   const s = p.scouted;
+  // v46：補齊 p.scouted 未涵蓋的欄位（對左右投/盜壘/觸擊/體力/耐久/捕手三項/變化球），走全欄位球探視圖（每季快取、不跳動）。
+  const sv = (typeof v46ScoutViewFor === "function") ? v46ScoutViewFor(p) : {};
+  const xrow = (label, key, isVel) => {
+    const v = (s && s[key] != null) ? s[key] : (sv ? sv[key] : null);
+    if (v == null) return "";
+    const txt = isVel ? (velocityKmh(v) + "km/h") : v;
+    return `<div class="attr attr2"><span>${label}</span><b>${txt}</b></div>`;
+  };
   if (p.isPitcher) {
-    return row("球速", s.velocity, true) + row("控球", s.control) + row("體力", s.stamina) + row("抗壓", s.composure);
+    const core = row("球速", s.velocity, true, "velocity") + row("控球", s.control, false, "control") + row("體力", s.stamina, false, "stamina") + row("抗壓", s.composure, false, "composure") + xrow("耐久", "durability", false);
+    const pitches = (sv && sv.pitches ? sv.pitches : (p.pitches || []));
+    // 變化球：每顆一個網格格子（球種名／球威・控球），融入既有 2 欄網格不破版
+    const pitchHtml = pitches.map(pt => `<div class="attr attr2"><span>${pt.type}</span><b>威${pt.stuff != null ? pt.stuff : "—"}／控${pt.control != null ? pt.control : "—"}</b></div>`).join("");
+    return core + pitchHtml;
   }
-  return row("接觸", s.contact) + row("長打", s.power) + row("選球", s.eye) + row("速度", s.speed) + row("守備", s.fielding) + row("臂力", s.arm);
+  const batCore = row("接觸", s.contact, false, "contact") + row("長打", s.power, false, "power") + row("選球", s.eye, false, "eye")
+    + xrow("對左投", "vsL") + xrow("對右投", "vsR")
+    + row("速度", s.speed, false, "speed") + xrow("盜壘", "steal") + xrow("觸擊", "bunting")
+    + row("守備", s.fielding, false, "fielding") + row("臂力", s.arm, false, "arm") + xrow("體力", "stamina") + xrow("耐久", "durability");
+  const catHtml = (p.gameCalling != null)
+    ? xrow("配球", "gameCalling") + xrow("接捕", "framing") + xrow("阻殺", "caughtStealing") + xrow("阻擋", "blocking") + xrow("傳球", "popTime") + xrow("調教", "pitcherHandling")
+    : "";
+  return batCore + catHtml;
 }
 function negotiationScoutBlock(p, neg) {
   const team = S.teams[neg.teamId || S.userTeamId];
@@ -1982,20 +2271,33 @@ function negotiationScoutBlock(p, neg) {
   } else {
     const own = neg.kind === "renewal"; // 自家人看真實值
     const rpt = scoutCeilingReport(p, team, neg.kind);
-    abilityRows = p.isPitcher
-      ? `<div class="attr"><span>球速</span><b>${velocityKmh(p.velocity)}km/h</b></div><div class="attr"><span>控球</span><b>${p.control}</b></div><div class="attr"><span>體力</span><b>${p.stamina}</b></div><div class="attr"><span>抗壓</span><b>${p.composure}</b></div>`
-      : `<div class="attr"><span>接觸</span><b>${p.contact}</b></div><div class="attr"><span>長打</span><b>${p.power}</b></div><div class="attr"><span>選球</span><b>${p.eye}</b></div><div class="attr"><span>速度</span><b>${p.speed}</b></div><div class="attr"><span>守備</span><b>${p.fielding}</b></div><div class="attr"><span>抗壓</span><b>${p.composure}</b></div>`;
+    // v46：自由/國際球員走全欄位球探視圖（霧化）；自家續約看真實值。兩者都攤出所有能力（含變化球/對左右投/盜壘觸擊/捕手三項/耐久）。
+    const sv2 = own ? null : ((typeof v46ScoutViewFor === "function") ? v46ScoutViewFor(p, neg.kind === "international" ? undefined : undefined) : {});
+    const gv = k => own ? (p[k] != null ? p[k] : "—") : (sv2 && sv2[k] != null ? sv2[k] : "—");
+    const cell = (label, k, isVel) => `<div class="attr"><span>${label}</span><b>${isVel ? (velocityKmh(gv(k)) + "km/h") : gv(k)}</b></div>`;
+    const cell2 = (label, k) => `<div class="attr attr2"><span>${label}</span><b>${gv(k)}</b></div>`;
+    if (p.isPitcher) {
+      const pitchArr = own ? (p.pitches || []) : ((sv2 && sv2.pitches) ? sv2.pitches : (p.pitches || []));
+      const pitchCells = pitchArr.map(pt => `<div class="attr attr2"><span>${pt.type}</span><b>威${pt.stuff != null ? pt.stuff : "—"}／控${pt.control != null ? pt.control : "—"}</b></div>`).join("");
+      abilityRows = cell("球速", "velocity", true) + cell("控球", "control") + cell("體力", "stamina") + cell("抗壓", "composure") + cell2("耐久", "durability") + pitchCells;
+    } else {
+      const catCells = (p.gameCalling != null) ? (cell2("配球", "gameCalling") + cell2("接捕", "framing") + cell2("阻殺", "caughtStealing") + cell2("阻擋", "blocking") + cell2("傳球", "popTime") + cell2("調教", "pitcherHandling")) : "";
+      abilityRows = cell("接觸", "contact") + cell("長打", "power") + cell("選球", "eye")
+        + cell2("對左投", "vsL") + cell2("對右投", "vsR")
+        + cell("速度", "speed") + cell2("盜壘", "steal") + cell2("觸擊", "bunting")
+        + cell("守備", "fielding") + cell2("臂力", "arm") + cell2("體力", "stamina") + cell("抗壓", "composure") + cell2("耐久", "durability") + catCells;
+    }
     const curG = gradeFromValue(trueOverall(p));
     ceilingRow = `<span class="gradebadge grade-${curG}">綜合現況 ${curG}（${Math.round(trueOverall(p))}）</span> <span class="gradebadge grade-${rpt.grade}">預測天花板 ${rpt.grade}（約${rpt.val}）</span>${own ? "" : `<span class="draftnote muted" style="display:block;">天花板為球探評估值（有效精準度 ${rpt.acc}），可能與真實潛力有落差。</span>`}`;
   }
   return `<div class="card">
-    <div class="eyebrow">📋 球探完整報告</div>
-    <div style="margin:6px 0;">${ceilingRow}</div>
-    ${neg.kind === "rookie" ? `<div class="draftnote muted" style="margin:2px 0;">逐項能力：現在(評估) → 預估~天花板值（準確度越高越可信）</div>` : ""}
+    <div class="eyebrow">${icon('clipboard')} 球探完整報告</div>
+    <div class="draftgrades" style="margin:6px 0;flex-wrap:wrap;">${ceilingRow}</div>
+    ${neg.kind === "rookie" ? `<div class="draftnote muted" style="margin:2px 0;">逐項能力：現在(評估) → 該項預估天花板（v38：每項能力各有自己的天花板，成長空間不一樣；準確度越高越可信）</div>` : ""}
     <div class="attrgrid">${abilityRows}</div>
-    <p class="sub dark" style="margin:6px 0;">📈 生涯階段：<b class="${phase.cls}">${phase.text}</b> — ${phase.desc}${neg.kind === "rookie" ? `；${p.maturity}` : ""}</p>
-    ${curLine ? `<p class="sub dark" style="margin:4px 0;">📊 ${seasonOver ? "上季成績（剛結束的球季）" : "本季至今"}：${curLine}</p>` : ""}
-    ${lastLine && p.lastSeasonStats ? `<p class="sub dark" style="margin:4px 0;">📊 第${p.lastSeasonStats.year}年成績：${lastLine}</p>` : ""}
+    <p class="sub dark" style="margin:6px 0;">${icon('chart-up')} 生涯階段：<b class="${phase.cls}">${phase.text}</b> — ${phase.desc}${neg.kind === "rookie" ? `；${p.maturity}` : ""}</p>
+    ${curLine ? `<p class="sub dark" style="margin:4px 0;">${icon('chart')} ${seasonOver ? "上季成績（剛結束的球季）" : "本季至今"}：${curLine}</p>` : ""}
+    ${lastLine && p.lastSeasonStats ? `<p class="sub dark" style="margin:4px 0;">${icon('chart')} 第${p.lastSeasonStats.year}年成績：${lastLine}</p>` : ""}
     ${!curLine && !lastLine ? `<p class="draftnote muted">尚無一軍出賽成績紀錄${neg.kind === "rookie" ? "（新秀）" : ""}。</p>` : ""}
   </div>`;
 }
@@ -2009,41 +2311,9 @@ function renderNegotiation() {
   ensureAgent(p);
   const agInfo = AGENT_TYPES[p.agent.type]; // v27：談判桌對面坐的是經紀人
   const failNote = neg.kind === "rookie" ? "這位新秀就會直接放棄加盟、退出本屆選秀" : (neg.kind === "freeAgent" ? "他就會轉投別隊、離開自由球員市場" : (neg.kind === "international" ? "他就會留在原聯盟效力、離開國際球員市場" : "他就會自動離隊、進入自由球員市場"));
-  app.innerHTML = `
-    <div class="wrap">
-      <div class="topbar"><div class="eyebrow">${kindLabel}</div><div class="teamname">${p.name}</div></div>
-      <div class="scoreboard">
-        <div class="sb-row small"><div class="sb-label">類型</div><div class="sb-value small">${p.isPitcher ? "投手" : "野手"}・${p.age}歲</div></div>
-        <div class="sb-row small"><div class="sb-label">剩餘談約機會</div><div class="sb-value small">${neg.attemptsLeft} 次</div></div>
-        <div class="sb-row small"><div class="sb-label">AI建議開價</div><div class="sb-value small">${formatMoney(neg.marketSalary)}／年</div></div>
-        <div class="sb-row small"><div class="sb-label">球員心理期望</div><div class="sb-value small">約 ${formatMoney(neg.desiredSalary)}／年・${neg.desiredYears}年</div></div>
-        <div class="sb-row small"><div class="sb-label">經紀人</div><div class="sb-value small">${p.agent.name} <span class="agenttag" title="${agInfo.desc}">${agInfo.name}</span></div></div>
-      </div>
-      <p class="draftnote muted" style="margin-top:-4px;">💼 ${agInfo.name}：${agInfo.desc}。</p>
-      ${negotiationScoutBlock(p, neg)}
-      ${neg.kind === "rookie" && neg.rookieCap ? `<div class="card issuecard"><div class="eyebrow">新秀薪資上限（聯盟規定）</div><p class="sub dark">此新秀（天花板 ${p.scoutedCeiling} 級）的年薪上限鎖定為 <b>${formatMoney(neg.rookieCap)}</b>，只能從上限往下談、無法向上加碼；出價越低成功率越低，砍太兇談崩5次會直接放棄加盟。</p></div>` : ""}
-      ${(() => {
-        // v28代理人事務所：情蒐卡（未探→委託按鈕；已探→揭露底線與性格；並顯示GM與此類經紀人的人脈）
-        const scouted = (typeof isAgentScouted === "function") && isAgentScouted(p);
-        const rel = (typeof agentRel === "function") ? agentRel(p.agent.type) : 0;
-        const relL = (typeof agentRelLabel === "function") ? agentRelLabel(rel) : { text: "", cls: "affmid" };
-        const cost = (typeof agentScoutCost === "function") ? agentScoutCost(p) : 0;
-        const relLine = `<p class="sub dark" style="margin:4px 0;">🤝 你與「${agInfo.name}」經紀人的交情：<span class="afftag ${relL.cls}">${relL.text}</span>${rel !== 0 ? `（${rel > 0 ? "談約門檻降低、較好談" : "談約門檻升高、較難談"}）` : ""}</p>`;
-        if (scouted) {
-          return `<div class="card agencycard">
-            <div class="eyebrow">🕵️ 代理人事務所・情蒐報告</div>
-            <p class="sub dark">經紀人 <b>${p.agent.name}</b>（${agInfo.name}）談判風格：${agInfo.desc}。</p>
-            <p class="sub dark">情蒐揭露的期望底線：年薪約 <b>${formatMoney(neg.desiredSalary)}</b>、年限偏好 <b>${neg.desiredYears} 年</b>。年限每少 1 年，所需薪資約增加 ${Math.round((agInfo.premiumRate != null ? agInfo.premiumRate : 0.28) * 100)}%。</p>
-            ${relLine}
-          </div>`;
-        }
-        return `<div class="card agencycard">
-          <div class="eyebrow">🕵️ 代理人事務所</div>
-          <p class="sub dark">尚未情蒐這位經紀人。委託事務所打聽（花費 <b>${formatMoney(cost)}</b>）可揭露其性格與期望底線，讓你一次開到位。</p>
-          ${relLine}
-          <div class="btnrow"><button id="btn-scout-agent" class="btn-secondary">委託情蒐（${formatMoney(cost)}）</button></div>
-        </div>`;
-      })()}
+  /* v40 A案分頁：談判畫面拆三頁——💰談判桌（出價操作）／📋球探報告／🕵️情報（經紀人＋事務所＋新秀薪資上限）。
+     所有面板同時存在DOM、CSS切換，表單狀態不因換頁遺失。 */
+  const negoDealPanel = `
       <p class="sub dark" style="margin-bottom:10px;">調整下方薪資與年限後送出，球員會評估是否接受；越接近期望金額與年限，成功率越高。談不成還可以再試，${5 - neg.attemptsLeft === 0 ? "共有5次機會" : `已用掉 ${5 - neg.attemptsLeft} 次`}，5次都談不成${failNote}。</p>
       <label class="field">
         <span>提出年薪（萬元）${neg.kind === "rookie" && neg.rookieCap ? `・上限 ${Math.round(neg.rookieCap / 10000)}萬` : ""}</span>
@@ -2062,7 +2332,48 @@ function renderNegotiation() {
         </ul>
       </div>` : ""}
       <div class="btnrow"><button id="btn-neg-submit" class="btn-primary">送出提案</button></div>
-      <div class="btnrow"><button id="btn-neg-cancel" class="btn-outline">先不談，稍後再說</button></div>
+      <div class="btnrow"><button id="btn-neg-cancel" class="btn-outline">先不談，稍後再說</button></div>`;
+  const negoReportPanel = negotiationScoutBlock(p, neg);
+  const negoIntelPanel = `
+      <p class="draftnote muted">${icon('briefcase')} ${agInfo.name}：${agInfo.desc}。</p>
+      ${neg.kind === "rookie" && neg.rookieCap ? `<div class="card issuecard"><div class="eyebrow">新秀薪資上限（聯盟規定）</div>${foldNote(`<p class="sub dark">此新秀（天花板 ${p.scoutedCeiling} 級）的年薪上限鎖定為 <b>${formatMoney(neg.rookieCap)}</b>，只能從上限往下談、無法向上加碼；出價越低成功率越低，砍太兇談崩5次會直接放棄加盟。</p>`)}</div>` : ""}
+      ${(() => {
+        // v28代理人事務所：情蒐卡（未探→委託按鈕；已探→揭露底線與性格；並顯示GM與此類經紀人的人脈）
+        const scouted = (typeof isAgentScouted === "function") && isAgentScouted(p);
+        const rel = (typeof agentRel === "function") ? agentRel(p.agent.type) : 0;
+        const relL = (typeof agentRelLabel === "function") ? agentRelLabel(rel) : { text: "", cls: "affmid" };
+        const cost = (typeof agentScoutCost === "function") ? agentScoutCost(p) : 0;
+        const relLine = `<p class="sub dark" style="margin:4px 0;">${icon('handshake')} 你與「${agInfo.name}」經紀人的交情：<span class="afftag ${relL.cls}">${relL.text}</span>${rel !== 0 ? `（${rel > 0 ? "談約門檻降低、較好談" : "談約門檻升高、較難談"}）` : ""}</p>`;
+        if (scouted) {
+          return `<div class="card agencycard">
+            <div class="eyebrow">${icon('scout')} 代理人事務所・情蒐報告</div>
+            <p class="sub dark">經紀人 <b>${p.agent.name}</b>（${agInfo.name}）談判風格：${agInfo.desc}。</p>
+            <p class="sub dark">情蒐揭露的期望底線：年薪約 <b>${formatMoney(neg.desiredSalary)}</b>、年限偏好 <b>${neg.desiredYears} 年</b>。年限每少 1 年，所需薪資約增加 ${Math.round((agInfo.premiumRate != null ? agInfo.premiumRate : 0.28) * 100)}%。</p>
+            ${relLine}
+          </div>`;
+        }
+        return `<div class="card agencycard">
+          <div class="eyebrow">${icon('scout')} 代理人事務所</div>
+          <p class="sub dark">尚未情蒐這位經紀人。委託事務所打聽（花費 <b>${formatMoney(cost)}</b>）可揭露其性格與期望底線，讓你一次開到位。</p>
+          ${relLine}
+          <div class="btnrow"><button id="btn-scout-agent" class="btn-secondary">委託情蒐（${formatMoney(cost)}）</button></div>
+        </div>`;
+      })()}`;
+  app.innerHTML = `
+    <div class="wrap">
+      <div class="topbar"><div class="eyebrow">${kindLabel}</div><div class="teamname">${p.name}</div></div>
+      <div class="scoreboard">
+        <div class="sb-row small"><div class="sb-label">類型</div><div class="sb-value small">${p.isPitcher ? "投手" : "野手"}・${p.age}歲</div></div>
+        <div class="sb-row small"><div class="sb-label">剩餘談約機會</div><div class="sb-value small">${neg.attemptsLeft} 次</div></div>
+        <div class="sb-row small"><div class="sb-label">AI建議開價</div><div class="sb-value small">${formatMoney(neg.marketSalary)}／年</div></div>
+        <div class="sb-row small"><div class="sb-label">球員心理期望</div><div class="sb-value small">約 ${formatMoney(neg.desiredSalary)}／年・${neg.desiredYears}年</div></div>
+        <div class="sb-row small"><div class="sb-label">經紀人</div><div class="sb-value small">${p.agent.name} <span class="agenttag" title="${agInfo.desc}">${agInfo.name}</span></div></div>
+      </div>
+      ${uiTabs("nego", [
+        { key: "deal", label: ""+icon('money')+" 談判桌", html: negoDealPanel },
+        { key: "report", label: ""+icon('clipboard')+" 球探報告", html: negoReportPanel },
+        { key: "intel", label: ""+icon('scout')+" 情報", html: negoIntelPanel }
+      ])}
     </div>`;
   const salaryInput = document.getElementById("in-neg-salary");
   salaryInput.oninput = () => {
@@ -2097,9 +2408,9 @@ function renderStaffNegotiation(neg) {
         <div class="sb-row small"><div class="sb-label">市場行情</div><div class="sb-value small">${formatMoney(neg.marketSalary)}／年</div></div>
         <div class="sb-row small"><div class="sb-label">留任期望</div><div class="sb-value small">約 ${formatMoney(neg.desiredSalary)}／年・${neg.desiredYears}年</div></div>
       </div>
-      <p class="draftnote muted">出價 ≥ 期望必定成交；年限每少 1 年，所需薪資 +25%（短約溢價）；期望固定不重擲。談判 5 次都談不成，此職位將空缺、加成歸零，須到自由市場補人。</p>
+      ${foldNote(`<p class="draftnote muted">出價 ≥ 期望必定成交；年限每少 1 年，所需薪資 +25%（短約溢價）；期望固定不重擲。談判 5 次都談不成，此職位將空缺、加成歸零，須到自由市場補人。</p>`)}
       <div class="card">
-        <div class="eyebrow">📊 現任 vs 市場可簽人選（數據比較）</div>
+        <div class="eyebrow">${icon('chart')} 現任 vs 市場可簽人選（數據比較）</div>
         <table class="stattable">
           <thead><tr><th>對象</th><th>能力</th><th>身價</th></tr></thead>
           <tbody>
@@ -2147,11 +2458,11 @@ function renderStaffRenewal() {
       <div class="topbar"><div class="eyebrow">${team.name}・休賽季幕僚異動</div><h1>教練／球探續約</h1></div>
       <div class="card issuecard">
         <div class="eyebrow">尚待處理：${queue.length} 位到期幕僚</div>
-        <p class="sub dark">合約到期的教練與球探需要你親自決定續約或放手。<b>不再自動暫代</b>：若不續約或談判破局，該職位會<b>空缺、加成歸零</b>，直到你在「教練團／球探」畫面到自由市場補人為止。</p>
+        ${foldNote(`<p class="sub dark">合約到期的教練與球探需要你親自決定續約或放手。<b>不再自動暫代</b>：若不續約或談判破局，該職位會<b>空缺、加成歸零</b>，直到你在「教練團／球探」畫面到自由市場補人為止。</p>`)}
       </div>
       ${staff ? `
       <div class="card">
-        <div class="eyebrow">🔔 ${title}・${staff.name}（合約到期）</div>
+        <div class="eyebrow">${icon('bell')} ${title}・${staff.name}（合約到期）</div>
         <p class="sub dark">現任能力：${staffAbilityLabel(item, staff)}</p>
         <p class="sub dark">目前年薪：${formatMoney(staff.salary || 0)}</p>
         <div class="btnrow"><button id="btn-open-renewal" class="btn-primary">開始續約談判</button></div>
@@ -2162,6 +2473,39 @@ function renderStaffRenewal() {
   const openBtn = document.getElementById("btn-open-renewal");
   if (openBtn) openBtn.onclick = () => openStaffRenewal();
   document.getElementById("btn-decline-renewal").onclick = () => declineStaffRenewal();
+}
+
+/* ---------- r008：分析主管續約畫面 ---------- */
+function renderDirectorRenewal() {
+  var team = S.teams[S.userTeamId];
+  var dir = team ? team.analysisDirector : null;
+  if (!dir) { proceedFromDirectorRenewal(); return; }
+  var newSalary = clamp(dir.salary + randInt(-200000, 300000), 500000, 3000000);
+  var newYears = randInt(1, 3);
+  app.innerHTML = `
+    <div class="wrap">
+      <div class="topbar"><div class="eyebrow">${team.name}・休賽季幕僚異動</div><h1>分析主管續約</h1></div>
+      <div class="card issuecard">
+        <div class="eyebrow">${icon('bell')} ${dir.name}・合約到期</div>
+        <p class="sub dark">你的分析主管 <b>${dir.name}</b>（等級：${dir.tier || "?"}）合約已到期。續約或讓他離開？</p>
+        <p class="sub dark">目前年薪：${formatMoney(dir.salary || 0)}</p>
+        <p class="sub dark">續約條件：年薪 ${formatMoney(newSalary)}・${newYears} 年</p>
+      </div>
+      <div class="btnrow"><button id="btn-renew-director" class="btn-primary">續約（${formatMoney(newSalary)} / ${newYears}年）</button></div>
+      <div class="btnrow"><button id="btn-decline-director" class="btn-outline warn">不續約（主管離隊）</button></div>
+    </div>`;
+  document.getElementById("btn-renew-director").onclick = function() {
+    dir.salary = newSalary;
+    dir.contractYears = newYears;
+    UI.flash = dir.name + " 已完成續約！年薪 " + formatMoney(newSalary) + "・" + newYears + " 年。";
+    proceedFromDirectorRenewal();
+  };
+  document.getElementById("btn-decline-director").onclick = function() {
+    var name = dir.name;
+    team.analysisDirector = null;
+    UI.flash = name + " 合約到期離隊。可至數據中心聘請新主管。";
+    proceedFromDirectorRenewal();
+  };
 }
 
 /* ---------- 財務赤字強制裁員（item7） ---------- */
@@ -2220,7 +2564,7 @@ function renderContractRenewals() {
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${team.name}</div><h1>合約續約談判</h1></div>
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      <p class="sub dark" style="margin-bottom:10px;">以下球員本季合約到期，請逐一決定「談約」（互動式議價，最多5次機會）或「不續約」（直接釋出進自由球員市場）。也可以一鍵依市場行情自動續約全部人。</p>
+      ${foldNote(`<p class="sub dark" style="margin-bottom:10px;">以下球員本季合約到期，請逐一決定「談約」（互動式議價，最多5次機會）或「不續約」（直接釋出進自由球員市場）。也可以一鍵依市場行情自動續約全部人。</p>`)}
       ${list.length === 0 ? `<div class="card"><p class="sub dark">所有待續約球員都已處理完畢！</p></div>` : `
       <table class="stattable">
         <thead><tr><th>姓名</th><th>年齡</th><th>類型</th><th>目前年薪</th><th></th></tr></thead>
@@ -2251,24 +2595,26 @@ function renderMarketing() {
       <div class="topbar"><div class="eyebrow">${team.name} ・ ${cal.dateLabel}</div><h1>行銷企劃</h1></div>
       ${renderRosterNav("marketing")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      <div class="scoreboard">
-        <div class="sb-row"><span class="sb-label">目前人氣</span><span class="sb-value small">${team.finance.popularity} / 100</span></div>
-        <div class="sb-row"><span class="sb-label">本季已投入</span><span class="sb-value small">${(team.finance.marketingCampaigns || []).length} 項活動・共 ${formatMoney((team.finance.marketingCampaigns || []).reduce((s, k) => s + ((MARKETING_CAMPAIGNS.find(c => c.key === k) || {}).cost || 0), 0))}</span></div>
-        <div class="sb-row small"><span class="sb-label">加成合計</span><span class="sb-value small">人氣成長 +${team.finance.marketingPopBoost || 0}・周邊收入 +${Math.round((team.finance.marketingMerchPct || 0) * 100)}%・進場率 +${Math.round((team.finance.marketingAttPct || 0) * 100)}%</span></div>
+      ${typeof v59VisualScene === "function" ? v59VisualScene("marketing_command_center_v58", "行銷企劃中心場景", "MARKETING VISUAL", "行銷企劃中心", "完整活動效果、費用與投入操作保留在下方。", "v59-marketing-scene") : ""}
+      <div class="scoreboard v59-compact-scoreboard">
+        <div class="sb-row small"><span class="sb-label">人氣</span><span class="sb-value small">${team.finance.popularity}/100</span><span class="sb-label">已投</span><span class="sb-value small">${(team.finance.marketingCampaigns || []).length}項・${formatMoney((team.finance.marketingCampaigns || []).reduce((s, k) => s + ((MARKETING_CAMPAIGNS.find(c => c.key === k) || {}).cost || 0), 0))}</span></div>
+        <div class="sb-row small"><span class="sb-label">加成</span><span class="sb-value small">人氣+${team.finance.marketingPopBoost || 0}・周邊+${Math.round((team.finance.marketingMerchPct || 0) * 100)}%・進場+${Math.round((team.finance.marketingAttPct || 0) * 100)}%</span></div>
       </div>
-      <p class="sub dark" style="margin-bottom:10px;">${canPlan ? "春訓期間可自由「複選」以下行銷活動（點一下投入、再點一下取消退費），效果會加總套用整季。三種加成的意義：人氣成長＝季末人氣提升更多；周邊收入＝販賣部/周邊營收%加成；進場率＝主場觀眾直接變多（門票收入）。" : "本季行銷活動已鎖定，要等下個休賽季開幕前（春訓期間）才能重新規劃。"}</p>
+      <p class="v59-compact-line">${canPlan ? "春訓期間可複選活動" : "本季已鎖定，休賽季再規劃"}</p>
+      ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">${canPlan ? "可自由複選以下行銷活動；點一下投入、再點一下取消退費，效果會加總套用整季。人氣成長＝季末人氣提升；周邊收入＝販賣部／周邊營收加成；進場率＝主場觀眾增加。" : "本季行銷活動已鎖定，要等下個休賽季開幕前（春訓期間）才能重新規劃。"}</p>`, "規則與效果說明") : ""}
       ${MARKETING_CAMPAIGNS.map(c => {
         const active = (team.finance.marketingCampaigns || []).includes(c.key);
         const effects = [c.popBoost ? `人氣成長 +${c.popBoost}${c.key === "endorse" ? "（有人氣王球員再+2）" : ""}` : "", c.merchPct ? `周邊收入 +${Math.round(c.merchPct * 100)}%` : "", c.attPct ? `進場率 +${Math.round(c.attPct * 100)}%` : ""].filter(Boolean).join("・");
+        const shortEffects = [c.popBoost ? `人氣+${c.popBoost}` : "", c.merchPct ? `周邊+${Math.round(c.merchPct * 100)}%` : "", c.attPct ? `進場+${Math.round(c.attPct * 100)}%` : ""].filter(Boolean).join("・");
         return `
         <div class="card dealcard ${active ? "dealchosen" : ""}">
-          <div class="eyebrow">${c.icon} ${c.label}${active ? "（已投入）" : ""}　<span style="font-weight:400;">花費 ${formatMoney(c.cost)}</span></div>
-          <p class="sub dark" style="margin:4px 0;">${c.desc}</p>
-          <p class="draftnote muted">效果：${effects}</p>
-          ${canPlan ? `<div class="btnrow"><button class="${active ? "btn-danger" : "btn-secondary"} marketing-btn" data-plan="${c.key}">${active ? "取消並退費" : `投入（${formatMoney(c.cost)}）`}</button></div>` : ""}
+          <div class="eyebrow">${iconVal(c.icon)} ${c.label}${active ? "（已投入）" : ""}　<span style="font-weight:400;">花費 ${formatMoney(c.cost)}</span></div>
+          <p class="v59-compact-card-copy">${shortEffects}</p>
+          ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">${c.desc}</p>`, "活動說明") : `<p class="sub dark" style="margin:4px 0;">${c.desc}</p>`}
+          ${canPlan ? `<div class="btnrow"><button class="${active ? "btn-danger" : "btn-secondary"} marketing-btn" data-plan="${c.key}">${active ? "取消" : "投入"}</button></div>` : ""}
         </div>`;
       }).join("")}
-      <p class="sub dark" style="margin-top:14px;">行銷效果不會直接影響戰績；想再進一步提升周邊/販賣部收入上限與球場容量，可以到「球場硬體建設」畫面投資升級。</p>
+      ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">行銷效果不會直接影響戰績；想再進一步提升周邊／販賣部收入上限與球場容量，可以到「球場硬體建設」畫面投資升級。</p>`, "與球場升級的關係") : foldNote(`<p class="sub dark" style="margin-top:14px;">行銷效果不會直接影響戰績；想再進一步提升周邊/販賣部收入上限與球場容量，可以到「球場硬體建設」畫面投資升級。</p>`)}
       <div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>
     </div>`;
   app.querySelectorAll(".marketing-btn").forEach(btn => {
@@ -2304,19 +2650,47 @@ function renderFinance() {
   const avgPayroll = leaguePayrolls.reduce((a, b) => a + b, 0) / leaguePayrolls.length;
   const taxThreshold = Math.round(avgPayroll * 1.3);
   const forecast = projectSeasonFinance(team);
-  app.innerHTML = `
-    <div class="wrap">
-      <div class="topbar"><div class="eyebrow">${team.name} ・ ${cal.dateLabel}</div><h1>財務</h1></div>
-      ${renderRosterNav("finance")}
-      ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
+  /* v40 A案分頁：財務拆四頁——📊總覽（預算/預估損益）／🎟️票價／📺合約（轉播·贊助）／📜上季報告。 */
+  const finOverviewPanel = `
       ${warns.length > 0 ? `<div class="card issuecard"><div class="eyebrow">財務提醒</div><ul class="issuelist">${warns.map(w => `<li>${w}</li>`).join("")}</ul></div>` : ""}
-
       <div class="scoreboard">
         <div class="sb-row"><span class="sb-label">目前預算</span><span class="sb-value" style="font-size:22px;">${formatMoney(team.finance.budget)}</span></div>
         <div class="sb-row"><span class="sb-label">球隊人氣</span><span class="sb-value small">${team.finance.popularity} / 100</span></div>
         <div class="sb-row"><span class="sb-label">目前薪資總額</span><span class="sb-value small">${formatMoney(team.finance.payroll)}</span></div>
         <div class="sb-row"><span class="sb-label">聯盟奢侈稅門檻</span><span class="sb-value small">${formatMoney(taxThreshold)}</span></div>
       </div>
+      ${(typeof payBreakdownHtml === "function") ? payBreakdownHtml(team, S.players) : ""}
+
+      <div class="divlabel">球迷三維度（他們不下令，但他們施壓）</div>
+      <div class="scoreboard">
+        <div class="sb-row"><span class="sb-label">${icon('chart-up')} 期待值${(S.fanExpect||50)>=75?"（王朝詛咒·門檻已升高）":""}</span><span class="sb-value small">${Math.round(S.fanExpect||50)} / 100</span></div>
+        <div class="sb-row"><span class="sb-label">${icon('hourglass')} 耐心（老闆耐心乘數）</span><span class="sb-value small">${Math.round(S.fanPatience||60)} / 100</span></div>
+        <div class="sb-row"><span class="sb-label">${icon('heart')} 認同（票房·贊助·FA意願·主場）</span><span class="sb-value small">${Math.round(S.fanIdentify||55)} / 100</span></div>
+      </div>
+      <div class="sb-row"><span class="sb-label">${icon('book-open')} 數據素養${(S.fanDataLiteracy||8)>=50?"（球迷已能讀懂進階數據）":(S.fanDataLiteracy||8)>=25?"（論壇開始討論 OPS+）":""}</span><span class="sb-value small">${Math.round(S.fanDataLiteracy||8)} / 100</span></div>
+      ${Array.isArray(S.fanTradeMemory)&&S.fanTradeMemory.length>0?`<div class="sb-row"><span class="sb-label">${icon('ghost')} 交易記憶（球迷還記得）</span><span class="sb-value small">${S.fanTradeMemory.slice(0,3).map(m=>m.name+"（"+m.yearsLeft+"年）").join("、")}</span></div>`:""}
+      </div>
+      <p class="draftnote muted">期待越高、未達標時球迷越不滿；耐心低會放大老闆對戰績失利的扣分；認同由「球迷認得的傳統數據明星與在地子弟兵」撐起——送走門面球員會重挫認同。數據素養隨年份演進：早年球迷不看 wRC+（Moneyball 被罵），晚年球迷會在論壇貼 Framing Runs（你的孤獨是你的護城河）。</p>
+
+      <div class="divlabel">球隊文化（你十年行為的沉澱）</div>
+      <div class="scoreboard">
+        <div class="sb-row"><span class="sb-label">${icon('leaf')} 文化標籤</span><span class="sb-value small">${(typeof v55CultureLabelHtml === "function") ? v55CultureLabelHtml((S.culture && S.culture.labels) || []) : "中庸"}</span></div>
+        ${(S.culture && S.culture.history && S.culture.history.length >= 3) ? `
+        <div class="sb-row"><span class="sb-label">${icon('users')} 自家子弟兵比例</span><span class="sb-value small">${Math.round((S.culture.scores.rookieDev || 0) * 100)}%</span></div>
+        <div class="sb-row"><span class="sb-label">${icon('coin')} FA支出占薪資帽</span><span class="sb-value small">${Math.round((S.culture.scores.faBigSpend || 0) * 100)}%</span></div>
+        <div class="sb-row"><span class="sb-label">${icon('shield-check')} 教練需求兌現率</span><span class="sb-value small">${Math.round((S.culture.scores.trust || 0) * 100)}%</span></div>
+        ` : '<div class="sb-row"><span class="sb-label muted">需累積至少3年行為紀錄才會顯示文化傾向</span></div>'}
+      </div>
+
+      <div class="divlabel">城市（${team.city || "—"}）</div>
+      <div class="scoreboard">
+        ${(S.cityState && S.cityState[S.userTeamId]) ? `
+        <div class="sb-row"><span class="sb-label">${icon('building')} 人口規模（票房基底）</span><span class="sb-value small">${Math.round(S.cityState[S.userTeamId].population)} / 100</span></div>
+        <div class="sb-row"><span class="sb-label">${icon('chart-line')} 經濟活力（贊助上限）</span><span class="sb-value small">${Math.round(S.cityState[S.userTeamId].economy)} / 100</span></div>
+        <div class="sb-row"><span class="sb-label">${icon('heart-handshake')} 球迷世代（耐心根基）</span><span class="sb-value small">${Math.round(S.cityState[S.userTeamId].fanGen)} / 100</span></div>
+        ` : '<div class="sb-row"><span class="sb-label muted">城市資料載入中</span></div>'}
+      </div>
+      <p class="draftnote muted">城市每年極緩演化：人口受球隊影響微幅成長、經濟隨機波動、球迷世代隨連年勝績深化。贏得夠久，城市會變成你的。</p>
 
       <div class="divlabel">本季預估損益（依目前人氣/戰績/已簽合約估算，非最終數字）</div>
       <table class="stattable">
@@ -2335,8 +2709,8 @@ function renderFinance() {
           <tr class="me"><td>預估淨損益</td><td style="${forecast.projectedNet < 0 ? "color:var(--redline);" : ""}">${forecast.projectedNet >= 0 ? "+" : ""}${formatMoney(forecast.projectedNet)}</td></tr>
         </tbody>
       </table>
-      ${forecast.projectedNet < 0 ? `<p class="sub dark" style="color:var(--redline);">目前估算本季可能虧損，建議提早調整票價策略或洽談轉播/贊助合約，不要等到季末才發現。</p>` : ""}
-
+      ${forecast.projectedNet < 0 ? `<p class="sub dark" style="color:var(--redline);">目前估算本季可能虧損，建議提早調整票價策略或洽談轉播/贊助合約，不要等到季末才發現。</p>` : ""}`;
+  const finTicketPanel = `
       <div class="divlabel">票價策略</div>
       <p class="sub dark" style="margin-bottom:10px;">${canChangeTicket ? "現在是春訓期間，可以調整票價。票價越高單張收入越高，但會降低進場意願（進場意願比例落在100%~50%之間）；票價只能在每季開打前（春訓期間）調整一次。" : "本季已經開打，票價要等下個休賽季開幕前（春訓期間）才能再調整。"}</p>
       <div class="scoreboard">
@@ -2355,8 +2729,8 @@ function renderFinance() {
         <span>自訂票價（元，上限 ${team.finance.ticketPriceCap}）</span>
         <input id="in-custom-ticket" type="number" min="${TICKET_PRICE_FLOOR}" max="${team.finance.ticketPriceCap}" placeholder="輸入金額，AI會估算進場成數" ${canChangeTicket ? "" : "disabled"} />
       </label>
-      ${canChangeTicket ? `<div class="btnrow"><button id="btn-custom-ticket" class="btn-secondary">套用自訂票價</button></div>` : ""}
-
+      ${canChangeTicket ? `<div class="btnrow"><button id="btn-custom-ticket" class="btn-secondary">套用自訂票價</button></div>` : ""}`;
+  const finDealsPanel = `
       ${["broadcast", "sponsor"].map(kind => {
         // v29：轉播/贊助方案卡——保證金＋浮動條款＋三情境試算全部攤開，看懂再簽
         const offers = kind === "broadcast" ? team.finance.broadcastOffers : team.finance.sponsorOffers;
@@ -2377,8 +2751,8 @@ function renderFinance() {
           </div>
           ${canChangeTicket ? `<div class="btnrow"><button class="btn-secondary deal-btn" data-kind="${kind}" data-id="${o.id}">${curKey === o.key ? "已簽此方案" : `簽下${o.label}`}</button></div>` : ""}
         </div>`).join("")}`;
-      }).join("")}
-
+      }).join("")}`;
+  const finReportPanel = `
       ${report ? `
       <div class="divlabel">上季收支報告（第${report.year}年）</div>
       <table class="stattable">
@@ -2401,8 +2775,18 @@ function renderFinance() {
       <p class="draftnote muted">結算後預算：${formatMoney(report.budgetAfter)}；人氣變化後：${report.popularityAfter}；當季票價：${report.ticketPrice}元${report.capRaised ? `（因上座踴躍，票價上限已調高至${report.ticketPriceCapAfter}元！）` : ""}${report.homeRecord ? `；上季主場 ${report.homeRecord.w}勝${report.homeRecord.l}敗／客場 ${report.awayRecord.w}勝${report.awayRecord.l}敗` : ""}</p>
       ` : `<p class="sub dark">尚無歷史收支報告，完成第一個球季後會在這裡顯示。</p>`}
 
-      <p class="sub dark" style="margin-top:14px;">收入來源說明：門票收入採「逐場實結」——每個主場依當時進場率×票價入帳；客隊贏球可抽該場門票8%（輸球2%），主隊反向支付。周邊/販賣部收入＝主場總進場人次×人均消費，人均消費受球場格位設施（消費/體驗類）與行銷加成影響，舒適類設施則直接提升進場率。薪資支出依球員目前能力與年齡估算市場身價，教練/球探維持既有合約金額；若隊內薪資總額超過聯盟平均的1.3倍，球季結束將被課徵超出部分50%的奢侈稅。</p>
-
+      ${foldNote(`<p class="sub dark" style="margin-top:14px;">收入來源說明：門票收入採「逐場實結」——每個主場依當時進場率×票價入帳；客隊贏球可抽該場門票8%（輸球2%），主隊反向支付。周邊/販賣部收入＝主場總進場人次×人均消費，人均消費受球場格位設施（消費/體驗類）與行銷加成影響，舒適類設施則直接提升進場率。薪資支出依球員目前能力與年齡估算市場身價，教練/球探維持既有合約金額；若隊內薪資總額超過聯盟平均的1.3倍，球季結束將被課徵超出部分50%的奢侈稅。</p>`)}`;
+  app.innerHTML = `
+    <div class="wrap">
+      <div class="topbar"><div class="eyebrow">${team.name} ・ ${cal.dateLabel}</div><h1>財務</h1></div>
+      ${renderRosterNav("finance")}
+      ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
+      ${uiTabs("finance", [
+        { key: "overview", label: ""+icon('chart')+" 總覽", badge: warns.length || 0, html: finOverviewPanel },
+        { key: "ticket", label: ""+icon('ticket')+" 票價", html: finTicketPanel },
+        { key: "deals", label: ""+icon('screen')+" 合約", html: finDealsPanel },
+        { key: "report", label: ""+icon('scroll')+" 上季報告", html: finReportPanel }
+      ])}
       <div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>
     </div>`;
   app.querySelectorAll(".ticket-tier-btn").forEach(btn => {
@@ -2616,7 +3000,8 @@ function applySpringEvent(team, nation, type) {
   }
   if (type === "eliteFriendship") {
     S.nationFriendship = { nation: nation.name, untilYear: S.seasonYear + 1 };
-    return { type, text: `與${nation.name}棒球名門結下深厚友誼！明年國際市場將多1個獨家名額，且必有一位${nation.name}菁英人選。` };
+    const lv = (typeof addNationBond === "function") ? addNationBond(nation.name, 3) : 0; // v38④：名門友誼同時灌注長期友好度+3
+    return { type, text: `與${nation.name}棒球名門結下深厚友誼！明年國際市場將多1個獨家名額，且必有一位${nation.name}菁英人選；與${nation.name}友好度+3（${lv}／${NATION_BOND_MAX}・${nationBondLabel(lv)}）。` };
   }
   if (type === "youngEyes") {
     const young = randomCampPlayers(team, 2, p => p.age <= 23);

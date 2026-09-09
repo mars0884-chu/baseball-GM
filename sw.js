@@ -1,9 +1,10 @@
-/* 職棒GM v37 Service Worker：離線快取 App Shell（第11階段 PWA）。
-   ASSETS 同時涵蓋模組版(6支JS+css)與單檔版(index.html)；缺檔以 allSettled 略過不整批失敗。 */
-const CACHE = "baseballgm-v37";
+/* 決勝GM v59 Service Worker：離線快取 App Shell（第11階段 PWA）。
+   ASSETS 同時涵蓋模組版(7支JS+css)與單檔版(index.html)；缺檔以 allSettled 略過不整批失敗。 */
+const CACHE = "baseballgm-v59";
 const ASSETS = [
   "./", "./index.html", "./style.css", "./manifest.webmanifest",
   "./icon-192.png", "./icon-512.png", "./icon-180.png",
+  "./00-theme.js",
   "./01-data-engine.js", "./02-finance.js", "./03-simulation.js",
   "./04-state-core.js", "./05-ui-dashboard.js", "./06-ui-roster.js"
 ];

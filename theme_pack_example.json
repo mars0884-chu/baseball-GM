@@ -1,0 +1,71 @@
+{
+  "version": "v50",
+  "icons": {
+    "trophy": {
+      "svg": "<svg viewBox='0 0 24 24'><path d='M6 3h12v3a6 6 0 0 1-12 0V3z' fill='#D9A441'/></svg>"
+    },
+    "money": "assets/icon/money.svg"
+  },
+  "slots": {
+    "bg.app": "url('assets/bg/field.jpg')",
+    "bg.card": "url('assets/tex/paper.png')"
+  },
+  "teams": {
+    "T0": {
+      "logo": "assets/teams/T0/logo_128.png",
+      "capMark": "assets/teams/T0/cap_256.png",
+      "primaryColor": "#1B3A6B",
+      "secondaryColor": "#C0C0C0",
+      "homeUniform": "assets/teams/T0/uniform_home_256.png",
+      "awayUniform": "assets/teams/T0/uniform_away_256.png"
+    }
+  },
+  "portraits": {
+    "layers": {
+      "skin": [
+        "assets/portrait/skin_01.png"
+      ],
+      "face": [
+        "assets/portrait/face_01.png"
+      ],
+      "eyes": [
+        "assets/portrait/eyes_01.png"
+      ],
+      "nose": [
+        "assets/portrait/nose_01.png"
+      ],
+      "hair": [
+        "assets/portrait/hair_01.png"
+      ],
+      "beard": [
+        "assets/portrait/beard_01.png"
+      ],
+      "cap": [
+        "assets/portrait/cap_default.png"
+      ],
+      "uniform": [
+        "assets/portrait/uniform_default.png"
+      ]
+    },
+    "rules": {
+      "beardChance": 30
+    },
+    "rendererConfig": {
+      "layerOrder": [
+        "skin",
+        "face",
+        "eyes",
+        "nose",
+        "uniform",
+        "hair",
+        "beard",
+        "cap"
+      ],
+      "masterSize": 256,
+      "note": "v50 定案：capMark = 完整帽子圖層；uniform 在 hair/beard/cap 之前；正式球衣僅 homeUniform/awayUniform（cityUniform 已停用）"
+    }
+  },
+  "assets": {
+    "team.logo": "assets/logo/default.svg"
+  }
+}
