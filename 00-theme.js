@@ -85,6 +85,18 @@ function v59VisualScene(key, alt, kicker, title, detail, extraClass) {
     '</section>';
 }
 
+/* v60-001：內容場景改為畫面先行；主要辨識與用途直接可見，
+   詳細規則仍由外層卡片保留，不把場景本身做成只有折疊文字的縮略版。 */
+function v60VisualScene(key, alt, kicker, title, detail, extraClass) {
+  var src = typeof v58ArtDataUrl === "function" ? v58ArtDataUrl(key) : "";
+  if (!src) return typeof v59VisualScene === "function" ? v59VisualScene(key, alt, kicker, title, detail, extraClass) : "";
+  var cls = extraClass ? " " + extraClass : "";
+  return '<section class="v60-visual-scene' + cls + '" data-v60-art-key="' + key + '" data-v60-art-source="approved-scene-png" aria-label="' + alt + '">' +
+    '<div class="v60-visual-scene-art"><img src="' + src + '" alt="' + alt + '"></div>' +
+    '<div class="v60-visual-scene-copy"><span class="v60-visual-kicker">' + kicker + '</span><strong>' + title + '</strong><span>' + detail + '</span></div>' +
+    '</section>';
+}
+
 /* ---------- v50 肖像母版規格（回應 Codex 美術檢查點 §2） ----------
    capMark 定義：完整帽子透明圖層 256×256（非帽徽），不拆分 capBase＋capInsignia。
    z-order（v50 修正）：skin → face → eyes → nose → uniform → hair → beard → cap

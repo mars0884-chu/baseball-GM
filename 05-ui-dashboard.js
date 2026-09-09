@@ -77,22 +77,21 @@ function v56DecorateRenderedContent() {
 function v57DashboardHero(team) {
   if (!team || typeof v57FacilityVisualProfile !== "function") return "";
   const currentLevel = Math.max(1, Number(team.facility && team.facility.level) || 1);
-  const anchors = [1, 3, 5, 7];
   const labels = { 1: "在地開放球場", 3: "城市球場", 5: "都會旗艦球場", 7: "全封閉巨蛋" };
-  const cards = anchors.map(function (level) {
-    const profile = v57FacilityVisualProfile(level);
-    const src = typeof v57ArtDataUrl === "function" ? v57ArtDataUrl(profile.artKey) : "";
+  const profile = v57FacilityVisualProfile(currentLevel);
+  const src = typeof v57ArtDataUrl === "function" ? v57ArtDataUrl(profile.artKey) : "";
+  const anchors = [1, 3, 5, 7];
+  const stageRail = anchors.map(function (level) {
     const reached = currentLevel >= level;
-    const active = currentLevel === level;
-    return `<article class="v57-dashboard-stage ${active ? "active" : ""} ${reached ? "reached" : "locked"}" data-v57-dashboard-stage="${level}">
-      <div class="v57-dashboard-stage-label"><b>Lv${level}</b><span>${labels[level]}</span></div>
-      ${src ? `<img src="${src}" alt="Lv${level} ${labels[level]}">` : `<div class="v57-dashboard-art-missing">素材未載入</div>`}
-      <div class="v57-dashboard-stage-state">${reached ? "✓ 已完成" : "🔒 尚未解鎖"}</div>
-    </article>`;
+    return `<span class="v60-stadium-stage ${reached ? "reached" : "locked"}"><b>Lv${level}</b>${labels[level]}</span>`;
   }).join("");
   return `<section class="v57-dashboard-hero" data-v57-dashboard-hero="true" aria-label="球場升級計畫">
-    <div class="v57-dashboard-hero-heading"><span class="v57-facility-kicker">STADIUM VISUAL・DASHBOARD</span><h2>球場升級計畫</h2><span>目前球場 Lv.${currentLevel}；四個完整獨立球場視覺級距直接顯示在主畫面。</span></div>
-    <div class="v57-dashboard-stage-grid">${cards}</div>
+    <div class="v57-dashboard-hero-heading"><span class="v57-facility-kicker">STADIUM VISUAL・DASHBOARD</span><h2>主場球場</h2><span>目前 Lv.${currentLevel}・${labels[currentLevel] || "球場升級中"}</span></div>
+    <div class="v60-dashboard-featured">
+      <div class="v60-dashboard-featured-art">${src ? `<img src="${src}" alt="Lv${currentLevel} ${labels[currentLevel] || "主場球場"}" data-v60-art-source="approved-stadium-png">` : `<div class="v57-dashboard-art-missing">素材未載入</div>`}</div>
+      <div class="v60-dashboard-featured-copy"><span class="v60-dashboard-kicker">HOME STADIUM</span><strong>${labels[currentLevel] || "主場球場"}</strong><span>球場等級、容量與格位狀態已由「球場硬體建設」保留完整操作。</span><button id="btn-dashboard-facilities" class="btn-secondary" type="button">查看球場硬體建設</button></div>
+    </div>
+    <div class="v60-stadium-rail" aria-label="球場升級階段">${stageRail}</div>
   </section>`;
 }
 /* ====================================================================
@@ -287,9 +286,9 @@ function renderTeamSelect() {
               const tierLabel = (typeof v55CityTierLabel === "function") ? v55CityTierLabel(t.id) : "";
               const personaLabel = (typeof personaOf === "function" && personaOf(t)) ? personaOf(t).name : "";
               const flavor = (typeof v55CityFlavorOf === "function") ? v55CityFlavorOf(t.id) : "";
-              return `<button class="v50-teamcard v55-teamcard-ext" data-id="${t.id}" style="--tc-primary:${pc};--tc-secondary:${sc}">
+              return `<button class="v50-teamcard v55-teamcard-ext v60-approved-teamcard" data-id="${t.id}" data-identity-source="approved-theme-pack" style="--tc-primary:${pc};--tc-secondary:${sc}">
                 <span class="v50-team-dot" style="background:${pc};box-shadow:0 0 0 3px ${sc}"></span>
-                ${logo}<span class="v50-team-name">${t.name}</span>
+                <span class="v60-team-logo-frame">${logo}</span><span class="v50-team-name">${t.name}</span>
                 <span class="v55-team-tags"><span class="v55-city-tier">${tierLabel}</span><span class="v55-persona-tag">${personaLabel}</span></span>
                 ${flavor ? `<span class="v55-city-flavor">${flavor}</span>` : ""}
               </button>`;
@@ -456,6 +455,13 @@ function renderDashboard() {
         <button id="btn-finance" class="btn-outline">財務</button>
       </div>
       <div class="btnrow">
+        <button id="btn-marketing" class="btn-outline">行銷企劃</button>
+        <button id="btn-facilities" class="btn-outline">球場硬體建設</button>
+      </div>
+      <div class="btnrow">
+        <button id="btn-global-activities" class="btn-outline">國際交流／海外行銷</button>
+      </div>
+      <div class="btnrow">
         <button id="btn-datacenter" class="btn-outline">${icon('chart')} 數據中心</button>
       </div>
       <div class="btnrow">
@@ -601,6 +607,8 @@ function renderDashboard() {
   if (cdEx && !cdEx.disabled) cdEx.onclick = () => { const el = document.getElementById("cd-exchange-nation"); runCdExchange(el ? el.value : null); };
   const cdMk = document.getElementById("btn-cd-marketing");
   if (cdMk && !cdMk.disabled) cdMk.onclick = () => { const el = document.getElementById("cd-marketing-nation"); runCdMarketing(el ? el.value : null); };
+  const dashboardFacilities = document.getElementById("btn-dashboard-facilities");
+  if (dashboardFacilities) dashboardFacilities.onclick = () => { UI.screen = "facilities"; render(); };
   document.getElementById("btn-standings").onclick = () => { UI.screen = "standings"; render(); };
   document.getElementById("btn-roster").onclick = () => { UI.screen = "roster"; render(); };
   document.getElementById("btn-coaches").onclick = () => { UI.screen = "coaches"; render(); };
@@ -608,6 +616,9 @@ function renderDashboard() {
   document.getElementById("btn-rotation").onclick = () => { UI.screen = "rotation"; render(); };
   document.getElementById("btn-trade").onclick = () => { UI.screen = "tradeTeamSelect"; render(); };
   document.getElementById("btn-finance").onclick = () => { UI.screen = "finance"; render(); };
+  document.getElementById("btn-marketing").onclick = () => { UI.screen = "marketing"; render(); };
+  document.getElementById("btn-facilities").onclick = () => { UI.screen = "facilities"; render(); };
+  document.getElementById("btn-global-activities").onclick = () => { UI.screen = "marketing"; render(); };
   { const dcb = document.getElementById("btn-datacenter"); if (dcb) dcb.onclick = () => { UI.screen = "dataCenter"; render(); }; }
   document.getElementById("btn-agency").onclick = () => { UI.agencyReturn = null; UI.screen = "agency"; render(); };
   const savesBtn = document.getElementById("btn-saves");
@@ -1267,7 +1278,7 @@ function renderNewsCard() {
   if (feed.length === 0) {
     return `<div class="card newscard">
       <div class="eyebrow">聯盟快訊</div>
-      ${typeof v59VisualScene === "function" ? v59VisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v59-news-scene") : ""}
+      ${typeof v60VisualScene === "function" ? v60VisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene") : ""}
       <p class="v59-compact-line">目前沒有新聞</p>
       ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">目前尚無新聞快訊；賽事、傷兵、國際活動與聯盟事件發生後會集中顯示在這裡。</p>`, "新聞來源") : ""}
     </div>`;
@@ -1279,7 +1290,7 @@ function renderNewsCard() {
   const tickerDur = clamp(feed.slice(0, 8).reduce((s, n) => s + n.text.length, 0) * 0.55, 18, 90);
   return `<div class="card newscard">
     <div class="eyebrow">聯盟快訊</div>
-    ${typeof v59VisualScene === "function" ? v59VisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v59-news-scene") : ""}
+    ${typeof v60VisualScene === "function" ? v60VisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene") : ""}
     ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<div class="tickerwrap"><div class="tickertrack" style="animation-duration:${tickerDur}s;">${tickerItems}<span class="tickersep">◆</span>${tickerItems}<span class="tickersep">◆</span></div></div>`, "開啟新聞跑馬燈") : `<div class="tickerwrap"><div class="tickertrack" style="animation-duration:${tickerDur}s;">${tickerItems}<span class="tickersep">◆</span>${tickerItems}<span class="tickersep">◆</span></div></div>`}
     ${show.map(n => `<p class="newsitem"><span class="newstime">${n.dateLabel}</span>${typeIcon[n.type] || ""+icon('news')+""} ${n.text}</p>`).join("")}
     ${feed.length > 5 ? `<button id="btn-news-toggle" class="btn-outline" style="margin-top:8px;">${UI.newsExpanded ? "收合" : `更多快訊（共${feed.length}則）`}</button>` : ""}
@@ -1777,9 +1788,10 @@ function renderIntlTournament() {
    ==================================================================== */
 /* v37① C/D 國家平行活動卡（主控台・開幕前顯示）：國際交流賽／海外行銷企劃，各一季一次。 */
 function renderCdActivitiesCard() {
-  if (!S.gameStarted || S.currentDay !== 0) return "";
+  if (!S.gameStarted) return "";
   if (typeof ensureCdActivities !== "function") return "";
   const st = ensureCdActivities();
+  const canRun = S.currentDay === 0;
   const team = S.teams[S.userTeamId];
   // v38④：選單直接標出該國友好度，讓「長線耕耘哪一國」變成可讀的決策
   const natOpts = cdActNations().map(n => {
@@ -1796,24 +1808,24 @@ function renderCdActivitiesCard() {
   }).join("") : `<p class="sub muted" style="margin:2px 0;">尚未與任何國家建立交情。友好度 3／5／7／10 各有解鎖。</p>`;
   return `<div class="card cdact-card">
     <div class="eyebrow">${icon('globe')} 國際交流／海外行銷</div>
-    ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">開幕前開放；交流與行銷各一季一次。海外春訓僅開放 B 級以上，這裡補上 C／D 級國家與母國的經營用途。</p>`, "活動規則") : ""}
+    ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">${canRun ? "開幕前開放；交流與行銷各一季一次。" : "畫面全年保留；實際執行僅限開幕前。"} 海外春訓僅開放 B 級以上，這裡補上 C／D 級國家與母國的經營用途。</p>`, "活動規則") : ""}
     <div class="v58-dual-scene-row">
-      ${typeof v59VisualScene === "function" ? v59VisualScene("international_exchange_v58", "國際交流場景", "EXCHANGE", "國際交流", "出訪、友誼賽與跨國交流的操作保留在下方。", "v59-compact-scene") : ""}
-      ${typeof v59VisualScene === "function" ? v59VisualScene("overseas_marketing_v58", "海外行銷場景", "OVERSEAS", "海外行銷", "海外市場檔期與執行按鈕保留在下方。", "v59-compact-scene") : ""}
+      ${typeof v60VisualScene === "function" ? v60VisualScene("international_exchange_v58", "國際交流場景", "EXCHANGE", "國際交流", "出訪、友誼賽與跨國交流的操作保留在下方。", "v60-compact-scene") : ""}
+      ${typeof v60VisualScene === "function" ? v60VisualScene("overseas_marketing_v58", "海外行銷場景", "OVERSEAS", "海外行銷", "海外市場檔期與執行按鈕保留在下方。", "v60-compact-scene") : ""}
     </div>
-    <p class="v59-compact-line">預算：<b>${formatMoney(team.finance.budget)}</b></p>
+    <p class="v59-compact-line">${canRun ? "本季可執行" : "本季已鎖定"}・預算：<b>${formatMoney(team.finance.budget)}</b></p>
     <div style="margin:6px 0;">${bondNames.length ? bondRows : `<p class="v59-compact-line">交情：尚未建立</p>`}</div>
     <div style="margin:8px 0;">
       <span class="benchrole-tag">交流賽</span> 人氣↑・士氣↑・潛力股
       ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">出訪打友誼賽，可提升人氣與全隊士氣，小機率發掘當地潛力股。</p>`, "交流賽說明") : ""}
-      <select id="cd-exchange-nation" class="sortselect">${natOpts}</select>
-      <div class="btnrow"><button id="btn-cd-exchange" class="btn-secondary" ${st.exchangeDone ? "disabled" : ""}>${st.exchangeDone ? "本季完成" : "執行交流"}</button></div>
+      <select id="cd-exchange-nation" class="sortselect" ${canRun ? "" : "disabled"}>${natOpts}</select>
+      <div class="btnrow"><button id="btn-cd-exchange" class="btn-secondary" ${st.exchangeDone || !canRun ? "disabled" : ""}>${st.exchangeDone ? "本季完成" : "執行交流"}</button></div>
     </div>
     <div style="margin:8px 0;">
       <span class="benchrole-tag">行銷企劃</span> 海外市場：回收・人氣
       ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">海外市場檔期偏財務回收與人氣，約七成成功。</p>`, "行銷說明") : ""}
-      <select id="cd-marketing-nation" class="sortselect">${natOpts}</select>
-      <div class="btnrow"><button id="btn-cd-marketing" class="btn-secondary" ${st.marketingDone ? "disabled" : ""}>${st.marketingDone ? "本季完成" : "執行行銷"}</button></div>
+      <select id="cd-marketing-nation" class="sortselect" ${canRun ? "" : "disabled"}>${natOpts}</select>
+      <div class="btnrow"><button id="btn-cd-marketing" class="btn-secondary" ${st.marketingDone || !canRun ? "disabled" : ""}>${st.marketingDone ? "本季完成" : "執行行銷"}</button></div>
     </div>
   </div>`;
 }

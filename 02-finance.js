@@ -2360,8 +2360,9 @@ function renderNegotiation() {
         </div>`;
       })()}`;
   app.innerHTML = `
-    <div class="wrap">
+    <div class="wrap v60-negotiation-screen draft-negotiation-screen">
       <div class="topbar"><div class="eyebrow">${kindLabel}</div><div class="teamname">${p.name}</div></div>
+      <div class="v60-negotiation-banner" aria-label="談薪流程"><div class="v60-negotiation-banner-icon">${icon('money')}</div><div><span>NEGOTIATION DESK</span><strong>把薪資與年限談成合約</strong><div class="v60-negotiation-steps"><b>1 報價</b><b>2 評估</b><b>3 簽約</b></div></div></div>
       <div class="scoreboard">
         <div class="sb-row small"><div class="sb-label">類型</div><div class="sb-value small">${p.isPitcher ? "投手" : "野手"}・${p.age}歲</div></div>
         <div class="sb-row small"><div class="sb-label">剩餘談約機會</div><div class="sb-value small">${neg.attemptsLeft} 次</div></div>
@@ -2399,8 +2400,9 @@ function renderStaffNegotiation(neg) {
     ? `<tr><td>${m.name}</td><td>調教力 ${m.teaching}${m.specialAbility ? `・${m.specialAbility.name}` : ""}</td><td>${formatMoney(m.salary)}／${m.contractYears}年</td></tr>`
     : `<tr><td>${m.name}</td><td>精準度 ${m.accuracy}・${m.specialty}</td><td>${formatMoney(m.salary)}／${m.contractYears}年</td></tr>`).join("");
   app.innerHTML = `
-    <div class="wrap">
+    <div class="wrap v60-negotiation-screen staff-negotiation-screen">
       <div class="topbar"><div class="eyebrow">${kindLabel}</div><div class="teamname">${neg.label}</div></div>
+      <div class="v60-negotiation-banner" aria-label="續約流程"><div class="v60-negotiation-banner-icon">${icon('money')}</div><div><span>RENEWAL DESK</span><strong>比較能力，再決定留任條件</strong><div class="v60-negotiation-steps"><b>1 比較</b><b>2 出價</b><b>3 留任</b></div></div></div>
       <div class="scoreboard">
         <div class="sb-row small"><div class="sb-label">現任能力</div><div class="sb-value small">${abilityLine}</div></div>
         <div class="sb-row small"><div class="sb-label">目前年薪</div><div class="sb-value small">${formatMoney(staff.salary || 0)}</div></div>
@@ -2595,7 +2597,8 @@ function renderMarketing() {
       <div class="topbar"><div class="eyebrow">${team.name} ・ ${cal.dateLabel}</div><h1>行銷企劃</h1></div>
       ${renderRosterNav("marketing")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      ${typeof v59VisualScene === "function" ? v59VisualScene("marketing_command_center_v58", "行銷企劃中心場景", "MARKETING VISUAL", "行銷企劃中心", "完整活動效果、費用與投入操作保留在下方。", "v59-marketing-scene") : ""}
+      ${typeof v60VisualScene === "function" ? v60VisualScene("marketing_command_center_v58", "行銷企劃中心場景", "MARKETING VISUAL", "行銷企劃中心", "完整活動效果、費用與投入操作保留在下方。", "v60-marketing-scene") : ""}
+      ${typeof renderCdActivitiesCard === "function" ? renderCdActivitiesCard() : ""}
       <div class="scoreboard v59-compact-scoreboard">
         <div class="sb-row small"><span class="sb-label">人氣</span><span class="sb-value small">${team.finance.popularity}/100</span><span class="sb-label">已投</span><span class="sb-value small">${(team.finance.marketingCampaigns || []).length}項・${formatMoney((team.finance.marketingCampaigns || []).reduce((s, k) => s + ((MARKETING_CAMPAIGNS.find(c => c.key === k) || {}).cost || 0), 0))}</span></div>
         <div class="sb-row small"><span class="sb-label">加成</span><span class="sb-value small">人氣+${team.finance.marketingPopBoost || 0}・周邊+${Math.round((team.finance.marketingMerchPct || 0) * 100)}%・進場+${Math.round((team.finance.marketingAttPct || 0) * 100)}%</span></div>

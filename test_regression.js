@@ -79,6 +79,24 @@ const v59SingleFileSource = fs.readFileSync("index.html", "utf8");
 assert((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1, "v59 single-file module embedding has one BULLPEN_TABS declaration");
 assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
 
+/* ---------- v60-001 視覺恢復候選 ---------- */
+console.log("\n--- v60-001 視覺恢復候選 ---");
+const v60ThemeSource = fs.readFileSync("00-theme.js", "utf8");
+const v60DashboardSource = fs.readFileSync("05-ui-dashboard.js", "utf8");
+const v60FinanceSource = fs.readFileSync("02-finance.js", "utf8");
+const v60RosterSource = fs.readFileSync("06-ui-roster.js", "utf8");
+const v60StyleSource = fs.readFileSync("style.css", "utf8");
+const v60SwSource = fs.readFileSync("sw.js", "utf8");
+assert(v60ThemeSource.indexOf("function v60VisualScene") >= 0 && v60ThemeSource.slice(v60ThemeSource.indexOf("function v60VisualScene"), v60ThemeSource.indexOf("function v60VisualScene") + 900).indexOf("<details") < 0, "v60 主要視覺場景不以收合文字冒充畫面");
+assert(v60DashboardSource.indexOf("v60-dashboard-featured") >= 0 && v60DashboardSource.indexOf('data-v60-art-source="approved-stadium-png"') >= 0, "v60 主畫面使用單一完整核准球場視覺");
+assert(v60DashboardSource.indexOf("v60-approved-teamcard") >= 0 && v60DashboardSource.indexOf('data-identity-source="approved-theme-pack"') >= 0, "v60 選隊頁使用核准 theme pack 圖案來源標記");
+assert(v60FinanceSource.indexOf("draft-negotiation-screen") >= 0 && v60FinanceSource.indexOf("v60-negotiation-banner") >= 0, "v60 談薪畫面具備可辨識視覺流程區");
+assert(v60StyleSource.indexOf(".field input") >= 0 && v60StyleSource.indexOf("background:#FFFFFF !important") >= 0 && v60StyleSource.indexOf(".draft-negotiation-screen input[type=\"number\"]") >= 0, "v60 談薪輸入框亮底高對比修正");
+assert(v60DashboardSource.indexOf("const canRun = S.currentDay === 0") >= 0 && v60DashboardSource.indexOf("!S.gameStarted || S.currentDay !== 0") < 0, "v60 國際交流／海外行銷畫面不再於球季中整張消失");
+assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && v60FinanceSource.indexOf('v60VisualScene("marketing_command_center_v58"') >= 0, "v60 行銷企劃頁實際整合海外活動畫面");
+assert(v60DashboardSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 && v60DashboardSource.indexOf("icon('news')") >= 0, "v60 新聞同時保留 PNG 場景與 SVG／語意 icon fallback");
+assert(v60SwSource.indexOf('baseballgm-v60') >= 0, "v60 Service Worker cache key 已更新");
+
 /* ---------- 1. 40國系統 ---------- */
 assert(g("NATIONS.length") === 40, "40國");
 assert(g("NATIONS.filter(n=>n.real).length") === 20, "現實20國");

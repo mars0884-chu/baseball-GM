@@ -991,3 +991,67 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v59-scene-info>p{margin:5px 0 0;color:#36577F;font-size:14px;line-height:1.55;}
 @media(max-width:820px){.v59-visual-scene{grid-template-columns:1fr;}.v59-visual-scene-copy{padding:3px 4px 5px;}.v59-visual-scene-art{min-height:220px;}}
 @media(max-width:520px){.v59-visual-scene{gap:8px;margin-bottom:10px;padding:8px;border-radius:14px;}.v59-visual-scene-art{min-height:190px;border-radius:11px;}.v59-visual-scene-copy strong{font-size:19px;}.v59-visual-kicker{font-size:10px;}details.fold[data-v59-text-density="1"]>summary,details.fold[data-v59-text-density="1"]>p,.v59-compact-line,.v59-compact-card-copy{font-size:14px;}.v59-dual-scene-row .v59-visual-scene{grid-template-columns:1fr;}.v59-dual-scene-row .v59-visual-scene-art{min-height:118px;}.v59-dual-scene-row .v59-visual-kicker{font-size:9px;letter-spacing:.04em;}.v59-dual-scene-row .v59-visual-scene-copy strong{font-size:14px;}}
+
+/* ====================================================================
+   v60-001 視覺恢復與可讀性修正
+   - 不讓 --chalk（文字色）再被誤用成輸入框底色。
+   - 主控台採單一完整球場視覺，避免四張小縮圖擠成縮略卡。
+   - 團隊圖案明確標示來自核准 theme pack，不另造 SVG。
+   ==================================================================== */
+.field input,
+.draft-negotiation-screen input[type="number"],
+.staff-negotiation-screen input[type="number"]{
+  background:#FFFFFF !important;
+  color:#17233B !important;
+  border:2px solid #B7D3F5 !important;
+  color-scheme:light;
+  caret-color:#143CFF;
+}
+.field input::placeholder{color:#6D86A6;opacity:1;}
+.field input:focus,
+.draft-negotiation-screen input[type="number"]:focus,
+.staff-negotiation-screen input[type="number"]:focus{outline:3px solid #FFE552;outline-offset:2px;border-color:#143CFF !important;}
+.draft-negotiation-screen input[type="number"]::-webkit-inner-spin-button,
+.draft-negotiation-screen input[type="number"]::-webkit-outer-spin-button,
+.staff-negotiation-screen input[type="number"]::-webkit-inner-spin-button,
+.staff-negotiation-screen input[type="number"]::-webkit-outer-spin-button{opacity:1;filter:none;}
+.v60-negotiation-banner{display:flex;align-items:center;gap:12px;margin:0 0 14px;padding:12px 14px;border:2px solid #26D9E8;border-radius:16px;background:linear-gradient(135deg,#FFFFFF,#EAF5FF);box-shadow:0 8px 18px rgba(20,60,255,.12);}
+.v60-negotiation-banner-icon{display:grid;place-items:center;flex:0 0 48px;width:48px;height:48px;border-radius:14px;background:#FFE552;color:#17233B;font-size:24px;}
+.v60-negotiation-banner span{display:block;color:#143CFF;font-size:10px;font-weight:900;letter-spacing:.12em;}
+.v60-negotiation-banner strong{display:block;margin:2px 0 6px;color:#17233B;font-size:18px;line-height:1.25;}
+.v60-negotiation-steps{display:flex;flex-wrap:wrap;gap:5px;}
+.v60-negotiation-steps b{padding:3px 7px;border-radius:999px;background:#1976FF;color:#FFFFFF;font-size:11px;}
+.v60-negotiation-steps b:first-child{background:#26D9E8;color:#17233B;}
+.v60-dashboard-featured{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(180px,.65fr);gap:12px;align-items:stretch;}
+.v60-dashboard-featured-art{display:flex;align-items:center;justify-content:center;min-height:260px;border:2px solid #B7D3F5;border-radius:15px;background:#F8FBFF;overflow:hidden;}
+.v60-dashboard-featured-art img{display:block;width:100%;height:100%;max-height:330px;padding:8px;object-fit:contain;}
+.v60-dashboard-featured-copy{display:flex;flex-direction:column;justify-content:center;gap:7px;padding:8px 4px;}
+.v60-dashboard-kicker,.v60-visual-kicker{color:#143CFF;font-size:11px;font-weight:900;letter-spacing:.1em;}
+.v60-dashboard-featured-copy strong{color:#FFFFFF;font-size:21px;line-height:1.2;}
+.v60-dashboard-featured-copy>span:not(.v60-dashboard-kicker){color:#EAF5FF;font-size:13px;line-height:1.5;}
+.v60-dashboard-featured-copy .btn-secondary{margin-top:4px;background:#FFFFFF;color:#17233B;border-color:#B7D3F5;}
+.v60-stadium-rail{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.v60-stadium-stage{display:inline-flex;align-items:center;gap:4px;padding:4px 7px;border:1px solid rgba(255,255,255,.45);border-radius:999px;color:#EAF5FF;font-size:10px;line-height:1.15;}
+.v60-stadium-stage b{color:#FFE552;}
+.v60-stadium-stage.locked{opacity:.58;}
+.v60-approved-teamcard{position:relative;min-height:136px!important;display:grid!important;grid-template-columns:18px 58px minmax(0,1fr);grid-template-rows:auto auto auto;align-items:center;column-gap:8px;row-gap:3px;padding:10px 11px!important;}
+.v60-approved-teamcard .v50-team-dot{grid-column:1;grid-row:1 / span 3;}
+.v60-team-logo-frame{grid-column:2;grid-row:1 / span 3;display:grid;place-items:center;width:58px;height:58px;border-radius:14px;background:#FFFFFF;border:2px solid var(--tc-secondary,#B7D3F5);}
+.v60-team-logo-frame img{display:block;width:48px!important;height:48px!important;object-fit:contain;}
+.v60-approved-teamcard .v50-team-name{grid-column:3;grid-row:1;align-self:end;}
+.v60-approved-teamcard .v55-team-tags{grid-column:3;grid-row:2;justify-content:flex-start;}
+.v60-approved-teamcard .v55-city-flavor{grid-column:3;grid-row:3;max-width:none;text-align:left;}
+.v60-visual-scene{display:grid;grid-template-columns:minmax(0,1.32fr) minmax(180px,.68fr);gap:14px;align-items:center;margin:0 0 16px;padding:12px;border:2px solid #26D9E8;border-radius:18px;background:linear-gradient(135deg,#FFFFFF 0%,#EAF5FF 100%);box-shadow:0 10px 24px rgba(20,60,255,.12);overflow:hidden;}
+.v60-visual-scene-art{display:flex;align-items:center;justify-content:center;min-width:0;min-height:250px;border:2px solid #B7D3F5;border-radius:15px;background:#F8FBFF;overflow:hidden;}
+.v60-visual-scene-art img{display:block;width:100%;height:100%;max-height:360px;padding:8px;object-fit:contain;}
+.v60-visual-scene-copy{display:flex;flex-direction:column;gap:7px;min-width:0;padding:8px 6px;}
+.v60-visual-scene-copy strong{color:#17233B;font-size:22px;line-height:1.2;}
+.v60-visual-scene-copy>span:last-child{color:#36577F;font-size:13px;line-height:1.55;}
+.v60-compact-scene{grid-template-columns:1fr;margin:0;padding:8px;border-radius:14px;}
+.v60-compact-scene .v60-visual-scene-art{min-height:170px;border-radius:11px;}
+.v60-compact-scene .v60-visual-scene-art img{max-height:210px;padding:4px;}
+.v60-compact-scene .v60-visual-scene-copy{padding:3px 3px 1px;gap:3px;}
+.v60-compact-scene .v60-visual-scene-copy strong{font-size:16px;}
+.v60-compact-scene .v60-visual-scene-copy>span:last-child{font-size:11px;line-height:1.4;}
+@media(max-width:820px){.v60-dashboard-featured{grid-template-columns:1fr;}.v60-dashboard-featured-copy{padding:2px 4px 5px;}.v60-visual-scene{grid-template-columns:1fr;}.v60-visual-scene-art{min-height:220px;}.v60-compact-scene{grid-template-columns:1fr;}.v60-compact-scene .v60-visual-scene-art{min-height:160px;}}
+@media(max-width:520px){.v60-dashboard-featured-art{min-height:220px;}.v60-dashboard-featured-copy strong{font-size:18px;}.v60-approved-teamcard{grid-template-columns:14px 50px minmax(0,1fr);min-height:124px!important;padding:8px!important;column-gap:6px;}.v60-team-logo-frame{width:50px;height:50px;}.v60-team-logo-frame img{width:42px!important;height:42px!important;}.v60-visual-scene{gap:8px;margin-bottom:10px;padding:8px;border-radius:14px;}.v60-visual-scene-art{min-height:190px;border-radius:11px;}.v60-visual-scene-copy strong{font-size:19px;}.v60-visual-scene-copy>span:last-child{font-size:12px;}.v60-compact-scene .v60-visual-scene-art{min-height:118px;}.v60-compact-scene .v60-visual-scene-copy strong{font-size:14px;}.v60-negotiation-banner{padding:10px;gap:8px;}.v60-negotiation-banner-icon{flex-basis:40px;width:40px;height:40px;font-size:20px;}.v60-negotiation-banner strong{font-size:16px;}}
