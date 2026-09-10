@@ -5,14 +5,17 @@ function foldNote(html, label) {
   return `<details class="fold"><summary>${label || "詳情"}</summary>${html}</details>`;
 }
 
-/* v60-r002：跨模組 renderer 相容橋接。
+/* v60-r007：跨模組 renderer 相容橋接。
    某些瀏覽器對 classic script 的 global lexical binding 處理不同；
    這裡直接讀取單檔內嵌 JSON，確保 APP、球場、新聞與內容畫面不會退回純文字。 */
 function v60CompatArtDataUrl(key) {
   try {
     const cache = window.__v60CompatArtCache || (window.__v60CompatArtCache = {});
     const status = window.__v60CompatArtStatus || (window.__v60CompatArtStatus = {});
-    ["v57-art-assets", "v58-art-assets"].forEach(function(id) {
+    const keyText = String(key || "");
+    const v57Key = /^(analysis_rehab_base_generated|dorm_base_generated|medical_base_generated|rehab_base_generated|scouting_base_generated|stadium_lv1_generated|stadium_lv3_generated|stadium_lv5_generated|stadium_lv7_generated|training_base_generated)$/.test(keyText);
+    const ids = v57Key ? ["v57-art-assets", "v58-art-assets"] : ["v58-art-assets", "v57-art-assets"];
+    ids.forEach(function(id) {
       if (status[id]) return;
       const node = document.getElementById(id);
       if (!node || !node.textContent) return;
@@ -38,7 +41,7 @@ function v60CompatVisualScene(key, alt, kicker, title, detail, extraClass) {
     <div class="v60-visual-scene-copy"><span class="v60-visual-kicker">${kicker}</span><strong>${title}</strong><span>${detail}</span></div>
   </section>`;
 }
-/* v60-r005：大型內嵌美術 JSON 位於模組腳本之後；若 IndexedDB 讀檔先完成，
+/* v60-r007：大型內嵌美術 JSON 位於模組腳本之後；若 IndexedDB 讀檔先完成，
    初次 render 可能早於素材節點解析。DOM 完成後只重繪一次，讓 APP／球場／新聞
    的實際畫面使用已存在的素材；不寫入 S、不觸發模擬、不呼叫亂數。 */
 var v60ArtReadyRerenderBound = false;
