@@ -100,8 +100,8 @@ assert(v60ThemeSource.indexOf("v491 detailed T0-T19 team identity PNG") >= 0, "v
 assert(v60FinanceSource.indexOf("draft-negotiation-screen") >= 0 && v60FinanceSource.indexOf("v60-negotiation-banner") >= 0, "v60 談薪畫面具備可辨識視覺流程區");
 assert(v60StyleSource.indexOf(".field input") >= 0 && v60StyleSource.indexOf("background:#FFFFFF !important") >= 0 && v60StyleSource.indexOf(".draft-negotiation-screen input[type=\"number\"]") >= 0, "v60 談薪輸入框亮底高對比修正");
 assert(v60DashboardSource.indexOf("const canRun = S.currentDay === 0") >= 0 && v60DashboardSource.indexOf("!S.gameStarted || S.currentDay !== 0") < 0, "v60 國際交流／海外行銷畫面不再於球季中整張消失");
-assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && v60FinanceSource.indexOf('v60VisualScene("marketing_command_center_v58"') >= 0, "v60 行銷企劃頁實際整合海外活動畫面");
-assert(v60DashboardSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 && v60DashboardSource.indexOf("icon('news')") >= 0 && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60DashboardSource.indexOf('!app.querySelector(".v60-news-scene")') >= 0, "v60 新聞 PNG 先行並保留 SVG／語意 icon fallback");
+assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceSource.indexOf('v60VisualScene("marketing_command_center_v58"') >= 0 || v60FinanceSource.indexOf('v60CompatVisualScene("marketing_command_center_v58"') >= 0), "v60 行銷企劃頁實際整合海外活動畫面");
+assert((v60DashboardSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60DashboardSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf("icon('news')") >= 0 && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60DashboardSource.indexOf('!app.querySelector(".v60-news-scene")') >= 0, "v60 新聞 PNG 先行並保留 SVG／語意 icon fallback");
 assert(v60SwSource.indexOf('baseballgm-v60') >= 0, "v60 Service Worker cache key 已更新");
 
 /* ---------- 1. 40國系統 ---------- */
@@ -4132,7 +4132,7 @@ const v57FinanceSource = fs.readFileSync("02-finance.js", "utf8");
 const v57FacilityStyle = fs.readFileSync("style.css", "utf8");
 assert(v57FinanceSource.indexOf("function v57FacilityVisualProfile") >= 0 && v57FinanceSource.indexOf("function renderV57FacilityVisual") >= 0, "v57-001 設施視覺 mapping 與 renderer 存在");
 assert(v57FinanceSource.indexOf('key: "local"') >= 0 && v57FinanceSource.indexOf('key: "city"') >= 0 && v57FinanceSource.indexOf('key: "flagship"') >= 0 && v57FinanceSource.indexOf('key: "dome"') >= 0, "v57-001 Lv1/Lv3/Lv5/Lv7 四個視覺錨點存在");
-assert(v57FinanceSource.indexOf("function v57StadiumVisual") >= 0 && v57FinanceSource.indexOf("v57ArtDataUrl(profile.artKey)") >= 0 && v57FinanceSource.indexOf("v57FacilityStateOverlay") >= 0, "v57-001 獨立 facility art + CSS 狀態元件實際接入 renderer");
+assert(v57FinanceSource.indexOf("function v57StadiumVisual") >= 0 && (v57FinanceSource.indexOf("v57ArtDataUrl(profile.artKey)") >= 0 || v57FinanceSource.indexOf("v60CompatArtDataUrl(profile.artKey)") >= 0) && v57FinanceSource.indexOf("v57FacilityStateOverlay") >= 0, "v57-001 獨立 facility art + CSS 狀態元件實際接入 renderer");
 assert(v57FinanceSource.indexOf('"medical_base_generated"') >= 0 && v57FinanceSource.indexOf('"scouting_base_generated"') >= 0 && v57FinanceSource.indexOf('"training_base_generated"') >= 0 && v57FinanceSource.indexOf('"dorm_base_generated"') >= 0 && v57FinanceSource.indexOf('"analysis_rehab_base_generated"') >= 0 && v57FinanceSource.indexOf('"rehab_base_generated"') >= 0, "v57-001 各設施分頁使用對應獨立圖像，不以球場圖冒充");
 assert(v57FinanceSource.indexOf("<svg") < 0 && v57FinanceSource.indexOf("overlay_locked") < 0 && v57FinanceSource.indexOf("overlay_upgrade") < 0 && v57FinanceSource.indexOf("overlay_construction") < 0 && v57FinanceSource.indexOf("已核准素材尚未載入") >= 0, "v57-001 不使用幾何 SVG 或圖片狀態 overlay，缺圖時明確顯示診斷訊息");
 const v57ProfileSource = v57FinanceSource.slice(v57FinanceSource.indexOf("function v57FacilityVisualProfile"), v57FinanceSource.indexOf("function renderFacilities"));
@@ -4148,7 +4148,7 @@ const v57DashboardSource = fs.readFileSync("05-ui-dashboard.js", "utf8");
 const v57IndexSource = fs.readFileSync("index.html", "utf8");
 assert(v57ThemeSource.indexOf("function v57ArtDataUrl") >= 0 && v57ThemeSource.indexOf("v57-art-assets") >= 0, "v57-002 單檔／模組共用離線素材 data URL 入口存在");
 assert(v57DashboardSource.indexOf("function v57DashboardHero") >= 0 && v57DashboardSource.indexOf("${v57DashboardHero(team)}") >= 0 && v57DashboardSource.indexOf("data-v57-dashboard-hero") >= 0, "v57-002 Dashboard 主畫面實際插入球場升級主視覺");
-assert(v57DashboardSource.indexOf("v57ArtDataUrl(profile.artKey)") >= 0 && v57DashboardSource.indexOf("const anchors = [1, 3, 5, 7]") >= 0 && v57FinanceSource.indexOf('artKey: "stadium_lv7_generated"') >= 0, "v57-002 Dashboard 四級距直接讀取獨立球場圖像");
+assert((v57DashboardSource.indexOf("v57ArtDataUrl(profile.artKey)") >= 0 || v57DashboardSource.indexOf("v60CompatArtDataUrl(profile.artKey)") >= 0) && v57DashboardSource.indexOf("const anchors = [1, 3, 5, 7]") >= 0 && v57FinanceSource.indexOf('artKey: "stadium_lv7_generated"') >= 0, "v57-002 Dashboard 四級距直接讀取獨立球場圖像");
 assert(v57FacilityStyle.indexOf(".v57-dashboard-hero") >= 0 && v57FacilityStyle.indexOf(".v57-dashboard-stage-grid") >= 0 && v57FacilityStyle.indexOf(".v57-dashboard-stage img") >= 0, "v57-002 Dashboard 主視覺 desktop／responsive CSS 就位");
 assert(v57IndexSource.indexOf('id="v57-art-assets"') >= 0 && v57IndexSource.indexOf('"stadium_lv1_generated"') >= 0 && v57IndexSource.indexOf('"medical_base_generated"') >= 0 && v57IndexSource.indexOf('"rehab_base_generated"') >= 0 && v57IndexSource.indexOf('"overlay_locked"') < 0 && v57IndexSource.indexOf('"overlay_upgrade"') < 0 && v57IndexSource.indexOf('"overlay_construction"') < 0, "v57-002 index.html 已嵌入 10 張獨立 PNG 素材且未嵌入狀態圖示");
 

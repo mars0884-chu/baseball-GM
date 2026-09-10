@@ -4,6 +4,32 @@
 function foldNote(html, label) {
   return `<details class="fold"><summary>${label || "詳情"}</summary>${html}</details>`;
 }
+
+/* v60-r002：跨模組 renderer 相容橋接。
+   某些瀏覽器對 classic script 的 global lexical binding 處理不同；
+   這裡直接讀取單檔內嵌 JSON，確保 APP、球場、新聞與內容畫面不會退回純文字。 */
+function v60CompatArtDataUrl(key) {
+  try {
+    const node = document.getElementById("v58-art-assets");
+    if (!node || !node.textContent) return "";
+    const cache = window.__v60CompatArtCache || (window.__v60CompatArtCache = JSON.parse(node.textContent) || {});
+    return cache[key] || "";
+  } catch (_) { return ""; }
+}
+function v60CompatAppIconDataUrl() {
+  return (typeof globalThis !== "undefined" && globalThis.v60AppIconDataUrl instanceof Function)
+    ? globalThis.v60AppIconDataUrl()
+    : "icon-512.png";
+}
+function v60CompatVisualScene(key, alt, kicker, title, detail, extraClass) {
+  const src = v60CompatArtDataUrl(key);
+  if (!src) return "";
+  const cls = extraClass ? ` ${extraClass}` : "";
+  return `<section class="v60-visual-scene${cls}" data-v60-art-key="${key}" data-v60-art-source="approved-scene-png" aria-label="${alt}">
+    <div class="v60-visual-scene-art"><img src="${src}" alt="${alt}"></div>
+    <div class="v60-visual-scene-copy"><span class="v60-visual-kicker">${kicker}</span><strong>${title}</strong><span>${detail}</span></div>
+  </section>`;
+}
 /* v56-001：內容圖像化 presentation adapter（只讀現有 S／UI，不新增狀態）。
    每次既有 render() 完成後，在原卡片前插入可辨識的 SVG 摘要；完整原文與既有按鈕保留。
    這個 adapter 不參與事件、模擬、Save 或 RNG，素材缺失時也只會略過視覺摘要。 */
@@ -79,7 +105,7 @@ function v57DashboardHero(team) {
   const currentLevel = Math.max(1, Number(team.facility && team.facility.level) || 1);
   const labels = { 1: "在地開放球場", 3: "城市球場", 5: "都會旗艦球場", 7: "全封閉巨蛋" };
   const profile = v57FacilityVisualProfile(currentLevel);
-  const src = typeof v57ArtDataUrl === "function" ? v57ArtDataUrl(profile.artKey) : "";
+  const src = v60CompatArtDataUrl(profile.artKey);
   const anchors = [1, 3, 5, 7];
   const stageRail = anchors.map(function (level) {
     const reached = currentLevel >= level;
@@ -194,7 +220,7 @@ function renderSetup() {
   app.innerHTML = `
     <div class="wrap">
       <section class="v60-app-brand-hero" data-v60-app-visual="approved-pwa-icon" aria-label="決勝 GM APP 主視覺">
-        <div class="v60-app-brand-mark"><img src="${typeof v60AppIconDataUrl === "function" ? v60AppIconDataUrl() : "icon-512.png"}" width="512" height="512" alt="決勝 GM 應用程式圖示" /></div>
+        <div class="v60-app-brand-mark"><img src="${v60CompatAppIconDataUrl()}" width="512" height="512" alt="決勝 GM 應用程式圖示" /></div>
         <div class="v60-app-brand-copy">
           <span>APP START</span>
           <strong>決勝 GM</strong>
@@ -1286,7 +1312,7 @@ function renderNewsCard() {
   if (feed.length === 0) {
     return `<div class="card newscard">
       <div class="eyebrow">聯盟快訊</div>
-      ${typeof v60VisualScene === "function" ? v60VisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene") : ""}
+      ${v60CompatVisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene")}
       <p class="v59-compact-line">目前沒有新聞</p>
       ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">目前尚無新聞快訊；賽事、傷兵、國際活動與聯盟事件發生後會集中顯示在這裡。</p>`, "新聞來源") : ""}
     </div>`;
@@ -1298,7 +1324,7 @@ function renderNewsCard() {
   const tickerDur = clamp(feed.slice(0, 8).reduce((s, n) => s + n.text.length, 0) * 0.55, 18, 90);
   return `<div class="card newscard">
     <div class="eyebrow">聯盟快訊</div>
-    ${typeof v60VisualScene === "function" ? v60VisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene") : ""}
+    ${v60CompatVisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene")}
     ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<div class="tickerwrap"><div class="tickertrack" style="animation-duration:${tickerDur}s;">${tickerItems}<span class="tickersep">◆</span>${tickerItems}<span class="tickersep">◆</span></div></div>`, "開啟新聞跑馬燈") : `<div class="tickerwrap"><div class="tickertrack" style="animation-duration:${tickerDur}s;">${tickerItems}<span class="tickersep">◆</span>${tickerItems}<span class="tickersep">◆</span></div></div>`}
     ${show.map(n => `<p class="newsitem"><span class="newstime">${n.dateLabel}</span>${typeIcon[n.type] || ""+icon('news')+""} ${n.text}</p>`).join("")}
     ${feed.length > 5 ? `<button id="btn-news-toggle" class="btn-outline" style="margin-top:8px;">${UI.newsExpanded ? "收合" : `更多快訊（共${feed.length}則）`}</button>` : ""}
@@ -1818,8 +1844,8 @@ function renderCdActivitiesCard() {
     <div class="eyebrow">${icon('globe')} 國際交流／海外行銷</div>
     ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">${canRun ? "開幕前開放；交流與行銷各一季一次。" : "畫面全年保留；實際執行僅限開幕前。"} 海外春訓僅開放 B 級以上，這裡補上 C／D 級國家與母國的經營用途。</p>`, "活動規則") : ""}
     <div class="v58-dual-scene-row">
-      ${typeof v60VisualScene === "function" ? v60VisualScene("international_exchange_v58", "國際交流場景", "EXCHANGE", "國際交流", "出訪、友誼賽與跨國交流的操作保留在下方。", "v60-compact-scene") : ""}
-      ${typeof v60VisualScene === "function" ? v60VisualScene("overseas_marketing_v58", "海外行銷場景", "OVERSEAS", "海外行銷", "海外市場檔期與執行按鈕保留在下方。", "v60-compact-scene") : ""}
+      ${v60CompatVisualScene("international_exchange_v58", "國際交流場景", "EXCHANGE", "國際交流", "出訪、友誼賽與跨國交流的操作保留在下方。", "v60-compact-scene")}
+      ${v60CompatVisualScene("overseas_marketing_v58", "海外行銷場景", "OVERSEAS", "海外行銷", "海外市場檔期與執行按鈕保留在下方。", "v60-compact-scene")}
     </div>
     <p class="v59-compact-line">${canRun ? "本季可執行" : "本季已鎖定"}・預算：<b>${formatMoney(team.finance.budget)}</b></p>
     <div style="margin:6px 0;">${bondNames.length ? bondRows : `<p class="v59-compact-line">交情：尚未建立</p>`}</div>

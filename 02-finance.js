@@ -540,7 +540,7 @@ function v57FacilityStateOverlay(state) {
   return `<span class="v57-visual-status ${kind}" aria-label="${label}"><span aria-hidden="true">${glyph}</span><span>${label}</span></span>`;
 }
 function v57StadiumVisual(profile, state) {
-  const src = typeof v57ArtDataUrl === "function" ? v57ArtDataUrl(profile.artKey) : "";
+  const src = typeof v60CompatArtDataUrl === "function" ? v60CompatArtDataUrl(profile.artKey) : "";
   const fallback = src ? `<img class="v57-confirmed-art-image" src="${src}" alt="Lv.${profile.level} ${profile.stage}">` : `<div class="v57-art-missing">已核准素材尚未載入</div>`;
   return `<div class="v57-facility-scene-frame v57-scene-${profile.key}" role="img" aria-label="Lv.${profile.level} ${profile.stage}">${fallback}${v57FacilityStateOverlay(state)}</div>`;
 }
@@ -568,7 +568,7 @@ function v57FacilityTabVisualData(team, ftab, cur) {
 }
 function v57FacilityTabArtVisual(ftab, profile, view, state) {
   if (ftab === "球場") return v57StadiumVisual(profile, state);
-  const src = typeof v57ArtDataUrl === "function" ? v57ArtDataUrl(view.artKey) : "";
+  const src = typeof v60CompatArtDataUrl === "function" ? v60CompatArtDataUrl(view.artKey) : "";
   const fallback = src ? `<img class="v57-confirmed-art-image" src="${src}" alt="${view.label}">` : `<div class="v57-art-missing">已核准素材尚未載入</div>`;
   return `<div class="v57-facility-scene-frame v57-facility-scene" role="img" aria-label="${view.label} Lv.${view.level}">${fallback}${v57FacilityStateOverlay(state)}</div>`;
 }
@@ -2597,7 +2597,7 @@ function renderMarketing() {
       <div class="topbar"><div class="eyebrow">${team.name} ・ ${cal.dateLabel}</div><h1>行銷企劃</h1></div>
       ${renderRosterNav("marketing")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      ${typeof v60VisualScene === "function" ? v60VisualScene("marketing_command_center_v58", "行銷企劃中心場景", "MARKETING VISUAL", "行銷企劃中心", "完整活動效果、費用與投入操作保留在下方。", "v60-marketing-scene") : ""}
+      ${typeof v60CompatVisualScene === "function" ? v60CompatVisualScene("marketing_command_center_v58", "行銷企劃中心場景", "MARKETING VISUAL", "行銷企劃中心", "完整活動效果、費用與投入操作保留在下方。", "v60-marketing-scene") : ""}
       ${typeof renderCdActivitiesCard === "function" ? renderCdActivitiesCard() : ""}
       <div class="scoreboard v59-compact-scoreboard">
         <div class="sb-row small"><span class="sb-label">人氣</span><span class="sb-value small">${team.finance.popularity}/100</span><span class="sb-label">已投</span><span class="sb-value small">${(team.finance.marketingCampaigns || []).length}項・${formatMoney((team.finance.marketingCampaigns || []).reduce((s, k) => s + ((MARKETING_CAMPAIGNS.find(c => c.key === k) || {}).cost || 0), 0))}</span></div>
