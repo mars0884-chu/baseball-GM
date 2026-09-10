@@ -10,9 +10,17 @@ function foldNote(html, label) {
    這裡直接讀取單檔內嵌 JSON，確保 APP、球場、新聞與內容畫面不會退回純文字。 */
 function v60CompatArtDataUrl(key) {
   try {
-    const node = document.getElementById("v58-art-assets");
-    if (!node || !node.textContent) return "";
-    const cache = window.__v60CompatArtCache || (window.__v60CompatArtCache = JSON.parse(node.textContent) || {});
+    const cache = window.__v60CompatArtCache || (window.__v60CompatArtCache = {});
+    const status = window.__v60CompatArtStatus || (window.__v60CompatArtStatus = {});
+    ["v57-art-assets", "v58-art-assets"].forEach(function(id) {
+      if (status[id]) return;
+      const node = document.getElementById(id);
+      if (!node || !node.textContent) return;
+      try {
+        Object.assign(cache, JSON.parse(node.textContent) || {});
+        status[id] = true;
+      } catch (_) {}
+    });
     return cache[key] || "";
   } catch (_) { return ""; }
 }
