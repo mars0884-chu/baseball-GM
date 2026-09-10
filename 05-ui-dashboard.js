@@ -103,7 +103,7 @@ function v56DecorateRenderedContent() {
       v56InsertSummary(mailList.closest(".card"), v56ContentSummary("mail", unread ? "有未讀待處理" : "目前無未讀", "收件匣狀態", `${unread} 封未讀・共 ${mail.length} 封`));
     }
     const newsCard = app.querySelector(".newscard");
-    if (newsCard && !app.querySelector(".v60-news-scene")) v56InsertSummary(newsCard, v56ContentSummary("news", "最新快訊已更新", "聯盟消息流", `${(S.newsFeed || []).length} 則可查閱`));
+    if (newsCard) v56InsertSummary(newsCard, v56ContentSummary("news", "最新快訊已更新", "聯盟消息流", `${(S.newsFeed || []).length} 則可查閱`));
     const ms = app.querySelector(".v48milestone-card");
     if (ms) v56InsertSummary(ms, v56ContentSummary("milestones", "里程碑已達成", "生涯成長節點", "查看下方既有回應選項。"));
     const dev = app.querySelector(".v54-ms-promote2, .v54-ms-promote1");
