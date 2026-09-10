@@ -30,6 +30,19 @@ function v60CompatVisualScene(key, alt, kicker, title, detail, extraClass) {
     <div class="v60-visual-scene-copy"><span class="v60-visual-kicker">${kicker}</span><strong>${title}</strong><span>${detail}</span></div>
   </section>`;
 }
+/* v60-r005：大型內嵌美術 JSON 位於模組腳本之後；若 IndexedDB 讀檔先完成，
+   初次 render 可能早於素材節點解析。DOM 完成後只重繪一次，讓 APP／球場／新聞
+   的實際畫面使用已存在的素材；不寫入 S、不觸發模擬、不呼叫亂數。 */
+var v60ArtReadyRerenderBound = false;
+function v60BindArtReadyRerender() {
+  if (v60ArtReadyRerenderBound || typeof document === "undefined" || document.readyState !== "loading") return;
+  v60ArtReadyRerenderBound = true;
+  document.addEventListener("DOMContentLoaded", function() {
+    try {
+      if (typeof render === "function" && typeof S !== "undefined" && S && typeof UI !== "undefined" && UI) render();
+    } catch (e) { console.error("[v60-art-ready-rerender]", e); }
+  }, { once: true });
+}
 /* v56-001：內容圖像化 presentation adapter（只讀現有 S／UI，不新增狀態）。
    每次既有 render() 完成後，在原卡片前插入可辨識的 SVG 摘要；完整原文與既有按鈕保留。
    這個 adapter 不參與事件、模擬、Save 或 RNG，素材缺失時也只會略過視覺摘要。 */
@@ -153,6 +166,7 @@ function wireUiTabs() {
 }
 function render() {
   // v35.1：全域渲染防護——任何畫面渲染拋錯都落到安全模式，不留白屏（手機「只剩綠底」的根治）
+  try { v60BindArtReadyRerender(); } catch (_) {}
   try { if (document.body && document.body.setAttribute) document.body.setAttribute("data-skin", (S && S.skin) || "emoji"); } catch (_) {} // v41⑦：皮膚插槽（預設emoji）
   try { if (document.body && document.body.setAttribute) document.body.setAttribute("data-screen", (typeof UI !== "undefined" && UI && UI.screen) || ""); } catch (_) {} // v47：分頁背景槽位（未導入資產包時無任何視覺變化）
   try { if (typeof v49ClearPortraitCache === "function") v49ClearPortraitCache(); } catch (_) {} // v49：清除肖像快取（轉隊後即時換帽）
