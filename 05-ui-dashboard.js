@@ -1337,6 +1337,7 @@ function renderNewsCard() {
   if (feed.length === 0) {
     return `<div class="card newscard">
       <div class="eyebrow">聯盟快訊</div>
+      ${v56ContentSummary("news", "目前無新聞", "聯盟消息流", "0 則可查閱")}
       ${v60CompatVisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene")}
       <p class="v59-compact-line">目前沒有新聞</p>
       ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">目前尚無新聞快訊；賽事、傷兵、國際活動與聯盟事件發生後會集中顯示在這裡。</p>`, "新聞來源") : ""}
@@ -1349,6 +1350,7 @@ function renderNewsCard() {
   const tickerDur = clamp(feed.slice(0, 8).reduce((s, n) => s + n.text.length, 0) * 0.55, 18, 90);
   return `<div class="card newscard">
     <div class="eyebrow">聯盟快訊</div>
+    ${v56ContentSummary("news", "最新快訊已更新", "聯盟消息流", `${feed.length} 則可查閱`)}
     ${v60CompatVisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene")}
     ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<div class="tickerwrap"><div class="tickertrack" style="animation-duration:${tickerDur}s;">${tickerItems}<span class="tickersep">◆</span>${tickerItems}<span class="tickersep">◆</span></div></div>`, "開啟新聞跑馬燈") : `<div class="tickerwrap"><div class="tickertrack" style="animation-duration:${tickerDur}s;">${tickerItems}<span class="tickersep">◆</span>${tickerItems}<span class="tickersep">◆</span></div></div>`}
     ${show.map(n => `<p class="newsitem"><span class="newstime">${n.dateLabel}</span>${typeIcon[n.type] || ""+icon('news')+""} ${n.text}</p>`).join("")}

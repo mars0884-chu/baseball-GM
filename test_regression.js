@@ -101,7 +101,7 @@ assert(v60FinanceSource.indexOf("draft-negotiation-screen") >= 0 && v60FinanceSo
 assert(v60StyleSource.indexOf(".field input") >= 0 && v60StyleSource.indexOf("background:#FFFFFF !important") >= 0 && v60StyleSource.indexOf(".draft-negotiation-screen input[type=\"number\"]") >= 0, "v60 談薪輸入框亮底高對比修正");
 assert(v60DashboardSource.indexOf("const canRun = S.currentDay === 0") >= 0 && v60DashboardSource.indexOf("!S.gameStarted || S.currentDay !== 0") < 0, "v60 國際交流／海外行銷畫面不再於球季中整張消失");
 assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceSource.indexOf('v60VisualScene("marketing_command_center_v58"') >= 0 || v60FinanceSource.indexOf('v60CompatVisualScene("marketing_command_center_v58"') >= 0), "v60 行銷企劃頁實際整合海外活動畫面");
-assert((v60DashboardSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60DashboardSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf("icon('news')") >= 0 && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60DashboardSource.indexOf('if (newsCard) v56InsertSummary(newsCard, v56ContentSummary("news"') >= 0, "v60 新聞 PNG 與 SVG 摘要同時存在");
+assert((v60DashboardSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60DashboardSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf("icon('news')") >= 0 && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60DashboardSource.indexOf('renderNewsCard') >= 0 && v60DashboardSource.indexOf('v56ContentSummary("news"') >= 0, "v60 新聞 renderer 同時輸出 PNG 與 SVG 摘要");
 assert(v60SwSource.indexOf('baseballgm-v60') >= 0, "v60 Service Worker cache key 已更新");
 
 /* ---------- 1. 40國系統 ---------- */
