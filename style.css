@@ -1022,13 +1022,13 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-negotiation-steps{display:flex;flex-wrap:wrap;gap:5px;}
 .v60-negotiation-steps b{padding:3px 7px;border-radius:999px;background:#1976FF;color:#FFFFFF;font-size:11px;}
 .v60-negotiation-steps b:first-child{background:#26D9E8;color:#17233B;}
-.v60-app-brand-hero{display:grid;grid-template-columns:minmax(126px,.42fr) minmax(0,1fr);gap:16px;align-items:center;margin:0 0 16px;padding:14px;border:2px solid #D9A441;border-radius:18px;background:linear-gradient(135deg,#173D2F 0%,#245642 58%,#B98216 160%);box-shadow:0 10px 24px rgba(23,61,47,.24);overflow:hidden;}
-.v60-app-brand-mark{display:grid;place-items:center;min-height:148px;padding:8px;border-radius:14px;background:#B98216;box-shadow:inset 0 0 0 2px rgba(255,255,255,.35);}
+.v60-app-brand-hero{display:grid;grid-template-columns:minmax(126px,.42fr) minmax(0,1fr);gap:16px;align-items:center;margin:0 0 16px;padding:14px;border:2px solid #26D9E8;border-radius:18px;background:linear-gradient(135deg,#143CFF 0%,#1976FF 48%,#26D9E8 100%);box-shadow:0 10px 24px rgba(20,60,255,.22);overflow:hidden;}
+.v60-app-brand-mark{display:grid;place-items:center;min-height:148px;padding:8px;border-radius:14px;background:#EAF5FF;box-shadow:inset 0 0 0 2px rgba(255,255,255,.72);}
 .v60-app-brand-mark img{display:block;width:min(100%,156px);height:auto;aspect-ratio:1;object-fit:contain;}
 .v60-app-brand-copy{display:flex;flex-direction:column;gap:5px;min-width:0;color:#F5F1E6;}
 .v60-app-brand-copy span{color:#FFE7A4;font-size:11px;font-weight:900;letter-spacing:.14em;}
 .v60-app-brand-copy strong{font-family:'Oswald',sans-serif;font-size:32px;line-height:1.05;letter-spacing:.02em;}
-.v60-app-brand-copy em{font-style:normal;color:#E7D9B0;font-size:11px;letter-spacing:.12em;}
+.v60-app-brand-copy em{font-style:normal;color:#FFF7EA;font-size:11px;letter-spacing:.12em;}
 .v60-news-scene{grid-template-columns:minmax(0,1.45fr) minmax(160px,.55fr);}
 .v60-news-scene .v60-visual-scene-art{min-height:280px;}
 .v60-dashboard-featured{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(180px,.65fr);gap:12px;align-items:stretch;}

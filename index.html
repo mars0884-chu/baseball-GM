@@ -6,26 +6,26 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="決勝 GM">
-<meta name="theme-color" content="#173D2F">
+<meta name="theme-color" content="#143CFF">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="manifest" href="manifest.webmanifest?v=v60-r010">
-<link rel="apple-touch-icon" href="icon-180.png?v=v60-r010">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=v60-r010">
-<link rel="stylesheet" href="style.css?v=v60-r010">
+<link rel="manifest" href="manifest.webmanifest?v=v60-r011">
+<link rel="apple-touch-icon" href="icon-180.png?v=v60-r011">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=v60-r011">
+<link rel="stylesheet" href="style.css?v=v60-r011">
 <title>決勝 GM — FRONT OFFICE BASEBALL</title>
 <style>
-  .v60-public-splash{min-height:100svh;display:grid;place-items:center;padding:24px;background:linear-gradient(160deg,#D9A441 0%,#B98216 58%,#765315 100%);color:#F5F1E6;text-align:center}
+  .v60-public-splash{min-height:100svh;display:grid;place-items:center;padding:24px;background:linear-gradient(160deg,#EAF5FF 0%,#B7D3F5 58%,#FFFFFF 100%);color:#102949;text-align:center}
   .v60-public-splash-card{display:grid;justify-items:center;gap:14px}
-  .v60-public-splash-icon{width:min(42vw,180px);height:min(42vw,180px);padding:10px;border-radius:32px;background:#173D2F;box-shadow:0 18px 40px rgba(23,61,47,.34),inset 0 0 0 2px rgba(245,241,230,.12)}
+  .v60-public-splash-icon{width:min(42vw,180px);height:min(42vw,180px);padding:10px;border-radius:32px;background:#FFFFFF;border:2px solid #26D9E8;box-shadow:0 18px 40px rgba(20,60,255,.18),inset 0 0 0 2px rgba(20,60,255,.06)}
   .v60-public-splash-icon img{display:block;width:100%;height:100%;object-fit:contain}
   .v60-public-splash-title{font-size:clamp(30px,8vw,48px);font-weight:800;letter-spacing:.04em}
-  .v60-public-splash-sub{font-size:11px;letter-spacing:.18em;color:#FFF0BE}
+  .v60-public-splash-sub{font-size:11px;letter-spacing:.18em;color:#143CFF}
 </style>
 <script>
-/* v60-r010 public deployment: visual PNGs remain separate so the first HTML response is not 65 MB. */
+/* v60-r011 public deployment: visual PNGs remain separate so the first HTML response is not 65 MB. */
 (function(){
   var root = "./visual_assets/";
-  window.__v60PublicAppIconPath = "./icon-512.png?v=v60-r010";
+  window.__v60PublicAppIconPath = "./icon-512.png?v=v60-r011";
   window.__v60PublicArtPaths = {
     analysis_rehab_base_generated: root + "v57/analysis_rehab_base_generated.png",
     dorm_base_generated: root + "v57/dorm_base_generated.png",
@@ -52,19 +52,19 @@
   });
 }());
 </script>
-<script defer src="00-theme.js?v=v60-r010"></script>
-<script defer src="01-data-engine.js?v=v60-r010"></script>
-<script defer src="02-finance.js?v=v60-r010"></script>
-<script defer src="03-simulation.js?v=v60-r010"></script>
-<script defer src="04-state-core.js?v=v60-r010"></script>
-<script defer src="05-ui-dashboard.js?v=v60-r010"></script>
-<script defer src="06-ui-roster.js?v=v60-r010"></script>
+<script defer src="00-theme.js?v=v60-r011"></script>
+<script defer src="01-data-engine.js?v=v60-r011"></script>
+<script defer src="02-finance.js?v=v60-r011"></script>
+<script defer src="03-simulation.js?v=v60-r011"></script>
+<script defer src="04-state-core.js?v=v60-r011"></script>
+<script defer src="05-ui-dashboard.js?v=v60-r011"></script>
+<script defer src="06-ui-roster.js?v=v60-r011"></script>
 </head>
 <body>
 <div id="app">
   <main class="v60-public-splash" aria-label="決勝 GM 載入中">
     <div class="v60-public-splash-card">
-      <div class="v60-public-splash-icon"><img src="icon-512.png?v=v60-r010" width="512" height="512" alt="決勝 GM 應用程式圖示"></div>
+      <div class="v60-public-splash-icon"><img src="icon-512.png?v=v60-r011" width="512" height="512" alt="決勝 GM 應用程式圖示"></div>
       <div class="v60-public-splash-title">決勝 GM</div>
       <div class="v60-public-splash-sub">FRONT OFFICE BASEBALL</div>
     </div>
@@ -75,7 +75,7 @@
   try{
     if(!("serviceWorker" in navigator)) return;
     if(location.protocol !== "http:" && location.protocol !== "https:") return;
-        window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js?v=v60-r010").catch(function(){}); });
+        window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js?v=v60-r011").catch(function(){}); });
   }catch(_){ }
 }());
 </script>

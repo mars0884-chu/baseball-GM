@@ -5,7 +5,7 @@ function foldNote(html, label) {
   return `<details class="fold"><summary>${label || "詳情"}</summary>${html}</details>`;
 }
 
-/* v60-r010：跨模組 renderer 相容橋接。
+/* v60-r011：跨模組 renderer 相容橋接。
    公開 Pages 版先查詢外部核准 PNG 路徑；離線單檔／模組包則回退到內嵌 JSON。
    兩條路徑共用同一組 key，確保 APP、球場、新聞與內容畫面不會退回純文字。 */
 function v60CompatArtDataUrl(key) {
