@@ -1,6 +1,6 @@
 /* 決勝GM v60 Service Worker：離線快取 App Shell（視覺恢復候選）。
    ASSETS 同時涵蓋模組版(7支JS+css)與單檔版(index.html)；缺檔以 allSettled 略過不整批失敗。 */
-const CACHE = "baseballgm-v60-r009";
+const CACHE = "baseballgm-v60-r010";
 const ASSETS = [
   "./", "./index.html", "./style.css", "./manifest.webmanifest",
   "./icon-192.png", "./icon-512.png", "./icon-180.png",

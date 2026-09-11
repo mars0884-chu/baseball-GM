@@ -5,14 +5,16 @@ function foldNote(html, label) {
   return `<details class="fold"><summary>${label || "詳情"}</summary>${html}</details>`;
 }
 
-/* v60-r007：跨模組 renderer 相容橋接。
-   某些瀏覽器對 classic script 的 global lexical binding 處理不同；
-   這裡直接讀取單檔內嵌 JSON，確保 APP、球場、新聞與內容畫面不會退回純文字。 */
+/* v60-r010：跨模組 renderer 相容橋接。
+   公開 Pages 版先查詢外部核准 PNG 路徑；離線單檔／模組包則回退到內嵌 JSON。
+   兩條路徑共用同一組 key，確保 APP、球場、新聞與內容畫面不會退回純文字。 */
 function v60CompatArtDataUrl(key) {
   try {
+    const keyText = String(key || "");
+    const publicMap = (typeof window !== "undefined" && window.__v60PublicArtPaths) || null;
+    if (publicMap && publicMap[keyText]) return publicMap[keyText];
     const cache = window.__v60CompatArtCache || (window.__v60CompatArtCache = {});
     const status = window.__v60CompatArtStatus || (window.__v60CompatArtStatus = {});
-    const keyText = String(key || "");
     const v57Key = /^(analysis_rehab_base_generated|dorm_base_generated|medical_base_generated|rehab_base_generated|scouting_base_generated|stadium_lv1_generated|stadium_lv3_generated|stadium_lv5_generated|stadium_lv7_generated|training_base_generated)$/.test(keyText);
     const ids = v57Key ? ["v57-art-assets", "v58-art-assets"] : ["v58-art-assets", "v57-art-assets"];
     ids.forEach(function(id) {
@@ -28,6 +30,7 @@ function v60CompatArtDataUrl(key) {
   } catch (_) { return ""; }
 }
 function v60CompatAppIconDataUrl() {
+  if (typeof window !== "undefined" && window.__v60PublicAppIconPath) return window.__v60PublicAppIconPath;
   return (typeof globalThis !== "undefined" && globalThis.v60AppIconDataUrl instanceof Function)
     ? globalThis.v60AppIconDataUrl()
     : "icon-512.png";
@@ -37,7 +40,7 @@ function v60CompatVisualScene(key, alt, kicker, title, detail, extraClass) {
   if (!src) return "";
   const cls = extraClass ? ` ${extraClass}` : "";
   return `<section class="v60-visual-scene${cls}" data-v60-art-key="${key}" data-v60-art-source="approved-scene-png" aria-label="${alt}">
-    <div class="v60-visual-scene-art"><img src="${src}" alt="${alt}"></div>
+    <div class="v60-visual-scene-art"><img src="${src}" alt="${alt}" loading="lazy" decoding="async"></div>
     <div class="v60-visual-scene-copy"><span class="v60-visual-kicker">${kicker}</span><strong>${title}</strong><span>${detail}</span></div>
   </section>`;
 }
@@ -66,14 +69,13 @@ function v56ContentSvg(domain) {
   const svg = {
     events: '<svg viewBox="0 0 120 56" aria-hidden="true"><path d="M9 43h102" stroke="#B7D3F5" stroke-width="6" stroke-linecap="round"/><circle cx="25" cy="43" r="8" fill="#26D9E8" stroke="#143CFF" stroke-width="3"/><circle cx="60" cy="43" r="8" fill="#FFE552" stroke="#143CFF" stroke-width="3"/><circle cx="95" cy="43" r="8" fill="#FF3D4F" stroke="#143CFF" stroke-width="3"/><path d="m59 6-19 23h13l-5 18 25-28H59Z" fill="#143CFF"/></svg>',
     mail: '<svg viewBox="0 0 120 56" aria-hidden="true"><rect x="12" y="13" width="76" height="39" rx="6" fill="#fff" stroke="#143CFF" stroke-width="4"/><path d="m15 16 35 27 35-27" fill="none" stroke="#26D9E8" stroke-width="4"/><circle cx="94" cy="14" r="11" fill="#FF3D4F"/><text x="94" y="18" text-anchor="middle" font-size="11" font-weight="900" fill="#fff">1</text></svg>',
-    news: '<svg viewBox="0 0 120 56" aria-hidden="true"><rect x="13" y="7" width="70" height="45" rx="5" fill="#fff" stroke="#143CFF" stroke-width="4"/><path d="M23 19h49M23 29h49M23 39h31" stroke="#26D9E8" stroke-width="5" stroke-linecap="round"/><rect x="91" y="20" width="19" height="20" rx="4" fill="#FF3D4F"/><text x="100.5" y="33" text-anchor="middle" font-size="8" font-weight="900" fill="#fff">LIVE</text></svg>',
     milestones: '<svg viewBox="0 0 120 56" aria-hidden="true"><circle cx="34" cy="28" r="20" fill="none" stroke="#B7D3F5" stroke-width="7"/><path d="M34 8a20 20 0 0 1 18 28" fill="none" stroke="#26D9E8" stroke-width="7" stroke-linecap="round"/><path d="m34 16 4 9 10 1-8 7 2 10-8-5-8 5 2-10-8-7 10-1Z" fill="#FFE552" stroke="#143CFF" stroke-width="2"/><path d="M70 19h37M70 29h25M70 39h31" stroke="#143CFF" stroke-width="4" stroke-linecap="round"/></svg>',
     awards: '<svg viewBox="0 0 120 56" aria-hidden="true"><path d="M12 49h96M25 49V34h20v15M50 49V20h20v29M75 49V29h20v20" fill="#EAF5FF" stroke="#143CFF" stroke-width="4"/><circle cx="60" cy="10" r="8" fill="#FFE552" stroke="#FF3D4F" stroke-width="3"/></svg>',
     championship: '<svg viewBox="0 0 120 56" aria-hidden="true"><path d="M37 11h46v15a23 23 0 0 1-46 0V11Z" fill="#FFE552" stroke="#143CFF" stroke-width="4"/><path d="M37 17H21a16 16 0 0 0 16 17M83 17h16a16 16 0 0 1-16 17M60 42v9M43 53h34" fill="none" stroke="#FF3D4F" stroke-width="4" stroke-linecap="round"/></svg>',
     'hall-of-fame': '<svg viewBox="0 0 120 56" aria-hidden="true"><rect x="18" y="6" width="48" height="44" rx="5" fill="#fff" stroke="#143CFF" stroke-width="4"/><circle cx="42" cy="22" r="9" fill="#26D9E8"/><path d="M28 44a14 14 0 0 1 28 0" fill="#EAF5FF" stroke="#143CFF" stroke-width="3"/><path d="m91 8 4 9 10 1-8 7 2 10-8-5-8 5 2-10-8-7 10-1Z" fill="#FFE552" stroke="#FF3D4F" stroke-width="2"/></svg>',
     chains: '<svg viewBox="0 0 120 56" aria-hidden="true"><path d="M16 28h88" stroke="#B7D3F5" stroke-width="5" stroke-linecap="round"/><circle cx="18" cy="28" r="10" fill="#26D9E8" stroke="#143CFF" stroke-width="3"/><circle cx="60" cy="28" r="10" fill="#FFE552" stroke="#143CFF" stroke-width="3"/><circle cx="102" cy="28" r="10" fill="#FF3D4F" stroke="#143CFF" stroke-width="3"/><path d="m40 22 8 6-8 6M82 22l8 6-8 6" fill="none" stroke="#143CFF" stroke-width="3"/></svg>'
   };
-  return svg[domain] || svg.news;
+  return svg[domain] || svg.events;
 }
 function v56ContentSummary(domain, state, title, detail) {
   const labels = { events: "事件", mail: "郵件", news: "新聞", milestones: "里程碑", awards: "獎項", championship: "冠軍", "hall-of-fame": "名人堂", chains: "連鎖" };
@@ -102,8 +104,6 @@ function v56DecorateRenderedContent() {
       const unread = mail.filter(function (item) { return item.unread; }).length;
       v56InsertSummary(mailList.closest(".card"), v56ContentSummary("mail", unread ? "有未讀待處理" : "目前無未讀", "收件匣狀態", `${unread} 封未讀・共 ${mail.length} 封`));
     }
-    const newsCard = app.querySelector(".newscard");
-    if (newsCard) v56InsertSummary(newsCard, v56ContentSummary("news", "最新快訊已更新", "聯盟消息流", `${(S.newsFeed || []).length} 則可查閱`));
     const ms = app.querySelector(".v48milestone-card");
     if (ms) v56InsertSummary(ms, v56ContentSummary("milestones", "里程碑已達成", "生涯成長節點", "查看下方既有回應選項。"));
     const dev = app.querySelector(".v54-ms-promote2, .v54-ms-promote1");
@@ -138,7 +138,7 @@ function v57DashboardHero(team) {
   return `<section class="v57-dashboard-hero" data-v57-dashboard-hero="true" aria-label="球場升級計畫">
     <div class="v57-dashboard-hero-heading"><span class="v57-facility-kicker">STADIUM VISUAL・DASHBOARD</span><h2>主場球場</h2><span>目前 Lv.${currentLevel}・${labels[currentLevel] || "球場升級中"}</span></div>
     <div class="v60-dashboard-featured">
-      <div class="v60-dashboard-featured-art">${src ? `<img src="${src}" alt="Lv${currentLevel} ${labels[currentLevel] || "主場球場"}" data-v60-art-source="approved-stadium-png">` : `<div class="v57-dashboard-art-missing">素材未載入</div>`}</div>
+    <div class="v60-dashboard-featured-art">${src ? `<img src="${src}" alt="Lv${currentLevel} ${labels[currentLevel] || "主場球場"}" data-v60-art-source="approved-stadium-png" loading="eager" decoding="async" fetchpriority="high">` : `<div class="v57-dashboard-art-missing">素材未載入</div>`}</div>
       <div class="v60-dashboard-featured-copy"><span class="v60-dashboard-kicker">HOME STADIUM</span><strong>${labels[currentLevel] || "主場球場"}</strong><span>球場等級、容量與格位狀態已由「球場硬體建設」保留完整操作。</span><button id="btn-dashboard-facilities" class="btn-secondary" type="button">查看球場硬體建設</button></div>
     </div>
     <div class="v60-stadium-rail" aria-label="球場升級階段">${stageRail}</div>
@@ -1337,23 +1337,21 @@ function renderNewsCard() {
   if (feed.length === 0) {
     return `<div class="card newscard">
       <div class="eyebrow">聯盟快訊</div>
-      ${v56ContentSummary("news", "目前無新聞", "聯盟消息流", "0 則可查閱")}
       ${v60CompatVisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene")}
       <p class="v59-compact-line">目前沒有新聞</p>
       ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">目前尚無新聞快訊；賽事、傷兵、國際活動與聯盟事件發生後會集中顯示在這裡。</p>`, "新聞來源") : ""}
     </div>`;
   }
   const show = feed.slice(0, UI.newsExpanded ? 15 : 5);
-  const typeIcon = { "戰報": ""+icon('fire')+"", "傷兵": ""+icon('bandage')+"", "里程碑": ""+icon('medal')+"", "國際賽": ""+icon('globe')+"", "春訓": ""+icon('blossom')+"", "贊助": ""+icon('handshake')+"", "訓練": ""+icon('training')+"", "高層": ""+icon('museum')+"" };
+  const typeIcon = { "戰報": "⚾", "傷兵": "🩹", "里程碑": "🏅", "國際賽": "🌐", "春訓": "🌸", "贊助": "🤝", "訓練": "🧢", "高層": "🏛️" };
   // v29真・跑馬燈：取最新8則串成一條，水平無縫循環捲動（內容複製兩份製造無限循環；長度越長捲越久）
-  const tickerItems = feed.slice(0, 8).map(n => `<span class="tickeritem">${typeIcon[n.type] || ""+icon('news')+""} ${n.text}</span>`).join("<span class=\"tickersep\">◆</span>");
+  const tickerItems = feed.slice(0, 8).map(n => `<span class="tickeritem">${typeIcon[n.type] || "📰"} ${n.text}</span>`).join("<span class=\"tickersep\">◆</span>");
   const tickerDur = clamp(feed.slice(0, 8).reduce((s, n) => s + n.text.length, 0) * 0.55, 18, 90);
   return `<div class="card newscard">
     <div class="eyebrow">聯盟快訊</div>
-    ${v56ContentSummary("news", "最新快訊已更新", "聯盟消息流", `${feed.length} 則可查閱`)}
     ${v60CompatVisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene")}
     ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<div class="tickerwrap"><div class="tickertrack" style="animation-duration:${tickerDur}s;">${tickerItems}<span class="tickersep">◆</span>${tickerItems}<span class="tickersep">◆</span></div></div>`, "開啟新聞跑馬燈") : `<div class="tickerwrap"><div class="tickertrack" style="animation-duration:${tickerDur}s;">${tickerItems}<span class="tickersep">◆</span>${tickerItems}<span class="tickersep">◆</span></div></div>`}
-    ${show.map(n => `<p class="newsitem"><span class="newstime">${n.dateLabel}</span>${typeIcon[n.type] || ""+icon('news')+""} ${n.text}</p>`).join("")}
+    ${show.map(n => `<p class="newsitem"><span class="newstime">${n.dateLabel}</span>${typeIcon[n.type] || "📰"} ${n.text}</p>`).join("")}
     ${feed.length > 5 ? `<button id="btn-news-toggle" class="btn-outline" style="margin-top:8px;">${UI.newsExpanded ? "收合" : `更多快訊（共${feed.length}則）`}</button>` : ""}
   </div>`;
 }

@@ -101,8 +101,10 @@ assert(v60FinanceSource.indexOf("draft-negotiation-screen") >= 0 && v60FinanceSo
 assert(v60StyleSource.indexOf(".field input") >= 0 && v60StyleSource.indexOf("background:#FFFFFF !important") >= 0 && v60StyleSource.indexOf(".draft-negotiation-screen input[type=\"number\"]") >= 0, "v60 談薪輸入框亮底高對比修正");
 assert(v60DashboardSource.indexOf("const canRun = S.currentDay === 0") >= 0 && v60DashboardSource.indexOf("!S.gameStarted || S.currentDay !== 0") < 0, "v60 國際交流／海外行銷畫面不再於球季中整張消失");
 assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceSource.indexOf('v60VisualScene("marketing_command_center_v58"') >= 0 || v60FinanceSource.indexOf('v60CompatVisualScene("marketing_command_center_v58"') >= 0), "v60 行銷企劃頁實際整合海外活動畫面");
-assert((v60DashboardSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60DashboardSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf("icon('news')") >= 0 && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60DashboardSource.indexOf('renderNewsCard') >= 0 && v60DashboardSource.indexOf('v56ContentSummary("news"') >= 0, "v60 新聞 renderer 同時輸出 PNG 與 SVG 摘要");
-assert(v60SwSource.indexOf('baseballgm-v60') >= 0, "v60 Service Worker cache key 已更新");
+const v60NewsRendererSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderNewsCard"), v60DashboardSource.indexOf("function renderSponsorMissionCard"));
+assert((v60NewsRendererSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60NewsRendererSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60NewsRendererSource.indexOf('v56ContentSummary("news"') < 0 && v60NewsRendererSource.indexOf("icon('news')") < 0, "v60 新聞 renderer 僅保留完整 PNG，不再輸出新聞 SVG");
+assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('loading="lazy"') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准 PNG 路徑與 lazy loading 已接入");
+assert(v60SwSource.indexOf('baseballgm-v60-r010') >= 0, "v60 Service Worker cache key 已更新");
 
 /* ---------- 1. 40國系統 ---------- */
 assert(g("NATIONS.length") === 40, "40國");
@@ -4121,7 +4123,7 @@ const v56DashboardSource = fs.readFileSync("05-ui-dashboard.js", "utf8");
 const v56StyleSource = fs.readFileSync("style.css", "utf8");
 assert(v56DashboardSource.indexOf("function v56DecorateRenderedContent") >= 0, "v56-001 render 完成後掛入內容圖像化 adapter");
 assert(v56DashboardSource.indexOf('const domain = ev.chained ? "chains" : "events"') >= 0 && v56DashboardSource.indexOf("v56ContentSummary(domain") >= 0 && v56DashboardSource.indexOf('labels = { events: "事件"') >= 0, "v56-001 事件／連鎖各有獨立視覺摘要 mapping");
-assert(v56DashboardSource.indexOf("v56ContentSummary(\"mail\"") >= 0 && v56DashboardSource.indexOf("v56ContentSummary(\"news\"") >= 0, "v56-001 郵件／新聞各有獨立視覺摘要 mapping");
+assert(v56DashboardSource.indexOf("v56ContentSummary(\"mail\"") >= 0 && v56DashboardSource.indexOf("v56ContentSummary(\"news\"") < 0 && v56DashboardSource.indexOf("newsroom_v58") >= 0, "v56-001 郵件保留摘要、新聞改由完整 PNG 畫面承載");
 assert(v56DashboardSource.indexOf("v56ContentSummary(\"milestones\"") >= 0 && v56DashboardSource.indexOf("v56ContentSummary(\"awards\"") >= 0 && v56DashboardSource.indexOf("v56ContentSummary(\"championship\"") >= 0, "v56-001 里程碑／獎項／冠軍各有視覺摘要 mapping");
 assert(v56DashboardSource.indexOf('v56ContentSummary("hall-of-fame"') >= 0 && v56DashboardSource.indexOf("v56ContentEscape") >= 0, "v56-001 名人堂摘要與內容跳脫保護就位");
 assert(v56StyleSource.indexOf(".v56-live-summary-art") >= 0 && v56StyleSource.indexOf("完整原卡片與文字不隱藏") >= 0 && v56StyleSource.indexOf("@media(max-width:620px)") >= 0, "v56-001 內容優先 scene 與手機 reflow CSS 就位");

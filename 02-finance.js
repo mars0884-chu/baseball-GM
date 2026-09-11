@@ -541,7 +541,7 @@ function v57FacilityStateOverlay(state) {
 }
 function v57StadiumVisual(profile, state) {
   const src = typeof v60CompatArtDataUrl === "function" ? v60CompatArtDataUrl(profile.artKey) : "";
-  const fallback = src ? `<img class="v57-confirmed-art-image" src="${src}" alt="Lv.${profile.level} ${profile.stage}">` : `<div class="v57-art-missing">已核准素材尚未載入</div>`;
+  const fallback = src ? `<img class="v57-confirmed-art-image" src="${src}" alt="Lv.${profile.level} ${profile.stage}" loading="lazy" decoding="async">` : `<div class="v57-art-missing">已核准素材尚未載入</div>`;
   return `<div class="v57-facility-scene-frame v57-scene-${profile.key}" role="img" aria-label="Lv.${profile.level} ${profile.stage}">${fallback}${v57FacilityStateOverlay(state)}</div>`;
 }
 function v57FacilityTabArtKey(ftab) {
@@ -569,7 +569,7 @@ function v57FacilityTabVisualData(team, ftab, cur) {
 function v57FacilityTabArtVisual(ftab, profile, view, state) {
   if (ftab === "球場") return v57StadiumVisual(profile, state);
   const src = typeof v60CompatArtDataUrl === "function" ? v60CompatArtDataUrl(view.artKey) : "";
-  const fallback = src ? `<img class="v57-confirmed-art-image" src="${src}" alt="${view.label}">` : `<div class="v57-art-missing">已核准素材尚未載入</div>`;
+  const fallback = src ? `<img class="v57-confirmed-art-image" src="${src}" alt="${view.label}" loading="lazy" decoding="async">` : `<div class="v57-art-missing">已核准素材尚未載入</div>`;
   return `<div class="v57-facility-scene-frame v57-facility-scene" role="img" aria-label="${view.label} Lv.${view.level}">${fallback}${v57FacilityStateOverlay(state)}</div>`;
 }
 function renderV57FacilityVisual(team, cur, next, canUpgrade, ftab) {
