@@ -8,10 +8,10 @@
 <meta name="apple-mobile-web-app-title" content="決勝 GM">
 <meta name="theme-color" content="#173D2F">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-180.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.webmanifest?v=v60-r010">
+<link rel="apple-touch-icon" href="icon-180.png?v=v60-r010">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=v60-r010">
+<link rel="stylesheet" href="style.css?v=v60-r010">
 <title>決勝 GM — FRONT OFFICE BASEBALL</title>
 <style>
   .v60-public-splash{min-height:100svh;display:grid;place-items:center;padding:24px;background:linear-gradient(160deg,#D9A441 0%,#B98216 58%,#765315 100%);color:#F5F1E6;text-align:center}
@@ -25,7 +25,7 @@
 /* v60-r010 public deployment: visual PNGs remain separate so the first HTML response is not 65 MB. */
 (function(){
   var root = "./visual_assets/";
-  window.__v60PublicAppIconPath = "./icon-512.png";
+  window.__v60PublicAppIconPath = "./icon-512.png?v=v60-r010";
   window.__v60PublicArtPaths = {
     analysis_rehab_base_generated: root + "v57/analysis_rehab_base_generated.png",
     dorm_base_generated: root + "v57/dorm_base_generated.png",
@@ -52,19 +52,19 @@
   });
 }());
 </script>
-<script defer src="00-theme.js"></script>
-<script defer src="01-data-engine.js"></script>
-<script defer src="02-finance.js"></script>
-<script defer src="03-simulation.js"></script>
-<script defer src="04-state-core.js"></script>
-<script defer src="05-ui-dashboard.js"></script>
-<script defer src="06-ui-roster.js"></script>
+<script defer src="00-theme.js?v=v60-r010"></script>
+<script defer src="01-data-engine.js?v=v60-r010"></script>
+<script defer src="02-finance.js?v=v60-r010"></script>
+<script defer src="03-simulation.js?v=v60-r010"></script>
+<script defer src="04-state-core.js?v=v60-r010"></script>
+<script defer src="05-ui-dashboard.js?v=v60-r010"></script>
+<script defer src="06-ui-roster.js?v=v60-r010"></script>
 </head>
 <body>
 <div id="app">
   <main class="v60-public-splash" aria-label="決勝 GM 載入中">
     <div class="v60-public-splash-card">
-      <div class="v60-public-splash-icon"><img src="icon-512.png" width="512" height="512" alt="決勝 GM 應用程式圖示"></div>
+      <div class="v60-public-splash-icon"><img src="icon-512.png?v=v60-r010" width="512" height="512" alt="決勝 GM 應用程式圖示"></div>
       <div class="v60-public-splash-title">決勝 GM</div>
       <div class="v60-public-splash-sub">FRONT OFFICE BASEBALL</div>
     </div>
@@ -75,7 +75,7 @@
   try{
     if(!("serviceWorker" in navigator)) return;
     if(location.protocol !== "http:" && location.protocol !== "https:") return;
-    window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
+        window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js?v=v60-r010").catch(function(){}); });
   }catch(_){ }
 }());
 </script>
