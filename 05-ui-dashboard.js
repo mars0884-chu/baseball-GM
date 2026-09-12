@@ -29,6 +29,19 @@ function v60CompatArtDataUrl(key) {
     return cache[key] || "";
   } catch (_) { return ""; }
 }
+function v60CompatArtFallbackUrl(key) {
+  try {
+    const fallbackMap = (typeof window !== "undefined" && window.__v60PublicArtFallbackPaths) || null;
+    return fallbackMap && fallbackMap[String(key || "")] ? fallbackMap[String(key || "")] : "";
+  } catch (_) { return ""; }
+}
+function v60CompatArtImageAttrs(key, loading, priority) {
+  const fallback = v60CompatArtFallbackUrl(key);
+  const safeLoading = loading === "eager" ? "eager" : "lazy";
+  const priorityAttr = priority ? ` fetchpriority="high"` : "";
+  const fallbackAttr = fallback ? ` onerror="this.onerror=null;this.src='${fallback}'"` : "";
+  return `loading="${safeLoading}" decoding="async"${priorityAttr}${fallbackAttr}`;
+}
 function v60CompatAppIconDataUrl() {
   if (typeof window !== "undefined" && window.__v60PublicAppIconPath) return window.__v60PublicAppIconPath;
   return (typeof globalThis !== "undefined" && globalThis.v60AppIconDataUrl instanceof Function)
@@ -40,9 +53,25 @@ function v60CompatVisualScene(key, alt, kicker, title, detail, extraClass) {
   if (!src) return "";
   const cls = extraClass ? ` ${extraClass}` : "";
   return `<section class="v60-visual-scene${cls}" data-v60-art-key="${key}" data-v60-art-source="approved-scene-png" aria-label="${alt}">
-    <div class="v60-visual-scene-art"><img src="${src}" alt="${alt}" loading="lazy" decoding="async"></div>
+    <div class="v60-visual-scene-art"><img src="${src}" alt="${alt}" ${v60CompatArtImageAttrs(key, "lazy", false)}></div>
     <div class="v60-visual-scene-copy"><span class="v60-visual-kicker">${kicker}</span><strong>${title}</strong><span>${detail}</span></div>
   </section>`;
+}
+/* v60-002：把可掃讀資訊改成圖像化指標，避免再用摺疊段落堆疊說明。
+   只讀取既有資料，不新增 state、不改數值、不呼叫 RNG。 */
+function v60UiEscape(value) {
+  return String(value == null ? "" : value).replace(/[&<>"']/g, function (ch) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch];
+  });
+}
+function v60VisualMetricRail(items, ariaLabel) {
+  const valid = (Array.isArray(items) ? items : []).filter(function (item) {
+    return item && item.length >= 2 && item[0] != null && item[1] != null;
+  });
+  if (!valid.length) return "";
+  return `<div class="v60-visual-metric-rail" aria-label="${v60UiEscape(ariaLabel || "關鍵資訊")}">${valid.map(function (item) {
+    return `<span class="v60-visual-metric"><b>${v60UiEscape(item[0])}</b><strong>${v60UiEscape(item[1])}</strong></span>`;
+  }).join("")}</div>`;
 }
 /* v60-r007：大型內嵌美術 JSON 位於模組腳本之後；若 IndexedDB 讀檔先完成，
    初次 render 可能早於素材節點解析。DOM 完成後只重繪一次，讓 APP／球場／新聞
@@ -130,6 +159,9 @@ function v57DashboardHero(team) {
   const labels = { 1: "在地開放球場", 3: "城市球場", 5: "都會旗艦球場", 7: "全封閉巨蛋" };
   const profile = v57FacilityVisualProfile(currentLevel);
   const src = v60CompatArtDataUrl(profile.artKey);
+  const facility = typeof facilityInfo === "function" ? facilityInfo(team) : null;
+  const slots = typeof stadiumSlotCount === "function" ? stadiumSlotCount(team) : null;
+  const built = team.facility && Array.isArray(team.facility.stadiumSlots) ? team.facility.stadiumSlots.length : null;
   const anchors = [1, 3, 5, 7];
   const stageRail = anchors.map(function (level) {
     const reached = currentLevel >= level;
@@ -138,8 +170,12 @@ function v57DashboardHero(team) {
   return `<section class="v57-dashboard-hero" data-v57-dashboard-hero="true" aria-label="球場升級計畫">
     <div class="v57-dashboard-hero-heading"><span class="v57-facility-kicker">STADIUM VISUAL・DASHBOARD</span><h2>主場球場</h2><span>目前 Lv.${currentLevel}・${labels[currentLevel] || "球場升級中"}</span></div>
     <div class="v60-dashboard-featured">
-    <div class="v60-dashboard-featured-art">${src ? `<img src="${src}" alt="Lv${currentLevel} ${labels[currentLevel] || "主場球場"}" data-v60-art-source="approved-stadium-png" loading="eager" decoding="async" fetchpriority="high">` : `<div class="v57-dashboard-art-missing">素材未載入</div>`}</div>
-      <div class="v60-dashboard-featured-copy"><span class="v60-dashboard-kicker">HOME STADIUM</span><strong>${labels[currentLevel] || "主場球場"}</strong><span>球場等級、容量與格位狀態已由「球場硬體建設」保留完整操作。</span><button id="btn-dashboard-facilities" class="btn-secondary" type="button">查看球場硬體建設</button></div>
+    <div class="v60-dashboard-featured-art">${src ? `<img src="${src}" alt="Lv${currentLevel} ${labels[currentLevel] || "主場球場"}" data-v60-art-source="approved-stadium-png" ${v60CompatArtImageAttrs(profile.artKey, "eager", true)}>` : `<div class="v57-dashboard-art-missing">素材未載入</div>`}</div>
+      <div class="v60-dashboard-featured-copy"><span class="v60-dashboard-kicker">HOME STADIUM</span><strong>${labels[currentLevel] || "主場球場"}</strong>${v60VisualMetricRail([
+        ["容量", facility ? `${facility.capacity.toLocaleString()} 人` : "—"],
+        ["格位", slots != null && built != null ? `${built}/${slots}` : "—"],
+        ["預算", team.finance ? formatMoney(team.finance.budget) : "—"]
+      ], "主場關鍵資訊")}<button id="btn-dashboard-facilities" class="btn-secondary" type="button">查看球場硬體建設</button></div>
     </div>
     <div class="v60-stadium-rail" aria-label="球場升級階段">${stageRail}</div>
   </section>`;
@@ -181,7 +217,7 @@ function render() {
   try { if (document.body && document.body.setAttribute) document.body.setAttribute("data-skin", (S && S.skin) || "emoji"); } catch (_) {} // v41⑦：皮膚插槽（預設emoji）
   try { if (document.body && document.body.setAttribute) document.body.setAttribute("data-screen", (typeof UI !== "undefined" && UI && UI.screen) || ""); } catch (_) {} // v47：分頁背景槽位（未導入資產包時無任何視覺變化）
   try { if (typeof v49ClearPortraitCache === "function") v49ClearPortraitCache(); } catch (_) {} // v49：清除肖像快取（轉隊後即時換帽）
-  try { const r = renderScreen(); try { wireUiTabs(); } catch (_) {} try { v56DecorateRenderedContent(); } catch (e) { console.error("[v56-content-visualization]", e); } return r; }
+  try { const r = renderScreen(); try { wireUiTabs(); } catch (_) {} return r; }
   catch (e) {
     UI.__bootError = "畫面渲染發生錯誤：" + ((e && e.message) || e);
     try { return renderBootRecovery(); }
@@ -402,14 +438,19 @@ function renderDashboard() {
         const pending = team.roster1.concat(team.roster2).map(id => S.players[id]).filter(p => p && p.injury && p.injury.pendingSurgery);
         if (pending.length === 0) return "";
         return pending.map(p => {
-          const surgCost = (typeof surgeryCostFor === "function") ? surgeryCostFor(p, team) : 0; // v29手術費用
-          const canAfford = team.finance.budget >= surgCost;
-          return `<div class="card issuecard">
-          <div class="eyebrow">${icon('medical')} 重傷治療方針待決定：${p.name}（${p.level}）</div>
-          <p class="sub dark">${p.name} 遭遇 <b>${p.injury.name}</b>（${p.injury.part}・重度），基礎恢復期約 ${p.injury.totalDays} 天。<b>決定治療方針前，恢復不會開始。</b></p>
-          <p class="sub dark">${icon('surgery')} <b>手術治療</b>：需支付手術費 <b>${formatMoney(surgCost)}</b>${medicalLevel(team) > 0 ? `（醫療室Lv.${medicalLevel(team)}已折抵${medicalLevel(team) * 5}%）` : ""}，恢復期延長約40%（約 ${Math.max(3, Math.round(p.injury.totalDays * 1.4))} 天），但傷癒降評機率僅2%、日後舊傷復發風險最低。<br>${icon('bandage')} <b>保守治療</b>：免費、恢復期照舊（約 ${p.injury.totalDays} 天），但傷癒降評機率約${Math.round(clamp(0.25 - (typeof rehabDowngradeShift === "function" ? rehabDowngradeShift(team) : 0), 0.05, 0.25) * 100)}%${hasTrait(p, "glass") ? "（玻璃體質再上修）" : hasTrait(p, "ironman") ? "（鋼鐵之軀下修）" : ""}，同部位也較易復發。</p>
-          <p class="draftnote muted">目前預算：${formatMoney(team.finance.budget)}${canAfford ? "" : "（不足以支付手術費）"}</p>
-          <div class="btnrow">
+           const surgCost = (typeof surgeryCostFor === "function") ? surgeryCostFor(p, team) : 0; // v29手術費用
+           const canAfford = team.finance.budget >= surgCost;
+           return `<div class="card issuecard">
+           <div class="eyebrow">${icon('medical')} 重傷治療方針待決定：${p.name}（${p.level}）</div>
+           <p class="v60-state-line">${p.injury.name}・${p.injury.part}；恢復尚未開始，請先選治療方針。</p>
+           ${v60VisualMetricRail([
+             ["手術", `${formatMoney(surgCost)}・約${Math.max(3, Math.round(p.injury.totalDays * 1.4))}天`],
+             ["保守", `免費・約${p.injury.totalDays}天`],
+             ["手術降評", "約2%"],
+             ["保守降評", `約${Math.round(clamp(0.25 - (typeof rehabDowngradeShift === "function" ? rehabDowngradeShift(team) : 0), 0.05, 0.25) * 100)}%`],
+             ["目前預算", `${formatMoney(team.finance.budget)}${canAfford ? "" : "・不足"}`]
+           ], "重傷治療決策")}
+           <div class="btnrow">
             <button class="btn-primary surg-btn" data-pid="${p.id}" data-method="surgery" ${canAfford ? "" : "disabled"}>手術治療（${formatMoney(surgCost)}）</button>
             <button class="btn-secondary surg-btn" data-pid="${p.id}" data-method="conservative">保守治療（免費）</button>
           </div>
@@ -419,14 +460,15 @@ function renderDashboard() {
       ${(() => {
         const injured = team.roster1.concat(team.roster2).map(id => S.players[id]).filter(p => p && isInjured(p) && !(p.injury && p.injury.pendingSurgery));
         if (injured.length === 0) return "";
-        return `<div class="card injurycard">
-          <div class="eyebrow">傷兵名單（${injured.length} 人）</div>
+         return `<div class="card injurycard">
+           <div class="eyebrow">傷兵名單（${injured.length} 人）</div>
           ${injured.map(p => {
             const pct26 = Math.round((p.injury.totalDays - p.injury.daysLeft) / Math.max(1, p.injury.totalDays) * 100);
             return `<p class="sub dark" style="margin:4px 0;">${icon('bandage')} ${p.name}（${p.level}）：${p.injury.name}・${p.injury.severityLabel}${p.injury.method === "surgery" ? "・術後復健" : ""}，還需 ${p.injury.daysLeft} 天<span class="rehabpct">復健 ${pct26}%</span></p>
             <div class="injurybar slim"><div style="width:${pct26}%"></div></div>`;
           }).join("")}
-          ${foldNote(`<p class="draftnote muted">傷兵不會被排入打線與投手調度，傷癒後自動歸隊。醫療室與復健中心可分別降低受傷機率、加速恢復並減少後遺症。</p>`)}
+           ${v60VisualMetricRail([["出賽", "暫停"], ["歸隊", "傷癒自動"], ["醫療室", "降受傷"], ["復健中心", "加速恢復"]], "傷兵狀態摘要")}
+           <p class="v60-state-line">傷兵不列入調度；恢復後自動歸隊。</p>
         </div>`;
       })()}
 
@@ -442,7 +484,8 @@ function renderDashboard() {
         <ul class="issuelist">
           ${lineupWarnings.map(i => `<li>${i}</li>`).join("")}
         </ul>
-        <p class="sub dark">比賽仍可正常進行，但建議盡快到「球員名單」的先發打線／投手輪值分頁調整，避免不合理的先發安排。</p>
+         ${v60VisualMetricRail([["比賽", "可繼續"], ["處理", "調整先發"], ["入口", "球員名單"]], "先發陣容摘要")}
+         <p class="v60-state-line">到「球員名單」調整先發打線／投手輪值。</p>
       </div>`
           : `
       <div class="card issuecard">
@@ -450,7 +493,8 @@ function renderDashboard() {
         <ul class="issuelist">
           ${lineupWarnings.map(i => `<li>${i}</li>`).join("")}
         </ul>
-        <p class="sub dark">純GM 模式下先發打線／輪值由總教練全權排定，傷兵會自動由教練遞補，你不需要（也無法）手動調整陣容。若一軍出現本職球員缺口，教練會另以「補強需求／遞補提案」向你請示。</p>
+        ${v60VisualMetricRail([["模式", "純 GM"], ["排陣", "總教練負責"], ["傷兵", "自動遞補"], ["缺口", "提案請示"]], "純GM陣容摘要")}
+        <p class="v60-state-line">你只需回應補強需求／遞補提案。</p>
       </div>`
       ) : ""}
 
@@ -460,7 +504,8 @@ function renderDashboard() {
         <ul class="issuelist">
           ${financeWarns.map(i => `<li>${i}</li>`).join("")}
         </ul>
-        <p class="sub dark">前往「財務」畫面可查看詳細收支並調整票價策略。</p>
+        ${v60VisualMetricRail([["警示", `${financeWarns.length} 項`], ["入口", "財務"], ["可調整", "票價・合約"]], "財務提醒摘要")}
+        <p class="v60-state-line">前往「財務」查看收支與票價策略。</p>
       </div>` : ""}`;
   const dashTodoCount = (dashTodoPanel.match(/class="card (issuecard|injurycard)/g) || []).length
     + (dashTodoPanel.match(/id="btn-aiprop-accept"/g) || []).length
@@ -1336,10 +1381,10 @@ function renderNewsCard() {
   const feed = S.newsFeed || [];
   if (feed.length === 0) {
     return `<div class="card newscard">
-      <div class="eyebrow">聯盟快訊</div>
-      ${v60CompatVisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene")}
-      <p class="v59-compact-line">目前沒有新聞</p>
-      ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">目前尚無新聞快訊；賽事、傷兵、國際活動與聯盟事件發生後會集中顯示在這裡。</p>`, "新聞來源") : ""}
+       <div class="eyebrow">聯盟快訊</div>
+       ${v60CompatVisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene")}
+       ${v60VisualMetricRail([["快訊", "0 則"], ["狀態", "等待事件"]], "新聞摘要")}
+       <p class="v60-state-line">賽事、傷兵與聯盟事件發生後會在這裡出現。</p>
     </div>`;
   }
   const show = feed.slice(0, UI.newsExpanded ? 15 : 5);
@@ -1348,9 +1393,9 @@ function renderNewsCard() {
   const tickerItems = feed.slice(0, 8).map(n => `<span class="tickeritem">${typeIcon[n.type] || "📰"} ${n.text}</span>`).join("<span class=\"tickersep\">◆</span>");
   const tickerDur = clamp(feed.slice(0, 8).reduce((s, n) => s + n.text.length, 0) * 0.55, 18, 90);
   return `<div class="card newscard">
-    <div class="eyebrow">聯盟快訊</div>
-    ${v60CompatVisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene")}
-    ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<div class="tickerwrap"><div class="tickertrack" style="animation-duration:${tickerDur}s;">${tickerItems}<span class="tickersep">◆</span>${tickerItems}<span class="tickersep">◆</span></div></div>`, "開啟新聞跑馬燈") : `<div class="tickerwrap"><div class="tickertrack" style="animation-duration:${tickerDur}s;">${tickerItems}<span class="tickersep">◆</span>${tickerItems}<span class="tickersep">◆</span></div></div>`}
+     <div class="eyebrow">聯盟快訊</div>
+     ${v60CompatVisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene")}
+     <div class="tickerwrap" aria-label="新聞跑馬燈"><div class="tickertrack" style="animation-duration:${tickerDur}s;">${tickerItems}<span class="tickersep">◆</span>${tickerItems}<span class="tickersep">◆</span></div></div>
     ${show.map(n => `<p class="newsitem"><span class="newstime">${n.dateLabel}</span>${typeIcon[n.type] || "📰"} ${n.text}</p>`).join("")}
     ${feed.length > 5 ? `<button id="btn-news-toggle" class="btn-outline" style="margin-top:8px;">${UI.newsExpanded ? "收合" : `更多快訊（共${feed.length}則）`}</button>` : ""}
   </div>`;
@@ -1441,7 +1486,7 @@ function renderSpringCamp() {
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${S.leagueName} ・ 第${S.seasonYear}年</div><h1>春季訓練</h1></div>
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      ${typeof v59VisualScene === "function" ? v59VisualScene("spring_training_base_v58", "春訓基地場景", "SPRING TRAINING VISUAL", "春訓基地", "完整訓練設施與既有球員訓練配置保留在下方。", "v59-spring-scene") : ""}
+      ${v60CompatVisualScene("spring_training_base_v58", "春訓基地場景", "SPRING TRAINING VISUAL", "春訓基地", "地點與訓練配置", "v60-spring-scene")}
       <div class="card">
         <div class="eyebrow">春訓地點</div>
         <select id="spring-nation" class="sortselect" style="width:100%;">
@@ -1449,13 +1494,13 @@ function renderSpringCamp() {
             ${list.map(n => `<option value="${n.name}" ${camp.nation === n.name ? "selected" : ""}>${n.name}${n.name === HOME_NATION_NAME ? "（母國・免費）" : `（${springCostForNation(n)}萬）`}</option>`).join("")}
           </optgroup>`).join("")}
         </select>
-        <div class="attrgrid" style="margin-top:8px;">
-          <div class="attr"><span>費用</span><b>${cost === 0 ? "免費" : formatMoney(cost)}</b></div>
-          <div class="attr"><span>目前預算</span><b>${formatMoney(team.finance.budget)}</b></div>
-          <div class="attr"><span>國家等級</span><b>${nation.grade}級</b></div>
-          <div class="attr"><span>訓練專長</span><b>${specLabels}</b></div>
-        </div>
-        ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="draftnote muted" style="margin:0;">${nation.flavor}。專長項目可獲得額外成效（${nation.grade}級：+${nation.grade === "S" ? "2~3" : nation.grade === "A" ? "1~3" : nation.grade === "B" ? "1~2" : "1"}）；${NATION_GRADE_ORDER[nation.grade] <= 2 && nation.name !== HOME_NATION_NAME ? "海外春訓期間會發生特殊事件（交流賽、媒體報導、名門友誼…，也可能水土不服）。" : nation.name === HOME_NATION_NAME ? "母國春訓穩定無風險，但沒有海外事件與國家專長以外的驚喜。" : "此等級國家事件較單純。"}單項訓練成效＝基礎1~2＋國家專長＋教練加成＋設施加成（合計最多+5，且不超過潛力天花板）。</p>`, "地點規則") : `<p class="draftnote muted">${nation.flavor}。</p>`}
+        ${v60VisualMetricRail([
+          ["費用", cost === 0 ? "免費" : formatMoney(cost)],
+          ["預算", formatMoney(team.finance.budget)],
+          ["等級", `${nation.grade}級`],
+          ["專長", specLabels]
+        ], "春訓地點摘要")}
+        <p class="v60-state-line">${nation.flavor}・單項最多 +5，且不超過潛力上限。</p>
       </div>
       <div class="tabrow">
         <button class="tab ${UI.springTab === "1軍" ? "active" : ""}" data-tab="1軍">1軍（${team.roster1.length}人）</button>
@@ -1467,18 +1512,15 @@ function renderSpringCamp() {
         <tbody>
           ${players.map(p => {
             const ovr = Math.round(trueOverall(p));
-            const attrLine = p.isPitcher
-              ? `速${velocityKmh(p.velocity)}km 控${p.control} 體${p.stamina} 壓${p.composure}`
-              : `打${p.contact} 長${p.power} 選${p.eye} 速${p.speed} 守${p.fielding} 觸${p.bunting}`;
             return `<tr>
-            <td><b>${p.name}</b>${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<span>${p.isPitcher ? "投手" : "野手"}${hasTrait(p, "grinder") ? "・練習狂" : ""}・${p.age}歲・OVR ${ovr}/${Math.max(ovr, p.potential)}<br>${attrLine}</span>`, "資料") : `<br><span class="draftnote muted">${p.isPitcher ? "投手" : "野手"}・${p.age}歲・OVR ${ovr}/${Math.max(ovr, p.potential)}<br>${attrLine}</span>`}</td>
+            <td><b>${p.name}</b><span class="v60-inline-meta">${p.isPitcher ? "投手" : "野手"}${hasTrait(p, "grinder") ? "・練習狂" : ""}・${p.age}歲・OVR ${ovr}/${Math.max(ovr, p.potential)}</span></td>
             <td><select class="sortselect spring-menu-select" aria-label="${p.name}訓練項目" data-id="${p.id}">
               ${springMenuFor(p).map(m => { const cur = menuAttrOf(p, m.key); const capped = cur >= p.potential; return `<option value="${m.key}" ${camp.assignments[p.id] === m.key ? "selected" : ""}>${m.label}${nation.specialties.includes(m.key) ? ""+icon('star-solid')+"" : ""}（現${cur}${capped ? "・已達頂" : ""}）</option>`; }).join("")}
             </select></td>
           </tr>`;}).join("")}
         </tbody>
       </table>
-      ${foldNote(`<p class="draftnote muted">${icon('star-solid')}＝本次春訓地點的國家專長項目，可獲得額外成效。每個訓練選項後面標示該能力「現在值」，低於綜合值的就是弱點；「已達頂」代表該項已到潛力天花板，再練也不會提升。春訓成果除了主練項目外，其他能力也會依球員特性連動提升（成果報告會完整列出）。</p>`)}
+      ${v60VisualMetricRail([["專長", "加成"], ["上限", "+5"], ["判定", "不超過潛力"], ["成果", "報告可查"]], "春訓判定摘要")}
       <div class="btnrow"><button id="btn-spring-go" class="btn-primary">確認出發春訓${cost > 0 ? `（支付 ${formatMoney(cost)}）` : "（母國・免費）"}</button></div>
     </div>`;
   document.getElementById("spring-nation").onchange = e => setSpringNation(e.target.value);
@@ -1498,11 +1540,12 @@ function renderSpringReport() {
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${S.leagueName} ・ 第${S.seasonYear}年</div><h1>春訓成果報告</h1></div>
-      ${typeof v59VisualScene === "function" ? v59VisualScene("spring_training_base_v58", "春訓成果場景", "SPRING REPORT VISUAL", "春訓成果", "完整成果數據與特殊事件保留在下方。", "v59-spring-report-scene") : ""}
+      ${v60CompatVisualScene("spring_training_base_v58", "春訓成果場景", "SPRING REPORT VISUAL", "春訓成果", "成果與特殊事件", "v60-spring-report-scene")}
       <div class="scoreboard">
         <div class="sb-row small"><div class="sb-label">春訓地點</div><div class="sb-value small">${r.nation}（${r.grade}級）</div></div>
         <div class="sb-row small"><div class="sb-label">花費</div><div class="sb-value small">${r.cost === 0 ? "免費（母國）" : formatMoney(r.cost)}</div></div>
       </div>
+      ${v60VisualMetricRail([["1軍成果", `${r.lines.filter(l => l.level === "1軍").length} 人`], ["2軍成果", `${r.lines.filter(l => l.level === "2軍").length} 人`], ["事件", `${(r.events || []).length} 件`]], "春訓成果摘要")}
       ${r.events && r.events.length > 0 ? `
       <div class="card">
         <div class="eyebrow">春訓特殊事件</div>
@@ -1516,14 +1559,12 @@ function renderSpringReport() {
         <thead><tr><th>球員</th><th>成效</th></tr></thead>
         <tbody>
           ${lines.map(l => {
-            const fullChanges = l.changes.length === 0 ? "已達潛力上限，維持水準" : l.changes.map(c => `${c.traitSpill ? ""+icon('link')+"" : ""}${c.label} ${c.from}→<b>${c.to}</b>${c.traitSpill ? "<span class=\"draftnote muted\">(特性連動)</span>" : (c.linked ? "<span class=\"draftnote muted\">(連動)</span>" : "")}`).join("、");
             const compactChanges = l.changes.length === 0 ? "維持" : l.changes.map(c => `${c.label}+${Math.max(0, c.to - c.from)}`).join("・");
-            const detail = `<span>訓練：${l.menu}<br>完整成效：${fullChanges}</span>`;
-            return `<tr><td>${l.name}</td><td>${compactChanges}${typeof v59TextDisclosure === "function" ? v59TextDisclosure(detail, "詳情") : `<br>${l.menu}<br>${fullChanges}`}</td></tr>`;
+            return `<tr><td><b>${l.name}</b><span class="v60-inline-meta">${l.menu}</span></td><td>${compactChanges}</td></tr>`;
           }).join("")}
         </tbody>
       </table>
-      ${foldNote(`<p class="draftnote muted">「連動」＝主練項目帶動的相關能力；「特性連動」＝依球員特性（練習狂、年輕潛力、觸擊職人…）額外提升的其他能力。</p>`)}
+      ${v60VisualMetricRail([["主練", "主要提升"], ["連動", "相關能力"], ["特性", "額外提升"]], "春訓成果判定")}
       <div class="btnrow"><button id="btn-spring-done" class="btn-primary">春訓結束，迎接開幕戰！</button></div>
     </div>`;
   app.querySelectorAll(".tab").forEach(btn => { btn.onclick = () => { UI.springReportTab = btn.dataset.tab; render(); }; });
@@ -1867,22 +1908,23 @@ function renderCdActivitiesCard() {
   }).join("") : `<p class="sub muted" style="margin:2px 0;">尚未與任何國家建立交情。友好度 3／5／7／10 各有解鎖。</p>`;
   return `<div class="card cdact-card">
     <div class="eyebrow">${icon('globe')} 國際交流／海外行銷</div>
-    ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">${canRun ? "開幕前開放；交流與行銷各一季一次。" : "畫面全年保留；實際執行僅限開幕前。"} 海外春訓僅開放 B 級以上，這裡補上 C／D 級國家與母國的經營用途。</p>`, "活動規則") : ""}
+    ${v60VisualMetricRail([["狀態", canRun ? "可執行" : "已鎖定"], ["預算", formatMoney(team.finance.budget)], ["交流", st.exchangeDone ? "已完成" : "待執行"], ["行銷", st.marketingDone ? "已完成" : "待執行"]], "國際活動摘要")}
+    <p class="v60-state-line">開幕前可各執行一次；球季中保留畫面，僅停用操作。</p>
     <div class="v58-dual-scene-row">
-      ${v60CompatVisualScene("international_exchange_v58", "國際交流場景", "EXCHANGE", "國際交流", "出訪、友誼賽與跨國交流的操作保留在下方。", "v60-compact-scene")}
-      ${v60CompatVisualScene("overseas_marketing_v58", "海外行銷場景", "OVERSEAS", "海外行銷", "海外市場檔期與執行按鈕保留在下方。", "v60-compact-scene")}
+      ${v60CompatVisualScene("international_exchange_v58", "國際交流場景", "EXCHANGE", "國際交流", "友誼賽與跨國互動", "v60-compact-scene")}
+      ${v60CompatVisualScene("overseas_marketing_v58", "海外行銷場景", "OVERSEAS", "海外行銷", "市場檔期與回收", "v60-compact-scene")}
     </div>
     <p class="v59-compact-line">${canRun ? "本季可執行" : "本季已鎖定"}・預算：<b>${formatMoney(team.finance.budget)}</b></p>
     <div style="margin:6px 0;">${bondNames.length ? bondRows : `<p class="v59-compact-line">交情：尚未建立</p>`}</div>
     <div style="margin:8px 0;">
-      <span class="benchrole-tag">交流賽</span> 人氣↑・士氣↑・潛力股
-      ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">出訪打友誼賽，可提升人氣與全隊士氣，小機率發掘當地潛力股。</p>`, "交流賽說明") : ""}
+      <span class="benchrole-tag">交流賽</span>
+      ${v60VisualMetricRail([["人氣", "提升"], ["士氣", "提升"], ["發掘", "小機率"]], "交流賽效果")}
       <select id="cd-exchange-nation" class="sortselect" ${canRun ? "" : "disabled"}>${natOpts}</select>
       <div class="btnrow"><button id="btn-cd-exchange" class="btn-secondary" ${st.exchangeDone || !canRun ? "disabled" : ""}>${st.exchangeDone ? "本季完成" : "執行交流"}</button></div>
     </div>
     <div style="margin:8px 0;">
-      <span class="benchrole-tag">行銷企劃</span> 海外市場：回收・人氣
-      ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">海外市場檔期偏財務回收與人氣，約七成成功。</p>`, "行銷說明") : ""}
+      <span class="benchrole-tag">行銷企劃</span>
+      ${v60VisualMetricRail([["方向", "財務回收"], ["人氣", "提升"], ["成功率", "約七成"]], "海外行銷效果")}
       <select id="cd-marketing-nation" class="sortselect" ${canRun ? "" : "disabled"}>${natOpts}</select>
       <div class="btnrow"><button id="btn-cd-marketing" class="btn-secondary" ${st.marketingDone || !canRun ? "disabled" : ""}>${st.marketingDone ? "本季完成" : "執行行銷"}</button></div>
     </div>
@@ -2169,14 +2211,16 @@ function dashMailPanel() {
     const mail = S.v43.mail || [];
     if (mail.length === 0) {
       return `<div class="card"><div class="eyebrow">${icon('mail')} 郵件中樞</div>
-        ${typeof v59VisualScene === "function" ? v59VisualScene("mailroom_v58", "郵件中樞場景", "MAILROOM VISUAL", "郵件中樞", "完整郵件內容、未讀狀態與既有處理按鈕保留在下方。", "v59-mail-scene") : ""}
+        ${v60CompatVisualScene("mailroom_v58", "郵件中樞場景", "MAILROOM VISUAL", "郵件中樞", "聯盟訊息與待辦入口", "v60-mail-scene")}
+        ${v60VisualMetricRail([["收件匣", "0 封"], ["狀態", "已清空"]], "郵件摘要")}
         <p class="v59-compact-line">目前沒有郵件</p>
-        ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">教練提案、掛牌報價、傷兵遞補與聯盟通知都會集中寄到這裡。</p>`, "郵件來源") : ""}</div>`;
+        <p class="v60-state-line">新提案、傷兵與聯盟通知會在這裡出現。</p></div>`;
     }
     const open = UI.v43MailOpen || null;
     return `<div class="card">
       <div class="eyebrow">${icon('mail')} 郵件中樞（${mail.filter(m => m.unread).length} 封未讀 / 共 ${mail.length} 封）</div>
-      ${typeof v59VisualScene === "function" ? v59VisualScene("mailroom_v58", "郵件中樞場景", "MAILROOM VISUAL", "郵件中樞", "完整郵件內容、未讀狀態與既有處理按鈕保留在下方。", "v59-mail-scene") : ""}
+      ${v60CompatVisualScene("mailroom_v58", "郵件中樞場景", "MAILROOM VISUAL", "郵件中樞", "聯盟訊息與待辦入口", "v60-mail-scene")}
+      ${v60VisualMetricRail([["未讀", `${mail.filter(m => m.unread).length} 封`], ["全部", `${mail.length} 封`], ["操作", "逐封處理"]], "郵件摘要")}
       <div class="v43maillist">
         ${mail.map(m => {
           const isOpen = open === m.id;

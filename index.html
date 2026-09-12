@@ -8,10 +8,10 @@
 <meta name="apple-mobile-web-app-title" content="決勝 GM">
 <meta name="theme-color" content="#143CFF">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="manifest" href="manifest.webmanifest?v=v60-r011">
-<link rel="apple-touch-icon" href="icon-180.png?v=v60-r011">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=v60-r011">
-<link rel="stylesheet" href="style.css?v=v60-r011">
+<link rel="manifest" href="manifest.webmanifest?v=v60-r012">
+<link rel="apple-touch-icon" href="icon-180.png?v=v60-r012">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=v60-r012">
+<link rel="stylesheet" href="style.css?v=v60-r012">
 <title>決勝 GM — FRONT OFFICE BASEBALL</title>
 <style>
   .v60-public-splash{min-height:100svh;display:grid;place-items:center;padding:24px;background:linear-gradient(160deg,#EAF5FF 0%,#B7D3F5 58%,#FFFFFF 100%);color:#102949;text-align:center}
@@ -22,11 +22,30 @@
   .v60-public-splash-sub{font-size:11px;letter-spacing:.18em;color:#143CFF}
 </style>
 <script>
-/* v60-r011 public deployment: visual PNGs remain separate so the first HTML response is not 65 MB. */
+/* v60-r012 public deployment: visual JPEG derivatives stay separate; approved PNGs remain the fallback source. */
 (function(){
   var root = "./visual_assets/";
-  window.__v60PublicAppIconPath = "./icon-512.png?v=v60-r011";
+  window.__v60PublicAppIconPath = "./icon-512.png?v=v60-r012";
   window.__v60PublicArtPaths = {
+    analysis_rehab_base_generated: root + "v57/analysis_rehab_base_generated.jpg",
+    dorm_base_generated: root + "v57/dorm_base_generated.jpg",
+    medical_base_generated: root + "v57/medical_base_generated.jpg",
+    rehab_base_generated: root + "v57/rehab_base_generated.jpg",
+    scouting_base_generated: root + "v57/scouting_base_generated.jpg",
+    stadium_lv1_generated: root + "v57/stadium_lv1_generated.jpg",
+    stadium_lv3_generated: root + "v57/stadium_lv3_generated.jpg",
+    stadium_lv5_generated: root + "v57/stadium_lv5_generated.jpg",
+    stadium_lv7_generated: root + "v57/stadium_lv7_generated.jpg",
+    training_base_generated: root + "v57/training_base_generated.jpg",
+    hall_of_fame_gallery_v58: root + "v58/hall_of_fame_gallery_v58.jpg",
+    international_exchange_v58: root + "v58/international_exchange_v58.jpg",
+    mailroom_v58: root + "v58/mailroom_v58.jpg",
+    marketing_command_center_v58: root + "v58/marketing_command_center_v58.jpg",
+    newsroom_v58: root + "v58/newsroom_v58.jpg",
+    overseas_marketing_v58: root + "v58/overseas_marketing_v58.jpg",
+    spring_training_base_v58: root + "v58/spring_training_base_v58.jpg"
+  };
+  window.__v60PublicArtFallbackPaths = {
     analysis_rehab_base_generated: root + "v57/analysis_rehab_base_generated.png",
     dorm_base_generated: root + "v57/dorm_base_generated.png",
     medical_base_generated: root + "v57/medical_base_generated.png",
@@ -52,19 +71,19 @@
   });
 }());
 </script>
-<script defer src="00-theme.js?v=v60-r011"></script>
-<script defer src="01-data-engine.js?v=v60-r011"></script>
-<script defer src="02-finance.js?v=v60-r011"></script>
-<script defer src="03-simulation.js?v=v60-r011"></script>
-<script defer src="04-state-core.js?v=v60-r011"></script>
-<script defer src="05-ui-dashboard.js?v=v60-r011"></script>
-<script defer src="06-ui-roster.js?v=v60-r011"></script>
+<script defer src="00-theme.js?v=v60-r012"></script>
+<script defer src="01-data-engine.js?v=v60-r012"></script>
+<script defer src="02-finance.js?v=v60-r012"></script>
+<script defer src="03-simulation.js?v=v60-r012"></script>
+<script defer src="04-state-core.js?v=v60-r012"></script>
+<script defer src="05-ui-dashboard.js?v=v60-r012"></script>
+<script defer src="06-ui-roster.js?v=v60-r012"></script>
 </head>
 <body>
 <div id="app">
   <main class="v60-public-splash" aria-label="決勝 GM 載入中">
     <div class="v60-public-splash-card">
-      <div class="v60-public-splash-icon"><img src="icon-512.png?v=v60-r011" width="512" height="512" alt="決勝 GM 應用程式圖示"></div>
+      <div class="v60-public-splash-icon"><img src="icon-512.png?v=v60-r012" width="512" height="512" alt="決勝 GM 應用程式圖示"></div>
       <div class="v60-public-splash-title">決勝 GM</div>
       <div class="v60-public-splash-sub">FRONT OFFICE BASEBALL</div>
     </div>
@@ -75,7 +94,7 @@
   try{
     if(!("serviceWorker" in navigator)) return;
     if(location.protocol !== "http:" && location.protocol !== "https:") return;
-        window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js?v=v60-r011").catch(function(){}); });
+        window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js?v=v60-r012").catch(function(){}); });
   }catch(_){ }
 }());
 </script>

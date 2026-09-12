@@ -541,7 +541,8 @@ function v57FacilityStateOverlay(state) {
 }
 function v57StadiumVisual(profile, state) {
   const src = typeof v60CompatArtDataUrl === "function" ? v60CompatArtDataUrl(profile.artKey) : "";
-  const fallback = src ? `<img class="v57-confirmed-art-image" src="${src}" alt="Lv.${profile.level} ${profile.stage}" loading="lazy" decoding="async">` : `<div class="v57-art-missing">已核准素材尚未載入</div>`;
+  const imageAttrs = typeof v60CompatArtImageAttrs === "function" ? v60CompatArtImageAttrs(profile.artKey, "lazy", false) : 'loading="lazy" decoding="async"';
+  const fallback = src ? `<img class="v57-confirmed-art-image" src="${src}" alt="Lv.${profile.level} ${profile.stage}" ${imageAttrs}>` : `<div class="v57-art-missing">已核准素材尚未載入</div>`;
   return `<div class="v57-facility-scene-frame v57-scene-${profile.key}" role="img" aria-label="Lv.${profile.level} ${profile.stage}">${fallback}${v57FacilityStateOverlay(state)}</div>`;
 }
 function v57FacilityTabArtKey(ftab) {
@@ -569,7 +570,8 @@ function v57FacilityTabVisualData(team, ftab, cur) {
 function v57FacilityTabArtVisual(ftab, profile, view, state) {
   if (ftab === "球場") return v57StadiumVisual(profile, state);
   const src = typeof v60CompatArtDataUrl === "function" ? v60CompatArtDataUrl(view.artKey) : "";
-  const fallback = src ? `<img class="v57-confirmed-art-image" src="${src}" alt="${view.label}" loading="lazy" decoding="async">` : `<div class="v57-art-missing">已核准素材尚未載入</div>`;
+  const imageAttrs = typeof v60CompatArtImageAttrs === "function" ? v60CompatArtImageAttrs(view.artKey, "lazy", false) : 'loading="lazy" decoding="async"';
+  const fallback = src ? `<img class="v57-confirmed-art-image" src="${src}" alt="${view.label}" ${imageAttrs}>` : `<div class="v57-art-missing">已核准素材尚未載入</div>`;
   return `<div class="v57-facility-scene-frame v57-facility-scene" role="img" aria-label="${view.label} Lv.${view.level}">${fallback}${v57FacilityStateOverlay(state)}</div>`;
 }
 function renderV57FacilityVisual(team, cur, next, canUpgrade, ftab) {
@@ -589,7 +591,7 @@ function renderV57FacilityVisual(team, cur, next, canUpgrade, ftab) {
     <div class="v57-facility-hero-copy">
       <span class="v57-facility-kicker">FACILITY VISUAL・${ftab}</span>
       <h2>${ftab === "球場" ? profile.stage : view.label}</h2>
-      <p>${v57FacilityTabSummary(team, ftab)}。視覺先呈現目前狀態，完整數值與既有操作保留在下方。</p>
+       <p class="v60-state-line">${v57FacilityTabSummary(team, ftab)}。</p>
       <div class="v57-facility-status-row"><span class="v57-state-badge ${agedCount > 0 ? "aged" : locked ? "locked" : upgradeReady ? "upgrade" : "stable"}">${statusLabel}</span><span class="v57-level-badge">Lv.${view.level}・${view.label}</span></div>
       <div class="v57-facility-facts">${facts}</div>
       <div class="v57-slot-legend" aria-label="設施格位視覺摘要">${pills}</div>
@@ -612,18 +614,15 @@ function renderFacilities() {
     const built = team.facility.stadiumSlots;
     const perCap = stadiumPerCapitaSpend(team, 1);
     body = `
-      <div class="scoreboard">
-        <div class="sb-row small"><div class="sb-label">目前等級</div><div class="sb-value small">Lv.${cur.level}・${cur.label}</div></div>
-        <div class="sb-row small"><div class="sb-label">目前容量</div><div class="sb-value small">${cur.capacity.toLocaleString()} 人</div></div>
-        <div class="sb-row small"><div class="sb-label">設施格位</div><div class="sb-value small">${built.length} / ${slotMax} 格</div></div>
-        <div class="sb-row small"><div class="sb-label">設施效果合計</div><div class="sb-value small">人均消費 +${Math.round(eff.spendPct * 100)}%・進場率 +${(eff.attPct * 100).toFixed(1)}%${eff.popBoost ? `・人氣成長 +${eff.popBoost}` : ""}</div></div>
-        <div class="sb-row small"><div class="sb-label">觀眾人均消費</div><div class="sb-value small">${perCap.toFixed(1)} 元/人次</div></div>
-        <div class="sb-row small"><div class="sb-label">年度維護費合計</div><div class="sb-value small">${formatMoney(eff.maintenance)}</div></div>
-        <div class="sb-row small"><div class="sb-label">球場完備度</div><div class="sb-value small">${(stadiumCompleteness(team) * 100).toFixed(1)}%${eff.aged > 0 ? `・${icon('warn')}${eff.aged}座老舊` : ""}</div></div>
-      </div>
+      ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([
+        ["等級", `Lv.${cur.level}`], ["容量", `${cur.capacity.toLocaleString()} 人`], ["格位", `${built.length}/${slotMax}`],
+        ["效果", `消費+${Math.round(eff.spendPct * 100)}%・進場+${(eff.attPct * 100).toFixed(1)}%`],
+        ["人均", `${perCap.toFixed(1)} 元`], ["完備", `${(stadiumCompleteness(team) * 100).toFixed(1)}%`]
+      ], "球場建設摘要") : ""}
+      <p class="v60-state-line">年度維護 ${formatMoney(eff.maintenance)}${eff.aged > 0 ? `・${icon('warn')} ${eff.aged} 座老舊` : ""}</p>
       <div class="divlabel">已建設施（${built.length}/${slotMax}格）${canUpgrade ? "" : "・春訓期間才能建造/拆除/重建"}</div>
-      ${eff.aged > 0 ? `<p class="sub dark">${icon('warn')} 有 ${eff.aged} 座設施屋齡達 ${STADIUM_LIFE} 年老舊化（效果減半、維護費照收），可花「建設費×${Math.round(STADIUM_REBUILD_COST * 100)}%」重建復原（每個休賽季限 1 座）。</p>` : ""}
-      ${built.length === 0 ? `<p class="sub dark">目前沒有任何格位設施。周邊收入＝主場進場人次×人均消費，蓋設施可以拉高人均消費與進場率。</p>` : `
+      ${eff.aged > 0 ? `<p class="v60-state-line">${icon('warn')} 老舊效果減半；可重建恢復，每休賽季限 1 座。</p>` : ""}
+      ${built.length === 0 ? `<p class="v60-state-line">尚無格位設施；建設可提升人均消費與進場率。</p>` : `
       <table class="stattable">
         <thead><tr><th>設施</th><th>屋齡</th><th>效果</th><th>年維護費</th><th></th></tr></thead>
         <tbody>${built.map((k, i) => {
@@ -637,7 +636,7 @@ function renderFacilities() {
             <td>${aged ? `<button class="pickbtn btn-rebuild-stadium" data-idx="${i}" ${canUpgrade ? "" : "disabled"}>重建 ${formatMoney(rebuildCost)}</button>` : `<button class="pickbtn warn btn-demolish-stadium" data-idx="${i}" ${canUpgrade ? "" : "disabled"}>拆除</button>`}</td></tr>`;
         }).join("")}</tbody>
       </table>
-      <p class="sub dark">拆除退回建設費 ${Math.round(STADIUM_DEMOLISH_REFUND * 100)}%；重建費＝建設費×${Math.round(STADIUM_REBUILD_COST * 100)}%（屋齡歸零、效果恢復）。</p>`}
+      <p class="v60-state-line">拆除退回 ${Math.round(STADIUM_DEMOLISH_REFUND * 100)}%；重建費為建設費 ${Math.round(STADIUM_REBUILD_COST * 100)}%。</p>`}
       <div class="divlabel">建造新設施（可重複建造同類，效果疊加）</div>
       ${built.length >= slotMax ? `<p class="sub dark">格位已滿：升級球場等級可獲得更多格位。</p>` : ""}
       ${STADIUM_FACILITY_TYPES.map(t => {
@@ -646,8 +645,7 @@ function renderFacilities() {
         const affordable = team.finance.budget >= t.cost;
         return `<div class="card">
           <div class="eyebrow">${iconVal(t.icon)} ${t.label}${owned > 0 ? `・已建 ${owned} 座` : ""}</div>
-          <p class="sub dark" style="margin:4px 0;">${t.desc}</p>
-          <p class="sub dark" style="margin:4px 0;">${fx}｜建設費 ${formatMoney(t.cost)}・年維護 ${formatMoney(Math.round(t.cost * t.maintPct))}（${Math.round(t.maintPct * 100)}%）</p>
+          ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["效果", fx || "—"], ["建設", formatMoney(t.cost)], ["維護", formatMoney(Math.round(t.cost * t.maintPct))]], `${t.label}摘要`) : `<p class="sub dark" style="margin:4px 0;">${fx}｜建設費 ${formatMoney(t.cost)}</p>`}
           <button class="pickbtn btn-build-stadium" data-key="${t.key}" ${canUpgrade && affordable && built.length < slotMax ? "" : "disabled"}>建造</button>
         </div>`;
       }).join("")}
@@ -666,18 +664,19 @@ function renderFacilities() {
   } else if (ftab === "訓練基地") {
     const groups = [...new Set(TRAINING_ITEMS.map(it => it.group))];
     body = `
-      <p class="sub dark" style="margin-bottom:10px;">各訓練項目獨立升級（最高Lv.${TRAINING_MAX_LEVEL}），提升對應能力的年度成長幅度（效果與教練指導加成疊加，於休賽季成長結算時生效）。</p>
+      ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["項目", `${TRAINING_ITEMS.length} 項`], ["最高", `Lv.${TRAINING_MAX_LEVEL}`], ["生效", "休賽季結算"]], "訓練基地摘要") : ""}
       ${groups.map(g => `
       <div class="card">
         <div class="eyebrow">${g}</div>
         ${TRAINING_ITEMS.filter(it => it.group === g).map(it => {
           const lv = trainingLevel(team, it.key);
           const maxed = lv >= TRAINING_MAX_LEVEL;
-          const cost = maxed ? 0 : TRAINING_UPGRADE_COSTS[lv] * 10000;
-          return `<div class="facilityrow">
-            <div class="facilityinfo">
-              <div class="facilityname">${it.label} <span class="facilitylv ${maxed ? "max" : ""}">Lv.${lv}${maxed ? "・MAX" : ""}</span></div>
-              <div class="facilitydesc">${it.desc}${maxed ? "" : `<br>升級費用：${formatMoney(cost)}`}</div>
+             const cost = maxed ? 0 : TRAINING_UPGRADE_COSTS[lv] * 10000;
+             const effect = it.desc.replace(/的年度成長幅度.*$/, "").replace(/（.*?）$/, "");
+            return `<div class="facilityrow">
+              <div class="facilityinfo">
+                <div class="facilityname">${it.label} <span class="facilitylv ${maxed ? "max" : ""}">Lv.${lv}${maxed ? "・MAX" : ""}</span></div>
+               <div class="facilitydesc">${maxed ? `效果：${effect}・已達上限` : `效果：${effect}・升級 ${formatMoney(cost)}`}</div>
             </div>
             ${maxed ? "" : `<button class="upbtn train-up-btn" data-key="${it.key}" ${canUpgrade && team.finance.budget >= cost ? "" : "disabled"}>升級</button>`}
           </div>`;
@@ -688,14 +687,10 @@ function renderFacilities() {
     const maxed = lv >= MEDICAL_MAX_LEVEL;
     const cost = maxed ? 0 : MEDICAL_UPGRADE_COSTS[lv] * 10000;
     body = `
-      <div class="scoreboard">
-        <div class="sb-row small"><div class="sb-label">醫療室等級</div><div class="sb-value small">Lv.${lv}${maxed ? "（MAX）" : ""}</div></div>
-        <div class="sb-row small"><div class="sb-label">受傷機率修正</div><div class="sb-value small">-${lv * 8}%</div></div>
-        <div class="sb-row small"><div class="sb-label">恢復天數修正</div><div class="sb-value small">-${lv * 6}%</div></div>
-      </div>
+      ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["等級", `Lv.${lv}${maxed ? " MAX" : ""}`], ["受傷", `-${lv * 8}%`], ["恢復", `-${lv * 6}%`]], "醫療室摘要") : ""}
       <div class="card">
         <div class="eyebrow">醫療室</div>
-        <p class="sub dark">球員出賽時有低機率受傷（耐久度越低、年齡越大機率越高），傷兵在恢復期間無法出賽。醫療室每升1級：受傷機率-8%、恢復天數-6%（最高Lv.${MEDICAL_MAX_LEVEL}：-40%／-30%）。</p>
+        <p class="v60-state-line">降低受傷機率與恢復天數。</p>
         ${maxed ? `<p class="sub dark">已達最高等級。</p>` : `
         <p class="sub dark">升級至 Lv.${lv + 1} 費用：<b>${formatMoney(cost)}</b></p>
         <div class="btnrow"><button id="btn-upgrade-medical" class="btn-primary" ${canUpgrade && team.finance.budget >= cost ? "" : "disabled"}>升級醫療室</button></div>`}
@@ -705,15 +700,10 @@ function renderFacilities() {
     const maxed = lv >= DORM_MAX_LEVEL;
     const cost = maxed ? 0 : DORM_UPGRADE_COSTS[lv] * 10000;
     body = `
-      <div class="scoreboard">
-        <div class="sb-row small"><div class="sb-label">選手宿舍等級</div><div class="sb-value small">Lv.${lv}${maxed ? "（MAX）" : ""}</div></div>
-        <div class="sb-row small"><div class="sb-label">投手疲勞恢復加成</div><div class="sb-value small">+${lv * 2}/日</div></div>
-        <div class="sb-row small"><div class="sb-label">狀況回升傾向</div><div class="sb-value small">+${lv * 2}%</div></div>
-        <div class="sb-row small"><div class="sb-label">年輕球員成長加成</div><div class="sb-value small">+${lv * 2}%（23歲以下）</div></div>
-      </div>
+      ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["等級", `Lv.${lv}${maxed ? " MAX" : ""}`], ["疲勞", `+${lv * 2}/日`], ["狀況", `+${lv * 2}%`], ["年輕", `+${lv * 2}%`]], "選手宿舍摘要") : ""}
       <div class="card">
         <div class="eyebrow">選手宿舍</div>
-        <p class="sub dark">提供全隊更好的休養與生活環境：每日狀況漂移更容易往「好調」方向、投手每日疲勞恢復每級+2、23歲以下年輕球員的年度成長獲得微幅加成。是「季中特訓↔疲勞受傷」循環中的恢復端投資。</p>
+        <p class="v60-state-line">改善休養、疲勞恢復與年輕球員成長。</p>
         ${maxed ? `<p class="sub dark">已達最高等級。</p>` : `
         <p class="sub dark">升級至 Lv.${lv + 1} 費用：<b>${formatMoney(cost)}</b></p>
         <div class="btnrow"><button id="btn-upgrade-dorm" class="btn-primary" ${canUpgrade && team.finance.budget >= cost ? "" : "disabled"}>升級選手宿舍</button></div>`}
@@ -723,14 +713,10 @@ function renderFacilities() {
     const maxed = lv >= ANALYSIS_MAX_LEVEL;
     const cost = maxed ? 0 : ANALYSIS_UPGRADE_COSTS[lv] * 10000;
     body = `
-      <div class="scoreboard">
-        <div class="sb-row small"><div class="sb-label">情蒐分析室等級</div><div class="sb-value small">Lv.${lv}${maxed ? "（MAX）" : ""}</div></div>
-        <div class="sb-row small"><div class="sb-label">球探評估精準度再加成</div><div class="sb-value small">+${lv * 1}</div></div>
-        <div class="sb-row small"><div class="sb-label">比賽情蒐加成</div><div class="sb-value small">期望得分 +${(lv * 0.05).toFixed(2)}</div></div>
-      </div>
+      ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["等級", `Lv.${lv}${maxed ? " MAX" : ""}`], ["評估", `+${lv}`], ["比賽", `+${(lv * 0.05).toFixed(2)}`]], "情蒐分析室摘要") : ""}
       <div class="card">
         <div class="eyebrow">情蒐分析室</div>
-        <p class="sub dark">建立數據與影像分析部門：三位球探的有效評估精準度再+1/級（與球探辦公室疊加，選秀/國際/交易評估誤差更小）、比賽中依情蒐獲得微幅期望得分加成，且Lv.1起主控台會顯示「對手情蒐報告」（Lv.3以上揭露對手攻投戰力數值）。</p>
+        <p class="v60-state-line">提升評估精準度，並在主控台解鎖對手情報。</p>
         ${maxed ? `<p class="sub dark">已達最高等級。</p>` : `
         <p class="sub dark">升級至 Lv.${lv + 1} 費用：<b>${formatMoney(cost)}</b></p>
         <div class="btnrow"><button id="btn-upgrade-analysis" class="btn-primary" ${canUpgrade && team.finance.budget >= cost ? "" : "disabled"}>升級情蒐分析室</button></div>`}
@@ -740,15 +726,10 @@ function renderFacilities() {
     const maxed = lv >= REHAB_MAX_LEVEL;
     const cost = maxed ? 0 : REHAB_UPGRADE_COSTS[lv] * 10000;
     body = `
-      <div class="scoreboard">
-        <div class="sb-row small"><div class="sb-label">復健中心等級</div><div class="sb-value small">Lv.${lv}${maxed ? "（MAX）" : ""}</div></div>
-        <div class="sb-row small"><div class="sb-label">恢復天數修正</div><div class="sb-value small">-${lv * 8}%（與醫療室疊加）</div></div>
-        <div class="sb-row small"><div class="sb-label">保守治療降評機率</div><div class="sb-value small">-${lv * 3}%</div></div>
-        <div class="sb-row small"><div class="sb-label">舊傷復發風險削減</div><div class="sb-value small">-${lv * 8}%</div></div>
-      </div>
+      ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["等級", `Lv.${lv}${maxed ? " MAX" : ""}`], ["恢復", `-${lv * 8}%`], ["降評", `-${lv * 3}%`], ["復發", `-${lv * 8}%`]], "復健中心摘要") : ""}
       <div class="card">
         <div class="eyebrow">復健中心</div>
-        <p class="sub dark">專業復健團隊與設備：受傷恢復天數每級-8%（與醫療室的-6%疊加）、重傷選擇「保守治療」時的傷癒降評機率每級-3%、傷病史造成的舊傷復發風險每級削減8%。傷兵越多、越該投資這裡。</p>
+        <p class="v60-state-line">縮短恢復、降低降評與舊傷復發風險。</p>
         ${maxed ? `<p class="sub dark">已達最高等級。</p>` : `
         <p class="sub dark">升級至 Lv.${lv + 1} 費用：<b>${formatMoney(cost)}</b></p>
         <div class="btnrow"><button id="btn-upgrade-rehab" class="btn-primary" ${canUpgrade && team.finance.budget >= cost ? "" : "disabled"}>升級復健中心</button></div>`}
@@ -758,15 +739,10 @@ function renderFacilities() {
     const maxed = lv >= SCOUT_OFFICE_MAX_LEVEL;
     const cost = maxed ? 0 : SCOUT_OFFICE_UPGRADE_COSTS[lv] * 10000;
     body = `
-      <div class="scoreboard">
-        <div class="sb-row small"><div class="sb-label">球探辦公室等級</div><div class="sb-value small">Lv.${lv}${maxed ? "（MAX）" : ""}</div></div>
-        <div class="sb-row small"><div class="sb-label">球探精準度加成</div><div class="sb-value small">+${lv * 2}</div></div>
-        <div class="sb-row small"><div class="sb-label">國際獨家人脈名額</div><div class="sb-value small">${exclusiveIntlSlots(team)} 位/年</div></div>
-        <div class="sb-row small"><div class="sb-label">國內選秀獨家名額</div><div class="sb-value small">${exclusiveDraftSlots(team)} 位/屆</div></div>
-      </div>
+      ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["等級", `Lv.${lv}${maxed ? " MAX" : ""}`], ["精準", `+${lv * 2}`], ["國際名額", `${exclusiveIntlSlots(team)}/年`], ["選秀名額", `${exclusiveDraftSlots(team)}/屆`]], "球探辦公室摘要") : ""}
       <div class="card">
         <div class="eyebrow">球探辦公室</div>
-        <p class="sub dark">提升三位球探（國內/國際/交易）的有效評估精準度（每級+2），並擴大兩條獨家人脈：國際球探精準度越高，每年國際市場能多挖出越多獨家人選；國內球探精準度達63/75/87，每屆選秀還能額外挖出1/2/3位其他球團看不到的獨家新秀（不佔公開池等級配額）。</p>
+        <p class="v60-state-line">提升三位球探精準度，擴大國際與選秀獨家人脈。</p>
         ${maxed ? `<p class="sub dark">已達最高等級。</p>` : `
         <p class="sub dark">升級至 Lv.${lv + 1} 費用：<b>${formatMoney(cost)}</b></p>
         <div class="btnrow"><button id="btn-upgrade-scoutoffice" class="btn-primary" ${canUpgrade && team.finance.budget >= cost ? "" : "disabled"}>升級球探辦公室</button></div>`}
@@ -783,7 +759,8 @@ function renderFacilities() {
         ${FACILITY_TABS.map(t => `<button class="tab fac-tab ${ftab === t ? "active" : ""}" data-factab="${t}">${t}</button>`).join("")}
       </div>
       ${v57Visual}
-      <p class="sub dark" style="margin-bottom:10px;">${canUpgrade ? "現在是春訓期間，可以投資升級硬體設施。" : "本季已開打，硬體升級要等下個休賽季開幕前（春訓期間）才能進行。"}目前預算：<b>${formatMoney(team.finance.budget)}</b></p>
+       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["窗口", canUpgrade ? "春訓可操作" : "球季鎖定"], ["預算", formatMoney(team.finance.budget)], ["頁面", ftab]], "硬體建設摘要") : ""}
+       <p class="v60-state-line">${canUpgrade ? "現在可投資升級硬體設施。" : "本季已開打，升級等下個休賽季春訓。"}</p>
       ${body}
       <div class="btnrow"><button id="btn-back" class="btn-secondary">返回主控台</button></div>
     </div>`;
@@ -2314,7 +2291,8 @@ function renderNegotiation() {
   /* v40 A案分頁：談判畫面拆三頁——💰談判桌（出價操作）／📋球探報告／🕵️情報（經紀人＋事務所＋新秀薪資上限）。
      所有面板同時存在DOM、CSS切換，表單狀態不因換頁遺失。 */
   const negoDealPanel = `
-      <p class="sub dark" style="margin-bottom:10px;">調整下方薪資與年限後送出，球員會評估是否接受；越接近期望金額與年限，成功率越高。談不成還可以再試，${5 - neg.attemptsLeft === 0 ? "共有5次機會" : `已用掉 ${5 - neg.attemptsLeft} 次`}，5次都談不成${failNote}。</p>
+      ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["剩餘機會", `${neg.attemptsLeft} 次`], ["市場行情", `${formatMoney(neg.marketSalary)}/年`], ["評估方向", "越接近期望越穩"], ["失敗結果", failNote]], "談判桌決策摘要") : ""}
+      <p class="v60-state-line">填入年薪與年限後送出；${5 - neg.attemptsLeft === 0 ? "本輪共有 5 次機會" : `本輪已使用 ${5 - neg.attemptsLeft} 次機會`}。</p>
       <label class="field">
         <span>提出年薪（萬元）${neg.kind === "rookie" && neg.rookieCap ? `・上限 ${Math.round(neg.rookieCap / 10000)}萬` : ""}</span>
         <input id="in-neg-salary" type="number" step="1" min="0" ${neg.kind === "rookie" && neg.rookieCap ? `max="${Math.round(neg.rookieCap / 10000)}"` : ""} value="${Math.round(neg.offerSalary / 10000)}" />
@@ -2336,7 +2314,7 @@ function renderNegotiation() {
   const negoReportPanel = negotiationScoutBlock(p, neg);
   const negoIntelPanel = `
       <p class="draftnote muted">${icon('briefcase')} ${agInfo.name}：${agInfo.desc}。</p>
-      ${neg.kind === "rookie" && neg.rookieCap ? `<div class="card issuecard"><div class="eyebrow">新秀薪資上限（聯盟規定）</div>${foldNote(`<p class="sub dark">此新秀（天花板 ${p.scoutedCeiling} 級）的年薪上限鎖定為 <b>${formatMoney(neg.rookieCap)}</b>，只能從上限往下談、無法向上加碼；出價越低成功率越低，砍太兇談崩5次會直接放棄加盟。</p>`)}</div>` : ""}
+       ${neg.kind === "rookie" && neg.rookieCap ? `<div class="card issuecard"><div class="eyebrow">新秀薪資上限（聯盟規定）</div>${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["天花板", `${p.scoutedCeiling} 級`], ["年薪上限", formatMoney(neg.rookieCap)], ["談判方向", "只能下修"], ["風險", "砍太兇會放棄"]], "新秀薪資規則") : `<p class="sub dark">上限 ${formatMoney(neg.rookieCap)}，只能向下談。</p>`}</div>` : ""}
       ${(() => {
         // v28代理人事務所：情蒐卡（未探→委託按鈕；已探→揭露底線與性格；並顯示GM與此類經紀人的人脈）
         const scouted = (typeof isAgentScouted === "function") && isAgentScouted(p);
@@ -2345,31 +2323,24 @@ function renderNegotiation() {
         const cost = (typeof agentScoutCost === "function") ? agentScoutCost(p) : 0;
         const relLine = `<p class="sub dark" style="margin:4px 0;">${icon('handshake')} 你與「${agInfo.name}」經紀人的交情：<span class="afftag ${relL.cls}">${relL.text}</span>${rel !== 0 ? `（${rel > 0 ? "談約門檻降低、較好談" : "談約門檻升高、較難談"}）` : ""}</p>`;
         if (scouted) {
-          return `<div class="card agencycard">
-            <div class="eyebrow">${icon('scout')} 代理人事務所・情蒐報告</div>
-            <p class="sub dark">經紀人 <b>${p.agent.name}</b>（${agInfo.name}）談判風格：${agInfo.desc}。</p>
-            <p class="sub dark">情蒐揭露的期望底線：年薪約 <b>${formatMoney(neg.desiredSalary)}</b>、年限偏好 <b>${neg.desiredYears} 年</b>。年限每少 1 年，所需薪資約增加 ${Math.round((agInfo.premiumRate != null ? agInfo.premiumRate : 0.28) * 100)}%。</p>
-            ${relLine}
-          </div>`;
+         return `<div class="card agencycard">
+           <div class="eyebrow">${icon('scout')} 代理人事務所・情蒐報告</div>
+             ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["經紀人", `${p.agent.name}・${agInfo.name}`], ["期望年薪", formatMoney(neg.desiredSalary)], ["偏好年限", `${neg.desiredYears} 年`], ["短約溢價", `每少 1 年 +${Math.round((agInfo.premiumRate != null ? agInfo.premiumRate : 0.28) * 100)}%`]], "經紀人情蒐摘要") : `<p class="sub dark">期望年薪 ${formatMoney(neg.desiredSalary)}、偏好 ${neg.desiredYears} 年。</p>`}
+             ${relLine}
+           </div>`;
         }
-        return `<div class="card agencycard">
-          <div class="eyebrow">${icon('scout')} 代理人事務所</div>
-          <p class="sub dark">尚未情蒐這位經紀人。委託事務所打聽（花費 <b>${formatMoney(cost)}</b>）可揭露其性格與期望底線，讓你一次開到位。</p>
-          ${relLine}
-          <div class="btnrow"><button id="btn-scout-agent" class="btn-secondary">委託情蒐（${formatMoney(cost)}）</button></div>
+         return `<div class="card agencycard">
+           <div class="eyebrow">${icon('scout')} 代理人事務所</div>
+           ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["情報", "尚未取得"], ["委託費用", formatMoney(cost)], ["可揭露", "性格・底線"]], "代理人情報摘要") : `<p class="sub dark">委託情蒐可揭露性格與期望底線。</p>`}
+           ${relLine}
+           <div class="btnrow"><button id="btn-scout-agent" class="btn-secondary">委託情蒐（${formatMoney(cost)}）</button></div>
         </div>`;
       })()}`;
   app.innerHTML = `
     <div class="wrap v60-negotiation-screen draft-negotiation-screen">
       <div class="topbar"><div class="eyebrow">${kindLabel}</div><div class="teamname">${p.name}</div></div>
       <div class="v60-negotiation-banner" aria-label="談薪流程"><div class="v60-negotiation-banner-icon">${icon('money')}</div><div><span>NEGOTIATION DESK</span><strong>把薪資與年限談成合約</strong><div class="v60-negotiation-steps"><b>1 報價</b><b>2 評估</b><b>3 簽約</b></div></div></div>
-      <div class="scoreboard">
-        <div class="sb-row small"><div class="sb-label">類型</div><div class="sb-value small">${p.isPitcher ? "投手" : "野手"}・${p.age}歲</div></div>
-        <div class="sb-row small"><div class="sb-label">剩餘談約機會</div><div class="sb-value small">${neg.attemptsLeft} 次</div></div>
-        <div class="sb-row small"><div class="sb-label">AI建議開價</div><div class="sb-value small">${formatMoney(neg.marketSalary)}／年</div></div>
-        <div class="sb-row small"><div class="sb-label">球員心理期望</div><div class="sb-value small">約 ${formatMoney(neg.desiredSalary)}／年・${neg.desiredYears}年</div></div>
-        <div class="sb-row small"><div class="sb-label">經紀人</div><div class="sb-value small">${p.agent.name} <span class="agenttag" title="${agInfo.desc}">${agInfo.name}</span></div></div>
-      </div>
+       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["類型", `${p.isPitcher ? "投手" : "野手"}・${p.age}歲`], ["剩餘", `${neg.attemptsLeft} 次`], ["市場行情", `${formatMoney(neg.marketSalary)}/年`], ["心理期望", `${formatMoney(neg.desiredSalary)}/年・${neg.desiredYears}年`], ["經紀人", `${p.agent.name}・${agInfo.name}`]], "球員談判摘要") : ""}
       ${uiTabs("nego", [
         { key: "deal", label: ""+icon('money')+" 談判桌", html: negoDealPanel },
         { key: "report", label: ""+icon('clipboard')+" 球探報告", html: negoReportPanel },
@@ -2597,14 +2568,10 @@ function renderMarketing() {
       <div class="topbar"><div class="eyebrow">${team.name} ・ ${cal.dateLabel}</div><h1>行銷企劃</h1></div>
       ${renderRosterNav("marketing")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      ${typeof v60CompatVisualScene === "function" ? v60CompatVisualScene("marketing_command_center_v58", "行銷企劃中心場景", "MARKETING VISUAL", "行銷企劃中心", "完整活動效果、費用與投入操作保留在下方。", "v60-marketing-scene") : ""}
+      ${typeof v60CompatVisualScene === "function" ? v60CompatVisualScene("marketing_command_center_v58", "行銷企劃中心場景", "MARKETING VISUAL", "行銷企劃中心", "活動配置與投入", "v60-marketing-scene") : ""}
       ${typeof renderCdActivitiesCard === "function" ? renderCdActivitiesCard() : ""}
-      <div class="scoreboard v59-compact-scoreboard">
-        <div class="sb-row small"><span class="sb-label">人氣</span><span class="sb-value small">${team.finance.popularity}/100</span><span class="sb-label">已投</span><span class="sb-value small">${(team.finance.marketingCampaigns || []).length}項・${formatMoney((team.finance.marketingCampaigns || []).reduce((s, k) => s + ((MARKETING_CAMPAIGNS.find(c => c.key === k) || {}).cost || 0), 0))}</span></div>
-        <div class="sb-row small"><span class="sb-label">加成</span><span class="sb-value small">人氣+${team.finance.marketingPopBoost || 0}・周邊+${Math.round((team.finance.marketingMerchPct || 0) * 100)}%・進場+${Math.round((team.finance.marketingAttPct || 0) * 100)}%</span></div>
-      </div>
-      <p class="v59-compact-line">${canPlan ? "春訓期間可複選活動" : "本季已鎖定，休賽季再規劃"}</p>
-      ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">${canPlan ? "可自由複選以下行銷活動；點一下投入、再點一下取消退費，效果會加總套用整季。人氣成長＝季末人氣提升；周邊收入＝販賣部／周邊營收加成；進場率＝主場觀眾增加。" : "本季行銷活動已鎖定，要等下個休賽季開幕前（春訓期間）才能重新規劃。"}</p>`, "規則與效果說明") : ""}
+      ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["人氣", `${team.finance.popularity}/100`], ["已投", `${(team.finance.marketingCampaigns || []).length} 項`], ["周邊", `+${Math.round((team.finance.marketingMerchPct || 0) * 100)}%`], ["進場", `+${Math.round((team.finance.marketingAttPct || 0) * 100)}%`]], "行銷企劃摘要") : ""}
+      <p class="v60-state-line">${canPlan ? "春訓期間可複選；點擊活動卡即可投入或取消。" : "本季已鎖定，休賽季再規劃。"}</p>
       ${MARKETING_CAMPAIGNS.map(c => {
         const active = (team.finance.marketingCampaigns || []).includes(c.key);
         const effects = [c.popBoost ? `人氣成長 +${c.popBoost}${c.key === "endorse" ? "（有人氣王球員再+2）" : ""}` : "", c.merchPct ? `周邊收入 +${Math.round(c.merchPct * 100)}%` : "", c.attPct ? `進場率 +${Math.round(c.attPct * 100)}%` : ""].filter(Boolean).join("・");
@@ -2613,11 +2580,11 @@ function renderMarketing() {
         <div class="card dealcard ${active ? "dealchosen" : ""}">
           <div class="eyebrow">${iconVal(c.icon)} ${c.label}${active ? "（已投入）" : ""}　<span style="font-weight:400;">花費 ${formatMoney(c.cost)}</span></div>
           <p class="v59-compact-card-copy">${shortEffects}</p>
-          ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">${c.desc}</p>`, "活動說明") : `<p class="sub dark" style="margin:4px 0;">${c.desc}</p>`}
+          ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["花費", formatMoney(c.cost)], ["效果", shortEffects || "—"]], `${c.label}效果`) : `<p class="sub dark" style="margin:4px 0;">${shortEffects}</p>`}
           ${canPlan ? `<div class="btnrow"><button class="${active ? "btn-danger" : "btn-secondary"} marketing-btn" data-plan="${c.key}">${active ? "取消" : "投入"}</button></div>` : ""}
         </div>`;
       }).join("")}
-      ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub dark" style="margin:0;">行銷效果不會直接影響戰績；想再進一步提升周邊／販賣部收入上限與球場容量，可以到「球場硬體建設」畫面投資升級。</p>`, "與球場升級的關係") : foldNote(`<p class="sub dark" style="margin-top:14px;">行銷效果不會直接影響戰績；想再進一步提升周邊/販賣部收入上限與球場容量，可以到「球場硬體建設」畫面投資升級。</p>`)}
+      <p class="v60-state-line">行銷影響人氣、周邊與進場；容量與收入上限前往球場硬體建設。</p>
       <div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>
     </div>`;
   app.querySelectorAll(".marketing-btn").forEach(btn => {
@@ -2673,7 +2640,8 @@ function renderFinance() {
       <div class="sb-row"><span class="sb-label">${icon('book-open')} 數據素養${(S.fanDataLiteracy||8)>=50?"（球迷已能讀懂進階數據）":(S.fanDataLiteracy||8)>=25?"（論壇開始討論 OPS+）":""}</span><span class="sb-value small">${Math.round(S.fanDataLiteracy||8)} / 100</span></div>
       ${Array.isArray(S.fanTradeMemory)&&S.fanTradeMemory.length>0?`<div class="sb-row"><span class="sb-label">${icon('ghost')} 交易記憶（球迷還記得）</span><span class="sb-value small">${S.fanTradeMemory.slice(0,3).map(m=>m.name+"（"+m.yearsLeft+"年）").join("、")}</span></div>`:""}
       </div>
-      <p class="draftnote muted">期待越高、未達標時球迷越不滿；耐心低會放大老闆對戰績失利的扣分；認同由「球迷認得的傳統數據明星與在地子弟兵」撐起——送走門面球員會重挫認同。數據素養隨年份演進：早年球迷不看 wRC+（Moneyball 被罵），晚年球迷會在論壇貼 Framing Runs（你的孤獨是你的護城河）。</p>
+       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["期待", `${Math.round(S.fanExpect||50)}/100`], ["耐心", `${Math.round(S.fanPatience||60)}/100`], ["認同", `${Math.round(S.fanIdentify||55)}/100`], ["數據素養", `${Math.round(S.fanDataLiteracy||8)}/100`]], "球迷壓力摘要") : ""}
+       <p class="v60-state-line">期待未達標會增加不滿；認同與數據素養隨長期經營累積。</p>
 
       <div class="divlabel">球隊文化（你十年行為的沉澱）</div>
       <div class="scoreboard">
@@ -2693,7 +2661,7 @@ function renderFinance() {
         <div class="sb-row"><span class="sb-label">${icon('heart-handshake')} 球迷世代（耐心根基）</span><span class="sb-value small">${Math.round(S.cityState[S.userTeamId].fanGen)} / 100</span></div>
         ` : '<div class="sb-row"><span class="sb-label muted">城市資料載入中</span></div>'}
       </div>
-      <p class="draftnote muted">城市每年極緩演化：人口受球隊影響微幅成長、經濟隨機波動、球迷世代隨連年勝績深化。贏得夠久，城市會變成你的。</p>
+       <p class="v60-state-line">城市資料每年緩慢演化，影響票房、贊助與球迷根基。</p>
 
       <div class="divlabel">本季預估損益（依目前人氣/戰績/已簽合約估算，非最終數字）</div>
       <table class="stattable">
@@ -2715,13 +2683,14 @@ function renderFinance() {
       ${forecast.projectedNet < 0 ? `<p class="sub dark" style="color:var(--redline);">目前估算本季可能虧損，建議提早調整票價策略或洽談轉播/贊助合約，不要等到季末才發現。</p>` : ""}`;
   const finTicketPanel = `
       <div class="divlabel">票價策略</div>
-      <p class="sub dark" style="margin-bottom:10px;">${canChangeTicket ? "現在是春訓期間，可以調整票價。票價越高單張收入越高，但會降低進場意願（進場意願比例落在100%~50%之間）；票價只能在每季開打前（春訓期間）調整一次。" : "本季已經開打，票價要等下個休賽季開幕前（春訓期間）才能再調整。"}</p>
+       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["目前", `${team.finance.ticketPrice} 元/張`], ["上限", `${team.finance.ticketPriceCap} 元`], ["預估進場", `${estimateAttendancePct(team, team.finance.ticketPrice)}%`], ["窗口", canChangeTicket ? "春訓可調" : "下季再調"]], "票價策略摘要") : ""}
+       <p class="v60-state-line">${canChangeTicket ? "票價越高，單張收入越高但進場意願下降；每季春訓調整一次。" : "本季已開打，票價等下個休賽季再調整。"}</p>
       <div class="scoreboard">
         <div class="sb-row small"><div class="sb-label">目前票價</div><div class="sb-value small">${team.finance.ticketPrice} 元／張</div></div>
         <div class="sb-row small"><div class="sb-label">目前票價上限</div><div class="sb-value small">${team.finance.ticketPriceCap} 元（最終上限 ${TICKET_PRICE_CEIL_MAX} 元）</div></div>
         <div class="sb-row small"><div class="sb-label">預估進場成數</div><div class="sb-value small">約 ${estimateAttendancePct(team, team.finance.ticketPrice)}%</div></div>
       </div>
-      <p class="draftnote muted">若本季票價已開在上限附近仍場場爆滿，隔年球團會評估調高票價上限（最終不超過${TICKET_PRICE_CEIL_MAX}元）。</p>
+       <p class="v60-state-line">接近上限仍場場爆滿，隔年可能調高上限；最高 ${TICKET_PRICE_CEIL_MAX} 元。</p>
       <div class="teamgrid">
         ${TICKET_PRICE_PRESETS.map(t => `
           <button class="teamcard ticket-tier-btn" data-tier="${t.key}" style="${team.finance.ticketPrice === Math.min(t.price, team.finance.ticketPriceCap) ? "border:2px solid var(--gold-2);" : ""}" ${(canChangeTicket && t.price <= team.finance.ticketPriceCap) ? "" : "disabled"}>
@@ -2741,11 +2710,12 @@ function renderFinance() {
         const curKey = cur && typeof cur === "object" ? cur.key : null;
         return `
       <div class="divlabel">${kind === "broadcast" ? "轉播" : "贊助"}合約（每年可重新洽談）</div>
-      <p class="sub dark" style="margin-bottom:10px;">${canChangeTicket ? "三種方案的差別在「保證金 vs 浮動條款」的比例：越積極的方案基本盤越薄、但戰績好時拿越多。點開試算表比較後再簽；不簽就沿用預設估算金額。" : `本季${kind === "broadcast" ? "轉播" : "贊助"}合約已鎖定，要等下個休賽季開幕前才能重談。`}</p>
+       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["方案", `${offers.length} 種`], ["比較", "保證金／浮動"], ["操作", canChangeTicket ? "可重談" : "已鎖定"]], `${kind === "broadcast" ? "轉播" : "贊助"}策略摘要`) : ""}
+       <p class="v60-state-line">${canChangeTicket ? "先比三種方案，再決定是否簽約；未簽沿用預設估算。" : `本季${kind === "broadcast" ? "轉播" : "贊助"}已鎖定，休賽季再談。`}</p>
       ${offers.map(o => `
         <div class="card dealcard ${curKey === o.key ? "dealchosen" : ""}">
           <div class="eyebrow">${o.label}${curKey === o.key ? "（本季已簽）" : ""}</div>
-          <p class="sub dark" style="margin:4px 0;">${o.desc}</p>
+           ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["保證金", formatMoney(o.base)], ["戰績分潤", o.winBonusPer10 ? `每±10% ${formatMoney(o.winBonusPer10)}` : "無"], ["季後賽", o.playoffBonus ? formatMoney(o.playoffBonus) : "無"]], `${o.label}條款摘要`) : `<p class="sub dark" style="margin:4px 0;">${o.desc}</p>`}
           <div class="scoreboard" style="margin:6px 0;">
             <div class="sb-row small"><div class="sb-label">保證金（穩拿）</div><div class="sb-value small">${formatMoney(o.base)}</div></div>
             <div class="sb-row small"><div class="sb-label">戰績分潤</div><div class="sb-value small">${o.winBonusPer10 ? `勝率每±10%，${kind === "broadcast" ? "分潤" : "獎金"}±${formatMoney(o.winBonusPer10)}` : "無（定額合約）"}</div></div>

@@ -2945,12 +2945,13 @@ function renderHallOfFame() {
         </div>
         <div class="gmtag">${hof.length} 位殿堂・${retNums.length} 個退休背號</div>
       </div>
-      ${typeof v59VisualScene === "function" ? v59VisualScene("hall_of_fame_gallery_v58", "名人堂展示館場景", "HALL OF FAME VISUAL", "球隊榮譽殿堂", "完整入選名單、退休背號與核准操作保留在下方。", "v59-hof-scene") : ""}
+      ${typeof v60CompatVisualScene === "function" ? v60CompatVisualScene("hall_of_fame_gallery_v58", "名人堂展示館場景", "HALL OF FAME VISUAL", "球隊榮譽殿堂", "入選紀錄與退休背號", "v60-hof-scene") : ""}
+      ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["殿堂", `${hof.length} 位`], ["退休背號", `${retNums.length} 個`], ["待審核", `${pending.length} 位`]], "名人堂摘要") : ""}
       ${pendingNote}
       ${retNumsHtml}
       <div class="divlabel">殿堂成員（${hof.length}）</div>
       ${membersHtml}
-      ${typeof v59TextDisclosure === "function" ? v59TextDisclosure(`<p class="sub muted" style="margin:0;">${icon('hof')} 入選門檻（自動提名）：打者 1500安／200轟／300盜、投手 150勝／1500K／100救援／150中繼，或效力本隊滿10年；提名後由 GM 最終核准。</p>`, "入選規則") : `<div class="card" style="margin-top:12px;"><p class="sub muted" style="margin:0;">${icon('hof')} 入選門檻（自動提名）：打者 1500安/200轟/300盜、投手 150勝/1500K/100救援/150中繼、或效力本隊滿10年。提名後由 GM 最終核准。</p></div>`}
+      <p class="v60-state-line">${icon('hof')} 達到生涯門檻會自動提名，由 GM 最終核准入殿。</p>
     </div>`;
     wireHallOfFame();
     wireRosterNav(); // v49修復：缺此行導致榮譽殿堂畫面無法跳出

@@ -1065,3 +1065,24 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 @media(max-width:820px){.v60-dashboard-featured{grid-template-columns:1fr;}.v60-dashboard-featured-copy{padding:2px 4px 5px;}.v60-visual-scene{grid-template-columns:1fr;}.v60-visual-scene-art{min-height:220px;}.v60-compact-scene{grid-template-columns:1fr;}.v60-compact-scene .v60-visual-scene-art{min-height:160px;}}
 @media(max-width:520px){.v60-dashboard-featured-art{min-height:220px;}.v60-dashboard-featured-copy strong{font-size:18px;}.v60-approved-teamcard{grid-template-columns:14px 50px minmax(0,1fr);min-height:124px!important;padding:8px!important;column-gap:6px;}.v60-team-logo-frame{width:50px;height:50px;}.v60-team-logo-frame img{width:42px!important;height:42px!important;}.v60-visual-scene{gap:8px;margin-bottom:10px;padding:8px;border-radius:14px;}.v60-visual-scene-art{min-height:190px;border-radius:11px;}.v60-visual-scene-copy strong{font-size:19px;}.v60-visual-scene-copy>span:last-child{font-size:12px;}.v60-compact-scene .v60-visual-scene-art{min-height:118px;}.v60-compact-scene .v60-visual-scene-copy strong{font-size:14px;}.v60-negotiation-banner{padding:10px;gap:8px;}.v60-negotiation-banner-icon{flex-basis:40px;width:40px;height:40px;font-size:20px;}.v60-negotiation-banner strong{font-size:16px;}}
 @media(max-width:520px){.v60-app-brand-hero{grid-template-columns:1fr;gap:10px;padding:10px;}.v60-app-brand-mark{min-height:118px;}.v60-app-brand-mark img{width:112px;}.v60-app-brand-copy strong{font-size:26px;}.v60-news-scene .v60-visual-scene-art{min-height:210px;}}
+
+/* ====================================================================
+   v60-002 資訊架構減量
+   以可見的視覺指標取代長段落；不使用 details 收合，不縮小既有操作控件。
+   ==================================================================== */
+.v60-visual-metric-rail{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:7px;margin:8px 0 10px;min-width:0;}
+.v60-visual-metric{display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0;min-height:52px;padding:7px 8px;border:1px solid #B7D3F5;border-radius:11px;background:#FFFFFF;color:#36577F;overflow-wrap:anywhere;}
+.v60-visual-metric b{color:#1459B8;font-size:11px;font-weight:800;line-height:1.2;}
+.v60-visual-metric strong{color:#143CFF;font-size:14px;font-weight:900;line-height:1.25;}
+.v60-state-line{margin:6px 0 10px;color:#36577F;font-size:13px;line-height:1.45;}
+.v60-inline-meta{display:block;margin-top:3px;color:#4A6386;font-size:12px;font-weight:600;line-height:1.35;}
+.v60-negotiation-screen .v60-visual-metric-rail{margin-top:0;}
+.v60-negotiation-screen .v60-visual-metric strong{font-size:13px;}
+.v57-facility-hero-copy>.v60-state-line{margin:2px 0 7px;}
+@media(max-width:520px){
+  .v60-visual-metric-rail{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:7px 0 9px;}
+  .v60-visual-metric{min-height:49px;padding:6px 7px;}
+  .v60-visual-metric b{font-size:11px;}
+  .v60-visual-metric strong{font-size:13px;}
+  .v60-state-line{font-size:13px;}
+}
