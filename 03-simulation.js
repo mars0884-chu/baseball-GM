@@ -3010,6 +3010,44 @@ function v43MakeInjuryProposal(team, injured) {
   } catch (_) { return null; }
 }
 // 批准／換人：批准則把建議人選升上一軍並排入相應位置；換人則指向下一位候選
+/* v60-003：核准遞補時自動完成名單交換。
+   教練提案的語意是「候選人接替傷者」：候選人在二軍就升上一軍，傷者若仍在一軍則同步下放二軍。
+   候選人若本來就在一軍，只下放傷者；所有移動仍走既有 roster1/roster2 與球員 level 欄位。 */
+function v60AutoResolveInjuryRoster(team, injured, candidate) {
+  try {
+    if (!team || !injured || !candidate) return { ok: false, movedUp: false, movedDown: false, msg: "名單資料不足。" };
+    if (!Array.isArray(team.roster1)) team.roster1 = [];
+    if (!Array.isArray(team.roster2)) team.roster2 = [];
+    var candidateIn1 = team.roster1.indexOf(candidate.id) >= 0;
+    var candidateIn2 = team.roster2.indexOf(candidate.id) >= 0;
+    var injuredIn1 = team.roster1.indexOf(injured.id) >= 0;
+    if (!candidateIn1 && !candidateIn2) return { ok: false, movedUp: false, movedDown: false, msg: "建議人選已不在目前名單。" };
+
+    var movedUp = false, movedDown = false;
+    if (candidateIn2) {
+      team.roster2 = team.roster2.filter(function(id) { return id !== candidate.id; });
+      if (team.roster1.indexOf(candidate.id) < 0) team.roster1.push(candidate.id);
+      candidate.level = "1軍";
+      movedUp = true;
+      if (typeof v42OnRosterMove === "function") try { v42OnRosterMove(candidate, "up"); } catch (e) {}
+    }
+    if (injuredIn1) {
+      team.roster1 = team.roster1.filter(function(id) { return id !== injured.id; });
+      if (team.roster2.indexOf(injured.id) < 0) team.roster2.push(injured.id);
+      injured.level = "2軍";
+      movedDown = true;
+      if (typeof v42OnRosterMove === "function") try { v42OnRosterMove(injured, "down"); } catch (e) {}
+    }
+    var parts = [];
+    if (movedUp) parts.push(candidate.name + "升上一軍");
+    else if (candidateIn1) parts.push(candidate.name + "已在一軍");
+    if (movedDown) parts.push(injured.name + "下放二軍");
+    return { ok: true, movedUp: movedUp, movedDown: movedDown, msg: parts.join("；") + "。" };
+  } catch (e) {
+    return { ok: false, movedUp: false, movedDown: false, msg: "名單自動調整失敗。" };
+  }
+}
+// 批准／換人：批准則自動完成候選人與傷者的升降；換人則指向下一位候選
 function v43ResolveInjuryProposal(id, action) {
   try {
     ensureV43State();
@@ -3020,19 +3058,16 @@ function v43ResolveInjuryProposal(id, action) {
       const pid = pr.candidateIds[pr.pickIndex];
       const p = S.players[pid];
       if (!p) { pr.status = "void"; return { ok: false, msg: "建議人選已不可用，提案取消。" }; }
-      // 升上一軍（若在二軍）
-      if (team.roster2.indexOf(pid) >= 0) {
-        team.roster2 = team.roster2.filter(x => x !== pid);
-        if (team.roster1.indexOf(pid) < 0) team.roster1.push(pid);
-        p.level = "1軍";
-      }
+      const injured = S.players[pr.injuredId];
+      const move = v60AutoResolveInjuryRoster(team, injured, p);
+      if (!move.ok) return { ok: false, msg: move.msg };
       pr.status = "approved";
       const coach = pr.coachId ? S.coaches[pr.coachId] : null;
       if (coach && typeof coach.trust === "number") coach.trust = clamp(coach.trust + 3, 0, 100); // 尊重教練判斷→信任小回
-      if (typeof pushNews === "function") pushNews("教練團", `GM 批准遞補：${p.name} 升上一軍頂替傷缺。`);
-      if (typeof chronicle === "function") chronicle("coach", `傷缺遞補：${p.name} 上一軍（教練提案獲准）`);
+      if (typeof pushNews === "function") pushNews("教練團", `GM 批准遞補：${move.msg.replace(/。$/, "")}。`);
+      if (typeof chronicle === "function") chronicle("coach", `傷缺遞補：${move.msg.replace(/。$/, "")}（教練提案獲准）`);
       if (typeof persist === "function") persist();
-      return { ok: true, msg: `已批准：${p.name} 升上一軍遞補。` };
+      return { ok: true, msg: `已批准：${move.msg}` };
     }
     if (action === "next") {
       if (pr.pickIndex + 1 >= pr.candidateIds.length) {

@@ -523,6 +523,10 @@ details.fold>p{margin-top:4px;}
 .uitab-badge{display:inline-block;min-width:16px;padding:0 4px;margin-left:4px;border-radius:8px;background:var(--redline);color:var(--chalk);font-size:11px;line-height:16px;text-align:center;}
 .uitab-panel{display:none;}
 .uitab-panel.active{display:block;}
+.v60-standings-hint{margin:2px 0 8px;}
+.v60-standings-summary,.v60-standings-ranking{min-height:120px;}
+.v60-standings-ranking>.uitab-bar{margin-top:8px;}
+.v60-standings-ranking .stattable{margin-top:8px;}
 /* v40：教練排線卡 */
 .tacticrow{display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap;}
 .tacticrow>span:first-child{font-family:'Oswald',sans-serif;font-size:12px;min-width:72px;color:var(--green-text);}
@@ -734,6 +738,18 @@ body[data-screen="mail"]      #app{ background-image: var(--pack-screen-mail,non
 /* 選秀/自由球員/國際市場卡片肖像 */
 .draftcard-head .v48photo { width: 48px; height: 48px; border-radius: 8px; margin-right: 10px; flex-shrink: 0; }
 .draftcard-head .v49portrait { border-radius: 8px; }
+.v60-draft-radar-wrap{display:flex;align-items:center;gap:12px;margin:8px 0 10px;padding:8px 10px;border:1px solid rgba(20,60,255,.22);border-radius:10px;background:linear-gradient(110deg,rgba(232,243,255,.9),rgba(255,255,255,.82));}
+.v60-draft-radar{width:176px;height:176px;display:block;flex:0 0 176px;}
+.v60-draft-radar-side{min-width:0;flex:1;}
+.v60-radar-legend{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px;}
+.v60-radar-key{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;}
+.v60-radar-key::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;}
+.v60-radar-key.current::before{background:#143CFF;}
+.v60-radar-key.ceiling::before{background:#FF5A66;}
+.v60-radar-values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 8px;margin-top:7px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#0C2D72;}
+.v60-radar-values span{display:flex;justify-content:space-between;gap:5px;border-bottom:1px dotted rgba(12,45,114,.2);}
+.v60-radar-values em{font-style:normal;font-weight:700;white-space:nowrap;}
+@media(max-width:620px){.v60-draft-radar-wrap{align-items:flex-start;gap:7px;padding:6px;}.v60-draft-radar{width:142px;height:142px;flex-basis:142px;}.v60-radar-values{grid-template-columns:1fr;font-size:10px;gap:2px;}.v60-standings-ranking>.uitab-bar{gap:4px;}.v60-standings-ranking>.uitab-bar .uitab-btn{padding:8px 10px;}}
 
 /* 戰績榜隊徽對齊 */
 .stattable .v49team-logo { vertical-align: -4px; }

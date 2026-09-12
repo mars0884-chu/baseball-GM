@@ -3683,6 +3683,72 @@ function v48RadarSVG(p, opts) {
   } catch (_) { return ""; }
 }
 
+/* v60-003：選秀專用現況／天花板重疊雷達。
+   選秀畫面只使用球探可見的估值：藍色＝目前能力、珊瑚紅＝預估天花板。
+   天花板沿用 p.scoutedPots／potFor；缺少舊資料時以 deterministic fog 補值，不呼叫亂數。 */
+const V60_DRAFT_RADAR_PITCHER = [
+  { key: "velocity", label: "球速" }, { key: "control", label: "控球" },
+  { key: "stamina", label: "體力" }, { key: "durability", label: "耐久" },
+  { key: "bestStuff", label: "變化球" }, { key: "composure", label: "抗壓" }
+];
+const V60_DRAFT_RADAR_BATTER = [
+  { key: "contact", label: "接觸" }, { key: "power", label: "長打" },
+  { key: "eye", label: "選球" }, { key: "speed", label: "速度" },
+  { key: "fielding", label: "守備" }, { key: "arm", label: "臂力" }
+];
+function v60DraftRadarData(p, acc) {
+  if (!p) return null;
+  const axes = p.isPitcher ? V60_DRAFT_RADAR_PITCHER : V60_DRAFT_RADAR_BATTER;
+  const sv = typeof v46ScoutViewFor === "function" ? v46ScoutViewFor(p, acc) : (p.scouted || p);
+  const pitchBest = function(source) {
+    const arr = source && Array.isArray(source.pitches) ? source.pitches : (p.pitches || []);
+    return arr.length ? Math.max.apply(null, arr.map(function(pt) { return Number(pt.stuff) || 40; })) : 40;
+  };
+  const currentFor = function(key) {
+    if (key === "bestStuff") return pitchBest(sv);
+    const value = sv && sv[key] != null ? sv[key] : (p[key] != null ? p[key] : 50);
+    return Number(value) || 50;
+  };
+  const ceilingFor = function(key, index) {
+    if (key === "bestStuff") {
+      const raw = typeof potFor === "function" ? potFor(p, "breaking") : (p.potential || 50);
+      return typeof v46Fog === "function" ? v46Fog(raw, acc, (p.id || "?") + ":v60-radar-ceiling:breaking") : raw;
+    }
+    if (p.scoutedPots && typeof p.scoutedPots[key] === "number") return p.scoutedPots[key];
+    const raw = typeof potFor === "function" ? potFor(p, key) : (p.potential || 50);
+    return typeof v46Fog === "function" ? v46Fog(raw, acc, (p.id || "?") + ":v60-radar-ceiling:" + key + ":" + index) : raw;
+  };
+  const current = axes.map(currentFor).map(function(v) { return clamp(Math.round(v), 20, 99); });
+  const ceiling = axes.map(function(a, i) { return clamp(Math.max(current[i], Math.round(ceilingFor(a.key, i))), 20, 99); });
+  return { axes: axes, current: current, ceiling: ceiling };
+}
+function v60DraftRadarSVG(p, opts) {
+  try {
+    opts = opts || {};
+    const data = v60DraftRadarData(p, opts.acc);
+    if (!data) return "";
+    const cx = 88, cy = 88, R = 58;
+    const angle = function(i) { return (Math.PI * 2 * i / 6) - Math.PI / 2; };
+    const point = function(i, r) { return (cx + R * r * Math.cos(angle(i))).toFixed(1) + "," + (cy + R * r * Math.sin(angle(i))).toFixed(1); };
+    const norm = function(v) { return clamp((v - 20) / 79, 0, 1); };
+    const grid = [0.33, 0.66, 1].map(function(r) { return '<polygon points="' + data.axes.map(function(_, i) { return point(i, r); }).join(" ") + '" fill="none" stroke="rgba(12,45,114,.22)" stroke-width="1"/>'; }).join("") +
+      data.axes.map(function(_, i) { const end = point(i, 1).split(","); return '<line x1="' + cx + '" y1="' + cy + '" x2="' + end[0] + '" y2="' + end[1] + '" stroke="rgba(12,45,114,.18)" stroke-width=".8"/>'; }).join("");
+    const polygon = function(values, cls, fill, stroke) { return '<polygon class="' + cls + '" points="' + values.map(function(v, i) { return point(i, Math.max(.06, norm(v))); }).join(" ") + '" fill="' + fill + '" stroke="' + stroke + '" stroke-width="2" stroke-linejoin="round"/>'; };
+    const dots = function(values, color) { return values.map(function(v, i) { const xy = point(i, Math.max(.06, norm(v))).split(","); return '<circle cx="' + xy[0] + '" cy="' + xy[1] + '" r="2.8" fill="' + color + '"/>'; }).join(""); };
+    const labels = data.axes.map(function(a, i) { const rr = R + 17, x = cx + rr * Math.cos(angle(i)), y = cy + rr * Math.sin(angle(i)); const anchor = Math.abs(Math.cos(angle(i))) < .3 ? "middle" : (Math.cos(angle(i)) > 0 ? "start" : "end"); return '<text x="' + x.toFixed(1) + '" y="' + (y + 4).toFixed(1) + '" text-anchor="' + anchor + '" fill="#0C2D72" font-size="10" font-family="sans-serif">' + a.label + '</text>'; }).join("");
+    const currentColor = "#143CFF", ceilingColor = "#FF5A66";
+    return '<svg class="v48radar v60-draft-radar" viewBox="0 0 176 176" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="選秀球員現況與天花板能力重疊雷達圖"><title>藍色現況、珊瑚紅預估天花板</title>' + grid + polygon(data.ceiling, "v60-radar-ceiling", "rgba(255,90,102,.16)", ceilingColor) + polygon(data.current, "v60-radar-current", "rgba(20,60,255,.22)", currentColor) + dots(data.ceiling, ceilingColor) + dots(data.current, currentColor) + labels + '</svg>';
+  } catch (_) { return ""; }
+}
+function v60DraftRadarCardHtml(p, acc) {
+  try {
+    const data = v60DraftRadarData(p, acc);
+    if (!data) return "";
+    const rows = data.axes.map(function(a, i) { return '<span><b>' + a.label + '</b><em>' + data.current[i] + ' → ' + data.ceiling[i] + '</em></span>'; }).join("");
+    return '<div class="v60-draft-radar-wrap"><div>' + v60DraftRadarSVG(p, { acc: acc }) + '</div><div class="v60-draft-radar-side"><div class="v60-radar-legend"><span class="v60-radar-key current">現況</span><span class="v60-radar-key ceiling">天花板</span></div><div class="draftnote muted">藍色現況 → 珊瑚紅預估天花板</div><div class="v60-radar-values" aria-label="雷達圖數值">' + rows + '</div></div></div>';
+  } catch (_) { return ""; }
+}
+
 function v46Cell(label, val, hot) {
   const shown = (val == null || val === "") ? "—" : val;
   return `<div class="v46cell${hot ? " hot" : ""}"><span class="lb">${label}</span><span class="vl">${shown}</span></div>`;

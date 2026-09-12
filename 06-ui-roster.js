@@ -1293,6 +1293,7 @@ function renderDraft() {
             </div>
             <button class="pickbtn" data-id="${p.id}">選他</button>
           </div>
+          ${typeof v60DraftRadarCardHtml === "function" ? v60DraftRadarCardHtml(p, draftEffAcc) : ""}
           <div class="draftmeta" style="margin-bottom:6px;">
             ${p.isPitcher ? `角色傾向：${p.role}` : `主守位：${POS_LABEL[p.positions[0].pos]}`}　球風：${p.archetype}
           </div>
@@ -1373,7 +1374,7 @@ function renderLastGameCard(g, team) {
 }
 
 function renderStandings() {
-  /* r008：分聯盟分頁 + 個人排行榜 */
+  /* v60-003：分聯盟＋分組／打者／投手二層分頁，避免整張排行長頁堆疊 */
   var allPlayers = Object.values(S.players).filter(function(p) { return p && p.team && p.seasonStats; });
   function divHtml(d) {
     return '<div class="divblock"><div class="divlabel">' + DIV_LABEL[d] + '</div>' +
@@ -1410,26 +1411,38 @@ function renderStandings() {
   }
   function eraFmt(v) { return v != null ? (typeof v === "number" ? v.toFixed(2) : v) : "-"; }
   function avgFmt(v) { return v != null ? (typeof v === "number" ? ("." + ((v * 1000 + 0.5) | 0).toString().padStart(3, "0")) : v) : "-"; }
-  function leagueRankings(prefix) {
+  function rankingMetricTabs(prefix, metrics, label) {
+    return uiTabs("standings-" + prefix + "-" + label, metrics.map(function(m) {
+      return { key: m.key, label: m.label, html: rankTable(m.label, m.list, m.stat, m.fmt) };
+    }));
+  }
+  function leagueContent(prefix) {
     var ids = leagueTeamIds(prefix);
     var n = 10;
-    var html = '<div class="divlabel" style="margin-top:14px;">打者排行</div>';
-    html += rankTable("安打", topBatters(ids, "H", n), "H");
-    html += rankTable("全壘打", topBatters(ids, "HR", n), "HR");
-    html += rankTable("打點", topBatters(ids, "RBI", n), "RBI");
-    html += rankTable("打擊率", topBatters(ids, "AVG", n), "AVG", avgFmt);
-    html += rankTable("盜壘", topBatters(ids, "SB", n), "SB");
-    html += '<div class="divlabel" style="margin-top:14px;">投手排行</div>';
-    html += rankTable("勝投", topPitchers(ids, "W", n), "W");
-    html += rankTable("三振", topPitchers(ids, "SO", n), "SO");
-    html += rankTable("救援成功", topPitchers(ids, "SV", n), "SV");
-    html += rankTable("防禦率", topPitchers(ids, "ERA", 10, true), "ERA", eraFmt);
-    return html;
+    var batters = [
+      { key: "hits", label: "安打", stat: "H", list: topBatters(ids, "H", n) },
+      { key: "homeRuns", label: "全壘打", stat: "HR", list: topBatters(ids, "HR", n) },
+      { key: "rbi", label: "打點", stat: "RBI", list: topBatters(ids, "RBI", n) },
+      { key: "avg", label: "打擊率", stat: "AVG", fmt: avgFmt, list: topBatters(ids, "AVG", n) },
+      { key: "steals", label: "盜壘", stat: "SB", list: topBatters(ids, "SB", n) }
+    ];
+    var pitchers = [
+      { key: "wins", label: "勝投", stat: "W", list: topPitchers(ids, "W", n) },
+      { key: "strikeouts", label: "三振", stat: "SO", list: topPitchers(ids, "SO", n) },
+      { key: "saves", label: "救援成功", stat: "SV", list: topPitchers(ids, "SV", n) },
+      { key: "era", label: "防禦率", stat: "ERA", fmt: eraFmt, list: topPitchers(ids, "ERA", n, true) }
+    ];
+    return uiTabs("standings-" + prefix + "-section", [
+      { key: "teams", label: "分組戰績", html: '<div class="v60-standings-summary">' + divHtml(prefix + "1") + divHtml(prefix + "2") + '</div>' },
+      { key: "batters", label: "打者排行", html: '<div class="v60-standings-ranking"><div class="draftnote muted">每頁顯示一項排行前 10 名。</div>' + rankingMetricTabs(prefix, batters, "batters") + '</div>' },
+      { key: "pitchers", label: "投手排行", html: '<div class="v60-standings-ranking"><div class="draftnote muted">每頁顯示一項排行前 10 名。</div>' + rankingMetricTabs(prefix, pitchers, "pitchers") + '</div>' }
+    ]);
   }
-  var leagueAhtml = divHtml("A1") + divHtml("A2") + leagueRankings("A");
-  var leagueBhtml = divHtml("B1") + divHtml("B2") + leagueRankings("B");
+  var leagueAhtml = leagueContent("A");
+  var leagueBhtml = leagueContent("B");
   app.innerHTML = '<div class="wrap">' +
     '<div class="topbar"><div class="eyebrow">' + S.leagueName + '</div><h1>戰績榜</h1></div>' +
+    '<p class="draftnote muted v60-standings-hint">先選聯盟，再選分組戰績、打者排行或投手排行；每個排行獨立一頁，不必一直往下拉。</p>' +
     uiTabs("standings", [
       { key: "leagueA", label: "海風聯盟", html: leagueAhtml },
       { key: "leagueB", label: "山岳聯盟", html: leagueBhtml }

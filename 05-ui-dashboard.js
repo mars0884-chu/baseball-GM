@@ -2308,9 +2308,9 @@ function v43InjuryProposalCardHtml(pr) {
       <p class="sub dark">${pr.reason}</p>
       <div class="divlabel">教練建議人選</div>
       ${v43PlayerFullCardHtml(pick, null)}
-      <p class="draftnote muted">批准＝把他升上一軍頂替傷缺；要教練換人＝聽下一個口袋人選；擱置＝先不處理（教練信任會小扣，之後可能再提）。這個洞不一定要補同守位，教練會依陣容彈性提人。</p>
+      <p class="draftnote muted">批准＝自動完成遞補換位：候選人升上一軍、傷者下放二軍；候選人若已在一軍則只調整傷者。要教練換人＝聽下一個口袋人選；擱置＝先不處理。</p>
       <div class="btnrow">
-        <button class="btn-primary v43-injprop-approve" data-ipid="${pr.id}">批准（升 ${pick.name} 上一軍）</button>
+        <button class="btn-primary v43-injprop-approve" data-ipid="${pr.id}">批准並自動換位</button>
         <button class="btn-secondary v43-injprop-next" data-ipid="${pr.id}">要教練換人選</button>
         <button class="btn-outline v43-injprop-dismiss" data-ipid="${pr.id}">先擱置</button>
       </div>
