@@ -1100,5 +1100,37 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
   .v60-visual-metric{min-height:49px;padding:6px 7px;}
   .v60-visual-metric b{font-size:11px;}
   .v60-visual-metric strong{font-size:13px;}
-  .v60-state-line{font-size:13px;}
+.v60-state-line{font-size:13px;}
+}
+
+/* v60-004 春訓守位分頁與長頁主要操作可見性 */
+.spring-position-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0 0 8px;}
+.spring-position-tabs .pos-filter-btn{min-width:0;padding:8px 4px;border:1.5px solid #B7D3F5;border-radius:10px;background:#FFFFFF;color:#17233B;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:800;line-height:1.15;cursor:pointer;}
+.spring-position-tabs .pos-filter-btn.active{background:#143CFF;border-color:#143CFF;color:#FFFFFF;box-shadow:0 3px 0 rgba(10,30,90,.18);}
+.spring-position-tabs .pos-count{display:block;margin-top:3px;color:#4A6386;font-size:10px;font-weight:700;}
+.spring-position-tabs .pos-filter-btn.active .pos-count{color:#EAF5FF;}
+.spring-list-context{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 8px;padding:7px 9px;border:1px solid #B7D3F5;border-radius:9px;background:#F8FBFF;color:#1459B8;font-size:12px;}
+.spring-list-context span{color:#4A6386;white-space:nowrap;}
+.spring-empty-state{padding:24px 10px!important;text-align:center!important;color:#4A6386!important;}
+.v60-sticky-actions{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom));z-index:30;margin:12px -8px 0;padding:8px 8px calc(8px + env(safe-area-inset-bottom));border:1px solid #B7D3F5;border-radius:12px;background:rgba(234,245,255,.95);box-shadow:0 -5px 18px rgba(20,60,255,.12);backdrop-filter:blur(7px);}
+.v60-sticky-actions button{min-height:48px;}
+.v60-marketing-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px -8px 0;padding:8px 8px calc(8px + env(safe-area-inset-bottom));}
+.v60-marketing-action-column{min-width:0;padding:6px;border:1px solid #B7D3F5;border-radius:10px;background:rgba(255,255,255,.78);}
+.v60-marketing-action-column .sortselect{width:100%;margin-top:6px;}
+.v60-marketing-action-column .btnrow{margin-top:6px;}
+.v60-marketing-actions .btnrow{margin-bottom:6px;}
+.v60-marketing-effect-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0;}
+.v60-marketing-effect-grid>div{min-width:0;}
+@media(max-width:520px){
+  .spring-position-tabs{gap:4px;}
+  .spring-position-tabs .pos-filter-btn{padding:8px 2px;font-size:11px;}
+  .spring-position-tabs .pos-count{font-size:9px;}
+  .spring-list-context{font-size:11px;}
+  .v60-sticky-actions{margin-left:-4px;margin-right:-4px;padding-left:6px;padding-right:6px;}
+  .v60-marketing-actions{margin-left:-4px;margin-right:-4px;padding-left:6px;padding-right:6px;}
+  .v60-marketing-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;}
+  .v60-marketing-action-column{padding:4px;}
+  .v60-marketing-action-column .benchrole-tag{font-size:10px;padding:3px 4px;}
+  .v60-marketing-action-column .sortselect{font-size:11px;padding:6px 3px;}
+  .v60-marketing-effect-grid{grid-template-columns:1fr;}
 }

@@ -1402,7 +1402,7 @@ function renderStandings() {
   function rankTable(title, list, stat, fmt) {
     if (!list.length) return "";
     return '<div class="divlabel">' + title + '</div>' +
-      '<table class="stattable"><thead><tr><th>#</th><th>球員</th><th>球隊</th><th>數值</th></tr></thead><tbody>' +
+      '<table class="stattable"><thead><tr><th>#</th><th>球員</th><th>球隊</th><th>' + title + '</th></tr></thead><tbody>' +
       list.map(function(p, i) {
         var tn = S.teams[p.team] ? S.teams[p.team].abbr || S.teams[p.team].name : "?";
         var val = fmt ? fmt(p.seasonStats[stat]) : (p.seasonStats[stat] || 0);

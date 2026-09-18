@@ -211,13 +211,26 @@ function wireUiTabs() {
     };
   });
 }
+/* v60-004：長頁主要操作列固定在可視區底部。 */
+function v60MarkStickyScreenAction() {
+  const appRoot = document.getElementById("app");
+  if (!appRoot || !appRoot.querySelector) return;
+  const wrap = appRoot.querySelector(".wrap");
+  if (!wrap || !wrap.children) return;
+  const rows = Array.from(wrap.children).filter(node => node.classList && node.classList.contains("btnrow") && node.querySelector("button"));
+  const actionRow = rows[rows.length - 1];
+  if (actionRow) actionRow.classList.add("v60-sticky-actions");
+  const backButton = appRoot.querySelector("#btn-back");
+  const backRow = backButton && backButton.closest(".btnrow");
+  if (backRow) backRow.classList.add("v60-sticky-actions");
+}
 function render() {
   // v35.1：全域渲染防護——任何畫面渲染拋錯都落到安全模式，不留白屏（手機「只剩綠底」的根治）
   try { v60BindArtReadyRerender(); } catch (_) {}
   try { if (document.body && document.body.setAttribute) document.body.setAttribute("data-skin", (S && S.skin) || "emoji"); } catch (_) {} // v41⑦：皮膚插槽（預設emoji）
   try { if (document.body && document.body.setAttribute) document.body.setAttribute("data-screen", (typeof UI !== "undefined" && UI && UI.screen) || ""); } catch (_) {} // v47：分頁背景槽位（未導入資產包時無任何視覺變化）
   try { if (typeof v49ClearPortraitCache === "function") v49ClearPortraitCache(); } catch (_) {} // v49：清除肖像快取（轉隊後即時換帽）
-  try { const r = renderScreen(); try { wireUiTabs(); } catch (_) {} return r; }
+  try { const r = renderScreen(); try { wireUiTabs(); v60MarkStickyScreenAction(); } catch (_) {} return r; }
   catch (e) {
     UI.__bootError = "畫面渲染發生錯誤：" + ((e && e.message) || e);
     try { return renderBootRecovery(); }
@@ -1462,6 +1475,26 @@ function renderScoutingReportCard(team, seasonOver) {
 }
 
 /* ---------- v25 春訓畫面 ---------- */
+const V60_SPRING_POSITION_TABS = [
+  { key: "all", label: "全部" },
+  { key: "P", label: "投手" },
+  { key: "C", label: "捕手" },
+  { key: "IF", label: "內野" },
+  { key: "OF", label: "外野" }
+];
+function v60SpringPositionGroup(p) {
+  if (p && p.isPitcher) return "P";
+  const primary = p && p.positions && p.positions[0] ? p.positions[0].pos : "";
+  if (primary === "C") return "C";
+  if (["1B", "2B", "3B", "SS", "DH"].includes(primary)) return "IF";
+  if (["LF", "CF", "RF"].includes(primary)) return "OF";
+  return "IF";
+}
+function v60SpringPositionTabs(players, activeKey) {
+  const counts = { all: players.length, P: 0, C: 0, IF: 0, OF: 0 };
+  players.forEach(p => { counts[v60SpringPositionGroup(p)] += 1; });
+  return `<div class="pos-filter-bar spring-position-tabs" role="tablist" aria-label="春訓守位分頁">${V60_SPRING_POSITION_TABS.map(t => `<button type="button" class="pos-filter-btn ${activeKey === t.key ? "active" : ""}" data-spring-position="${t.key}" role="tab" aria-selected="${activeKey === t.key ? "true" : "false"}">${t.label}<span class="pos-count">${counts[t.key]}人</span></button>`).join("")}</div>`;
+}
 function renderSpringCamp() {
   if (!S.springCamp || S.springCamp.year !== S.seasonYear) prepareSpringCamp();
   const camp = S.springCamp;
@@ -1473,6 +1506,10 @@ function renderSpringCamp() {
   UI.springTab = UI.springTab || "1軍";
   const ids = UI.springTab === "1軍" ? team.roster1 : team.roster2;
   const players = ids.map(id => S.players[id]).filter(Boolean);
+  const springPositionKey = V60_SPRING_POSITION_TABS.some(t => t.key === UI.springPositionTab) ? UI.springPositionTab : "all";
+  UI.springPositionTab = springPositionKey;
+  const visiblePlayers = springPositionKey === "all" ? players : players.filter(p => v60SpringPositionGroup(p) === springPositionKey);
+  const springPositionLabel = V60_SPRING_POSITION_TABS.find(t => t.key === springPositionKey).label;
   // v29（Mars定案）：海外春訓僅開放B級以上國家（C/D級訓練環境不足）；母國青雲國不受限
   const gradeNations = ["S", "A", "B"].map(g => ({ g, list: NATIONS.filter(n => n.grade === g) }));
   const specLabels = nation.specialties.map(k => SPRING_MENU_LABEL[k]).join("、");
@@ -1506,11 +1543,13 @@ function renderSpringCamp() {
         <button class="tab ${UI.springTab === "1軍" ? "active" : ""}" data-tab="1軍">1軍（${team.roster1.length}人）</button>
         <button class="tab ${UI.springTab === "2軍" ? "active" : ""}" data-tab="2軍">2軍（${team.roster2.length}人）</button>
       </div>
+      ${v60SpringPositionTabs(players, springPositionKey)}
+      <div class="spring-list-context"><b>${UI.springTab}・${springPositionLabel}</b><span>${visiblePlayers.length} 人顯示</span></div>
       <div class="btnrow"><button id="btn-spring-auto" class="btn-secondary">AI一鍵建議（${UI.springTab}全員）</button></div>
       <table class="stattable">
         <thead><tr><th>球員</th><th>訓練</th></tr></thead>
         <tbody>
-          ${players.map(p => {
+          ${visiblePlayers.length === 0 ? `<tr><td colspan="2" class="spring-empty-state">此分類目前沒有球員</td></tr>` : visiblePlayers.map(p => {
             const ovr = Math.round(trueOverall(p));
             return `<tr>
             <td><b>${p.name}</b><span class="v60-inline-meta">${p.isPitcher ? "投手" : "野手"}${hasTrait(p, "grinder") ? "・練習狂" : ""}・${p.age}歲・OVR ${ovr}/${Math.max(ovr, p.potential)}</span></td>
@@ -1525,6 +1564,7 @@ function renderSpringCamp() {
     </div>`;
   document.getElementById("spring-nation").onchange = e => setSpringNation(e.target.value);
   app.querySelectorAll(".tab").forEach(btn => { btn.onclick = () => { UI.springTab = btn.dataset.tab; render(); }; });
+  app.querySelectorAll("[data-spring-position]").forEach(btn => { btn.onclick = () => { UI.springPositionTab = btn.dataset.springPosition; render(); }; });
   document.getElementById("btn-spring-auto").onclick = () => springAutoAssign(UI.springTab);
   app.querySelectorAll(".spring-menu-select").forEach(sel => { sel.onchange = e => setSpringAssignment(sel.dataset.id, e.target.value); });
   document.getElementById("btn-spring-go").onclick = () => { UI.flash = null; executeSpringCamp(); };
@@ -1910,23 +1950,27 @@ function renderCdActivitiesCard() {
     <div class="eyebrow">${icon('globe')} 國際交流／海外行銷</div>
     ${v60VisualMetricRail([["狀態", canRun ? "可執行" : "已鎖定"], ["預算", formatMoney(team.finance.budget)], ["交流", st.exchangeDone ? "已完成" : "待執行"], ["行銷", st.marketingDone ? "已完成" : "待執行"]], "國際活動摘要")}
     <p class="v60-state-line">開幕前可各執行一次；球季中保留畫面，僅停用操作。</p>
+    <div class="v60-marketing-actions v60-sticky-actions" aria-label="國際活動操作">
+      <div class="v60-marketing-action-column">
+        <span class="benchrole-tag">交流賽</span>
+        <select id="cd-exchange-nation" class="sortselect" ${canRun ? "" : "disabled"}>${natOpts}</select>
+        <div class="btnrow"><button id="btn-cd-exchange" class="btn-secondary" ${st.exchangeDone || !canRun ? "disabled" : ""}>${st.exchangeDone ? "本季完成" : "執行交流"}</button></div>
+      </div>
+      <div class="v60-marketing-action-column">
+        <span class="benchrole-tag">行銷企劃</span>
+        <select id="cd-marketing-nation" class="sortselect" ${canRun ? "" : "disabled"}>${natOpts}</select>
+        <div class="btnrow"><button id="btn-cd-marketing" class="btn-secondary" ${st.marketingDone || !canRun ? "disabled" : ""}>${st.marketingDone ? "本季完成" : "執行行銷"}</button></div>
+      </div>
+    </div>
     <div class="v58-dual-scene-row">
       ${v60CompatVisualScene("international_exchange_v58", "國際交流場景", "EXCHANGE", "國際交流", "友誼賽與跨國互動", "v60-compact-scene")}
       ${v60CompatVisualScene("overseas_marketing_v58", "海外行銷場景", "OVERSEAS", "海外行銷", "市場檔期與回收", "v60-compact-scene")}
     </div>
     <p class="v59-compact-line">${canRun ? "本季可執行" : "本季已鎖定"}・預算：<b>${formatMoney(team.finance.budget)}</b></p>
     <div style="margin:6px 0;">${bondNames.length ? bondRows : `<p class="v59-compact-line">交情：尚未建立</p>`}</div>
-    <div style="margin:8px 0;">
-      <span class="benchrole-tag">交流賽</span>
-      ${v60VisualMetricRail([["人氣", "提升"], ["士氣", "提升"], ["發掘", "小機率"]], "交流賽效果")}
-      <select id="cd-exchange-nation" class="sortselect" ${canRun ? "" : "disabled"}>${natOpts}</select>
-      <div class="btnrow"><button id="btn-cd-exchange" class="btn-secondary" ${st.exchangeDone || !canRun ? "disabled" : ""}>${st.exchangeDone ? "本季完成" : "執行交流"}</button></div>
-    </div>
-    <div style="margin:8px 0;">
-      <span class="benchrole-tag">行銷企劃</span>
-      ${v60VisualMetricRail([["方向", "財務回收"], ["人氣", "提升"], ["成功率", "約七成"]], "海外行銷效果")}
-      <select id="cd-marketing-nation" class="sortselect" ${canRun ? "" : "disabled"}>${natOpts}</select>
-      <div class="btnrow"><button id="btn-cd-marketing" class="btn-secondary" ${st.marketingDone || !canRun ? "disabled" : ""}>${st.marketingDone ? "本季完成" : "執行行銷"}</button></div>
+    <div class="v60-marketing-effect-grid">
+      <div><span class="benchrole-tag">交流賽效果</span>${v60VisualMetricRail([["人氣", "提升"], ["士氣", "提升"], ["發掘", "小機率"]], "交流賽效果")}</div>
+      <div><span class="benchrole-tag">海外行銷效果</span>${v60VisualMetricRail([["方向", "財務回收"], ["人氣", "提升"], ["成功率", "約七成"]], "海外行銷效果")}</div>
     </div>
   </div>`;
 }
