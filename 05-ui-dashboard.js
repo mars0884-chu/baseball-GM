@@ -211,7 +211,9 @@ function wireUiTabs() {
     };
   });
 }
-/* v60-004：長頁主要操作列固定在可視區底部。 */
+/* v60-004：長頁主要操作列固定在可視區底部。
+   只標記每個畫面最外層最後一個操作列；不改按鈕事件、不新增 state，
+   讓「確認／繼續／返回」不必滑到數千像素後才找得到。 */
 function v60MarkStickyScreenAction() {
   const appRoot = document.getElementById("app");
   if (!appRoot || !appRoot.querySelector) return;
@@ -435,6 +437,7 @@ function renderDashboard() {
       ${(typeof renderCallupHintCard === "function") ? renderCallupHintCard() : ""}
       ${(typeof renderDemandCards === "function") ? renderDemandCards(team) : ""}
       ${(typeof renderInjuryProposalCards === "function") ? renderInjuryProposalCards() : ""}
+      ${(typeof renderCoachRosterSwapCards === "function") ? renderCoachRosterSwapCards() : ""}
       ${(typeof renderListingOfferCards === "function") ? renderListingOfferCards() : ""}
       ${renderKpiCard()}
       ${renderKpiMidReviewCard()}
@@ -678,9 +681,16 @@ function renderDashboard() {
       const pid = b.dataset.pid;
       const p = pid ? S.players[pid] : null;
       if (typeof promotePlayer === "function" && p) {
-        promotePlayer(pid); // 內含 persist()+render()
-        if (typeof checkDemandFulfilled === "function") try { checkDemandFulfilled(); } catch (e) {}
-        UI.flash = `${p.name} 已升上一軍——若達到需求門檻，教練需求將自動判定達成。`;
+        const swap = (typeof v60MakeCoachRosterSwapProposal === "function")
+          ? v60MakeCoachRosterSwapProposal(pid, b.dataset.id)
+          : null;
+        if (!swap) {
+          promotePlayer(pid); // 舊環境 fallback；正式 v60 會走上面的教練提案
+          if (typeof checkDemandFulfilled === "function") try { checkDemandFulfilled(); } catch (e) {}
+          UI.flash = `${p.name} 已升上一軍——若達到需求門檻，教練需求將自動判定達成。`;
+        } else {
+          UI.flash = swap.msg;
+        }
         render();
       }
       return;
@@ -2297,6 +2307,11 @@ function v43MailActionButton(m) {
       if (!pr || pr.status !== "open") return `<p class="draftnote muted">（此提案已處理）</p>`;
       return v43InjuryProposalCardHtml(pr);
     }
+    if (m.meta.kind === "rosterSwapProposal") {
+      const pr = (S.v43.rosterSwapProposals || []).find(x => x.id === m.meta.refId);
+      if (!pr || pr.status !== "open") return `<p class="draftnote muted">（此換位提案已處理或失效）</p>`;
+      return v60CoachRosterSwapCardHtml(pr);
+    }
     return "";
   } catch (_) { return ""; }
 }
@@ -2370,6 +2385,47 @@ function renderInjuryProposalCards() {
   } catch (_) { return ""; }
 }
 
+/* ---------- v60-005 健康球員換位提案卡 ---------- */
+function v60RosterSwapMiniCardHtml(p, label, tone) {
+  if (!p) return "";
+  const overall = (typeof trueOverall === "function") ? Math.round(trueOverall(p)) : "—";
+  return `<div class="v60-roster-swap-player ${tone || ""}">
+    <span class="v60-roster-swap-label">${label}</span>
+    <b>${p.name}</b>
+    <span>${v60RosterSwapRoleLabel(p)}・${p.age || "—"}歲・綜合 ${overall}</span>
+  </div>`;
+}
+function v60CoachRosterSwapCardHtml(pr) {
+  try {
+    const incoming = S.players[pr.incomingId];
+    const outgoing = S.players[(pr.outgoingIds || [])[pr.pickIndex || 0]];
+    if (!incoming || !outgoing) return "";
+    const coach = pr.coachId ? S.coaches[pr.coachId] : null;
+    return `<div class="card issuecard v60-roster-swap-card">
+      <div class="eyebrow">${icon('exchange')} 教練健康換位提案</div>
+      <p class="sub dark"><b>${coach ? coach.name : "教練團"}</b>：一軍已滿編，建議用健康二軍人選取代一位健康一軍球員。</p>
+      <div class="v60-roster-swap-grid">
+        ${v60RosterSwapMiniCardHtml(incoming, "升上一軍", "up")}
+        <span class="v60-roster-swap-arrow">⇄</span>
+        ${v60RosterSwapMiniCardHtml(outgoing, "下放二軍", "down")}
+      </div>
+      <p class="draftnote muted">${pr.reason || "批准後會同時完成升降；受傷球員仍走醫療室遞補流程。"}</p>
+      <div class="btnrow">
+        <button class="btn-primary v60-roster-swap-approve" data-rsid="${pr.id}">批准並完成換位</button>
+        <button class="btn-secondary v60-roster-swap-next" data-rsid="${pr.id}">要教練換下放人選</button>
+        <button class="btn-outline v60-roster-swap-defer" data-rsid="${pr.id}">先擱置</button>
+      </div>
+    </div>`;
+  } catch (_) { return ""; }
+}
+function renderCoachRosterSwapCards() {
+  try {
+    ensureV43State();
+    const open = (S.v43.rosterSwapProposals || []).filter(p => p.status === "open");
+    return open.map(v60CoachRosterSwapCardHtml).join("");
+  } catch (_) { return ""; }
+}
+
 /* ---------- v43 重繪 AI 主動提案卡（改用完整資料元件；覆蓋 v36 版顯示） ----------
    函式改名 renderAiProposalCardV43；整合點把 dashTodoPanel 的 renderAiProposalCard() 換成它。 */
 function renderAiProposalCardV43() {
@@ -2427,6 +2483,10 @@ function wireV43Cards() {
     app.querySelectorAll(".v43-injprop-approve").forEach(b => { b.onclick = () => { const r = v43ResolveInjuryProposal(b.dataset.ipid, "approve"); UI.flash = r.msg; render(); }; });
     app.querySelectorAll(".v43-injprop-next").forEach(b => { b.onclick = () => { const r = v43ResolveInjuryProposal(b.dataset.ipid, "next"); UI.flash = r.msg; render(); }; });
     app.querySelectorAll(".v43-injprop-dismiss").forEach(b => { b.onclick = () => { const r = v43ResolveInjuryProposal(b.dataset.ipid, "dismiss"); UI.flash = r.msg; render(); }; });
+    // v60-005：健康球員換位提案（批准才同時升降；換人只改提案，不改名單）
+    app.querySelectorAll(".v60-roster-swap-approve").forEach(b => { b.onclick = () => { const r = v60ResolveCoachRosterSwapProposal(b.dataset.rsid, "approve"); UI.flash = r.msg; render(); }; });
+    app.querySelectorAll(".v60-roster-swap-next").forEach(b => { b.onclick = () => { const r = v60ResolveCoachRosterSwapProposal(b.dataset.rsid, "next"); UI.flash = r.msg; render(); }; });
+    app.querySelectorAll(".v60-roster-swap-defer").forEach(b => { b.onclick = () => { const r = v60ResolveCoachRosterSwapProposal(b.dataset.rsid, "defer"); UI.flash = r.msg; render(); }; });
   } catch (_) {}
 }
 

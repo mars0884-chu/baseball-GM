@@ -3253,6 +3253,8 @@ function ensureV43State() {
     if (!Array.isArray(S.v43.mail)) S.v43.mail = [];           // 郵件中樞收件匣
     if (typeof S.v43.mailSeq !== "number") S.v43.mailSeq = 1;
     if (typeof S.v43.injuryProposalSeq !== "number") S.v43.injuryProposalSeq = 1;
+    if (!Array.isArray(S.v43.rosterSwapProposals)) S.v43.rosterSwapProposals = []; // v60：健康球員升降換位提案
+    if (typeof S.v43.rosterSwapProposalSeq !== "number") S.v43.rosterSwapProposalSeq = 1;
   } catch (_) {}
 }
 // 玩家把某位自家一/二軍球員掛上交易市場

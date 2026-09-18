@@ -2533,7 +2533,14 @@ function renderReleaseImpact(p, team) {
 function wireV42Cards() {
   try {
     app.querySelectorAll(".v42-resign-btn").forEach(b => { b.onclick = () => { if (typeof v42RetainCoach === "function") v42RetainCoach(b.dataset.act); }; });
-    app.querySelectorAll(".v42-callup-btn").forEach(b => { b.onclick = () => { if (typeof promotePlayer === "function") promotePlayer(b.dataset.id); }; });
+    app.querySelectorAll(".v42-callup-btn").forEach(b => { b.onclick = () => {
+      // 釋出後仍有空缺時直接補位；若一軍已滿，改走健康換位提案，不默默只升不降。
+      const r = (typeof v60MakeCoachRosterSwapProposal === "function")
+        ? v60MakeCoachRosterSwapProposal(b.dataset.id, null)
+        : null;
+      if (r) { UI.flash = r.msg; render(); }
+      else if (typeof promotePlayer === "function") promotePlayer(b.dataset.id);
+    }; });
   } catch (_) {}
 }
 

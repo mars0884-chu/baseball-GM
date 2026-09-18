@@ -1100,10 +1100,14 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
   .v60-visual-metric{min-height:49px;padding:6px 7px;}
   .v60-visual-metric b{font-size:11px;}
   .v60-visual-metric strong{font-size:13px;}
-.v60-state-line{font-size:13px;}
+  .v60-state-line{font-size:13px;}
 }
 
-/* v60-004 春訓守位分頁與長頁主要操作可見性 */
+/* ====================================================================
+   v60-004 春訓守位分頁與長頁操作可見性
+   分頁只切換目前要看的球員清單；資料、訓練選擇與按鈕行為不變。
+   主要操作列採 sticky，不用把玩家送到長頁最底部才能確認或返回。
+   ==================================================================== */
 .spring-position-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0 0 8px;}
 .spring-position-tabs .pos-filter-btn{min-width:0;padding:8px 4px;border:1.5px solid #B7D3F5;border-radius:10px;background:#FFFFFF;color:#17233B;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:800;line-height:1.15;cursor:pointer;}
 .spring-position-tabs .pos-filter-btn.active{background:#143CFF;border-color:#143CFF;color:#FFFFFF;box-shadow:0 3px 0 rgba(10,30,90,.18);}
@@ -1133,4 +1137,22 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
   .v60-marketing-action-column .benchrole-tag{font-size:10px;padding:3px 4px;}
   .v60-marketing-action-column .sortselect{font-size:11px;padding:6px 3px;}
   .v60-marketing-effect-grid{grid-template-columns:1fr;}
+}
+
+/* v60-005 教練健康換位提案：兩側清楚呈現升降對象，避免用長文字猜測名單變化。 */
+.v60-roster-swap-card{border-color:#2CC7D6;}
+.v60-roster-swap-grid{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr);align-items:stretch;gap:8px;margin:8px 0 10px;}
+.v60-roster-swap-player{display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0;padding:10px;border:1px solid #B7D3F5;border-radius:12px;background:#F8FBFF;color:#36577F;}
+.v60-roster-swap-player.up{border-color:#2CC7D6;background:#F2FEFF;}
+.v60-roster-swap-player.down{border-color:#F0C65A;background:#FFFBEA;}
+.v60-roster-swap-label{font-size:11px;font-weight:900;letter-spacing:.04em;color:#1459B8;}
+.v60-roster-swap-player.down .v60-roster-swap-label{color:#986600;}
+.v60-roster-swap-player b{min-width:0;overflow-wrap:anywhere;color:#17233B;font-size:17px;line-height:1.25;}
+.v60-roster-swap-player>span:last-child{font-size:12px;line-height:1.35;}
+.v60-roster-swap-arrow{display:flex;align-items:center;justify-content:center;color:#143CFF;font-size:22px;font-weight:900;}
+@media(max-width:520px){
+  .v60-roster-swap-grid{grid-template-columns:1fr;gap:6px;}
+  .v60-roster-swap-arrow{height:20px;transform:rotate(90deg);}
+  .v60-roster-swap-player{padding:9px;}
+  .v60-roster-swap-player b{font-size:16px;}
 }

@@ -3092,6 +3092,145 @@ function v43ResolveInjuryProposal(id, action) {
   } catch (_) { return { ok: false, msg: "處理失敗。" }; }
 }
 
+/* ---------- v60-005：教練健康球員換位提案 ----------
+   需求單從二軍拔擢人選時，若一軍已滿編，不再默默只升不降。
+   教練會先提出「升上一軍＋健康球員下放二軍」的成對方案，玩家批准後才原子執行。
+   受傷球員仍只走上面的 v43 傷兵遞補流程；本功能不把傷兵當成健康換位人選。 */
+function v60RosterSwapRoleLabel(p) {
+  if (!p) return "球員";
+  if (p.isPitcher) return p.role || "投手";
+  return (p.positions || []).map(x => POS_LABEL[x.pos] || x.pos).join("／") || "野手";
+}
+function v60RosterSwapHealthy(p) {
+  return !!(p && !isInjured(p) && !(p.injury && p.injury.pendingSurgery) && !(p.internationalDutyGamesLeft > 0));
+}
+function v60RosterSwapPreservesDepth(team, incoming, outgoing) {
+  try {
+    const beforePlayers = (team.roster1 || []).map(id => S.players[id]).filter(v60RosterSwapHealthy);
+    const ids = (team.roster1 || []).filter(id => id !== outgoing.id).concat([incoming.id]);
+    const players = ids.map(id => S.players[id]).filter(v60RosterSwapHealthy);
+    // 換位不得讓原本已有的基本深度消失；若舊檔本來就有缺口，交由既有缺口系統處理，不在這裡擴大阻擋。
+    if (beforePlayers.some(p => p.isPitcher) && !players.some(p => p.isPitcher)) return false;
+    if (beforePlayers.some(p => !p.isPitcher) && !players.some(p => !p.isPitcher)) return false;
+    const fieldPositions = (typeof LINEUP_FIELD_POSITIONS !== "undefined") ? LINEUP_FIELD_POSITIONS : ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF"];
+    for (const pos of fieldPositions) {
+      const beforeHas = beforePlayers.some(p => !p.isPitcher && (p.positions || []).some(x => x.pos === pos));
+      const afterHas = players.some(p => !p.isPitcher && (p.positions || []).some(x => x.pos === pos));
+      if (beforeHas && !afterHas) return false;
+    }
+    const beforeStarters = beforePlayers.filter(p => p.isPitcher && p.role === "先發").length;
+    const afterStarters = players.filter(p => p.isPitcher && p.role === "先發").length;
+    if (beforeStarters >= 4 && afterStarters < 4) return false;
+    const beforePen = beforePlayers.filter(p => p.isPitcher && p.role !== "先發").length;
+    const afterPen = players.filter(p => p.isPitcher && p.role !== "先發").length;
+    if (beforePen >= 3 && afterPen < 3) return false;
+    return true;
+  } catch (_) { return false; }
+}
+function v60CoachHealthySwapCandidates(team, incoming) {
+  try {
+    if (!team || !incoming) return [];
+    const protectedIds = new Set((team.lineup || []).map(s => s.playerId).concat(team.rotation || []));
+    const pool = (team.roster1 || []).map(id => S.players[id]).filter(p =>
+      v60RosterSwapHealthy(p) && p.id !== incoming.id && !protectedIds.has(p.id) && p.id !== team.captainId
+    );
+    const safe = pool.filter(p => v60RosterSwapPreservesDepth(team, incoming, p));
+    return safe.sort((a, b) => {
+      const diff = trueOverall(a) - trueOverall(b);
+      return diff || String(a.id).localeCompare(String(b.id));
+    }).slice(0, 3);
+  } catch (_) { return []; }
+}
+function v60MakeCoachRosterSwapProposal(incomingId, demandId) {
+  try {
+    ensureV43State();
+    const team = S.teams[S.userTeamId];
+    const incoming = team && S.players[incomingId];
+    if (!team || !incoming || !(team.roster2 || []).includes(incomingId)) return { ok: false, msg: "這位球員已不在二軍，未執行升降。" };
+    if (!v60RosterSwapHealthy(incoming)) return { ok: false, msg: `${incoming.name} 目前不是可出賽的健康人選，未執行升降。` };
+    // 釋出造成的一軍空缺不需要硬湊換位；只有滿編時才進入教練成對提案。
+    if ((team.roster1 || []).length < 28) {
+      promotePlayer(incomingId);
+      if (typeof checkDemandFulfilled === "function") checkDemandFulfilled();
+      return { ok: true, direct: true, msg: `${incoming.name} 已升上一軍；目前一軍尚有空位，未要求下放其他健康球員。` };
+    }
+    const open = (S.v43.rosterSwapProposals || []).find(p => p.status === "open" && p.incomingId === incomingId);
+    if (open) return { ok: true, proposal: open, msg: `這份換位提案仍在待辦：教練建議 ${incoming.name} 升上一軍。` };
+    const outgoing = v60CoachHealthySwapCandidates(team, incoming);
+    if (outgoing.length === 0) {
+      return { ok: false, msg: "一軍目前沒有可安全下放的健康球員；未擅自升降，請到球員名單手動處理。" };
+    }
+    const coach = (typeof headCoachOf === "function") ? headCoachOf(team) : null;
+    const demand = (S.demands || []).find(d => d.id === demandId);
+    const pr = {
+      id: "RS" + (S.v43.rosterSwapProposalSeq++) + "_" + S.seasonYear,
+      teamId: team.id, coachId: coach ? coach.id : null, demandId: demand ? demand.id : null,
+      incomingId, outgoingIds: outgoing.map(p => p.id), pickIndex: 0,
+      status: "open", year: S.seasonYear, createdDay: S.currentDay || 0,
+      title: `${incoming.name}（${v60RosterSwapRoleLabel(incoming)}）升上一軍，建議 ${outgoing[0].name} 下放二軍`,
+      reason: `${coach ? coach.name + "教練" : "教練團"}認為一軍已滿編，${incoming.name}符合目前補強方向；先讓 ${outgoing[0].name}（${v60RosterSwapRoleLabel(outgoing[0])}、綜合${Math.round(trueOverall(outgoing[0]))}）下放調整。${demand ? "此提案對應「" + demand.title + "」。" : ""}`
+    };
+    S.v43.rosterSwapProposals.push(pr);
+    if (typeof v43PushMail === "function") v43PushMail("coach", "教練健康換位提案", pr.title, { kind: "rosterSwapProposal", refId: pr.id });
+    if (typeof pushNews === "function") pushNews("教練團", `${coach ? coach.name : "教練團"}提出健康換位：${incoming.name}升上一軍、${outgoing[0].name}下放二軍，等待GM批准。`);
+    if (typeof persist === "function") persist();
+    return { ok: true, proposal: pr, msg: `教練已提出健康換位：${incoming.name}升上一軍、${outgoing[0].name}下放二軍，請在待辦批准。` };
+  } catch (_) { return { ok: false, msg: "教練換位提案建立失敗，未執行名單變更。" }; }
+}
+function v60ResolveCoachRosterSwapProposal(id, action) {
+  try {
+    ensureV43State();
+    const pr = (S.v43.rosterSwapProposals || []).find(x => x.id === id);
+    if (!pr || pr.status !== "open") return { ok: false, msg: "此健康換位提案已不在待回應狀態。" };
+    const team = S.teams[pr.teamId || S.userTeamId];
+    const incoming = team && S.players[pr.incomingId];
+    const outgoing = team && S.players[pr.outgoingIds[pr.pickIndex]];
+    if (action === "next") {
+      if (pr.pickIndex + 1 >= pr.outgoingIds.length) return { ok: false, msg: "教練已提出所有可安全下放的人選，沒有其他建議了。" };
+      pr.pickIndex++;
+      const next = S.players[pr.outgoingIds[pr.pickIndex]];
+      pr.title = `${incoming ? incoming.name : "候選人"}升上一軍，改建議 ${next ? next.name : "下一位"} 下放二軍`;
+      pr.reason = `教練改提 ${next ? next.name : "下一位健康候選人"}；你仍可批准、要求下一位或先擱置。`;
+      if (typeof persist === "function") persist();
+      return { ok: true, msg: `教練改提：${next ? next.name : "下一位"} 下放二軍。` };
+    }
+    if (action === "defer") {
+      pr.status = "deferred";
+      if (typeof persist === "function") persist();
+      return { ok: true, msg: "已先擱置健康換位提案；未改變任何球員名單。" };
+    }
+    if (action !== "approve") return { ok: false, msg: "未知的健康換位回應。" };
+    if (!team || !incoming || !outgoing || !(team.roster2 || []).includes(incoming.id) || !(team.roster1 || []).includes(outgoing.id)) {
+      pr.status = "void";
+      if (typeof persist === "function") persist();
+      return { ok: false, msg: "提案中的球員名單已變動，提案取消，未執行部分升降。" };
+    }
+    const protectedIds = new Set((team.lineup || []).map(s => s.playerId).concat(team.rotation || []));
+    if (protectedIds.has(outgoing.id) || !v60RosterSwapHealthy(incoming) || !v60RosterSwapHealthy(outgoing) || !v60RosterSwapPreservesDepth(team, incoming, outgoing)) {
+      return { ok: false, msg: "目前狀態已不適合安全換位（可能已進入先發／輪值或深度不足），未執行名單變更。" };
+    }
+    // 所有驗證完成後才同時寫入兩邊名單，避免半套升降。
+    team.roster1 = (team.roster1 || []).filter(id2 => id2 !== outgoing.id).concat([incoming.id]);
+    team.roster2 = (team.roster2 || []).filter(id2 => id2 !== incoming.id).concat([outgoing.id]);
+    incoming.level = "1軍";
+    outgoing.level = "2軍";
+    if (typeof v42OnRosterMove === "function") {
+      try { v42OnRosterMove(incoming, "up"); } catch (e) {}
+      try { v42OnRosterMove(outgoing, "down"); } catch (e) {}
+    }
+    pr.status = "approved";
+    pr.resolvedDay = S.currentDay || 0;
+    const coach = pr.coachId ? S.coaches[pr.coachId] : null;
+    if (coach && typeof coach.trust === "number") coach.trust = clamp(coach.trust + 3, 0, 100);
+    if (pr.demandId && typeof checkDemandFulfilled === "function") checkDemandFulfilled();
+    const msg = `${incoming.name}升上一軍；${outgoing.name}下放二軍`;
+    if (typeof pushNews === "function") pushNews("教練團", `GM 批准健康換位：${msg}。`);
+    if (typeof chronicle === "function") chronicle("coach", `健康球員換位：${msg}（教練提案獲准）`);
+    if (typeof persist === "function") persist();
+    return { ok: true, msg: `已批准：${msg}。教練信任+3。` };
+  } catch (_) { return { ok: false, msg: "健康換位處理失敗，未執行部分名單變更。" }; }
+}
+
 /* ---------- v43④ 郵件中樞 push ----------
    把教練事件、掛牌報價、傷兵遞補、輪值異動通知等統一收進 S.v43.mail。
    category：coach／trade／injury／system。unread 標記；玩家在郵件中樞讀取與跳轉處理。 */
