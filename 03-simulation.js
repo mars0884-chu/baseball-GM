@@ -2976,8 +2976,12 @@ function v43InjuryReplaceCandidates(team, injured) {
       sc += Math.floor(Math.random() * 7) - 3;
       return { p, sc };
     }).sort((a, b) => b.sc - a.sc);
-    return scored.slice(0, 3).map(x => x.p);
-  } catch (_) { return []; }
+    // 保留既有評分的亂數抽取次數；真正升格只選健康二軍，不把一軍板凳當作補人。
+    const eligible = p => team.roster2.includes(p.id) && !team.roster1.includes(p.id) && v60RosterSwapHealthy(p);
+    const ranked = scored.filter(x => eligible(x.p)).map(x => x.p);
+    // 同類型只有一軍板凳時，仍允許既有的跨類型二軍備援；不額外抽亂數。
+    return (ranked.length ? ranked : pool.filter(eligible).sort((a, b) => trueOverall(b) - trueOverall(a))).slice(0, 3);
+  } catch (error) { console.error("[傷兵遞補] 候選計算失敗", error); return []; }
 }
 function v43MakeInjuryProposal(team, injured) {
   try {
@@ -3012,7 +3016,7 @@ function v43MakeInjuryProposal(team, injured) {
 // 批准／換人：批准則把建議人選升上一軍並排入相應位置；換人則指向下一位候選
 /* v60-003：核准遞補時自動完成名單交換。
    教練提案的語意是「候選人接替傷者」：候選人在二軍就升上一軍，傷者若仍在一軍則同步下放二軍。
-   候選人若本來就在一軍，只下放傷者；所有移動仍走既有 roster1/roster2 與球員 level 欄位。 */
+   候選人已在一軍或已不可用時整筆拒絕，不得只下放傷者。 */
 function v60AutoResolveInjuryRoster(team, injured, candidate) {
   try {
     if (!team || !injured || !candidate) return { ok: false, movedUp: false, movedDown: false, msg: "名單資料不足。" };
@@ -3021,7 +3025,13 @@ function v60AutoResolveInjuryRoster(team, injured, candidate) {
     var candidateIn1 = team.roster1.indexOf(candidate.id) >= 0;
     var candidateIn2 = team.roster2.indexOf(candidate.id) >= 0;
     var injuredIn1 = team.roster1.indexOf(injured.id) >= 0;
+    if (!injuredIn1 && !team.roster2.includes(injured.id)) return { ok: false, movedUp: false, movedDown: false, msg: "傷者已離隊，未執行升降。" };
     if (!candidateIn1 && !candidateIn2) return { ok: false, movedUp: false, movedDown: false, msg: "建議人選已不在目前名單。" };
+    if (!candidateIn2 || candidateIn1 || candidate.id === injured.id || !v60RosterSwapHealthy(candidate)) {
+      return { ok: false, movedUp: false, movedDown: false, msg: "遞補人選必須是健康二軍球員，尚未執行升降；請要教練重提人選。" };
+    }
+    if (!isInjured(injured)) return { ok: false, movedUp: false, movedDown: false, msg: "傷者已康復，未執行傷兵換位。" };
+    if (!injuredIn1 && team.roster1.length >= 28) return { ok: false, movedUp: false, movedDown: false, msg: "一軍已滿，原傷缺已被補上，未執行升降。" };
 
     var movedUp = false, movedDown = false;
     if (candidateIn2) {
@@ -3029,14 +3039,17 @@ function v60AutoResolveInjuryRoster(team, injured, candidate) {
       if (team.roster1.indexOf(candidate.id) < 0) team.roster1.push(candidate.id);
       candidate.level = "1軍";
       movedUp = true;
-      if (typeof v42OnRosterMove === "function") try { v42OnRosterMove(candidate, "up"); } catch (e) {}
     }
     if (injuredIn1) {
       team.roster1 = team.roster1.filter(function(id) { return id !== injured.id; });
       if (team.roster2.indexOf(injured.id) < 0) team.roster2.push(injured.id);
       injured.level = "2軍";
       movedDown = true;
-      if (typeof v42OnRosterMove === "function") try { v42OnRosterMove(injured, "down"); } catch (e) {}
+    }
+    // 名單先成對更新，再通知既有事件；事件錯誤保留診斷，不回報假失敗而讓玩家重複批准。
+    if (typeof v42OnRosterMove === "function") {
+      try { v42OnRosterMove(candidate, "up"); } catch (error) { console.error("[傷兵遞補] 升格事件失敗", error); }
+      if (movedDown) try { v42OnRosterMove(injured, "down"); } catch (error) { console.error("[傷兵遞補] 下放事件失敗", error); }
     }
     var parts = [];
     if (movedUp) parts.push(candidate.name + "升上一軍");
@@ -3044,16 +3057,30 @@ function v60AutoResolveInjuryRoster(team, injured, candidate) {
     if (movedDown) parts.push(injured.name + "下放二軍");
     return { ok: true, movedUp: movedUp, movedDown: movedDown, msg: parts.join("；") + "。" };
   } catch (e) {
+    console.error("[傷兵遞補] 名單調整失敗", e);
     return { ok: false, movedUp: false, movedDown: false, msg: "名單自動調整失敗。" };
   }
 }
 // 批准／換人：批准則自動完成候選人與傷者的升降；換人則指向下一位候選
+function v60CanReopenInjuryProposal(pr, team) {
+  if (!pr || pr.status !== "approved" || pr.year !== S.seasonYear || !team || team.roster1.length >= 28) return false;
+  const injured = S.players[pr.injuredId];
+  return !!(injured && isInjured(injured) && team.roster2.includes(injured.id)
+    && !(S.v43.injuryProposals || []).some(other => other.status === "open" && other.injuredId === injured.id));
+}
 function v43ResolveInjuryProposal(id, action) {
   try {
     ensureV43State();
     const pr = (S.v43.injuryProposals || []).find(x => x.id === id);
-    if (!pr || pr.status !== "open") return { ok: false, msg: "此提案已不在待回應狀態。" };
     const team = S.teams[S.userTeamId];
+    if (action === "reopen") {
+      if (!v60CanReopenInjuryProposal(pr, team)) return { ok: false, msg: "此傷缺已補齊、傷者已康復，或已有待回應提案。" };
+      const fresh = v43MakeInjuryProposal(team, S.players[pr.injuredId]);
+      if (!fresh) return { ok: false, msg: "目前沒有健康二軍遞補人選；名單未變動。" };
+      if (typeof persist === "function") persist();
+      return { ok: true, msg: "教練已重提二軍遞補人選，請確認後批准；尚未升降。" };
+    }
+    if (!pr || pr.status !== "open") return { ok: false, msg: "此提案已不在待回應狀態。" };
     if (action === "approve") {
       const pid = pr.candidateIds[pr.pickIndex];
       const p = S.players[pid];
@@ -3070,6 +3097,20 @@ function v43ResolveInjuryProposal(id, action) {
       return { ok: true, msg: `已批准：${move.msg}` };
     }
     if (action === "next") {
+      // 跳過已升格、受傷或離隊人選；舊提案不可用時重提，仍需玩家另行批准。
+      const usable = pid => team.roster2.includes(pid) && !team.roster1.includes(pid) && v60RosterSwapHealthy(S.players[pid]);
+      const nextIndex = (pr.candidateIds || []).findIndex((pid, index) => index > pr.pickIndex && usable(pid));
+      if (nextIndex < 0 && !usable((pr.candidateIds || [])[pr.pickIndex])) {
+        const injured = S.players[pr.injuredId];
+        const refreshed = injured ? v43InjuryReplaceCandidates(team, injured) : [];
+        if (!refreshed.length) return { ok: false, msg: "目前沒有健康二軍遞補人選，未執行升降。" };
+        pr.candidateIds = refreshed.map(p => p.id);
+        pr.pickIndex = -1;
+      } else if (nextIndex >= 0) {
+        pr.pickIndex = nextIndex - 1;
+      } else {
+        return { ok: false, msg: "沒有其他可行人選；可批准目前人選或先擱置。" };
+      }
       if (pr.pickIndex + 1 >= pr.candidateIds.length) {
         return { ok: false, msg: "教練已提出所有可行人選，沒有其他建議了。請直接批准，或自行到名單調整。" };
       }

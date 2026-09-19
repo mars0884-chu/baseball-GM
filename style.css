@@ -358,7 +358,36 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .draftname{font-family:'Oswald',sans-serif;font-size:17px;font-weight:600;color:var(--ink);}
 .draftmeta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--green-text);}
 .draftgrades{display:flex;gap:8px;margin-bottom:8px;}
-.draftgrades .gradebadge{border-radius:4px;width:auto;padding:3px 8px;font-size:11px;}
+.draftgrades .gradebadge{border-radius:6px;width:auto;height:auto;min-height:30px;padding:4px 8px;font-size:16px;line-height:1.4;color:#17233B;background:#E5F1FF;border:1px solid #7597BE;white-space:normal;}
+.draftgrades .grade-S{background:#FFF3BF;border-color:#A57B19;}
+.draftgrades .grade-A{background:#E5F1FF;border-color:#2867B8;}
+.draftgrades .grade-B{background:#DDF9FC;border-color:#167E8C;}
+.draftgrades .grade-C{background:#FFF8DD;border-color:#A57B19;}
+.draftgrades .grade-D{background:#FFE8EB;border-color:#B64A58;}
+/* r017：目前數據／未來天花板使用獨立亮底標籤，不修改雷達圖。 */
+.v60-draft-evaluations{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+.v60-draft-evaluation{display:flex;flex-direction:column;gap:6px;padding:10px;background:#F4F9FF;border:2px solid #5989C2;border-radius:12px;color:#17233B;min-width:0;}
+.v60-draft-evaluation.ceiling{background:#FFFBEA;border-color:#A57B19;}
+.v60-draft-evaluation>span{font-size:16px;font-weight:700;line-height:1.4;}
+.v60-draft-evaluation strong{font-size:22px;line-height:1.4;color:#17233B;}
+.draftcard .draftnote,.draftcard .draftmeta{font-size:14px;color:#36577F;line-height:1.5;}
+.draftcard .draftnote b{color:#17385E;}
+.draftcard .attr{background:#F4F9FF;border:1px solid #B7D3F5;min-width:0;flex-wrap:wrap;}
+.draftcard .attr>span,.draftcard .attr b{color:#17233B;}
+.draftcard .attr>span{font-size:14px;}
+.draftcard .attr2 b .proj{color:#254E80;opacity:1;}
+.v60-draft-pager{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0;scroll-margin-top:12px;}
+.v60-draft-pager button{min-height:48px;min-width:72px;padding:8px;border:1px solid #5989C2;border-radius:8px;background:#FFF;color:#17385E;font-size:16px;cursor:pointer;}
+.v60-draft-pager button:disabled{color:#536479;background:#E8EEF5;cursor:default;}
+.v60-draft-pager button:hover:not(:disabled){background:#DDF9FC;}
+.v60-draft-pager button:focus-visible{outline:3px solid #143CFF;outline-offset:2px;}
+.v60-draft-pager span{font-size:14px;color:#17385E;text-align:center;}
+.v60-campaign-choice{padding:12px;}
+.v60-campaign-title{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:16px;color:#17233B;}
+.v60-campaign-title>span{white-space:nowrap;}
+.v60-campaign-effects{margin:8px 0;font-size:14px;line-height:1.5;color:#36577F;}
+.v60-campaign-choice .btnrow{margin-top:8px;}
+.v60-campaign-choice button{min-height:48px;}
 .draftnote{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink);margin-top:2px;}
 .draftnote.muted{color:#8A8368;}
 
@@ -1145,10 +1174,14 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-roster-swap-player{display:flex;flex-direction:column;justify-content:center;gap:3px;min-width:0;padding:10px;border:1px solid #B7D3F5;border-radius:12px;background:#F8FBFF;color:#36577F;}
 .v60-roster-swap-player.up{border-color:#2CC7D6;background:#F2FEFF;}
 .v60-roster-swap-player.down{border-color:#F0C65A;background:#FFFBEA;}
-.v60-roster-swap-label{font-size:11px;font-weight:900;letter-spacing:.04em;color:#1459B8;}
+.v60-roster-swap-label{font-size:14px;font-weight:900;letter-spacing:.04em;color:#1459B8;}
 .v60-roster-swap-player.down .v60-roster-swap-label{color:#986600;}
 .v60-roster-swap-player b{min-width:0;overflow-wrap:anywhere;color:#17233B;font-size:17px;line-height:1.25;}
-.v60-roster-swap-player>span:last-child{font-size:12px;line-height:1.35;}
+.v60-roster-swap-player>span:last-child{font-size:14px;line-height:1.4;}
+.v60-swap-player-detail{min-height:44px;background:#FFF;border:1px solid #7597BE;border-radius:8px;color:#17233B;font-size:17px;font-weight:700;padding:6px;cursor:pointer;}
+.v60-swap-player-detail:hover{background:#DDF9FC;}
+.v60-swap-player-detail:focus-visible{outline:3px solid #143CFF;outline-offset:2px;}
+.v60-roster-swap-player .player-photo{align-self:center;}
 .v60-roster-swap-arrow{display:flex;align-items:center;justify-content:center;color:#143CFF;font-size:22px;font-weight:900;}
 @media(max-width:520px){
   .v60-roster-swap-grid{grid-template-columns:1fr;gap:6px;}

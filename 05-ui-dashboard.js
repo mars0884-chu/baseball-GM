@@ -54,7 +54,7 @@ function v60CompatVisualScene(key, alt, kicker, title, detail, extraClass) {
   const cls = extraClass ? ` ${extraClass}` : "";
   return `<section class="v60-visual-scene${cls}" data-v60-art-key="${key}" data-v60-art-source="approved-scene-png" aria-label="${alt}">
     <div class="v60-visual-scene-art"><img src="${src}" alt="${alt}" ${v60CompatArtImageAttrs(key, "lazy", false)}></div>
-    <div class="v60-visual-scene-copy"><span class="v60-visual-kicker">${kicker}</span><strong>${title}</strong><span>${detail}</span></div>
+    <div class="v60-visual-scene-copy"><strong>${title}</strong></div>
   </section>`;
 }
 /* v60-002：把可掃讀資訊改成圖像化指標，避免再用摺疊段落堆疊說明。
@@ -730,10 +730,7 @@ function renderDashboard() {
   const kpiNego = document.getElementById("btn-kpi-negotiate"); // v37⑤ 開季目標協商
   if (kpiNego) kpiNego.onclick = () => { negotiateKpiGoalDown(); };
   // v37① C/D 國家平行活動
-  const cdEx = document.getElementById("btn-cd-exchange");
-  if (cdEx && !cdEx.disabled) cdEx.onclick = () => { const el = document.getElementById("cd-exchange-nation"); runCdExchange(el ? el.value : null); };
-  const cdMk = document.getElementById("btn-cd-marketing");
-  if (cdMk && !cdMk.disabled) cdMk.onclick = () => { const el = document.getElementById("cd-marketing-nation"); runCdMarketing(el ? el.value : null); };
+  wireCdActivitiesActions();
   const dashboardFacilities = document.getElementById("btn-dashboard-facilities");
   if (dashboardFacilities) dashboardFacilities.onclick = () => { UI.screen = "facilities"; render(); };
   document.getElementById("btn-standings").onclick = () => { UI.screen = "standings"; render(); };
@@ -1976,13 +1973,20 @@ function renderCdActivitiesCard() {
       ${v60CompatVisualScene("international_exchange_v58", "國際交流場景", "EXCHANGE", "國際交流", "友誼賽與跨國互動", "v60-compact-scene")}
       ${v60CompatVisualScene("overseas_marketing_v58", "海外行銷場景", "OVERSEAS", "海外行銷", "市場檔期與回收", "v60-compact-scene")}
     </div>
-    <p class="v59-compact-line">${canRun ? "本季可執行" : "本季已鎖定"}・預算：<b>${formatMoney(team.finance.budget)}</b></p>
     <div style="margin:6px 0;">${bondNames.length ? bondRows : `<p class="v59-compact-line">交情：尚未建立</p>`}</div>
     <div class="v60-marketing-effect-grid">
       <div><span class="benchrole-tag">交流賽效果</span>${v60VisualMetricRail([["人氣", "提升"], ["士氣", "提升"], ["發掘", "小機率"]], "交流賽效果")}</div>
       <div><span class="benchrole-tag">海外行銷效果</span>${v60VisualMetricRail([["方向", "財務回收"], ["人氣", "提升"], ["成功率", "約七成"]], "海外行銷效果")}</div>
     </div>
   </div>`;
+}
+
+// 主控台和行銷頁共用相同操作接線，避免移動場景後按鈕只剩外觀。
+function wireCdActivitiesActions() {
+  const cdEx = document.getElementById("btn-cd-exchange");
+  if (cdEx && !cdEx.disabled) cdEx.onclick = () => { const el = document.getElementById("cd-exchange-nation"); runCdExchange(el ? el.value : null); };
+  const cdMk = document.getElementById("btn-cd-marketing");
+  if (cdMk && !cdMk.disabled) cdMk.onclick = () => { const el = document.getElementById("cd-marketing-nation"); runCdMarketing(el ? el.value : null); };
 }
 
 function renderKpiCard() {
@@ -2363,11 +2367,12 @@ function v43InjuryProposalCardHtml(pr) {
     if (!pick) return "";
     return `<div class="card issuecard v43injprop">
       <div class="eyebrow">${icon('bandage')} 教練遞補提案</div>
-      <p class="sub dark">${pr.title}</p>
-      <p class="sub dark">${pr.reason}</p>
-      <div class="divlabel">教練建議人選</div>
-      ${v43PlayerFullCardHtml(pick, null)}
-      <p class="draftnote muted">批准＝自動完成遞補換位：候選人升上一軍、傷者下放二軍；候選人若已在一軍則只調整傷者。要教練換人＝聽下一個口袋人選；擱置＝先不處理。</p>
+      <div class="v60-roster-swap-grid">
+        ${v60RosterSwapMiniCardHtml(pick, pick.level === "2軍" ? "二軍 → 一軍" : "人選已變動・請換人", "up")}
+        <span class="v60-roster-swap-arrow" aria-hidden="true">⇄</span>
+        ${v60RosterSwapMiniCardHtml(injured, injured && injured.level === "2軍" ? "傷兵已在二軍" : "傷兵 → 二軍", "down")}
+      </div>
+      <p class="draftnote">${injured && injured.injury ? `傷停 ${injured.injury.daysLeft || 0} 天・` : ""}${injured && injured.level === "2軍" ? "批准後補上一軍空缺" : "批准後一升一降"}；人選已變動時不執行。</p>
       <div class="btnrow">
         <button class="btn-primary v43-injprop-approve" data-ipid="${pr.id}">批准並自動換位</button>
         <button class="btn-secondary v43-injprop-next" data-ipid="${pr.id}">要教練換人選</button>
@@ -2380,8 +2385,12 @@ function renderInjuryProposalCards() {
   try {
     ensureV43State();
     const open = (S.v43.injuryProposals || []).filter(p => p.status === "open");
-    if (open.length === 0) return "";
-    return open.map(p => v43InjuryProposalCardHtml(p)).join("");
+    const team = S.teams[S.userTeamId], seen = new Set();
+    const recovery = (S.v43.injuryProposals || []).filter(pr => {
+      if (!v60CanReopenInjuryProposal(pr, team) || seen.has(pr.injuredId)) return false;
+      seen.add(pr.injuredId); return true;
+    }).map(pr => `<div class="card issuecard"><p class="sub dark">${S.players[pr.injuredId].name}仍在二軍養傷，一軍尚有空位。</p><button class="btn-secondary v43-injprop-reopen" data-ipid="${pr.id}">請教練重提遞補</button></div>`).join("");
+    return open.map(p => v43InjuryProposalCardHtml(p)).join("") + recovery;
   } catch (_) { return ""; }
 }
 
@@ -2391,7 +2400,8 @@ function v60RosterSwapMiniCardHtml(p, label, tone) {
   const overall = (typeof trueOverall === "function") ? Math.round(trueOverall(p)) : "—";
   return `<div class="v60-roster-swap-player ${tone || ""}">
     <span class="v60-roster-swap-label">${label}</span>
-    <b>${p.name}</b>
+    ${typeof themePlayerPhoto === "function" ? themePlayerPhoto(p.id, { player: p, teamId: S.userTeamId, isAway: false }) : ""}
+    <button class="v60-swap-player-detail" data-player-id="${p.id}" aria-label="查看 ${p.name} 完整資料">${p.name}</button>
     <span>${v60RosterSwapRoleLabel(p)}・${p.age || "—"}歲・綜合 ${overall}</span>
   </div>`;
 }
@@ -2481,6 +2491,8 @@ function wireV43Cards() {
     app.querySelectorAll(".v43-offer-decline").forEach(b => { b.onclick = () => { const r = v43DeclineOffer(b.dataset.offerid); UI.flash = r.msg; render(); }; });
     // 傷兵遞補提案
     app.querySelectorAll(".v43-injprop-approve").forEach(b => { b.onclick = () => { const r = v43ResolveInjuryProposal(b.dataset.ipid, "approve"); UI.flash = r.msg; render(); }; });
+    app.querySelectorAll(".v43-injprop-reopen").forEach(b => { b.onclick = () => { const r = v43ResolveInjuryProposal(b.dataset.ipid, "reopen"); UI.flash = r.msg; render(); }; });
+    app.querySelectorAll(".v60-swap-player-detail").forEach(b => { b.onclick = () => { UI.selectedPlayerId = b.dataset.playerId; UI.playerDetailReturn = UI.screen; UI.screen = "playerDetail"; render(); }; });
     app.querySelectorAll(".v43-injprop-next").forEach(b => { b.onclick = () => { const r = v43ResolveInjuryProposal(b.dataset.ipid, "next"); UI.flash = r.msg; render(); }; });
     app.querySelectorAll(".v43-injprop-dismiss").forEach(b => { b.onclick = () => { const r = v43ResolveInjuryProposal(b.dataset.ipid, "dismiss"); UI.flash = r.msg; render(); }; });
     // v60-005：健康球員換位提案（批准才同時升降；換人只改提案，不改名單）

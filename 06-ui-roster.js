@@ -1255,6 +1255,13 @@ function renderDraft() {
   const sortKey = UI.draftSort || "default";
   const sorted = d.pool.slice().sort(DRAFT_SORTS[sortKey]);
   const filtered = applyPosFilter(sorted, "draftPosFilter");
+  const pageKey = [S.seasonYear, d.pickIndex, sortKey, UI.draftPosFilter || "all"].join(":");
+  if (UI.draftPageKey !== pageKey) { UI.draftPageKey = pageKey; UI.draftPage = 0; }
+  const pageCount = Math.max(1, Math.ceil(filtered.length / 2));
+  const page = Math.max(0, Math.min(pageCount - 1, Number(UI.draftPage) || 0));
+  UI.draftPage = page;
+  const visibleDraft = filtered.slice(page * 2, page * 2 + 2);
+  const pager = `<nav class="v60-draft-pager" aria-label="選秀人選分頁"><button data-draft-page="${page - 1}" ${page === 0 ? "disabled" : ""}>上一頁</button><span>${page + 1}／${pageCount} 頁・${filtered.length} 人</span><button data-draft-page="${page + 1}" ${page === pageCount - 1 ? "disabled" : ""}>下一頁</button></nav>`;
   const scout = S.teams[S.userTeamId].scouts.domestic;
   const draftEffAcc = effectiveScoutAccuracy(S.teams[S.userTeamId], scout); // ⑦含球探辦公室加成
 
@@ -1276,14 +1283,16 @@ function renderDraft() {
         </div>
         <div class="btnrow"><button id="btn-skip-cancel" class="btn-outline">取消</button></div>
       </div>` : `<div class="btnrow"><button id="btn-skip-pick" class="btn-outline">放棄本輪選秀權</button></div>`}
-      <p class="sub" style="margin-bottom:10px;">以下為球探評估報告，非真實能力值；準確度越高、評估落差越小。標示「獨家情報」的是國內球探人脈額外挖掘的菁英新秀，只有你能選、AI球團接觸不到（不佔本屆公開池的等級配額）。</p>
+      <p class="sub" style="margin-bottom:10px;">能力皆為球探估值，準確度越高誤差越小。獨家新秀僅你可選，不佔公開池配額。</p>
       ${posFilterBarHtml(d.pool, "draftPosFilter")}
       <select id="sort-draft" class="sortselect">
         <option value="default" ${sortKey === "default" ? "selected" : ""}>依現在能力評等排序</option>
         <option value="age" ${sortKey === "age" ? "selected" : ""}>依年齡排序（小到大）</option>
         <option value="ceiling" ${sortKey === "ceiling" ? "selected" : ""}>依天花板評等排序</option>
       </select>
-      ${filtered.map(p => `
+      ${pager}
+      ${visibleDraft.length ? "" : '<p class="draftnote">此分類沒有待選球員。</p>'}
+      ${visibleDraft.map(p => `
         <div class="card draftcard">
           <div class="draftcard-head">
             ${(() => { try { return (typeof themePlayerPhoto === "function") ? themePlayerPhoto(p.id, { player: p, teamId: null, isAway: false }) : ""; } catch(_){ return ""; } })()}
@@ -1297,19 +1306,28 @@ function renderDraft() {
           <div class="draftmeta" style="margin-bottom:6px;">
             ${p.isPitcher ? `角色傾向：${p.role}` : `主守位：${POS_LABEL[p.positions[0].pos]}`}　球風：${p.archetype}
           </div>
-          <div class="draftgrades">
-            <span class="gradebadge grade-${p.scoutedGrade}">現在 ${p.scoutedGrade}${p.scoutedOverall != null ? `（${p.scoutedOverall}）` : ""}</span>
-            <span class="gradebadge grade-${p.scoutedCeiling}">天花板 ${p.scoutedCeiling}${p.scoutedCeilingVal != null ? `（約${p.scoutedCeilingVal}）` : ""}</span>
+          <div class="draftgrades v60-draft-evaluations">
+            <div class="v60-draft-evaluation"><span>目前數據</span><strong><span class="gradebadge grade-${p.scoutedGrade}">${p.scoutedGrade}</span> ${p.scoutedOverall != null ? p.scoutedOverall : "—"}</strong></div>
+            <div class="v60-draft-evaluation ceiling"><span>未來天花板</span><strong><span class="gradebadge grade-${p.scoutedCeiling}">${p.scoutedCeiling}</span> ${p.scoutedCeilingVal != null ? `約 ${p.scoutedCeilingVal}` : "—"}</strong></div>
           </div>
-          <div class="draftnote muted" style="margin:2px 0;">能力評估：現在(評估) → 預估~天花板值${p.isPitcher ? `・球路 ${p.pitches ? p.pitches.length : "?"} 種` : ""}</div>
+          <div class="draftnote muted" style="margin:2px 0;">現在 → 預估天花板${p.isPitcher ? `・${p.pitches ? p.pitches.length : "?"} 種球路` : ""}</div>
           <div class="attrgrid">
             ${scoutedAttrRows(p)}
           </div>
           <div class="draftnote">${p.maturity}</div>
-          ${(() => { const ph = growthPhaseLabel(p); return `<div class="draftnote">${icon('chart-up')} 生涯階段：<b class="${ph.cls}">${ph.text}</b>——${ph.desc}</div>`; })()}
-          <div class="draftnote muted">${p.scoutConfidence}（球探有效準確度 ${draftEffAcc}，數值可能與真實能力有落差）</div>
+          ${(() => { const ph = growthPhaseLabel(p); return `<div class="draftnote">生涯：<b class="${ph.cls}">${ph.text}</b>・${ph.desc}</div>`; })()}
+          <div class="draftnote muted">${p.scoutConfidence}</div>
         </div>`).join("")}
+      ${pager}
     </div>`;
+  app.querySelectorAll("[data-draft-page]").forEach(btn => {
+    btn.onclick = () => {
+      UI.draftPage = Number(btn.dataset.draftPage);
+      render();
+      const target = app.querySelector && app.querySelector(".v60-draft-pager");
+      if (target && target.scrollIntoView) target.scrollIntoView({ block: "start" });
+    };
+  });
   document.getElementById("sort-draft").onchange = (e) => { UI.draftSort = e.target.value; render(); };
   wirePosFilterButtons();
   if (UI.draftSkipConfirm) {

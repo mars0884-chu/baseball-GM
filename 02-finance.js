@@ -2574,13 +2574,11 @@ function renderMarketing() {
       <p class="v60-state-line">${canPlan ? "春訓期間可複選；點擊活動卡即可投入或取消。" : "本季已鎖定，休賽季再規劃。"}</p>
       ${MARKETING_CAMPAIGNS.map(c => {
         const active = (team.finance.marketingCampaigns || []).includes(c.key);
-        const effects = [c.popBoost ? `人氣成長 +${c.popBoost}${c.key === "endorse" ? "（有人氣王球員再+2）" : ""}` : "", c.merchPct ? `周邊收入 +${Math.round(c.merchPct * 100)}%` : "", c.attPct ? `進場率 +${Math.round(c.attPct * 100)}%` : ""].filter(Boolean).join("・");
-        const shortEffects = [c.popBoost ? `人氣+${c.popBoost}` : "", c.merchPct ? `周邊+${Math.round(c.merchPct * 100)}%` : "", c.attPct ? `進場+${Math.round(c.attPct * 100)}%` : ""].filter(Boolean).join("・");
+        const shortEffects = [c.popBoost ? `人氣+${c.popBoost}${c.key === "endorse" ? "（人氣王再+2）" : ""}` : "", c.merchPct ? `周邊+${Math.round(c.merchPct * 100)}%` : "", c.attPct ? `進場+${Math.round(c.attPct * 100)}%` : ""].filter(Boolean).join("・");
         return `
-        <div class="card dealcard ${active ? "dealchosen" : ""}">
-          <div class="eyebrow">${iconVal(c.icon)} ${c.label}${active ? "（已投入）" : ""}　<span style="font-weight:400;">花費 ${formatMoney(c.cost)}</span></div>
-          <p class="v59-compact-card-copy">${shortEffects}</p>
-          ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["花費", formatMoney(c.cost)], ["效果", shortEffects || "—"]], `${c.label}效果`) : `<p class="sub dark" style="margin:4px 0;">${shortEffects}</p>`}
+        <div class="card dealcard v60-campaign-choice ${active ? "dealchosen" : ""}">
+          <div class="v60-campaign-title"><strong>${c.label}${active ? "（已投入）" : ""}</strong><span>${formatMoney(c.cost)}</span></div>
+          <p class="v60-campaign-effects">${shortEffects}</p>
           ${canPlan ? `<div class="btnrow"><button class="${active ? "btn-danger" : "btn-secondary"} marketing-btn" data-plan="${c.key}">${active ? "取消" : "投入"}</button></div>` : ""}
         </div>`;
       }).join("")}
@@ -2590,6 +2588,7 @@ function renderMarketing() {
   app.querySelectorAll(".marketing-btn").forEach(btn => {
     btn.onclick = () => toggleMarketingCampaign(btn.dataset.plan);
   });
+  wireCdActivitiesActions();
   document.getElementById("btn-back").onclick = () => { UI.screen = "dashboard"; render(); };
   wireRosterNav();
 }
