@@ -2768,6 +2768,12 @@ function proceedFromSelfTraining() {
 }
 
 function buildLeague() {
+  const steps = buildLeagueSteps();
+  let step = steps.next();
+  while (!step.done) step = steps.next();
+  return step.value;
+}
+function* buildLeagueSteps() {
   const personaCycle = shuffle(PERSONA_KEYS.slice()); // v27：7型個性洗牌後輪配，確保20隊分布均勻
   // v491：保留原 shuffle 呼叫維持共用 RNG 序列，結果丟棄；隊名改從 TEAM_DEFS 取用
   shuffle(CITY_NAMES.slice());
@@ -2775,7 +2781,7 @@ function buildLeague() {
   const divKeys = ["A1", "A2", "B1", "B2"];
   const teams = {}, players = {}, coaches = {};
   let idx = 0;
-  divKeys.forEach(div => {
+  for (const div of divKeys) {
     const league = div[0];
     for (let i = 0; i < 5; i++) {
       const teamId = "T" + idx;
@@ -2802,8 +2808,9 @@ function buildLeague() {
       teams[teamId].coachStaff = staff;
       roster1.concat(roster2).concat(rosterDev).forEach(p => { players[p.id] = p; });
       idx++;
+      yield { completed: idx, total: 22, label: `建立球隊 ${idx}/20` };
     }
-  });
+  }
   // v491：不再覆寫 T0 隊名、不標記 isUser——一律由 pickTeam() 處理
   return { teams, players, coaches };
 }

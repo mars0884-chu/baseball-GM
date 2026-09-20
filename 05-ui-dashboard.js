@@ -4,6 +4,9 @@
 function foldNote(html, label) {
   return `<details class="fold"><summary>${label || "詳情"}</summary>${html}</details>`;
 }
+function v60UpgradeComparison(rows) {
+  return `<table class="stattable v60-upgrade-compare"><thead><tr><th>效果</th><th>目前</th><th>升級後</th></tr></thead><tbody>${rows.map(r => `<tr><th>${v60UiEscape(r[0])}</th><td>${v60UiEscape(r[1])}</td><td><b>${v60UiEscape(r[2])}</b></td></tr>`).join('')}</tbody></table>`;
+}
 
 /* v60-r011：跨模組 renderer 相容橋接。
    公開 Pages 版先查詢外部核准 PNG 路徑；離線單檔／模組包則回退到內嵌 JSON。
@@ -227,6 +230,8 @@ function v60MarkStickyScreenAction() {
   if (backRow) backRow.classList.add("v60-sticky-actions");
 }
 function render() {
+  if (typeof window !== 'undefined' && window.v60BootFailed && typeof window.v60RenderBootFailure === 'function') return window.v60RenderBootFailure();
+  if (UI.injuryChoiceReturn && UI.screen !== 'playerDetail') { UI.injuryChoiceReturn = false; return v60RenderInjuryChoice(); }
   // v35.1：全域渲染防護——任何畫面渲染拋錯都落到安全模式，不留白屏（手機「只剩綠底」的根治）
   try { v60BindArtReadyRerender(); } catch (_) {}
   try { if (document.body && document.body.setAttribute) document.body.setAttribute("data-skin", (S && S.skin) || "emoji"); } catch (_) {} // v41⑦：皮膚插槽（預設emoji）
@@ -318,8 +323,33 @@ function renderSetup() {
       </div>
     </div>`;
   document.getElementById("btn-start").onclick = () => {
-    newGame(document.getElementById("in-gm").value);
+    v60StartNewGame(document.getElementById("in-gm").value);
   };
+}
+
+// 分段僅讓瀏覽器繪製進度；不抽亂數、不改建局順序，不估造剩餘秒數。
+async function v60StartNewGame(name) {
+  if (UI.creatingGame) return;
+  UI.creatingGame = true;
+  const started = performance.now();
+  const previous = S, previousId = ID_SEQ;
+  app.innerHTML = '<div class="wrap"><section class="card v60-loading" aria-busy="true"><h1>建立新球季</h1><p role="status" id="v60-build-status">準備球隊資料</p><progress id="v60-build-progress" max="22" value="0" aria-label="已完成建局工作"></progress><p id="v60-build-time">所需時間依裝置而異</p></section></div>';
+  try {
+    const steps = newGameSteps(name);
+    for (;;) {
+      await new Promise(resolve => setTimeout(resolve, 0));
+      const step = steps.next();
+      if (step.done) break;
+      document.getElementById('v60-build-status').textContent = step.value.label;
+      document.getElementById('v60-build-progress').value = step.value.completed;
+      document.getElementById('v60-build-time').textContent = `已等待 ${((performance.now() - started) / 1000).toFixed(1)} 秒`;
+    }
+  } catch (error) {
+    console.error('[建立球季]', error);
+    S = previous; ID_SEQ = previousId;
+    UI.flash = '建立失敗，原存檔未刪除；請重試或回報。';
+    UI.screen = 'setup'; render();
+  } finally { UI.creatingGame = false; }
 }
 
 /* ---------- v35.1：安全模式・載入救援畫面 ----------
@@ -1517,6 +1547,11 @@ function renderSpringCamp() {
   UI.springPositionTab = springPositionKey;
   const visiblePlayers = springPositionKey === "all" ? players : players.filter(p => v60SpringPositionGroup(p) === springPositionKey);
   const springPositionLabel = V60_SPRING_POSITION_TABS.find(t => t.key === springPositionKey).label;
+  const springPageKey = `${S.seasonYear}:${UI.springTab}:${springPositionKey}`;
+  if (UI.springPageKey !== springPageKey) { UI.springPageKey = springPageKey; UI.springPage = 0; }
+  const springPages = Math.max(1, Math.ceil(visiblePlayers.length / 6));
+  UI.springPage = Math.min(Math.max(0, UI.springPage || 0), springPages - 1);
+  const pagePlayers = visiblePlayers.slice(UI.springPage * 6, UI.springPage * 6 + 6);
   // v29（Mars定案）：海外春訓僅開放B級以上國家（C/D級訓練環境不足）；母國青雲國不受限
   const gradeNations = ["S", "A", "B"].map(g => ({ g, list: NATIONS.filter(n => n.grade === g) }));
   const specLabels = nation.specialties.map(k => SPRING_MENU_LABEL[k]).join("、");
@@ -1544,35 +1579,38 @@ function renderSpringCamp() {
           ["等級", `${nation.grade}級`],
           ["專長", specLabels]
         ], "春訓地點摘要")}
-        <p class="v60-state-line">${nation.flavor}・單項最多 +5，且不超過潛力上限。</p>
+        <p class="v60-state-line">${nation.flavor}</p>
       </div>
       <div class="tabrow">
         <button class="tab ${UI.springTab === "1軍" ? "active" : ""}" data-tab="1軍">1軍（${team.roster1.length}人）</button>
         <button class="tab ${UI.springTab === "2軍" ? "active" : ""}" data-tab="2軍">2軍（${team.roster2.length}人）</button>
       </div>
       ${v60SpringPositionTabs(players, springPositionKey)}
-      <div class="spring-list-context"><b>${UI.springTab}・${springPositionLabel}</b><span>${visiblePlayers.length} 人顯示</span></div>
+      <div class="spring-list-context"><b>${UI.springTab}・${springPositionLabel}</b><span>共 ${visiblePlayers.length} 人</span></div>
       <div class="btnrow"><button id="btn-spring-auto" class="btn-secondary">AI一鍵建議（${UI.springTab}全員）</button></div>
+      <nav class="v60-choice-pager" aria-label="春訓名單分頁"><button id="spring-prev" ${UI.springPage === 0 ? 'disabled' : ''}>上一頁</button><span>${UI.springPage + 1}/${springPages}</span><button id="spring-next" ${UI.springPage === springPages - 1 ? 'disabled' : ''}>下一頁</button></nav>
       <table class="stattable">
         <thead><tr><th>球員</th><th>訓練</th></tr></thead>
         <tbody>
-          ${visiblePlayers.length === 0 ? `<tr><td colspan="2" class="spring-empty-state">此分類目前沒有球員</td></tr>` : visiblePlayers.map(p => {
+          ${visiblePlayers.length === 0 ? `<tr><td colspan="2" class="spring-empty-state">此分類目前沒有球員</td></tr>` : pagePlayers.map(p => {
             const ovr = Math.round(trueOverall(p));
             return `<tr>
-            <td><b>${p.name}</b><span class="v60-inline-meta">${p.isPitcher ? "投手" : "野手"}${hasTrait(p, "grinder") ? "・練習狂" : ""}・${p.age}歲・OVR ${ovr}/${Math.max(ovr, p.potential)}</span></td>
+            <td><b>${p.name}</b><span class="v60-inline-meta">${p.isPitcher ? "投手" : "野手"}${hasTrait(p, "grinder") ? "・練習狂" : ""}・${p.age}歲</span><div class="v60-ability-track" role="img" aria-label="綜合能力${ovr}，天花板${Math.max(ovr,p.potential)}"><i style="width:${Math.max(0,Math.min(100,p.potential))}%"></i><b style="width:${Math.max(0,Math.min(100,ovr))}%"></b></div><small>目前 ${ovr}／上限 ${Math.max(ovr,p.potential)}</small></td>
             <td><select class="sortselect spring-menu-select" aria-label="${p.name}訓練項目" data-id="${p.id}">
-              ${springMenuFor(p).map(m => { const cur = menuAttrOf(p, m.key); const capped = cur >= p.potential; return `<option value="${m.key}" ${camp.assignments[p.id] === m.key ? "selected" : ""}>${m.label}${nation.specialties.includes(m.key) ? ""+icon('star-solid')+"" : ""}（現${cur}${capped ? "・已達頂" : ""}）</option>`; }).join("")}
+              ${springMenuFor(p).map(m => { const cur = menuAttrOf(p, m.key); const capped = cur >= p.potential; return `<option value="${m.key}" ${camp.assignments[p.id] === m.key ? "selected" : ""}>${m.label} ${cur}${nation.specialties.includes(m.key) ? '・專長' : ''}${capped ? '・滿' : ''}</option>`; }).join("")}
             </select></td>
           </tr>`;}).join("")}
         </tbody>
       </table>
-      ${v60VisualMetricRail([["專長", "加成"], ["上限", "+5"], ["判定", "不超過潛力"], ["成果", "報告可查"]], "春訓判定摘要")}
+      <div class="v60-training-limit"><span>單項成長</span><b>目前 → 最多 +5</b><span>不超過潛力・專長加成・成果報告可查</span></div>
       <div class="btnrow"><button id="btn-spring-go" class="btn-primary">確認出發春訓${cost > 0 ? `（支付 ${formatMoney(cost)}）` : "（母國・免費）"}</button></div>
     </div>`;
   document.getElementById("spring-nation").onchange = e => setSpringNation(e.target.value);
   app.querySelectorAll(".tab").forEach(btn => { btn.onclick = () => { UI.springTab = btn.dataset.tab; render(); }; });
   app.querySelectorAll("[data-spring-position]").forEach(btn => { btn.onclick = () => { UI.springPositionTab = btn.dataset.springPosition; render(); }; });
   document.getElementById("btn-spring-auto").onclick = () => springAutoAssign(UI.springTab);
+  document.getElementById('spring-prev').onclick = () => { UI.springPage--; render(); };
+  document.getElementById('spring-next').onclick = () => { UI.springPage++; render(); };
   app.querySelectorAll(".spring-menu-select").forEach(sel => { sel.onchange = e => setSpringAssignment(sel.dataset.id, e.target.value); });
   document.getElementById("btn-spring-go").onclick = () => { UI.flash = null; executeSpringCamp(); };
 }
@@ -1954,35 +1992,38 @@ function renderCdActivitiesCard() {
     return `<p class="sub dark" style="margin:2px 0;">${icon('handshake')} <b>${n}</b> 友好度 ${lv}／${NATION_BOND_MAX}（${nationBondLabel(lv)}）${perks.length ? `<span class="muted"> — ${perks.join("、")}</span>` : ""}</p>`;
   }).join("") : `<p class="sub muted" style="margin:2px 0;">尚未與任何國家建立交情。友好度 3／5／7／10 各有解鎖。</p>`;
   return `<div class="card cdact-card">
-    <div class="eyebrow">${icon('globe')} 國際交流／海外行銷</div>
-    ${v60VisualMetricRail([["狀態", canRun ? "可執行" : "已鎖定"], ["預算", formatMoney(team.finance.budget)], ["交流", st.exchangeDone ? "已完成" : "待執行"], ["行銷", st.marketingDone ? "已完成" : "待執行"]], "國際活動摘要")}
-    <p class="v60-state-line">開幕前可各執行一次；球季中保留畫面，僅停用操作。</p>
-    <div class="v60-marketing-actions v60-sticky-actions" aria-label="國際活動操作">
+    <div class="eyebrow">${canRun ? "開幕前・各一次" : "球季中・已鎖定"}・預算 ${formatMoney(team.finance.budget)}</div>
+    <div class="v60-marketing-actions" aria-label="國際活動操作">
       <div class="v60-marketing-action-column">
-        <span class="benchrole-tag">交流賽</span>
+        ${v60CompatVisualScene("international_exchange_v58", "國際交流場景", "EXCHANGE", "國際交流", "", "v60-compact-scene")}
         <select id="cd-exchange-nation" class="sortselect" ${canRun ? "" : "disabled"}>${natOpts}</select>
-        <div class="btnrow"><button id="btn-cd-exchange" class="btn-secondary" ${st.exchangeDone || !canRun ? "disabled" : ""}>${st.exchangeDone ? "本季完成" : "執行交流"}</button></div>
+        <p id="cd-exchange-cost" class="v60-state-line"></p>
+        <p class="v60-activity-outcome">士氣最高 +2・機會發掘新人</p>
+        <div class="btnrow v60-sticky-actions"><button id="btn-cd-exchange" class="btn-secondary" ${st.exchangeDone || !canRun ? "disabled" : ""}>${st.exchangeDone ? "本季完成" : "執行交流"}</button></div>
       </div>
       <div class="v60-marketing-action-column">
-        <span class="benchrole-tag">行銷企劃</span>
+        ${v60CompatVisualScene("overseas_marketing_v58", "海外行銷場景", "OVERSEAS", "海外行銷", "", "v60-compact-scene")}
         <select id="cd-marketing-nation" class="sortselect" ${canRun ? "" : "disabled"}>${natOpts}</select>
-        <div class="btnrow"><button id="btn-cd-marketing" class="btn-secondary" ${st.marketingDone || !canRun ? "disabled" : ""}>${st.marketingDone ? "本季完成" : "執行行銷"}</button></div>
+        <p id="cd-marketing-cost" class="v60-state-line"></p>
+        <p class="v60-activity-outcome">成功率 70%・人氣 +1～3</p>
+        <div class="btnrow v60-sticky-actions"><button id="btn-cd-marketing" class="btn-secondary" ${st.marketingDone || !canRun ? "disabled" : ""}>${st.marketingDone ? "本季完成" : "執行行銷"}</button></div>
       </div>
-    </div>
-    <div class="v58-dual-scene-row">
-      ${v60CompatVisualScene("international_exchange_v58", "國際交流場景", "EXCHANGE", "國際交流", "友誼賽與跨國互動", "v60-compact-scene")}
-      ${v60CompatVisualScene("overseas_marketing_v58", "海外行銷場景", "OVERSEAS", "海外行銷", "市場檔期與回收", "v60-compact-scene")}
     </div>
     <div style="margin:6px 0;">${bondNames.length ? bondRows : `<p class="v59-compact-line">交情：尚未建立</p>`}</div>
-    <div class="v60-marketing-effect-grid">
-      <div><span class="benchrole-tag">交流賽效果</span>${v60VisualMetricRail([["人氣", "提升"], ["士氣", "提升"], ["發掘", "小機率"]], "交流賽效果")}</div>
-      <div><span class="benchrole-tag">海外行銷效果</span>${v60VisualMetricRail([["方向", "財務回收"], ["人氣", "提升"], ["成功率", "約七成"]], "海外行銷效果")}</div>
-    </div>
   </div>`;
 }
 
 // 主控台和行銷頁共用相同操作接線，避免移動場景後按鈕只剩外觀。
 function wireCdActivitiesActions() {
+  ['exchange', 'marketing'].forEach(kind => {
+    const select = document.getElementById(`cd-${kind}-nation`), label = document.getElementById(`cd-${kind}-cost`);
+    if (!select || !label) return;
+    const update = () => {
+      const nation = nationByName(select.value);
+      label.textContent = nation ? `投入 ${formatMoney(cdCostFor(nation, kind))}・${kind === 'marketing' ? '回收 0.5～2.2倍' : '人氣 +1～4'}` : '請選擇國家';
+    };
+    select.onchange = update; update();
+  });
   const cdEx = document.getElementById("btn-cd-exchange");
   if (cdEx && !cdEx.disabled) cdEx.onclick = () => { const el = document.getElementById("cd-exchange-nation"); runCdExchange(el ? el.value : null); };
   const cdMk = document.getElementById("btn-cd-marketing");
@@ -2375,11 +2416,43 @@ function v43InjuryProposalCardHtml(pr) {
       <p class="draftnote">${injured && injured.injury ? `傷停 ${injured.injury.daysLeft || 0} 天・` : ""}${injured && injured.level === "2軍" ? "批准後補上一軍空缺" : "批准後一升一降"}；人選已變動時不執行。</p>
       <div class="btnrow">
         <button class="btn-primary v43-injprop-approve" data-ipid="${pr.id}">批准並自動換位</button>
+        <button class="btn-secondary v60-injury-choose" data-ipid="${pr.id}">自己選人</button>
         <button class="btn-secondary v43-injprop-next" data-ipid="${pr.id}">要教練換人選</button>
         <button class="btn-outline v43-injprop-dismiss" data-ipid="${pr.id}">先擱置</button>
       </div>
     </div>`;
   } catch (_) { return ""; }
+}
+function v60RenderInjuryChoice() {
+  const choice = UI.injuryChoice;
+  const team = S.teams[S.userTeamId];
+  const proposal = choice && (S.v43.injuryProposals || []).find(p => p.id === choice.id && p.status === 'open');
+  if (!proposal) { UI.injuryChoice = null; render(); return; }
+  const all = v60ManualInjuryCandidates(team);
+  const list = choice.group === 'all' ? all : all.filter(p => v60SpringPositionGroup(p) === choice.group);
+  const pages = Math.max(1, Math.ceil(list.length / 4));
+  choice.page = Math.min(Math.max(0, choice.page), pages - 1);
+  const selected = all.find(p => p.id === choice.selected);
+  const injured = S.players[proposal.injuredId];
+  app.innerHTML = `<div class="wrap v60-injury-picker">
+    <h1>自選遞補</h1><p>健康二軍 ${all.length} 人・自選不增減教練信任</p>
+    ${v60SpringPositionTabs(all, choice.group)}
+    <div class="v60-choice-list">${list.slice(choice.page * 4, choice.page * 4 + 4).map(p => `<div class="card ${p.id === choice.selected ? 'dealchosen' : ''}">${v60RosterSwapMiniCardHtml(p, '可上一軍', 'up')}<button class="btn-secondary" data-injury-select="${p.id}" aria-pressed="${p.id === choice.selected}">${p.id === choice.selected ? '已選擇' : '選擇'}</button></div>`).join('') || '<p>此位置沒有健康二軍人選</p>'}</div>
+    <nav class="v60-choice-pager" aria-label="遞補名單分頁"><button id="inj-prev" ${choice.page === 0 ? 'disabled' : ''}>上一頁</button><span>${choice.page + 1}/${pages}</span><button id="inj-next" ${choice.page === pages - 1 ? 'disabled' : ''}>下一頁</button></nav>
+    ${selected ? `<section class="card" aria-label="升降確認"><h2>確認換位</h2><div class="v60-roster-swap-grid">${v60RosterSwapMiniCardHtml(selected, '二軍 → 一軍', 'up')}<span aria-hidden="true">⇄</span>${v60RosterSwapMiniCardHtml(injured, injured.level === '2軍' ? '留二軍養傷' : '一軍 → 二軍', 'down')}</div></section>` : ''}
+    <div class="btnrow v60-sticky-actions"><button id="inj-confirm" class="btn-primary" ${selected ? '' : 'disabled'}>確認遞補</button><button id="inj-cancel" class="btn-outline">取消自選</button></div>
+  </div>`;
+  const redraw = () => v60RenderInjuryChoice();
+  app.querySelectorAll('[data-spring-position]').forEach(b => { b.onclick = () => { choice.group = b.dataset.springPosition; choice.page = 0; redraw(); }; });
+  app.querySelectorAll('[data-injury-select]').forEach(b => { b.onclick = () => { choice.selected = b.dataset.injurySelect; redraw(); app.querySelector('[aria-label="升降確認"]').scrollIntoView({block:'center'}); document.getElementById('inj-confirm').focus({ preventScroll: true }); }; });
+  app.querySelectorAll('.v60-swap-player-detail').forEach(b => { b.onclick = () => { UI.injuryChoiceReturn = true; UI.playerDetailReturn = UI.screen; UI.selectedPlayerId = b.dataset.playerId; UI.screen = 'playerDetail'; render(); }; });
+  document.getElementById('inj-prev').onclick = () => { choice.page--; redraw(); };
+  document.getElementById('inj-next').onclick = () => { choice.page++; redraw(); };
+  document.getElementById('inj-cancel').onclick = () => { UI.injuryChoice = null; render(); };
+  document.getElementById('inj-confirm').onclick = () => {
+    const result = v43ResolveInjuryProposal(choice.id, 'manual', choice.selected);
+    UI.injuryChoice = null; UI.flash = result.msg; render();
+  };
 }
 function renderInjuryProposalCards() {
   try {
@@ -2412,8 +2485,8 @@ function v60CoachRosterSwapCardHtml(pr) {
     if (!incoming || !outgoing) return "";
     const coach = pr.coachId ? S.coaches[pr.coachId] : null;
     return `<div class="card issuecard v60-roster-swap-card">
-      <div class="eyebrow">${icon('exchange')} 教練健康換位提案</div>
-      <p class="sub dark"><b>${coach ? coach.name : "教練團"}</b>：一軍已滿編，建議用健康二軍人選取代一位健康一軍球員。</p>
+      <div class="eyebrow">${coach ? coach.name : "教練團"}・健康換位</div>
+      <p class="v60-state-line">一軍 ${S.teams[S.userTeamId].roster1.length}/28・批准後一升一降</p>
       <div class="v60-roster-swap-grid">
         ${v60RosterSwapMiniCardHtml(incoming, "升上一軍", "up")}
         <span class="v60-roster-swap-arrow">⇄</span>
@@ -2491,6 +2564,7 @@ function wireV43Cards() {
     app.querySelectorAll(".v43-offer-decline").forEach(b => { b.onclick = () => { const r = v43DeclineOffer(b.dataset.offerid); UI.flash = r.msg; render(); }; });
     // 傷兵遞補提案
     app.querySelectorAll(".v43-injprop-approve").forEach(b => { b.onclick = () => { const r = v43ResolveInjuryProposal(b.dataset.ipid, "approve"); UI.flash = r.msg; render(); }; });
+    app.querySelectorAll('.v60-injury-choose').forEach(b => { b.onclick = () => { UI.injuryChoice = { id: b.dataset.ipid, group: 'all', page: 0, selected: null }; v60RenderInjuryChoice(); }; });
     app.querySelectorAll(".v43-injprop-reopen").forEach(b => { b.onclick = () => { const r = v43ResolveInjuryProposal(b.dataset.ipid, "reopen"); UI.flash = r.msg; render(); }; });
     app.querySelectorAll(".v60-swap-player-detail").forEach(b => { b.onclick = () => { UI.selectedPlayerId = b.dataset.playerId; UI.playerDetailReturn = UI.screen; UI.screen = "playerDetail"; render(); }; });
     app.querySelectorAll(".v43-injprop-next").forEach(b => { b.onclick = () => { const r = v43ResolveInjuryProposal(b.dataset.ipid, "next"); UI.flash = r.msg; render(); }; });

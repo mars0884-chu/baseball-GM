@@ -111,13 +111,19 @@ let UI = { screen: "loading", rosterTab: "1軍", flash: null, selectedPlayerId: 
 const app = document.getElementById("app");
 
 function newGame(gmNameInput) {
+  const steps = newGameSteps(gmNameInput);
+  let step = steps.next();
+  while (!step.done) step = steps.next();
+}
+function* newGameSteps(gmNameInput) {
   ID_SEQ = 1;
   const gmName = (gmNameInput || "").trim() || generateChineseName();
   // v491：保留原 RNG 呼叫維持共用亂數序列，結果丟棄；聯盟名改用固定品牌
   choice(LEAGUE_PREFIX);
   const leagueName = LEAGUE_BRAND.fullName;
-  const { teams, players, coaches } = buildLeague();
+  const { teams, players, coaches } = yield* buildLeagueSteps();
   const schedule = buildSeasonSchedule(teams);
+  yield { completed: 21, total: 22, label: "賽程已建立，準備球團資料" };
   S = {
     gmName, leagueName, teams, players, coaches, schedule,
     currentDay: 0, seasonYear: 1, resultsLog: [], playoffs: null, retiredPlayers: {}, lastAwards: null,
@@ -1628,4 +1634,3 @@ function finishIntlTournament() {
   if (S.intlTournament) S.intlTournament.done = true;
   enterOffseason();
 }
-

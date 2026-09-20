@@ -1076,6 +1076,29 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-app-brand-copy em{font-style:normal;color:#FFF7EA;font-size:11px;letter-spacing:.12em;}
 .v60-news-scene{grid-template-columns:minmax(0,1.45fr) minmax(160px,.55fr);}
 .v60-news-scene .v60-visual-scene-art{min-height:280px;}
+
+/* r018：保留完整核准圖，縮短重複橫幅；操作與狀態放在同一決策區。 */
+.v60-choice-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+.v60-choice-list .card{margin:0;padding:10px;min-width:0;}
+.v60-choice-list button{min-height:48px;white-space:normal;}
+.v60-choice-pager{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;}
+.v60-choice-pager button{min-height:48px;min-width:88px;}
+.v60-choice-pager button{background:#FFFFFF;color:#12385D;border:1px solid #88ADDB;border-radius:8px;font-size:16px;cursor:pointer;}
+.v60-choice-pager button:disabled{opacity:.5;cursor:default;}
+.v60-choice-pager button:focus-visible{outline:3px solid #164FFF;outline-offset:2px;}
+.v60-injury-picker .v60-sticky-actions{background:#F5FAFF;}
+.v60-loading progress{width:100%;height:24px;accent-color:#204CFF;}
+.v60-training-limit{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px;background:#E8F4FF;color:#173453;border-radius:10px;}
+.v60-upgrade-compare td:last-child{color:#1637B8;background:#EAF4FF;}
+.cdact-card .v60-marketing-action-column{min-width:0;padding:10px;border:1px solid #BCD4F2;border-radius:14px;}
+.cdact-card select{max-width:100%;width:100%;}
+@media(max-width:520px){
+  .v60-marketing-scene.v60-visual-scene,.v60-spring-scene.v60-visual-scene,.cdact-card .v60-compact-scene.v60-visual-scene{grid-template-columns:130px minmax(0,1fr);padding:6px;}
+  .v60-marketing-scene .v60-visual-scene-art,.v60-spring-scene .v60-visual-scene-art,.cdact-card .v60-compact-scene .v60-visual-scene-art{min-height:0;height:130px;}
+  .v60-marketing-scene .v60-visual-scene-art img,.v60-spring-scene .v60-visual-scene-art img,.cdact-card .v60-compact-scene .v60-visual-scene-art img{height:124px;max-height:124px;object-fit:contain;padding:2px;}
+  .v60-choice-list .v60-roster-swap-player{padding:4px;}
+  .v60-upgrade-compare{font-size:14px;}
+}
 .v60-dashboard-featured{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(180px,.65fr);gap:12px;align-items:stretch;}
 .v60-dashboard-featured-art{display:flex;align-items:center;justify-content:center;min-height:260px;border:2px solid #B7D3F5;border-radius:15px;background:#F8FBFF;overflow:hidden;}
 .v60-dashboard-featured-art img{display:block;width:100%;height:100%;max-height:330px;padding:8px;object-fit:contain;}
@@ -1183,7 +1206,27 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-swap-player-detail:focus-visible{outline:3px solid #143CFF;outline-offset:2px;}
 .v60-roster-swap-player .player-photo{align-self:center;}
 .v60-roster-swap-arrow{display:flex;align-items:center;justify-content:center;color:#143CFF;font-size:22px;font-weight:900;}
+.v60-campaign-list .v60-campaign-choice{display:grid;grid-template-columns:minmax(0,1fr) 64px;column-gap:10px;padding:10px;margin:0;border-radius:0;border-bottom:1px solid #B7D3F5;}
+.v60-campaign-list{border:1px solid #B7D3F5;border-radius:12px;overflow:hidden;margin-bottom:12px;}
+.v60-campaign-list .v60-campaign-title{grid-column:1;flex-wrap:wrap;gap:4px;}
+.v60-campaign-list .v60-campaign-title strong{font-size:16px;}
+.v60-campaign-list .v60-campaign-effects{grid-column:1;margin:4px 0 0;font-size:14px;}
+.v60-campaign-list .btnrow{grid-column:2;grid-row:1/3;align-self:center;margin:0;}
+.v60-campaign-list button{width:64px;padding:8px;}
+.v60-activity-outcome{font-size:14px;color:#25486C;line-height:1.45;margin:6px 0;}
+.v60-ability-track{position:relative;height:9px;margin:6px 0;background:#DCE5F0;border-radius:5px;overflow:hidden;}
+.v60-ability-track i,.v60-ability-track b{position:absolute;left:0;top:0;height:9px;border-radius:5px;}
+.v60-ability-track i{background:#69D4E5;}
+.v60-ability-track b{background:#2455D8;}
+.v60-ability-track+small{font-size:14px;color:#294967;}
+.v60-injury-picker .v60-roster-swap-grid{grid-template-columns:minmax(0,1fr) 16px minmax(0,1fr);}
 @media(max-width:520px){
+  .cdact-card .v60-compact-scene.v60-visual-scene{grid-template-columns:minmax(0,1fr);gap:4px;}
+  .cdact-card .v60-compact-scene .v60-visual-scene-art{height:112px;min-height:112px;}
+  .cdact-card .v60-compact-scene .v60-visual-scene-art img{height:108px;}
+  .cdact-card .v60-visual-scene-copy{padding:2px;}
+  .v57-facility-hero .v57-facility-scene-frame{height:160px;}
+  .v57-facility-hero .v57-facility-facts div{padding:4px;}
   .v60-roster-swap-grid{grid-template-columns:1fr;gap:6px;}
   .v60-roster-swap-arrow{height:20px;transform:rotate(90deg);}
   .v60-roster-swap-player{padding:9px;}

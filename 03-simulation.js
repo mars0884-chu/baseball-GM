@@ -3068,7 +3068,12 @@ function v60CanReopenInjuryProposal(pr, team) {
   return !!(injured && isInjured(injured) && team.roster2.includes(injured.id)
     && !(S.v43.injuryProposals || []).some(other => other.status === "open" && other.injuredId === injured.id));
 }
-function v43ResolveInjuryProposal(id, action) {
+function v60ManualInjuryCandidates(team) {
+  if (!team) return [];
+  return (team.roster2 || []).map(id => S.players[id]).filter(p =>
+    p && p.team === team.id && !(team.roster1 || []).includes(p.id) && v60RosterSwapHealthy(p));
+}
+function v43ResolveInjuryProposal(id, action, selectedId) {
   try {
     ensureV43State();
     const pr = (S.v43.injuryProposals || []).find(x => x.id === id);
@@ -3081,18 +3086,25 @@ function v43ResolveInjuryProposal(id, action) {
       return { ok: true, msg: "教練已重提二軍遞補人選，請確認後批准；尚未升降。" };
     }
     if (!pr || pr.status !== "open") return { ok: false, msg: "此提案已不在待回應狀態。" };
-    if (action === "approve") {
-      const pid = pr.candidateIds[pr.pickIndex];
+    if (action === "approve" || action === "manual") {
+      const manual = action === "manual";
+      const pid = manual ? selectedId : pr.candidateIds[pr.pickIndex];
+      if (manual && !v60ManualInjuryCandidates(team).some(p => p.id === pid)) return { ok: false, msg: "此人已非健康二軍，請重新選擇；名單未變動。" };
       const p = S.players[pid];
       if (!p) { pr.status = "void"; return { ok: false, msg: "建議人選已不可用，提案取消。" }; }
       const injured = S.players[pr.injuredId];
+      if (manual && p.foreign && foreignCountOnRoster1(team) - (injured && injured.foreign && team.roster1.includes(injured.id) ? 1 : 0) + 1 > FOREIGN_ROSTER_CAP) {
+        return { ok: false, msg: "換位後洋將人數超過一軍上限，請改選；名單未變動。" };
+      }
       const move = v60AutoResolveInjuryRoster(team, injured, p);
       if (!move.ok) return { ok: false, msg: move.msg };
+      // 暫選不寫入Save；成功時才把實際人選記入原提案欄位。
+      if (manual) { pr.candidateIds = [pid]; pr.pickIndex = 0; }
       pr.status = "approved";
       const coach = pr.coachId ? S.coaches[pr.coachId] : null;
-      if (coach && typeof coach.trust === "number") coach.trust = clamp(coach.trust + 3, 0, 100); // 尊重教練判斷→信任小回
+      if (!manual && coach && typeof coach.trust === "number") coach.trust = clamp(coach.trust + 3, 0, 100); // 自選不增減信任，Mars 2026-09-20核准。
       if (typeof pushNews === "function") pushNews("教練團", `GM 批准遞補：${move.msg.replace(/。$/, "")}。`);
-      if (typeof chronicle === "function") chronicle("coach", `傷缺遞補：${move.msg.replace(/。$/, "")}（教練提案獲准）`);
+      if (typeof chronicle === "function") chronicle("coach", `傷缺遞補：${move.msg.replace(/。$/, "")}（${manual ? "GM自選" : "教練提案獲准"}）`);
       if (typeof persist === "function") persist();
       return { ok: true, msg: `已批准：${move.msg}` };
     }
@@ -3130,7 +3142,7 @@ function v43ResolveInjuryProposal(id, action) {
       return { ok: true, msg: "已擱置這份遞補提案（教練信任−2）。傷缺仍在，教練之後可能再提。" };
     }
     return { ok: false, msg: "未知的回應。" };
-  } catch (_) { return { ok: false, msg: "處理失敗。" }; }
+  } catch (error) { console.error("[傷缺提案]", error); return { ok: false, msg: "處理失敗，請保留存檔並回報。" }; }
 }
 
 /* ---------- v60-005：教練健康球員換位提案 ----------

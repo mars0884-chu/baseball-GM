@@ -1,6 +1,6 @@
 /* 決勝GM v60 Service Worker：離線快取 App Shell（視覺恢復候選）。
    ASSETS 同時涵蓋模組版(7支JS+css)與單檔版(index.html)；缺檔以 allSettled 略過不整批失敗。 */
-const CACHE = "baseballgm-v60-r017";
+const CACHE = "baseballgm-v60-r018";
 const ASSETS = [
   "./", "./index.html", "./style.css", "./manifest.webmanifest",
   "./icon-192.png", "./icon-512.png", "./icon-180.png",
@@ -11,30 +11,32 @@ const ASSETS = [
 self.addEventListener("install", (e) => {
   e.waitUntil((async () => {
     const c = await caches.open(CACHE);
-    await Promise.allSettled(ASSETS.map((u) => c.add(u)));
+    const results = await Promise.allSettled(ASSETS.map((u) => c.add(u.endsWith('.html') || u === './' ? u : u + '?v=v60-r018')));
+    const failures = results.filter(r => r.status === 'rejected');
+    if (failures.length) { console.error('[離線核心快取未完成]', failures); throw Error('離線核心下載未完成，保留原版本'); }
     self.skipWaiting();
   })());
 });
 self.addEventListener("activate", (e) => {
   e.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)));
+    await Promise.all(keys.filter((k) => k.startsWith('baseballgm-') && k !== CACHE).map((k) => caches.delete(k)));
     self.clients.claim();
   })());
 });
 self.addEventListener("fetch", (e) => {
-  if (e.request.method !== "GET") return;
+  if (e.request.method !== "GET" || new URL(e.request.url).origin !== self.location.origin) return;
   e.respondWith((async () => {
-    const cached = await caches.match(e.request);
+    const c = await caches.open(CACHE);
+    const cached = await c.match(e.request);
     if (cached) return cached;
     try {
       const res = await fetch(e.request);
-      const c = await caches.open(CACHE);
-      c.put(e.request, res.clone()).catch(() => {});
+      if (res.ok) e.waitUntil(c.put(e.request, res.clone()).catch(error => console.error('[素材快取]', error)));
       return res;
     } catch (err) {
       if (e.request.mode === "navigate") {
-        const idx = (await caches.match("./index.html")) || (await caches.match("./"));
+        const idx = (await c.match("./index.html")) || (await c.match("./"));
         if (idx) return idx;
       }
       throw err;

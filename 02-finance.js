@@ -589,14 +589,12 @@ function renderV57FacilityVisual(team, cur, next, canUpgrade, ftab) {
   const facts = view.facts.map(function (item) { return `<div><strong>${item[0]}</strong><span>${item[1]}</span></div>`; }).join("");
   return `<section class="v57-facility-hero" data-v57-facility-visual="true" data-facility-level="${view.level}" data-facility-stage="${ftab === "球場" ? profile.key : view.artKey}">
     <div class="v57-facility-hero-copy">
-      <span class="v57-facility-kicker">FACILITY VISUAL・${ftab}</span>
       <h2>${ftab === "球場" ? profile.stage : view.label}</h2>
-       <p class="v60-state-line">${v57FacilityTabSummary(team, ftab)}。</p>
       <div class="v57-facility-status-row"><span class="v57-state-badge ${agedCount > 0 ? "aged" : locked ? "locked" : upgradeReady ? "upgrade" : "stable"}">${statusLabel}</span><span class="v57-level-badge">Lv.${view.level}・${view.label}</span></div>
       <div class="v57-facility-facts">${facts}</div>
       <div class="v57-slot-legend" aria-label="設施格位視覺摘要">${pills}</div>
     </div>
-    <div class="v57-facility-hero-scene">${v57FacilityTabArtVisual(ftab, profile, view, { agedCount, upgradeReady, locked })}<div class="v57-scene-caption">${ftab === "球場" ? profile.stage : view.label}・standalone facility art</div></div>
+    <div class="v57-facility-hero-scene">${v57FacilityTabArtVisual(ftab, profile, view, { agedCount, upgradeReady, locked })}</div>
   </section>`;
 }
 function renderFacilities() {
@@ -690,7 +688,7 @@ function renderFacilities() {
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["等級", `Lv.${lv}${maxed ? " MAX" : ""}`], ["受傷", `-${lv * 8}%`], ["恢復", `-${lv * 6}%`]], "醫療室摘要") : ""}
       <div class="card">
         <div class="eyebrow">醫療室</div>
-        <p class="v60-state-line">降低受傷機率與恢復天數。</p>
+        ${maxed ? '' : v60UpgradeComparison([['受傷機率', `-${lv * 8}%`, `-${(lv + 1) * 8}%`], ['恢復天數', `-${lv * 6}%`, `-${(lv + 1) * 6}%`]])}
         ${maxed ? `<p class="sub dark">已達最高等級。</p>` : `
         <p class="sub dark">升級至 Lv.${lv + 1} 費用：<b>${formatMoney(cost)}</b></p>
         <div class="btnrow"><button id="btn-upgrade-medical" class="btn-primary" ${canUpgrade && team.finance.budget >= cost ? "" : "disabled"}>升級醫療室</button></div>`}
@@ -703,7 +701,7 @@ function renderFacilities() {
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["等級", `Lv.${lv}${maxed ? " MAX" : ""}`], ["疲勞", `+${lv * 2}/日`], ["狀況", `+${lv * 2}%`], ["年輕", `+${lv * 2}%`]], "選手宿舍摘要") : ""}
       <div class="card">
         <div class="eyebrow">選手宿舍</div>
-        <p class="v60-state-line">改善休養、疲勞恢復與年輕球員成長。</p>
+        ${maxed ? '' : v60UpgradeComparison([['疲勞恢復/日', `+${lv * 2}`, `+${(lv + 1) * 2}`], ['狀況／年輕成長', `+${lv * 2}%`, `+${(lv + 1) * 2}%`]])}
         ${maxed ? `<p class="sub dark">已達最高等級。</p>` : `
         <p class="sub dark">升級至 Lv.${lv + 1} 費用：<b>${formatMoney(cost)}</b></p>
         <div class="btnrow"><button id="btn-upgrade-dorm" class="btn-primary" ${canUpgrade && team.finance.budget >= cost ? "" : "disabled"}>升級選手宿舍</button></div>`}
@@ -729,7 +727,7 @@ function renderFacilities() {
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["等級", `Lv.${lv}${maxed ? " MAX" : ""}`], ["恢復", `-${lv * 8}%`], ["降評", `-${lv * 3}%`], ["復發", `-${lv * 8}%`]], "復健中心摘要") : ""}
       <div class="card">
         <div class="eyebrow">復健中心</div>
-        <p class="v60-state-line">縮短恢復、降低降評與舊傷復發風險。</p>
+        ${maxed ? '' : v60UpgradeComparison([['恢復天數／復發風險', `-${lv * 8}%`, `-${(lv + 1) * 8}%`], ['降評風險', `-${lv * 3}%`, `-${(lv + 1) * 3}%`]])}
         ${maxed ? `<p class="sub dark">已達最高等級。</p>` : `
         <p class="sub dark">升級至 Lv.${lv + 1} 費用：<b>${formatMoney(cost)}</b></p>
         <div class="btnrow"><button id="btn-upgrade-rehab" class="btn-primary" ${canUpgrade && team.finance.budget >= cost ? "" : "disabled"}>升級復健中心</button></div>`}
@@ -760,7 +758,6 @@ function renderFacilities() {
       </div>
       ${v57Visual}
        ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["窗口", canUpgrade ? "春訓可操作" : "球季鎖定"], ["預算", formatMoney(team.finance.budget)], ["頁面", ftab]], "硬體建設摘要") : ""}
-       <p class="v60-state-line">${canUpgrade ? "現在可投資升級硬體設施。" : "本季已開打，升級等下個休賽季春訓。"}</p>
       ${body}
       <div class="btnrow"><button id="btn-back" class="btn-secondary">返回主控台</button></div>
     </div>`;
@@ -2572,7 +2569,7 @@ function renderMarketing() {
       ${typeof renderCdActivitiesCard === "function" ? renderCdActivitiesCard() : ""}
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["人氣", `${team.finance.popularity}/100`], ["已投", `${(team.finance.marketingCampaigns || []).length} 項`], ["周邊", `+${Math.round((team.finance.marketingMerchPct || 0) * 100)}%`], ["進場", `+${Math.round((team.finance.marketingAttPct || 0) * 100)}%`]], "行銷企劃摘要") : ""}
       <p class="v60-state-line">${canPlan ? "春訓期間可複選；點擊活動卡即可投入或取消。" : "本季已鎖定，休賽季再規劃。"}</p>
-      ${MARKETING_CAMPAIGNS.map(c => {
+      <div class="v60-campaign-list">${MARKETING_CAMPAIGNS.map(c => {
         const active = (team.finance.marketingCampaigns || []).includes(c.key);
         const shortEffects = [c.popBoost ? `人氣+${c.popBoost}${c.key === "endorse" ? "（人氣王再+2）" : ""}` : "", c.merchPct ? `周邊+${Math.round(c.merchPct * 100)}%` : "", c.attPct ? `進場+${Math.round(c.attPct * 100)}%` : ""].filter(Boolean).join("・");
         return `
@@ -2581,14 +2578,15 @@ function renderMarketing() {
           <p class="v60-campaign-effects">${shortEffects}</p>
           ${canPlan ? `<div class="btnrow"><button class="${active ? "btn-danger" : "btn-secondary"} marketing-btn" data-plan="${c.key}">${active ? "取消" : "投入"}</button></div>` : ""}
         </div>`;
-      }).join("")}
-      <p class="v60-state-line">行銷影響人氣、周邊與進場；容量與收入上限前往球場硬體建設。</p>
+      }).join("")}</div>
+      <button id="btn-marketing-facilities" class="btn-outline">球場容量與收入上限 →</button>
       <div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>
     </div>`;
   app.querySelectorAll(".marketing-btn").forEach(btn => {
     btn.onclick = () => toggleMarketingCampaign(btn.dataset.plan);
   });
   wireCdActivitiesActions();
+  document.getElementById('btn-marketing-facilities').onclick = () => { UI.screen = 'facilities'; render(); };
   document.getElementById("btn-back").onclick = () => { UI.screen = "dashboard"; render(); };
   wireRosterNav();
 }
