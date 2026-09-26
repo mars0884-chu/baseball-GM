@@ -1611,12 +1611,12 @@ function renderRoster() {
         </select>
         ${sortDirButtonHtml("pitcherSortDir")}
       </div>
-      <table class="stattable">
+      <div class="v60-roster-table-wrap"><table class="stattable">
         <thead><tr><th>姓名</th><th>狀況</th><th>年齡</th><th>角色</th><th>先發位置</th><th>球速(km/h)</th><th>控球</th><th>體力</th><th>疲勞</th><th>抗壓</th><th></th></tr></thead>
         <tbody>
           ${pitchers.map(p => `<tr data-id="${p.id}"><td class="rowlink" data-id="${p.id}">${nameWithDutyTag(p)}</td><td>${conditionTagHtml(p)}</td><td>${p.age}</td><td>${p.role}</td><td>${UI.rosterTab === "1軍" ? pitcherRoleTag(team, p) : "－"}</td><td>${velocityKmh(p.velocity)}</td><td>${p.control}</td><td>${p.stamina}</td><td>${fatigueOf(p) > 70 ? `<b style="color:#c0392b;">${fatigueOf(p)}</b>` : fatigueOf(p)}</td><td>${p.composure}</td><td><button class="movebtn" data-id="${p.id}">${actionLabel}</button></td></tr>`).join("")}
         </tbody>
-      </table>` : ""}
+      </table></div>` : ""}
       ${showBatters ? `<div class="divlabel">野手（${filteredBatters.length}）</div>
       <div class="btnrow" style="align-items:center;">
         <select id="sort-batter" class="sortselect" style="flex:1;">
@@ -1633,12 +1633,12 @@ function renderRoster() {
         </select>
         ${sortDirButtonHtml("batterSortDir")}
       </div>
-      <table class="stattable">
+      <div class="v60-roster-table-wrap"><table class="stattable">
         <thead><tr><th>姓名</th><th>狀況</th><th>年齡</th><th>守位</th><th>先發</th><th>接觸</th><th>長打</th><th>選球</th><th>觸擊</th><th>速度</th><th>守備%</th><th></th></tr></thead>
         <tbody>
           ${filteredBatters.map(p => `<tr data-id="${p.id}"><td class="rowlink" data-id="${p.id}">${nameWithDutyTag(p)}</td><td>${conditionTagHtml(p)}</td><td>${p.age}</td><td>${p.positions.map(x => POS_LABEL[x.pos]).join("/")}</td><td>${UI.rosterTab === "1軍" ? batterLineupTag(team, p) : "－"}</td><td>${p.contact}</td><td>${p.power}</td><td>${p.eye}</td><td>${p.bunting || "-"}</td><td>${p.speed}</td><td>${p.fielding}</td><td><button class="movebtn" data-id="${p.id}">${actionLabel}</button></td></tr>`).join("")}
         </tbody>
-      </table>` : ""}
+      </table></div>` : ""}
       <div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>
     </div>`;
   var sortPEl = document.getElementById("sort-pitcher");

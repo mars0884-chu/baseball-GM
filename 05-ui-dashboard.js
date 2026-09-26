@@ -246,6 +246,164 @@ function v60MarkStickyScreenAction() {
   const backRow = backButton && backButton.closest(".btnrow");
   if (backRow) backRow.classList.add("v60-sticky-actions");
 }
+/* v60-010：開季準備導覽列。財務預估只讀 S；不得觸發 ensure、薪資補值或共享亂數。 */
+function v60PreseasonFinanceForecast(team) {
+  if (!team || !S || !S.teams) return null;
+  const finance = team.finance || {};
+  const seasonYear = Number.isFinite(S.seasonYear) ? S.seasonYear : 1;
+  const ticketPrice = Number.isFinite(finance.ticketPrice) ? finance.ticketPrice : ({ low: 250, mid: 420, high: 620, premium: 880 }[finance.ticketTier] || 420);
+  const ticketCap = Number.isFinite(finance.ticketPriceCap) ? finance.ticketPriceCap : TICKET_PRICE_CEIL_DEFAULT;
+  const popularity = Number.isFinite(finance.popularity) ? finance.popularity : 50;
+  const played = (team.wins || 0) + (team.losses || 0);
+  const winPct = played > 0 ? (team.wins || 0) / played : 0.5;
+  const facility = team.facility || {};
+  const level = Number.isFinite(facility.level) ? facility.level : 1;
+  const capacity = (FACILITY_LEVELS.find(f => f.level === level) || FACILITY_LEVELS[0]).capacity;
+  let spendPct = 0, attendancePct = 0, maintenanceCost = 0;
+  const slots = Array.isArray(facility.stadiumSlots) ? facility.stadiumSlots : [];
+  const builtYears = Array.isArray(facility.slotBuilt) ? facility.slotBuilt : [];
+  slots.forEach((key, i) => {
+    const type = stadiumFacilityType(key);
+    if (!type) return;
+    const builtYear = Number.isFinite(builtYears[i]) ? builtYears[i] : seasonYear;
+    const decay = seasonYear - builtYear >= STADIUM_LIFE ? STADIUM_DECAY_MULT : 1;
+    spendPct += type.spendPct * decay;
+    attendancePct += type.attPct * decay;
+    maintenanceCost += Math.round(type.cost * type.maintPct);
+  });
+  const currentMarketing = finance.marketingYear === seasonYear;
+  const city = S.cityState && S.cityState[team.id];
+  const cityAttendance = city ? 0.85 + (city.population / 100) * 0.30 : 1;
+  const baseAttendance = (0.32 + popularity / 100 * 0.38 + (winPct - 0.5) * 0.55
+    + (currentMarketing ? finance.marketingAttPct || 0 : 0) + attendancePct) * cityAttendance;
+  const attendanceRate = clamp(baseAttendance * ticketDemandRate(ticketPrice, ticketCap, popularity), 0.06, 0.98);
+  const projectedAttendance = Math.round(capacity * attendanceRate);
+  const totalGames = S.schedule ? S.schedule.length : 126;
+  const homeGames = Math.round(totalGames / 2);
+  const awayGames = totalGames - homeGames;
+  const ticketRevenue = projectedAttendance * ticketPrice * homeGames;
+  const currentBroadcastDeal = finance.dealsYear === seasonYear ? finance.broadcastDeal : null;
+  const currentSponsorDeal = finance.dealsYear === seasonYear ? finance.sponsorDeal : null;
+  const broadcastEstimate = dealSeasonRevenue(currentBroadcastDeal, winPct, false);
+  const sponsorEstimate = dealSeasonRevenue(currentSponsorDeal, winPct, false);
+  const broadcastRevenue = broadcastEstimate != null ? broadcastEstimate : Math.round((3000 + popularity * 42) * 10000);
+  const sponsorRevenue = Math.max(0, sponsorEstimate != null ? sponsorEstimate : Math.round((1500 + popularity * 26) * 10000 + (winPct - 0.5) * 4200 * 10000));
+  const merchPct = currentMarketing ? finance.marketingMerchPct || 0 : 0;
+  const perCapitaSpend = (MERCH_BASE_SPEND + popularity * 0.06) * (1 + spendPct) * (1 + merchPct);
+  const merchRevenue = Math.round(projectedAttendance * homeGames * perCapitaSpend);
+  const perGameGate = projectedAttendance * ticketPrice;
+  const gateShareIncome = Math.round(awayGames * perGameGate * (winPct * GATE_SHARE_WIN + (1 - winPct) * GATE_SHARE_LOSE));
+  const gateSharePaid = Math.round(homeGames * perGameGate * ((1 - winPct) * GATE_SHARE_WIN + winPct * GATE_SHARE_LOSE));
+  const players = S.players || {};
+  let payroll = 0;
+  (team.roster1 || []).concat(team.roster2 || []).forEach(id => {
+    const player = players[id];
+    if (player) payroll += Number.isFinite(player.salary) ? player.salary : computePlayerSalary(player);
+  });
+  (team.rosterDev || []).forEach(id => {
+    const player = players[id];
+    if (player) payroll += Number.isFinite(player.salary) ? player.salary : (typeof V54_DEV_MIN_SALARY !== "undefined" ? V54_DEV_MIN_SALARY : 80000);
+  });
+  ["1軍", "2軍"].forEach(group => COACH_ROLES.forEach(role => {
+    const id = team.coachStaff && team.coachStaff[group] && team.coachStaff[group][role];
+    const coach = id && S.coaches && S.coaches[id];
+    if (coach) payroll += coach.salary || 0;
+  }));
+  if (team.coachStaff && team.coachStaff["育成"]) Object.values(team.coachStaff["育成"]).forEach(id => {
+    const coach = S.coaches && S.coaches[id];
+    if (coach) payroll += coach.salary || 0;
+  });
+  if (team.scouts) Object.values(team.scouts).forEach(scout => { if (scout) payroll += scout.salary || 0; });
+  const leaguePayrolls = Object.values(S.teams).map(other => other === team ? payroll : (other.finance && other.finance.payroll) || 0);
+  const avgPayroll = leaguePayrolls.length ? leaguePayrolls.reduce((sum, amount) => sum + amount, 0) / leaguePayrolls.length : payroll;
+  const luxuryTax = payroll > avgPayroll * 1.3 ? Math.round((payroll - avgPayroll * 1.3) * 0.5) : 0;
+  const totalRevenue = ticketRevenue + broadcastRevenue + sponsorRevenue + merchRevenue + gateShareIncome;
+  const projectedNet = totalRevenue - payroll - luxuryTax - maintenanceCost - gateSharePaid;
+  return { budget: finance.budget, projectedNet, previousNet: finance.lastSeasonReport && finance.lastSeasonReport.net, projectedAttendance };
+}
+function v60PreseasonWindow() {
+  return !!(S && S.userTeamId && S.teams && S.teams[S.userTeamId] && S.currentDay === 0
+    && !["setup", "teamSelect", "gameModePick", "bootRecovery", "tutorial", "gameOver"].includes(UI.screen));
+}
+function v60PreseasonNextStage() {
+  if (S.forcedCutRequired) return { label: "處理裁員", short: "裁員", screen: "financeCuts" };
+  if ((S.pendingContractRenewals || []).length) return { label: "處理談約", short: "球員約", screen: "contractRenewals" };
+  if ((S.pendingStaffRenewals || []).length) return { label: "教練／球探續約", short: "教練約", screen: "staffRenewal" };
+  if (S.v55PendingDirectorRenewal) return { label: "主管續約", short: "主管約", screen: "directorRenewal" };
+  if (S.draft && S.draft.active) return { label: "繼續選秀", short: "選秀", screen: "draft" };
+  if (S.draftDoneYear !== S.seasonYear) return { label: "進入選秀", short: "選秀", screen: "draft" };
+  if (S.springCamp && S.springCamp.year === S.seasonYear && S.springCamp.executed) return { label: "春訓成果", short: "成果", screen: "springReport" };
+  if (S.springCampDoneYear !== S.seasonYear) return { label: "安排春訓", short: "春訓", screen: "springCamp" };
+  return { label: "回主控台", short: "開季", screen: "dashboard" };
+}
+function v60PreseasonGoNext() {
+  if (S.forcedCutRequired) return proceedFromOffseasonSummary();
+  if ((S.pendingContractRenewals || []).length) return proceedFromOffseasonSummary();
+  if ((S.pendingStaffRenewals || []).length) { UI.screen = "staffRenewal"; render(); return; }
+  if (S.v55PendingDirectorRenewal) { UI.screen = "directorRenewal"; render(); return; }
+  if (S.draft && S.draft.active) { UI.screen = "draft"; render(); return; }
+  if (S.draftDoneYear !== S.seasonYear) return proceedToDraft();
+  if (S.springCamp && S.springCamp.year === S.seasonYear && S.springCamp.executed) { UI.screen = "springReport"; render(); return; }
+  if (S.springCampDoneYear !== S.seasonYear) {
+    if (!S.springCamp || S.springCamp.year !== S.seasonYear) prepareSpringCamp();
+    UI.screen = "springCamp"; render(); return;
+  }
+  UI.screen = "dashboard"; render();
+}
+function v60PreseasonOpenContracts() {
+  if (S.forcedCutRequired) { UI.screen = "financeCuts"; }
+  else if ((S.pendingContractRenewals || []).length) { UI.screen = "contractRenewals"; }
+  else if ((S.pendingStaffRenewals || []).length) { UI.screen = "staffRenewal"; }
+  else if (S.v55PendingDirectorRenewal) { UI.screen = "directorRenewal"; }
+  else { UI.screen = "finance"; UI.tabs = UI.tabs || {}; UI.tabs.finance = "deals"; }
+  render();
+}
+function v60MountPreseasonDock() {
+  if (!v60PreseasonWindow()) return;
+  const root = document.getElementById("app");
+  if (!root || !root.querySelector || !root.insertAdjacentHTML || !root.querySelectorAll || root.querySelector(".v60-preseason-dock")) return;
+  const team = S.teams[S.userTeamId];
+  const snapshot = v60PreseasonFinanceForecast(team);
+  if (!snapshot) return;
+  const stage = v60PreseasonNextStage();
+  const netClass = snapshot.projectedNet < 0 ? "is-negative" : "is-positive";
+  const previous = Number.isFinite(snapshot.previousNet) ? `${snapshot.previousNet >= 0 ? "+" : ""}${formatMoney(snapshot.previousNet)}` : "尚無上季資料";
+  root.insertAdjacentHTML("afterbegin", `<aside class="v60-preseason-dock" aria-label="開季準備快捷列">
+    <div class="v60-preseason-dock-inner">
+      <button class="v60-preseason-finance ${netClass}" type="button" data-v60-prep="finance" aria-label="開啟財務總覽；本季預估損益 ${formatMoney(snapshot.projectedNet)}">
+        <span><small>預算</small><b>${formatMoney(snapshot.budget)}</b></span>
+        <span><small>上季實績</small><b>${previous}</b></span>
+        <span class="v60-preseason-current"><small>本季預估</small><b>${snapshot.projectedNet >= 0 ? "+" : ""}${formatMoney(snapshot.projectedNet)}</b></span>
+      </button>
+      <nav class="v60-preseason-links" aria-label="開季準備入口">
+        <button type="button" data-v60-prep="next" aria-label="前往下一個開季流程：${stage.label}" title="下一步：${stage.label}"><span>下一步</span><small>${stage.short}</small></button>
+        <button type="button" data-v60-prep="contracts">談約${(S.pendingContractRenewals || []).length ? `・${S.pendingContractRenewals.length}` : ""}</button>
+        <button type="button" data-v60-prep="ticket">票價</button>
+        <button type="button" data-v60-prep="marketing">行銷</button>
+        <button type="button" data-v60-prep="facilities">硬體</button>
+        <button type="button" data-v60-prep="roster">名單</button>
+        <button type="button" data-v60-prep="spring" ${S.draftDoneYear !== S.seasonYear && !(S.springCamp && S.springCamp.year === S.seasonYear) ? "disabled" : ""}>春訓</button>
+      </nav>
+    </div>
+  </aside>`);
+  root.querySelectorAll("[data-v60-prep]").forEach(button => {
+    button.onclick = () => {
+      const route = button.dataset.v60Prep;
+      if (route === "next") return v60PreseasonGoNext();
+      if (route === "contracts") return v60PreseasonOpenContracts();
+      if (route === "finance" || route === "ticket") {
+        UI.screen = "finance"; UI.tabs = UI.tabs || {}; UI.tabs.finance = route === "ticket" ? "ticket" : "overview";
+      } else if (route === "marketing") UI.screen = "marketing";
+      else if (route === "facilities") UI.screen = "facilities";
+      else if (route === "roster") UI.screen = "roster";
+      else if (route === "spring") {
+        if (S.springCamp && S.springCamp.year === S.seasonYear && S.springCamp.executed) UI.screen = "springReport";
+        else { if (!S.springCamp || S.springCamp.year !== S.seasonYear) prepareSpringCamp(); UI.screen = "springCamp"; }
+      }
+      render();
+    };
+  });
+}
 let v60LastRenderedScreen = null;
 function render() {
   if (typeof window !== 'undefined' && window.v60BootFailed && typeof window.v60RenderBootFailure === 'function') return window.v60RenderBootFailure();
@@ -261,7 +419,7 @@ function render() {
   try { if (document.body && document.body.setAttribute) document.body.setAttribute("data-skin", (S && S.skin) || "emoji"); } catch (_) {} // v41⑦：皮膚插槽（預設emoji）
   try { if (document.body && document.body.setAttribute) document.body.setAttribute("data-screen", (typeof UI !== "undefined" && UI && UI.screen) || ""); } catch (_) {} // v47：分頁背景槽位（未導入資產包時無任何視覺變化）
   try { if (typeof v49ClearPortraitCache === "function") v49ClearPortraitCache(); } catch (_) {} // v49：清除肖像快取（轉隊後即時換帽）
-  try { const r = renderScreen(); try { wireUiTabs(); v60MarkStickyScreenAction(); } catch (_) {} v60KickRenderedSceneImages(); return r; }
+  try { const r = renderScreen(); try { v60MountPreseasonDock(); wireUiTabs(); v60MarkStickyScreenAction(); } catch (e) { console.error("開季準備快捷列掛線失敗：", e); } v60KickRenderedSceneImages(); return r; }
   catch (e) {
     UI.__bootError = "畫面渲染發生錯誤：" + ((e && e.message) || e);
     try { return renderBootRecovery(); }

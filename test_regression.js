@@ -81,7 +81,7 @@ if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
   assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
 } else {
   assert((v59SingleFileSource.match(/<script defer src="0[0-6]-[^\"]+\.js\?v=/g) || []).length === 7, "v59 public shell loads the seven ordered modular scripts");
-  assert(v59SingleFileSource.includes("v60-r019-capacity2") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r019 public shell uses a fresh cache key without duplicating module source");
+  assert(v59SingleFileSource.includes("v60-r020-preseasonflow") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r020 public shell uses a fresh cache key without duplicating module source");
 }
 
 /* ---------- v60-001 視覺恢復候選 ---------- */
@@ -120,7 +120,7 @@ assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceS
 const v60NewsRendererSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderNewsCard"), v60DashboardSource.indexOf("function renderSponsorMissionCard"));
 assert((v60NewsRendererSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60NewsRendererSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60NewsRendererSource.indexOf('v56ContentSummary("news"') < 0 && v60NewsRendererSource.indexOf("icon('news')") < 0, "v60 新聞 renderer 僅保留完整 PNG，不再輸出新聞 SVG");
 assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('v60CompatArtFallbackUrl') >= 0 && v60DashboardSource.indexOf('safeLoading') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准圖片路徑、PNG fallback 與 lazy loading 已接入");
-assert(v60SwSource.indexOf('baseballgm-v60-r019') >= 0, "v60-005 Service Worker cache key 已更新");
+assert(v60SwSource.indexOf('baseballgm-v60-r020-preseasonflow') >= 0, "v60-005 Service Worker cache key 已更新");
 assert(v60DashboardSource.includes('v60CompatArtImageAttrs(key, "eager", false)') && v60DashboardSource.includes('window.requestAnimationFrame(kick)') && v60DashboardSource.includes('img.loading = "lazy";\n        img.loading = "eager";') && v60DashboardSource.includes('v60KickRenderedSceneImages(); return r;'), "動態插入場景圖後下一幀觸發載入，確保瀏覽器啟動請求");
 assert(v60DashboardSource.includes('__v60CurrentScreen !== v60LastRenderedScreen') && v60DashboardSource.includes('window.scrollTo(0, 0)'), "切換新畫面先回到頁首，避免沿用舊長頁捲動位置");
 
@@ -134,7 +134,7 @@ assert(v60FinanceSource.indexOf("JPEG") < 0 && v60FinanceSource.indexOf("v60Comp
 assert(v60RosterSource.indexOf("名人堂摘要") >= 0 && v60RosterSource.indexOf("v60-state-line") >= 0, "v60-002 名人堂保留可見狀態摘要");
 assert(v60StyleSource.indexOf(".v60-visual-metric-rail") >= 0 && v60StyleSource.indexOf("@media(max-width:520px)") >= 0, "v60-002 指標列具備手機 responsive layout");
 if (v60PublicSource) {
-assert(v60PublicSource.indexOf("v60-r019") >= 0 && v60PublicSource.indexOf("v60-r019-capacity2") >= 0 && v60PublicSource.indexOf(".jpg") >= 0 && v60PublicSource.indexOf("__v60PublicArtFallbackPaths") >= 0 && v60PublicSource.indexOf(".png") >= 0, "v60-005 public shell 更新場景快取版本並使用 JPEG 主路徑與核准 PNG fallback");
+assert(v60PublicSource.indexOf("v60-r020") >= 0 && v60PublicSource.indexOf("v60-r020-preseasonflow") >= 0 && v60PublicSource.indexOf(".jpg") >= 0 && v60PublicSource.indexOf("__v60PublicArtFallbackPaths") >= 0 && v60PublicSource.indexOf(".png") >= 0, "v60-005 public shell 更新場景快取版本並使用 JPEG 主路徑與核准 PNG fallback");
 } else {
   console.log("v60-002 public shell check: NOT RUN（public_deployment 不屬於固定 20 檔 Modular ZIP，乾淨解壓時不存在）");
 }
@@ -4320,6 +4320,33 @@ assert(g("__r19OverDashboard.includes('目前 29 人') && !__r19OverDashboard.in
 g(`__r19Team.roster1=__r19Hitters.slice(0,8).map(p=>p.id); renderDashboard(); var __r19MissingPitcherDashboard=app.innerHTML;`);
 assert(g("__r19MissingPitcherDashboard.includes('沒有任何投手') && __r19MissingPitcherDashboard.includes('暫停比賽模擬') && !__r19MissingPitcherDashboard.includes('模擬下一天')"), "r019 renderer仍阻擋完全缺少投手的不可出賽名單");
 g('S=JSON.parse(__r19SavedState); UI=JSON.parse(__r19SavedUI);');
+
+/* v60-010：開季準備導覽必須唯讀，財務預估固定可見且不得繞過必要流程。 */
+console.log("\n--- v60-010 開季準備導覽與文字重複量 ---");
+const v60PrepDash = fs.readFileSync("05-ui-dashboard.js", "utf8");
+const v60PrepFinance = fs.readFileSync("02-finance.js", "utf8");
+const v60PrepStyle = fs.readFileSync("style.css", "utf8");
+const v60PrepFlow = fs.readFileSync("01-data-engine.js", "utf8");
+const v60PrepRoster = fs.readFileSync("06-ui-roster.js", "utf8");
+const v60ForecastFn = v60PrepDash.slice(v60PrepDash.indexOf("function v60PreseasonFinanceForecast"), v60PrepDash.indexOf("function v60PreseasonWindow"));
+assert(v60ForecastFn.includes("function v60PreseasonFinanceForecast") && !/Math\.random|ensureFinance\(|ensureFacility\(|ensureStadiumSlots\(|refreshPayroll\(|persist\(/.test(v60ForecastFn), "v60-010 頁首財務預估不呼叫寫入、補值或亂數入口");
+assert(v60PrepDash.includes('data-v60-prep="next"') && v60PrepDash.includes('data-v60-prep="contracts"') && v60PrepDash.includes('data-v60-prep="ticket"') && v60PrepDash.includes('data-v60-prep="marketing"') && v60PrepDash.includes('data-v60-prep="facilities"') && v60PrepDash.includes('data-v60-prep="spring"'), "v60-010 開季流程、談約、票價、行銷、硬體及春訓有直達入口");
+assert(v60PrepDash.includes("${stage.short}") && v60PrepDash.includes("title=\"下一步：${stage.label}\""), "v60-010 下一步入口直接標示目的階段");
+assert(v60PrepDash.includes("proceedFromOffseasonSummary()") && v60PrepDash.includes("proceedToDraft()") && v60PrepFlow.includes("function proceedFromStaffRenewals()") && v60PrepFlow.includes("function proceedFromDirectorRenewal()"), "v60-010 流程下一步保留既有裁員、續約、選秀關卡");
+assert(v60PrepStyle.includes(".v60-preseason-dock{position:sticky;top:0") && v60PrepStyle.includes("safe-area-inset"), "v60-010 頁首導覽固定且與既有安全區樣式相容");
+assert(v60PrepRoster.includes("v60-roster-table-wrap") && v60PrepStyle.includes(".v60-roster-table-wrap{max-width:100%;overflow-x:auto"), "v60-010 球員寬表限制在內部捲動框，不撐開手機頁面");
+const v60TicketPanel = v60PrepFinance.slice(v60PrepFinance.indexOf("const finTicketPanel"), v60PrepFinance.indexOf("const finDealsPanel"));
+assert(v60TicketPanel.includes("票價策略摘要") && !v60TicketPanel.includes("目前票價上限</div>") && !v60TicketPanel.includes("預估進場成數</div>"), "v60-010 票價頁移除與視覺指標重複的明細列");
+g(`var __v60PreseasonSaved=JSON.stringify(S), __v60PreseasonOldRandom=Math.random, __v60PreseasonForecast=null, __v60PreseasonForecastError=null;
+try { Math.random=function(){throw new Error("預估不應抽亂數")}; __v60PreseasonForecast=v60PreseasonFinanceForecast(S.teams[S.userTeamId]); }
+catch(e) { __v60PreseasonForecastError=String(e); }
+finally { Math.random=__v60PreseasonOldRandom; }
+var __v60PreseasonUnchanged=JSON.stringify(S)===__v60PreseasonSaved;`);
+assert(g("!__v60PreseasonForecastError && __v60PreseasonForecast && Number.isFinite(__v60PreseasonForecast.projectedNet) && __v60PreseasonUnchanged"), "v60-010 真實遊戲狀態財務預估不消耗亂數且不改存檔");
+g(`var __v60CutBefore=S.forcedCutRequired, __v60RenewBefore=S.pendingContractRenewals; S.forcedCutRequired=true; S.pendingContractRenewals=["pending"];
+var __v60CutStage=v60PreseasonNextStage().screen; S.forcedCutRequired=false; var __v60RenewStage=v60PreseasonNextStage().screen;
+S.forcedCutRequired=__v60CutBefore; S.pendingContractRenewals=__v60RenewBefore;`);
+assert(g('__v60CutStage==="financeCuts" && __v60RenewStage==="contractRenewals"'), "v60-010 下一步優先保留赤字裁員與球員續約入口");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

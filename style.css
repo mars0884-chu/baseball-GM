@@ -1191,6 +1191,37 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
   .v60-marketing-effect-grid{grid-template-columns:1fr;}
 }
 
+/* v60-010 開季準備：唯讀財務監看固定頁首，主要操作一列可直接進入既有流程。 */
+.v60-preseason-dock{position:sticky;top:0;z-index:70;padding:6px 10px 7px;border-bottom:1px solid #9BC8F5;background:rgba(234,245,255,.97);box-shadow:0 5px 16px rgba(20,60,120,.12);backdrop-filter:blur(9px);}
+.v60-preseason-dock-inner{max-width:1040px;margin:0 auto;}
+.v60-preseason-finance{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;width:100%;padding:5px 7px;border:1px solid #B7D3F5;border-radius:10px;background:#FFFFFF;color:#17233B;text-align:left;cursor:pointer;}
+.v60-preseason-finance>span{display:flex;align-items:baseline;justify-content:center;gap:5px;min-width:0;white-space:nowrap;}
+.v60-preseason-finance small{color:#4A6386;font-size:11px;font-weight:700;}
+.v60-preseason-finance b{overflow:hidden;color:#17233B;font-size:13px;text-overflow:ellipsis;}
+.v60-preseason-finance .v60-preseason-current{padding-left:6px;border-left:1px solid #D7E6F7;}
+.v60-preseason-finance.is-negative .v60-preseason-current b{color:#B42336;}
+.v60-preseason-finance.is-positive .v60-preseason-current b{color:#087B69;}
+.v60-preseason-links{display:grid;grid-template-columns:repeat(7,minmax(44px,1fr));gap:5px;margin-top:5px;}
+.v60-preseason-links button{min-width:0;min-height:38px;padding:5px 3px;border:1px solid #AFCBF0;border-radius:8px;background:#FFFFFF;color:#143CFF;font-size:12px;font-weight:800;white-space:nowrap;cursor:pointer;}
+.v60-preseason-links button:first-child{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border-color:#143CFF;background:#143CFF;color:#FFFFFF;white-space:normal;line-height:1.05;}
+.v60-preseason-links button:first-child small{font-size:9px;font-weight:700;color:#D8F8FF;}
+.v60-preseason-links button:disabled{border-color:#C7D3E2;background:#EEF3F8;color:#78889B;cursor:not-allowed;}
+.v60-preseason-links button:focus-visible,.v60-preseason-finance:focus-visible{outline:3px solid #21C9D6;outline-offset:2px;}
+.v60-roster-table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px;border-radius:4px;}
+.v60-roster-table-wrap .stattable{margin-bottom:0;}
+@media(max-width:520px){
+  .v60-preseason-dock{padding:5px 6px 6px;}
+  .v60-preseason-finance{gap:2px;padding:5px 3px;}
+  .v60-preseason-finance>span{display:flex;flex-direction:column;align-items:center;gap:0;line-height:1.15;}
+  .v60-preseason-finance small{font-size:10px;}
+  .v60-preseason-finance b{max-width:100%;font-size:12px;}
+  .v60-preseason-finance .v60-preseason-current{padding-left:0;border-left:0;}
+  .v60-preseason-links{gap:4px;}
+  .v60-preseason-links button{min-height:42px;padding:4px 1px;font-size:11px;}
+  .v60-preseason-links button:first-child small{font-size:9px;}
+  .v60-roster-table-wrap .stattable{min-width:680px;}
+}
+
 /* v60-005 教練健康換位提案：兩側清楚呈現升降對象，避免用長文字猜測名單變化。 */
 .v60-roster-swap-card{border-color:#2CC7D6;}
 .v60-roster-swap-grid{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr);align-items:stretch;gap:8px;margin:8px 0 10px;}

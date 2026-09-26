@@ -2680,14 +2680,8 @@ function renderFinance() {
       ${forecast.projectedNet < 0 ? `<p class="sub dark" style="color:var(--redline);">目前估算本季可能虧損，建議提早調整票價策略或洽談轉播/贊助合約，不要等到季末才發現。</p>` : ""}`;
   const finTicketPanel = `
       <div class="divlabel">票價策略</div>
-       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["目前", `${team.finance.ticketPrice} 元/張`], ["上限", `${team.finance.ticketPriceCap} 元`], ["預估進場", `${estimateAttendancePct(team, team.finance.ticketPrice)}%`], ["窗口", canChangeTicket ? "春訓可調" : "下季再調"]], "票價策略摘要") : ""}
-       <p class="v60-state-line">${canChangeTicket ? "票價越高，單張收入越高但進場意願下降；每季春訓調整一次。" : "本季已開打，票價等下個休賽季再調整。"}</p>
-      <div class="scoreboard">
-        <div class="sb-row small"><div class="sb-label">目前票價</div><div class="sb-value small">${team.finance.ticketPrice} 元／張</div></div>
-        <div class="sb-row small"><div class="sb-label">目前票價上限</div><div class="sb-value small">${team.finance.ticketPriceCap} 元（最終上限 ${TICKET_PRICE_CEIL_MAX} 元）</div></div>
-        <div class="sb-row small"><div class="sb-label">預估進場成數</div><div class="sb-value small">約 ${estimateAttendancePct(team, team.finance.ticketPrice)}%</div></div>
-      </div>
-       <p class="v60-state-line">接近上限仍場場爆滿，隔年可能調高上限；最高 ${TICKET_PRICE_CEIL_MAX} 元。</p>
+      ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["目前", `${team.finance.ticketPrice} 元/張`], ["上限", `${team.finance.ticketPriceCap} 元`], ["預估進場", `${estimateAttendancePct(team, team.finance.ticketPrice)}%`], ["窗口", canChangeTicket ? "春訓可調" : "下季再調"]], "票價策略摘要") : ""}
+       <p class="v60-state-line">${canChangeTicket ? "春訓可調一次；票價愈高，預估進場率愈低。" : "本季已開打；票價下季再調。"} 爆滿可能逐年提高上限（最高 ${TICKET_PRICE_CEIL_MAX} 元）。</p>
       <div class="teamgrid">
         ${TICKET_PRICE_PRESETS.map(t => `
           <button class="teamcard ticket-tier-btn" data-tier="${t.key}" style="${team.finance.ticketPrice === Math.min(t.price, team.finance.ticketPriceCap) ? "border:2px solid var(--gold-2);" : ""}" ${(canChangeTicket && t.price <= team.finance.ticketPriceCap) ? "" : "disabled"}>
