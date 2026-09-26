@@ -246,8 +246,15 @@ function v60MarkStickyScreenAction() {
   const backRow = backButton && backButton.closest(".btnrow");
   if (backRow) backRow.classList.add("v60-sticky-actions");
 }
+let v60LastRenderedScreen = null;
 function render() {
   if (typeof window !== 'undefined' && window.v60BootFailed && typeof window.v60RenderBootFailure === 'function') return window.v60RenderBootFailure();
+  const __v60CurrentScreen = (typeof UI !== 'undefined' && UI) ? UI.screen : null;
+  if (__v60CurrentScreen !== v60LastRenderedScreen) {
+    v60LastRenderedScreen = __v60CurrentScreen;
+    try { if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') window.scrollTo(0, 0); }
+    catch (e) { console.error("切換畫面時重設捲動位置失敗：", e); }
+  }
   if (UI.injuryChoiceReturn && UI.screen !== 'playerDetail') { UI.injuryChoiceReturn = false; return v60RenderInjuryChoice(); }
   // v35.1：全域渲染防護——任何畫面渲染拋錯都落到安全模式，不留白屏（手機「只剩綠底」的根治）
   try { v60BindArtReadyRerender(); } catch (_) {}
