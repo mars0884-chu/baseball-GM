@@ -1088,9 +1088,9 @@ function rosterIssues(team) {
   const r1 = team.roster1.map(id => S.players[id]).filter(Boolean);
   const p1 = r1.filter(p => p.isPitcher).length;
   const b1 = r1.length - p1;
-  if (team.roster1.length > 28) issues.push(`1軍超編：目前 ${team.roster1.length} 人，編制上限28人，請先下放至28人以內`);
-  if (team.roster2.length > 32) issues.push(`2軍超編：目前 ${team.roster2.length} 人，編制上限32人，請先調整至32人以內`);
-  if (team.rosterDev && team.rosterDev.length > 25) issues.push(`育成超編：目前 ${team.rosterDev.length} 人，編制上限25人，請先調整至25人以內`);
+  if (team.roster1.length > 28) issues.push(`1軍超編：目前 ${team.roster1.length} 人，編制上限28人`);
+  if (team.roster2.length > 32) issues.push(`2軍超編：目前 ${team.roster2.length} 人，編制上限32人`);
+  if (team.rosterDev && team.rosterDev.length > 25) issues.push(`育成超編：目前 ${team.rosterDev.length} 人，編制上限25人`);
   if (p1 === 0) issues.push("1軍目前沒有任何投手，無法出賽");
   if (b1 === 0) issues.push("1軍目前沒有任何野手，無法出賽");
   return issues;

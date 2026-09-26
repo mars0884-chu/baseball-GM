@@ -81,7 +81,7 @@ if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
   assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
 } else {
   assert((v59SingleFileSource.match(/<script defer src="0[0-6]-[^\"]+\.js\?v=/g) || []).length === 7, "v59 public shell loads the seven ordered modular scripts");
-  assert(v59SingleFileSource.includes("v60-r019-capacity1") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r019 public shell uses a fresh cache key without duplicating module source");
+  assert(v59SingleFileSource.includes("v60-r019-capacity2") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r019 public shell uses a fresh cache key without duplicating module source");
 }
 
 /* ---------- v60-001 視覺恢復候選 ---------- */
@@ -134,7 +134,7 @@ assert(v60FinanceSource.indexOf("JPEG") < 0 && v60FinanceSource.indexOf("v60Comp
 assert(v60RosterSource.indexOf("名人堂摘要") >= 0 && v60RosterSource.indexOf("v60-state-line") >= 0, "v60-002 名人堂保留可見狀態摘要");
 assert(v60StyleSource.indexOf(".v60-visual-metric-rail") >= 0 && v60StyleSource.indexOf("@media(max-width:520px)") >= 0, "v60-002 指標列具備手機 responsive layout");
 if (v60PublicSource) {
-assert(v60PublicSource.indexOf("v60-r019") >= 0 && v60PublicSource.indexOf("v60-r019-capacity1") >= 0 && v60PublicSource.indexOf(".jpg") >= 0 && v60PublicSource.indexOf("__v60PublicArtFallbackPaths") >= 0 && v60PublicSource.indexOf(".png") >= 0, "v60-005 public shell 更新場景快取版本並使用 JPEG 主路徑與核准 PNG fallback");
+assert(v60PublicSource.indexOf("v60-r019") >= 0 && v60PublicSource.indexOf("v60-r019-capacity2") >= 0 && v60PublicSource.indexOf(".jpg") >= 0 && v60PublicSource.indexOf("__v60PublicArtFallbackPaths") >= 0 && v60PublicSource.indexOf(".png") >= 0, "v60-005 public shell 更新場景快取版本並使用 JPEG 主路徑與核准 PNG fallback");
 } else {
   console.log("v60-002 public shell check: NOT RUN（public_deployment 不屬於固定 20 檔 Modular ZIP，乾淨解壓時不存在）");
 }
@@ -4316,7 +4316,7 @@ __r19Team.roster2=(__r19Team.roster2||[]).filter(id=>!__r19Team.roster1.includes
 __r19Team.rosterDev=(__r19Team.rosterDev||[]).filter(id=>!__r19Team.roster1.includes(id));
 S.gameStarted=true; S.currentDay=1; S.springCampDoneYear=S.seasonYear; UI.screen='dashboard'; UI.tabs=UI.tabs||{}; UI.tabs.dash='game';
 renderDashboard(); var __r19OverDashboard=app.innerHTML; var __r19OverDayHandler=document.getElementById('btn-day').onclick;`);
-assert(g("__r19OverDashboard.includes('目前 29 人') && __r19OverDashboard.includes('名單編制提醒・比賽可繼續') && __r19OverDashboard.includes('模擬下一天') && !__r19OverDashboard.includes('暫停比賽模擬') && typeof __r19OverDayHandler==='function'"), "r019 renderer實際呈現29人提醒且例行賽模擬按鈕可用");
+assert(g("__r19OverDashboard.includes('目前 29 人') && !__r19OverDashboard.includes('請先下放') && __r19OverDashboard.includes('名單編制提醒・比賽可繼續') && __r19OverDashboard.includes('模擬下一天') && !__r19OverDashboard.includes('暫停比賽模擬') && typeof __r19OverDayHandler==='function'"), "r019 renderer實際呈現29人提醒且例行賽模擬按鈕可用");
 g(`__r19Team.roster1=__r19Hitters.slice(0,8).map(p=>p.id); renderDashboard(); var __r19MissingPitcherDashboard=app.innerHTML;`);
 assert(g("__r19MissingPitcherDashboard.includes('沒有任何投手') && __r19MissingPitcherDashboard.includes('暫停比賽模擬') && !__r19MissingPitcherDashboard.includes('模擬下一天')"), "r019 renderer仍阻擋完全缺少投手的不可出賽名單");
 g('S=JSON.parse(__r19SavedState); UI=JSON.parse(__r19SavedUI);');
