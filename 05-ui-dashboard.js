@@ -60,6 +60,19 @@ function v60CompatVisualScene(key, alt, kicker, title, detail, extraClass) {
     <div class="v60-visual-scene-copy"><strong>${title}</strong></div>
   </section>`;
 }
+function v60KickRenderedSceneImages() {
+  try {
+    const images = document.querySelectorAll("#app .v60-visual-scene img");
+    images.forEach(img => {
+      if (img.complete && img.naturalWidth > 0) return;
+      // 動態 innerHTML 新增圖片時，部分瀏覽器雖顯示 eager，仍未開始請求；插入後切換一次才會排入下載。
+      img.loading = "lazy";
+      img.loading = "eager";
+    });
+  } catch (e) {
+    console.error("場景圖片載入觸發失敗：", e);
+  }
+}
 /* v60-002：把可掃讀資訊改成圖像化指標，避免再用摺疊段落堆疊說明。
    只讀取既有資料，不新增 state、不改數值、不呼叫 RNG。 */
 function v60UiEscape(value) {
@@ -237,7 +250,7 @@ function render() {
   try { if (document.body && document.body.setAttribute) document.body.setAttribute("data-skin", (S && S.skin) || "emoji"); } catch (_) {} // v41⑦：皮膚插槽（預設emoji）
   try { if (document.body && document.body.setAttribute) document.body.setAttribute("data-screen", (typeof UI !== "undefined" && UI && UI.screen) || ""); } catch (_) {} // v47：分頁背景槽位（未導入資產包時無任何視覺變化）
   try { if (typeof v49ClearPortraitCache === "function") v49ClearPortraitCache(); } catch (_) {} // v49：清除肖像快取（轉隊後即時換帽）
-  try { const r = renderScreen(); try { wireUiTabs(); v60MarkStickyScreenAction(); } catch (_) {} return r; }
+  try { const r = renderScreen(); try { wireUiTabs(); v60MarkStickyScreenAction(); } catch (_) {} v60KickRenderedSceneImages(); return r; }
   catch (e) {
     UI.__bootError = "畫面渲染發生錯誤：" + ((e && e.message) || e);
     try { return renderBootRecovery(); }
