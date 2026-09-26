@@ -475,7 +475,9 @@ function renderDashboard() {
   const lastLog = S.resultsLog[S.resultsLog.length - 1];
   const myLastGame = lastLog ? lastLog.results.find(r => r.home === team.id || r.away === team.id) : null;
   const issues = rosterIssues(team);
-  const blocked = issues.length > 0;
+  const blockingIssues = rosterBlockingIssues(team);
+  const rosterWarnings = issues.filter(i => !blockingIssues.includes(i));
+  const blocked = blockingIssues.length > 0;
   ensureLineup(team); ensureRotation(team); ensureBullpenOrder(team, S.players);
   const lineupWarnings = blocked ? [] : lineupRotationWarnings(team);
   ensureFinance(team);
@@ -582,13 +584,20 @@ function renderDashboard() {
     + (dashTodoPanel.match(/class="rumor-intercept"/g) || []).length;
   const dashMailUnread = (typeof v43UnreadMailCount === "function") ? v43UnreadMailCount() : 0; // v43郵件未讀數
   const dashGamePanel = `
+      ${rosterWarnings.length > 0 ? `
+      <div class="card issuecard">
+        <div class="eyebrow">名單編制提醒・比賽可繼續</div>
+        <ul class="issuelist">${rosterWarnings.map(i => `<li>${i}</li>`).join("")}</ul>
+        <p class="v60-state-line">暫時超編不影響比賽；可自行整理，並會在下次選秀後自動整編。</p>
+        <button id="btn-roster-warning" class="btn-outline">查看球員名單</button>
+      </div>` : ""}
       ${blocked ? `
       <div class="card issuecard">
         <div class="eyebrow">名單狀態異常，暫停比賽模擬</div>
         <ul class="issuelist">
-          ${issues.map(i => `<li>${i}</li>`).join("")}
+          ${blockingIssues.map(i => `<li>${i}</li>`).join("")}
         </ul>
-        <p class="sub dark">請先到「球員名單」調整升降，符合條件後才能繼續模擬比賽。</p>
+        <p class="sub dark">一軍缺少出賽必要位置，請補足投手或野手後再繼續模擬。</p>
         <button id="btn-roster-fix" class="btn-primary">前往球員名單調整</button>
       </div>` : ""}
 
@@ -708,6 +717,8 @@ function renderDashboard() {
       UI.flash = null; UI.screen = "springCamp"; render();
     };
   }
+  const rosterWarningButton = document.getElementById("btn-roster-warning");
+  if (rosterWarningButton) rosterWarningButton.onclick = () => { UI.screen = "roster"; render(); };
   if (blocked) {
     document.getElementById("btn-roster-fix").onclick = () => { UI.screen = "roster"; render(); };
   } else if (!seasonOver && !needSpringCamp) {
@@ -855,16 +866,25 @@ const ROUND_LABEL = ["八強系列賽（五戰三勝）", "四強系列賽（五
 function renderPlayoffs() {
   const p = S.playoffs;
   const issues = rosterIssues(S.teams[S.userTeamId]);
-  const blocked = issues.length > 0 && !p.champion;
+  const blockingIssues = rosterBlockingIssues(S.teams[S.userTeamId]);
+  const rosterWarnings = issues.filter(i => !blockingIssues.includes(i));
+  const blocked = blockingIssues.length > 0 && !p.champion;
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${S.leagueName} ・ 第${S.seasonYear}年</div><h1>季後賽</h1></div>
       <div class="divlabel">${ROUND_LABEL[p.round]}</div>
       ${p.matchups.map(m => renderMatchupCard(m)).join("")}
+      ${rosterWarnings.length > 0 && !p.champion ? `
+      <div class="card issuecard">
+        <div class="eyebrow">名單編制提醒・比賽可繼續</div>
+        <ul class="issuelist">${rosterWarnings.map(i => `<li>${i}</li>`).join("")}</ul>
+        <p class="v60-state-line">暫時超編不影響比賽；可自行整理，並會在下次選秀後自動整編。</p>
+        <button id="btn-roster-warning" class="btn-outline">查看球員名單</button>
+      </div>` : ""}
       ${blocked ? `
       <div class="card issuecard">
         <div class="eyebrow">名單狀態異常，暫停季後賽模擬</div>
-        <ul class="issuelist">${issues.map(i => `<li>${i}</li>`).join("")}</ul>
+        <ul class="issuelist">${blockingIssues.map(i => `<li>${i}</li>`).join("")}</ul>
         <button id="btn-roster-fix" class="btn-primary">前往球員名單調整</button>
       </div>` : (p.champion ? `
         <div class="card champcard">
@@ -878,6 +898,8 @@ function renderPlayoffs() {
         </div>`)}
       <div class="btnrow"><button id="btn-back" class="btn-outline">返回主畫面</button></div>
     </div>`;
+  const rosterWarningButton = document.getElementById("btn-roster-warning");
+  if (rosterWarningButton) rosterWarningButton.onclick = () => { UI.screen = "roster"; render(); };
   if (blocked) {
     document.getElementById("btn-roster-fix").onclick = () => { UI.screen = "roster"; render(); };
   }

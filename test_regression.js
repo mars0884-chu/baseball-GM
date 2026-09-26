@@ -70,14 +70,19 @@ assert(g("typeof v59VisualScene==='function' && v59VisualScene('newsroom_v58','�
 assert(g("v59VisualScene('missing_v58','缺圖','','','')===''"), "v59 missing-art safe fallback");
 assert(g("typeof renderMarketing==='function' && typeof renderSpringCamp==='function' && typeof renderSpringReport==='function' && typeof renderCdActivitiesCard==='function'"), "v58 activity visual render entrypoints");
 assert(g("typeof renderHallOfFame==='function' && typeof dashMailPanel==='function' && typeof renderNewsCard==='function'"), "v58 information visual render entrypoints");
-assert(g("renderNewsCard.toString().includes('目前尚無新聞快訊') && renderNewsCard.toString().includes('newsroom_v58')"), "v58 empty-news state still renders newsroom scene");
+assert(g("renderNewsCard.toString().includes('新聞摘要') && renderNewsCard.toString().includes('newsroom_v58')"), "v58 empty-news state still renders newsroom scene");
 assert(g("dashMailPanel.toString().includes('目前沒有郵件') && dashMailPanel.toString().includes('mailroom_v58')"), "v58 empty-mail state still renders mailroom scene");
-assert(g("renderMarketing.toString().includes('v59TextDisclosure') && renderMarketing.toString().includes('春訓期間可複選活動')"), "v59 marketing text hierarchy");
-assert(g("renderSpringCamp.toString().includes('地點規則') && renderCdActivitiesCard.toString().includes('交流賽說明')"), "v59 activity progressive disclosure");
-assert(g("renderNewsCard.toString().includes('開啟新聞跑馬燈') && renderHallOfFame.toString().includes('入選規則')"), "v59 repeated information moved behind disclosure");
+assert(g("renderMarketing.toString().includes('v60VisualMetricRail') && renderMarketing.toString().includes('春訓期間可複選')"), "v60-002 marketing information hierarchy uses visible metrics");
+assert(g("renderSpringCamp.toString().includes('v60VisualMetricRail') && renderCdActivitiesCard.toString().includes('international_exchange_v58') && renderCdActivitiesCard.toString().includes('overseas_marketing_v58')"), "v60-002 activity screens use visible metrics and approved scenes");
+assert(g("renderNewsCard.toString().includes('aria-label=\"新聞跑馬燈\"') && renderHallOfFame.toString().includes('v60-state-line')"), "v60-002 repeated information becomes visible state guidance");
 const v59SingleFileSource = fs.readFileSync("index.html", "utf8");
-assert((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1, "v59 single-file module embedding has one BULLPEN_TABS declaration");
-assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
+if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
+  assert((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1, "v59 single-file module embedding has one BULLPEN_TABS declaration");
+  assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
+} else {
+  assert((v59SingleFileSource.match(/<script defer src="0[0-6]-[^\"]+\.js\?v=/g) || []).length === 7, "v59 public shell loads the seven ordered modular scripts");
+  assert(v59SingleFileSource.includes("v60-r019-capacity1") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r019 public shell uses a fresh cache key without duplicating module source");
+}
 
 /* ---------- v60-001 視覺恢復候選 ---------- */
 console.log("\n--- v60-001 視覺恢復候選 ---");
@@ -87,24 +92,52 @@ const v60FinanceSource = fs.readFileSync("02-finance.js", "utf8");
 const v60RosterSource = fs.readFileSync("06-ui-roster.js", "utf8");
 const v60StyleSource = fs.readFileSync("style.css", "utf8");
 const v60SwSource = fs.readFileSync("sw.js", "utf8");
+const v60PublicPath = require("path").resolve(__dirname, "../public_deployment/index.html");
+const v60PublicSource = fs.existsSync(v60PublicPath) ? fs.readFileSync(v60PublicPath, "utf8") : null;
 assert(v60ThemeSource.indexOf("function v60VisualScene") >= 0 && v60ThemeSource.slice(v60ThemeSource.indexOf("function v60VisualScene"), v60ThemeSource.indexOf("function v60VisualScene") + 900).indexOf("<details") < 0, "v60 主要視覺場景不以收合文字冒充畫面");
-assert(v60ThemeSource.indexOf("V60_APP_ICON_DATA") >= 0 && v60ThemeSource.indexOf("function v60AppIconDataUrl") >= 0 && v60ThemeSource.indexOf("data:image/png;base64,") >= 0, "v60 APP 主視覺使用既有 icon PNG 並可內嵌");
+const v60PublicThemeMode = v60ThemeSource.includes("./theme_assets/");
+if (v60PublicThemeMode) {
+  assert(v60ThemeSource.includes("V60_APP_ICON_DATA") && v60ThemeSource.includes("function v60AppIconDataUrl") && v59SingleFileSource.includes("__v60PublicAppIconPath") && fs.existsSync("icon-512.png"), "v60 public APP 主視覺使用已部署 icon PNG 路徑");
+} else {
+  assert(v60ThemeSource.indexOf("V60_APP_ICON_DATA") >= 0 && v60ThemeSource.indexOf("function v60AppIconDataUrl") >= 0 && v60ThemeSource.indexOf("data:image/png;base64,") >= 0, "v60 APP 主視覺使用既有 icon PNG 並可內嵌");
+}
 assert(v60DashboardSource.indexOf("v60-app-brand-hero") >= 0 && v60DashboardSource.indexOf("approved-pwa-icon") >= 0 && v60DashboardSource.indexOf("v60AppIconDataUrl") >= 0, "v60 啟動畫面真正掛入 APP 主視覺");
 assert(v60DashboardSource.indexOf("v60-dashboard-featured") >= 0 && v60DashboardSource.indexOf('data-v60-art-source="approved-stadium-png"') >= 0, "v60 主畫面使用單一完整核准球場視覺");
 assert(v60DashboardSource.indexOf("v60-approved-teamcard") >= 0 && v60DashboardSource.indexOf('data-identity-source="approved-theme-pack"') >= 0, "v60 選隊頁使用核准 theme pack 圖案來源標記");
 const v60BuiltinStart = v60ThemeSource.indexOf("var V54_BUILTIN_THEME = ") + "var V54_BUILTIN_THEME = ".length;
 const v60BuiltinEnd = v60ThemeSource.indexOf("; // 建置工具填入點——勿手動編輯", v60BuiltinStart);
 const v60BuiltinTheme = JSON.parse(v60ThemeSource.slice(v60BuiltinStart, v60BuiltinEnd));
-assert(Object.keys(v60BuiltinTheme.teams || {}).length === 20 && Object.values(v60BuiltinTheme.teams).every(t => String(t.logo || "").startsWith("data:image/png;base64,")), "v60 builtin theme 恢復 v491 詳細 T0-T19 PNG 隊徽");
-assert(v60ThemeSource.indexOf("v491 detailed T0-T19 team identity PNG") >= 0, "v60 詳細隊徽 PNG 恢復來源標記就位");
+if (v60PublicThemeMode) {
+  assert(Object.keys(v60BuiltinTheme.teams || {}).length === 20 && Object.values(v60BuiltinTheme.teams).every(t => /^\.\/theme_assets\/[0-9a-f]{64}\.png$/.test(String(t.logo || "")) && fs.existsSync(t.logo.replace(/^\.\//, ""))), "v60 public builtin theme 的20隊詳細PNG隊徽路徑均存在");
+} else {
+  assert(Object.keys(v60BuiltinTheme.teams || {}).length === 20 && Object.values(v60BuiltinTheme.teams).every(t => String(t.logo || "").startsWith("data:image/png;base64,")), "v60 builtin theme 恢復 v491 詳細 T0-T19 PNG 隊徽");
+}
+assert(v60ThemeSource.indexOf("恢復 v491 已核准的詳細 T0-T19 team identity PNG") >= 0, "v60 詳細隊徽 PNG 恢復來源標記就位");
 assert(v60FinanceSource.indexOf("draft-negotiation-screen") >= 0 && v60FinanceSource.indexOf("v60-negotiation-banner") >= 0, "v60 談薪畫面具備可辨識視覺流程區");
 assert(v60StyleSource.indexOf(".field input") >= 0 && v60StyleSource.indexOf("background:#FFFFFF !important") >= 0 && v60StyleSource.indexOf(".draft-negotiation-screen input[type=\"number\"]") >= 0, "v60 談薪輸入框亮底高對比修正");
 assert(v60DashboardSource.indexOf("const canRun = S.currentDay === 0") >= 0 && v60DashboardSource.indexOf("!S.gameStarted || S.currentDay !== 0") < 0, "v60 國際交流／海外行銷畫面不再於球季中整張消失");
 assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceSource.indexOf('v60VisualScene("marketing_command_center_v58"') >= 0 || v60FinanceSource.indexOf('v60CompatVisualScene("marketing_command_center_v58"') >= 0), "v60 行銷企劃頁實際整合海外活動畫面");
 const v60NewsRendererSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderNewsCard"), v60DashboardSource.indexOf("function renderSponsorMissionCard"));
 assert((v60NewsRendererSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60NewsRendererSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60NewsRendererSource.indexOf('v56ContentSummary("news"') < 0 && v60NewsRendererSource.indexOf("icon('news')") < 0, "v60 新聞 renderer 僅保留完整 PNG，不再輸出新聞 SVG");
-assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('loading="lazy"') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准 PNG 路徑與 lazy loading 已接入");
-assert(v60SwSource.indexOf('baseballgm-v60-r011') >= 0, "v60 Service Worker cache key 已更新");
+assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('v60CompatArtFallbackUrl') >= 0 && v60DashboardSource.indexOf('safeLoading') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准圖片路徑、PNG fallback 與 lazy loading 已接入");
+assert(v60SwSource.indexOf('baseballgm-v60-r019') >= 0, "v60-005 Service Worker cache key 已更新");
+assert(v60DashboardSource.includes('v60CompatArtImageAttrs(key, "eager", false)') && v60DashboardSource.includes('window.requestAnimationFrame(kick)') && v60DashboardSource.includes('img.loading = "lazy";\n        img.loading = "eager";') && v60DashboardSource.includes('v60KickRenderedSceneImages(); return r;'), "動態插入場景圖後下一幀觸發載入，確保瀏覽器啟動請求");
+assert(v60DashboardSource.includes('__v60CurrentScreen !== v60LastRenderedScreen') && v60DashboardSource.includes('window.scrollTo(0, 0)'), "切換新畫面先回到頁首，避免沿用舊長頁捲動位置");
+
+/* ---------- v60-002 資訊架構減量與靜態素材載入效能 ---------- */
+console.log("\n--- v60-002 資訊架構減量與靜態素材載入效能 ---");
+const v60MetricSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function v60VisualMetricRail"), v60DashboardSource.indexOf("var v60ArtReadyRerenderBound"));
+assert(v60MetricSource.indexOf("function v60VisualMetricRail") >= 0 && v60MetricSource.indexOf("<details") < 0, "v60-002 可見指標元件不以 details 收合文字");
+assert(v60DashboardSource.indexOf("v56DecorateRenderedContent();") < 0, "v60-002 不再在 render 後插入重複 SVG 摘要");
+assert(v60FinanceSource.indexOf("談判桌決策摘要") >= 0 && v60DashboardSource.indexOf("重傷治療決策") >= 0 && v60FinanceSource.indexOf("票價策略摘要") >= 0, "v60-002 談薪、傷病與票價改為可見決策摘要");
+assert(v60FinanceSource.indexOf("JPEG") < 0 && v60FinanceSource.indexOf("v60CompatArtImageAttrs") >= 0, "v60-002 facility renderer 使用共用圖片 fallback，不改素材來源");
+assert(v60RosterSource.indexOf("名人堂摘要") >= 0 && v60RosterSource.indexOf("v60-state-line") >= 0, "v60-002 名人堂保留可見狀態摘要");
+assert(v60StyleSource.indexOf(".v60-visual-metric-rail") >= 0 && v60StyleSource.indexOf("@media(max-width:520px)") >= 0, "v60-002 指標列具備手機 responsive layout");
+if (v60PublicSource) {
+assert(v60PublicSource.indexOf("v60-r019") >= 0 && v60PublicSource.indexOf("v60-r019-capacity1") >= 0 && v60PublicSource.indexOf(".jpg") >= 0 && v60PublicSource.indexOf("__v60PublicArtFallbackPaths") >= 0 && v60PublicSource.indexOf(".png") >= 0, "v60-005 public shell 更新場景快取版本並使用 JPEG 主路徑與核准 PNG fallback");
+} else {
+  console.log("v60-002 public shell check: NOT RUN（public_deployment 不屬於固定 20 檔 Modular ZIP，乾淨解壓時不存在）");
+}
 
 /* ---------- 1. 40國系統 ---------- */
 assert(g("NATIONS.length") === 40, "40國");
@@ -1690,7 +1723,7 @@ assert(g("typeof foldNote==='function' && foldNote('<p>x</p>').indexOf('<details
 g("UI.screen='dashboard'; render();");
 assert(g("app.innerHTML.indexOf('foldNote(')<0"), "v39⑥ 主控台無模板逸出（摺疊正確求值）");
 g("UI.screen='marketing'; render(); var __v39mk=app.innerHTML; UI.screen='dashboard'; render();");
-assert(g("__v39mk.indexOf('<details class=\"fold\"')>=0"), "v39⑥ 行銷畫面說明已收進摺疊區");
+assert(g("__v39mk.indexOf('v60-visual-metric-rail')>=0 && __v39mk.indexOf('春訓期間可複選')>=0"), "v39⑥ 行銷畫面改為可見指標資訊層級");
 g("UI.screen='agency'; render(); var __v39ag=app.innerHTML; UI.screen='dashboard'; render();");
 assert(g("__v39ag.indexOf('<details class=\"fold\"')>=0 && __v39ag.indexOf('foldNote(')<0"), "v39⑥ 經紀人事務所說明已收進摺疊區");
 
@@ -2099,6 +2132,7 @@ g("var __ipr=v43MakeInjuryProposal(__ut43,__inj);");
 assert(g("__ipr && __ipr.status==='open' && __ipr.candidateIds.length>0"), "v43 傷兵遞補：教練提出候選人選");
 assert(g("(function(){var r=v43ResolveInjuryProposal(__ipr.id,'next'); return r.ok===true || r.msg.indexOf('沒有其他')>=0;})()"), "v43 傷兵遞補：可要教練換人選");
 assert(g("(function(){var pid=__ipr.candidateIds[__ipr.pickIndex]; var r=v43ResolveInjuryProposal(__ipr.id,'approve'); return r.ok && S.teams[S.userTeamId].roster1.indexOf(pid)>=0 && __ipr.status==='approved';})()"), "v43 傷兵遞補：批准→建議人選升上一軍");
+assert(g("S.teams[S.userTeamId].roster2.indexOf(__inj.id)>=0 && S.players[__inj.id].level==='2軍'"), "v60-003 傷兵遞補核准→傷者自動下放二軍");
 assert(g("(function(){ var inj2=S.players[__ut43.roster1[1]]; inj2.injury={name:'x',part:'膝',severity:'mid',severityLabel:'中度',daysLeft:15,totalDays:15}; __ut43.lineup.push({playerId:inj2.id,position:'1B'}); var p=v43MakeInjuryProposal(__ut43,inj2); if(!p) return true; var r=v43ResolveInjuryProposal(p.id,'dismiss'); return r.ok && p.status==='dismissed';})()"), "v43 傷兵遞補：可擱置提案");
 g("__inj.injury=null; S.gameMode='gm_coach';");
 
@@ -3445,7 +3479,7 @@ assert(g("typeof v54ApplyBuiltinTheme === 'function'"), "v54 v54ApplyBuiltinThem
 // v56 candidate 以 r012 正式單檔同源的內建主題啟動；不可回退成無資產 modular 狀態。
 g("resetThemePack()");
 assert(g("v54ApplyBuiltinTheme() === true"), "v56 candidate r012 內建主題可自動套用");
-assert(g("THEME.pack && THEME.pack.version === 'v55-r012-codex-production-v01'"), "v56 candidate 使用 r012 正式主題版本");
+assert(g("THEME.pack && THEME.pack.version === 'v60-r016-codex-production-v01'"), "r017 保留 r016 已核准主題，不為程式版本重建美術");
 
 // 設定內建主題後應可自動套用
 g("V54_BUILTIN_THEME = {teams:{T0:{primaryColor:'#AABB00'}},portraits:{layers:{skin:['data:image/png;base64,BUILTIN']}},icons:{}}");
@@ -4152,7 +4186,140 @@ assert(v57ThemeSource.indexOf("function v57ArtDataUrl") >= 0 && v57ThemeSource.i
 assert(v57DashboardSource.indexOf("function v57DashboardHero") >= 0 && v57DashboardSource.indexOf("${v57DashboardHero(team)}") >= 0 && v57DashboardSource.indexOf("data-v57-dashboard-hero") >= 0, "v57-002 Dashboard 主畫面實際插入球場升級主視覺");
 assert((v57DashboardSource.indexOf("v57ArtDataUrl(profile.artKey)") >= 0 || v57DashboardSource.indexOf("v60CompatArtDataUrl(profile.artKey)") >= 0) && v57DashboardSource.indexOf("const anchors = [1, 3, 5, 7]") >= 0 && v57FinanceSource.indexOf('artKey: "stadium_lv7_generated"') >= 0, "v57-002 Dashboard 四級距直接讀取獨立球場圖像");
 assert(v57FacilityStyle.indexOf(".v57-dashboard-hero") >= 0 && v57FacilityStyle.indexOf(".v57-dashboard-stage-grid") >= 0 && v57FacilityStyle.indexOf(".v57-dashboard-stage img") >= 0, "v57-002 Dashboard 主視覺 desktop／responsive CSS 就位");
-assert(v57IndexSource.indexOf('id="v57-art-assets"') >= 0 && v57IndexSource.indexOf('"stadium_lv1_generated"') >= 0 && v57IndexSource.indexOf('"medical_base_generated"') >= 0 && v57IndexSource.indexOf('"rehab_base_generated"') >= 0 && v57IndexSource.indexOf('"overlay_locked"') < 0 && v57IndexSource.indexOf('"overlay_upgrade"') < 0 && v57IndexSource.indexOf('"overlay_construction"') < 0, "v57-002 index.html 已嵌入 10 張獨立 PNG 素材且未嵌入狀態圖示");
+if (v57IndexSource.indexOf('id="v57-art-assets"') >= 0) {
+  assert(v57IndexSource.indexOf('"stadium_lv1_generated"') >= 0 && v57IndexSource.indexOf('"medical_base_generated"') >= 0 && v57IndexSource.indexOf('"rehab_base_generated"') >= 0 && v57IndexSource.indexOf('"overlay_locked"') < 0 && v57IndexSource.indexOf('"overlay_upgrade"') < 0 && v57IndexSource.indexOf('"overlay_construction"') < 0, "v57-002 single-file embeds independent art PNGs without state icons");
+} else {
+  assert(v57IndexSource.includes('__v60PublicArtPaths') && v57IndexSource.includes('stadium_lv1_generated') && v57IndexSource.includes('medical_base_generated') && v57IndexSource.includes('rehab_base_generated') && v57IndexSource.includes('__v60PublicArtFallbackPaths'), "v57-002 public shell maps approved art and PNG fallback paths");
+}
+
+/* ---------- v60-003 戰績分頁／遞補自動換位／選秀雙層雷達 ---------- */
+console.log("\n--- v60-003 戰績分頁／遞補自動換位／選秀雙層雷達 ---");
+const v60Dash003 = fs.readFileSync("05-ui-dashboard.js", "utf8");
+const v60Roster003 = fs.readFileSync("06-ui-roster.js", "utf8");
+const v60Sim003 = fs.readFileSync("03-simulation.js", "utf8");
+const v60Data003 = fs.readFileSync("01-data-engine.js", "utf8");
+const v60Style003 = fs.readFileSync("style.css", "utf8");
+assert(v60Roster003.indexOf("standings-") >= 0 && v60Roster003.indexOf("每頁顯示一項排行前 10 名") >= 0, "v60-003 戰績榜改為分組／打者／投手分頁");
+assert(v60Roster003.indexOf("rankingMetricTabs") >= 0 && v60Roster003.indexOf("leagueContent") >= 0, "v60-003 個人排行使用獨立頁籤鍵，避免所有表格縱向堆疊");
+assert(v60Roster003.indexOf("<th>' + title + '</th>") >= 0 && v60Roster003.indexOf("<th>數值</th>") < 0, "v60-003 排行欄位標題使用實際數據名稱，不再統一顯示數值");
+assert(v60Sim003.indexOf("function v60AutoResolveInjuryRoster") >= 0 && v60Sim003.indexOf("movedDown") >= 0, "v60-003 教練遞補核准含自動升降二軍交換");
+assert(v60Data003.indexOf("function v60DraftRadarData") >= 0 && v60Data003.indexOf("function v60DraftRadarSVG") >= 0 && v60Data003.indexOf("v60-radar-current") >= 0 && v60Data003.indexOf("v60-radar-ceiling") >= 0, "v60-003 選秀現況／天花板重疊雷達 renderer");
+assert(v60Roster003.indexOf("v60DraftRadarCardHtml(p, draftEffAcc)") >= 0, "v60-003 選秀候選卡實際插入雙層雷達");
+assert(v60Style003.indexOf(".v60-draft-radar-wrap") >= 0 && v60Style003.indexOf(".v60-radar-legend") >= 0 && v60Style003.indexOf("@media(max-width:620px)") >= 0, "v60-003 雷達圖圖例與手機 reflow CSS");
+g("var __v60RadarPlayer=S.players[S.teams[S.userTeamId].roster1[0]]; var __v60RadarHtml=v60DraftRadarCardHtml(__v60RadarPlayer,70);");
+assert(g("__v60RadarHtml.indexOf('v60-radar-current')>=0 && __v60RadarHtml.indexOf('v60-radar-ceiling')>=0 && __v60RadarHtml.indexOf('現況')>=0 && __v60RadarHtml.indexOf('天花板')>=0"), "v60-003 雷達輸出同時含現況／天花板與圖例");
+
+/* ---------- v60-004 春訓守位分頁／長頁主要操作可見性 ---------- */
+console.log("\n--- v60-004 春訓守位分頁／長頁主要操作可見性 ---");
+const v60Dash004 = fs.readFileSync("05-ui-dashboard.js", "utf8");
+const v60Style004 = fs.readFileSync("style.css", "utf8");
+assert(v60Dash004.indexOf("V60_SPRING_POSITION_TABS") >= 0 && v60Dash004.indexOf("v60SpringPositionGroup") >= 0 && v60Dash004.indexOf("data-spring-position") >= 0, "v60-004 春訓名單提供全部／投手／捕手／內野／外野分頁");
+assert(v60Dash004.indexOf("visiblePlayers") >= 0 && v60Dash004.indexOf("此分類目前沒有球員") >= 0 && v60Dash004.indexOf("springAutoAssign(UI.springTab)") >= 0, "v60-004 守位分頁只過濾顯示清單，AI全員建議與資料出口維持原行為");
+assert(v60Dash004.indexOf("function v60MarkStickyScreenAction") >= 0 && v60Dash004.indexOf("v60-sticky-actions") >= 0 && v60Dash004.indexOf('appRoot.querySelector("#btn-back")') >= 0, "v60-004 每個長頁主要操作列與巢狀返回列具備 sticky 標記");
+assert(/btnrow v60-sticky-actions[^\n]*id="btn-cd-exchange"/.test(v60Dash004) && /btnrow v60-sticky-actions[^\n]*id="btn-cd-marketing"/.test(v60Dash004), "v60-004 交流／海外行銷各自按鈕保留sticky，不把大張圖片一起浮起遮住畫面");
+assert(v60Style004.indexOf(".spring-position-tabs") >= 0 && v60Style004.indexOf(".v60-sticky-actions") >= 0 && v60Style004.indexOf("safe-area-inset-bottom") >= 0 && v60Style004.indexOf("@media(max-width:520px)") >= 0, "v60-004 春訓守位分頁與安全區 sticky 操作列具備手機 responsive CSS");
+g("var __v60SpringP=[{isPitcher:true},{isPitcher:false,positions:[{pos:'C'}]},{isPitcher:false,positions:[{pos:'SS'}]},{isPitcher:false,positions:[{pos:'CF'}]}]; var __v60SpringTabs=v60SpringPositionTabs(__v60SpringP,'C');");
+assert(g("__v60SpringTabs.indexOf('投手<span class=\"pos-count\">1人')>=0 && __v60SpringTabs.indexOf('捕手<span class=\"pos-count\">1人')>=0 && __v60SpringTabs.indexOf('內野<span class=\"pos-count\">1人')>=0 && __v60SpringTabs.indexOf('外野<span class=\"pos-count\">1人')>=0 && __v60SpringTabs.indexOf('data-spring-position=\"C\"')>=0"), "v60-004 春訓守位分頁正確計數並標示目前頁籤");
+
+/* ---------- v60-005 教練健康球員換位提案 ---------- */
+console.log("\n--- v60-005 教練健康球員換位提案 ---");
+const v60SwapSim = fs.readFileSync("03-simulation.js", "utf8");
+const v60SwapData = fs.readFileSync("01-data-engine.js", "utf8");
+const v60SwapDash = fs.readFileSync("05-ui-dashboard.js", "utf8");
+const v60SwapRoster = fs.readFileSync("06-ui-roster.js", "utf8");
+const v60SwapStyle = fs.readFileSync("style.css", "utf8");
+assert(v60SwapSim.indexOf("function v60MakeCoachRosterSwapProposal") >= 0 && v60SwapSim.indexOf("function v60ResolveCoachRosterSwapProposal") >= 0, "v60-005 健康球員換位具備建立／核准 resolver");
+assert(v60SwapSim.indexOf("v60RosterSwapPreservesDepth") >= 0 && v60SwapSim.indexOf("未擅自升降") >= 0 && v60SwapSim.indexOf("受傷球員仍只走上面的 v43") >= 0, "v60-005 只提出安全健康換位，保留傷兵專用流程");
+assert(v60SwapData.indexOf("rosterSwapProposals") >= 0 && v60SwapData.indexOf("rosterSwapProposalSeq") >= 0, "v60-005 舊存檔惰性補齊健康換位容器");
+assert(v60SwapDash.indexOf("renderCoachRosterSwapCards") >= 0 && v60SwapDash.indexOf("批准並完成換位") >= 0 && v60SwapDash.indexOf("要教練換下放人選") >= 0, "v60-005 待辦畫面明確顯示升／降球員與三種回應");
+assert(v60SwapRoster.indexOf("v60MakeCoachRosterSwapProposal") >= 0 && v60SwapStyle.indexOf(".v60-roster-swap-grid") >= 0, "v60-005 二軍拉人入口與 responsive 換位視覺已接通");
+g("var __v60SwapSave=JSON.stringify(S); var __v60SwapTeam=S.teams[S.userTeamId]; ensureV43(); S.v43.rosterSwapProposals=[]; var __v60SwapIncomingId=(__v60SwapTeam.roster2||[]).find(function(id){return v60RosterSwapHealthy(S.players[id]) && !S.players[id].isPitcher;}) || (__v60SwapTeam.roster2||[]).find(function(id){return v60RosterSwapHealthy(S.players[id]);}); var __v60SwapFill=(__v60SwapTeam.roster2||[]).filter(function(id){return id!==__v60SwapIncomingId && v60RosterSwapHealthy(S.players[id]);}).slice(0,Math.max(0,28-(__v60SwapTeam.roster1||[]).length)); __v60SwapTeam.roster1=(__v60SwapTeam.roster1||[]).concat(__v60SwapFill); __v60SwapTeam.roster2=(__v60SwapTeam.roster2||[]).filter(function(id){return __v60SwapFill.indexOf(id)<0;}); var __v60SwapCands=v60CoachHealthySwapCandidates(__v60SwapTeam,S.players[__v60SwapIncomingId]);");
+assert(g("__v60SwapIncomingId && __v60SwapTeam.roster1.length===28 && __v60SwapCands.length>0"), "v60-005 滿編一軍可找到不在先發／輪值且不破壞深度的健康下放人選");
+g("var __v60SwapMake=v60MakeCoachRosterSwapProposal(__v60SwapIncomingId,null); var __v60SwapPr=__v60SwapMake.proposal; var __v60SwapOutId=__v60SwapPr && __v60SwapPr.outgoingIds[0]; var __v60SwapBefore1=__v60SwapTeam.roster1.slice(); var __v60SwapBefore2=__v60SwapTeam.roster2.slice(); var __v60SwapApprove=__v60SwapPr ? v60ResolveCoachRosterSwapProposal(__v60SwapPr.id,'approve') : {ok:false};");
+assert(g("__v60SwapMake.ok && __v60SwapPr && __v60SwapApprove.ok && __v60SwapPr.status==='approved' && __v60SwapTeam.roster1.indexOf(__v60SwapIncomingId)>=0 && __v60SwapTeam.roster2.indexOf(__v60SwapIncomingId)<0 && __v60SwapTeam.roster2.indexOf(__v60SwapOutId)>=0 && __v60SwapTeam.roster1.indexOf(__v60SwapOutId)<0"), "v60-005 批准後原子完成一升一降，兩邊 level 與名單同步");
+g("S=JSON.parse(__v60SwapSave); ensureV43();");
+
+/* r017：穿過真正提案／批准入口，防止僅下放而沒有升格。 */
+g(`var __r17Saved=JSON.stringify(S); var __r17UI=JSON.stringify(UI);
+function __r17Setup(){
+  S=JSON.parse(__r17Saved); ensureV43(); S.v43.injuryProposals=[];
+  var t=S.teams[S.userTeamId];
+  var injured=S.players[t.roster1[0]];
+  injured.injury={name:'測試傷',part:'肩',severity:'mid',daysLeft:20,totalDays:20};
+  return {t:t,injured:injured};
+}
+var __r17=__r17Setup(); var __r17C=v43InjuryReplaceCandidates(__r17.t,__r17.injured);`);
+assert(g("__r17C.length>0 && __r17C.every(p=>__r17.t.roster2.includes(p.id) && !__r17.t.roster1.includes(p.id) && v60RosterSwapHealthy(p))"), "r017 教練只推薦真正可升格的健康二軍");
+g("var __r17Pr=v43MakeInjuryProposal(__r17.t,__r17.injured); var __r17Up=__r17Pr.candidateIds[0]; var __r17Count=[__r17.t.roster1.length,__r17.t.roster2.length]; var __r17Result=v43ResolveInjuryProposal(__r17Pr.id,'approve');");
+assert(g("__r17Result.ok && __r17.t.roster1.includes(__r17Up) && !__r17.t.roster2.includes(__r17Up) && S.players[__r17Up].level==='1軍' && __r17.t.roster2.includes(__r17.injured.id) && !__r17.t.roster1.includes(__r17.injured.id) && __r17.injured.level==='2軍' && __r17.t.roster1.length===__r17Count[0] && __r17.t.roster2.length===__r17Count[1]"), "r017 批准前在二軍、批准後在一軍且一升一降人數不變");
+assert(g("!v43ResolveInjuryProposal(__r17Pr.id,'approve').ok && __r17.t.roster1.length===__r17Count[0]"), "r017 重複批准不得重複升降");
+g("__r17=__r17Setup(); var __r17Bench=__r17.t.roster1.find(id=>id!==__r17.injured.id); S.v43.injuryProposals=[{id:'r17legacy',status:'open',injuredId:__r17.injured.id,candidateIds:[__r17Bench],pickIndex:0}]; var __r17Before=JSON.stringify([__r17.t.roster1,__r17.t.roster2]); var __r17Bad=v43ResolveInjuryProposal('r17legacy','approve');");
+assert(g("!__r17Bad.ok && JSON.stringify([__r17.t.roster1,__r17.t.roster2])===__r17Before && S.v43.injuryProposals[0].status==='open'"), "r017 舊一軍候選批准失敗時絕不單獨下放傷者");
+g("var __r17Refresh=v43ResolveInjuryProposal('r17legacy','next'); var __r17Legacy=S.v43.injuryProposals[0];");
+assert(g("__r17Refresh.ok && __r17.t.roster2.includes(__r17Legacy.candidateIds[__r17Legacy.pickIndex]) && JSON.stringify([__r17.t.roster1,__r17.t.roster2])===__r17Before"), "r017 舊提案可重提二軍人選且未批准前不動名單");
+g("var __r17Candidate=S.players[__r17Legacy.candidateIds[__r17Legacy.pickIndex]]; __r17Candidate.injury={daysLeft:5}; var __r17Reject=v43ResolveInjuryProposal('r17legacy','approve');");
+assert(g("!__r17Reject.ok && JSON.stringify([__r17.t.roster1,__r17.t.roster2])===__r17Before"), "r017 遞補人選也受傷時整筆拒絕");
+g("__r17Candidate.injury=null; __r17.injured.injury=null; __r17Reject=v43ResolveInjuryProposal('r17legacy','approve');");
+assert(g("!__r17Reject.ok && JSON.stringify([__r17.t.roster1,__r17.t.roster2])===__r17Before"), "r017 原傷者康復後不再按舊傷缺下放");
+g("__r17=__r17Setup(); __r17.t.roster2.forEach(id=>{S.players[id].injury={daysLeft:5};});");
+assert(g("v43InjuryReplaceCandidates(__r17.t,__r17.injured).length===0 && v43MakeInjuryProposal(__r17.t,__r17.injured)===null"), "r017 無健康二軍時不冒用一軍人選、不建立假提案");
+g("__r17=__r17Setup(); __r17.t.roster1=__r17.t.roster1.filter(id=>id!==__r17.injured.id); __r17.t.roster2.push(__r17.injured.id); __r17.injured.level='2軍'; S.v43.injuryProposals=[{id:'r17partial',year:S.seasonYear,status:'approved',injuredId:__r17.injured.id,candidateIds:[__r17.t.roster1[0]],pickIndex:0}]; var __r17Partial=JSON.stringify([__r17.t.roster1,__r17.t.roster2]); var __r17Reopen=v43ResolveInjuryProposal('r17partial','reopen'); var __r17New=S.v43.injuryProposals.find(p=>p.status==='open');");
+assert(g("__r17Reopen.ok && __r17New && JSON.stringify([__r17.t.roster1,__r17.t.roster2])===__r17Partial && !v43ResolveInjuryProposal('r17partial','reopen').ok"), "r017 舊已批准但仍缺人可重提，不自動調動且不可重複開案");
+g("var __r17FillId=__r17New.candidateIds[0]; var __r17FillBefore=__r17.t.roster1.length; var __r17Fill=v43ResolveInjuryProposal(__r17New.id,'approve');");
+assert(g("__r17Fill.ok && __r17.t.roster1.length===__r17FillBefore+1 && __r17.t.roster1.includes(__r17FillId) && __r17.t.roster2.includes(__r17.injured.id)"), "r017 傷者已下放時批准只補足既有一軍空缺");
+g("S=JSON.parse(__r17Saved); UI=JSON.parse(__r17UI); ensureV43();");
+assert(v60RosterSource.includes('v60-draft-evaluations') && v60RosterSource.includes('目前數據') && v60RosterSource.includes('未來天花板') && v60StyleSource.includes('.v60-draft-evaluation strong'), "r017 評級標籤與數字分層且具高對比樣式");
+assert(v60RosterSource.includes('filtered.slice(page * 2, page * 2 + 2)') && v60RosterSource.includes('data-draft-page') && v60RosterSource.includes('UI.draftPageKey !== pageKey'), "r017 選秀兩人分頁且選人排序分類切換重設頁碼");
+assert(v60DashboardSource.includes('v60-swap-player-detail') && v60DashboardSource.includes('UI.playerDetailReturn = UI.screen'), "r017 升降肖像卡保留完整球員資料入口");
+const r17MarketingSource=v60FinanceSource.slice(v60FinanceSource.indexOf('function renderMarketing()'),v60FinanceSource.indexOf('function formatMoney('));
+assert(r17MarketingSource.includes('wireCdActivitiesActions()') && v60DashboardSource.includes('function wireCdActivitiesActions()'), "r017 主控台與行銷頁的交流／海外行銷按鈕都接上既有執行函式");
+assert(r17MarketingSource.includes('v60-campaign-choice') && r17MarketingSource.includes('人氣王再+2') && !r17MarketingSource.includes('iconVal(c.icon)') && !r17MarketingSource.includes('`${c.label}效果`'), "r017 行銷活動費用與效果只顯示一次、去除裝飾圖示並保留加成條件");
+
+/* r018：自選不改信任；非法候選不得產生半套升降。 */
+g(`__r17=__r17Setup(); var __r18Pr=v43MakeInjuryProposal(__r17.t,__r17.injured);
+var __r18Coach=S.coaches[__r18Pr.coachId]; var __r18Trust=__r18Coach.trust;
+var __r18Ids=v60ManualInjuryCandidates(__r17.t).map(p=>p.id);
+var __r18Before=JSON.stringify([__r17.t.roster1,__r17.t.roster2,__r18Pr]);`);
+assert(g('__r18Ids.length>0 && __r18Ids.every(id=>S.players[id].team===__r17.t.id && __r17.t.roster2.includes(id))'), 'r018 自選僅本隊健康二軍');
+assert(g('!v43ResolveInjuryProposal(__r18Pr.id,"manual",__r17.t.roster1[1]).ok && JSON.stringify([__r17.t.roster1,__r17.t.roster2,__r18Pr])===__r18Before'), 'r018 一軍人選拒絕且提案名單不變');
+assert(g('!v43ResolveInjuryProposal(__r18Pr.id,"manual","不存在").ok && __r18Coach.trust===__r18Trust'), 'r018 無效人選不改信任');
+g('S.players[__r18Ids[0]].internationalDutyGamesLeft=2;');
+assert(g('!v43ResolveInjuryProposal(__r18Pr.id,"manual",__r18Ids[0]).ok && JSON.stringify([__r17.t.roster1,__r17.t.roster2,__r18Pr])===__r18Before'), 'r018 國家隊徵召後確認仍整筆拒絕');
+g('S.players[__r18Ids[0]].internationalDutyGamesLeft=0; var __r18N=__r17.t.roster1.length; var __r18Result=v43ResolveInjuryProposal(__r18Pr.id,"manual",__r18Ids[0]);');
+assert(g('__r18Result.ok && __r18Coach.trust===__r18Trust && __r17.t.roster1.length===__r18N && __r17.t.roster1.includes(__r18Ids[0]) && __r17.t.roster2.includes(__r17.injured.id)'), 'r018 自選真正一升一降且不加不扣信任');
+assert(g('__r18Pr.candidateIds[__r18Pr.pickIndex]===__r18Ids[0] && !v43ResolveInjuryProposal(__r18Pr.id,"manual",__r18Ids[1]).ok'), 'r018 歷史記錄實際人選且禁止重複確認');
+g('__r17=__r17Setup(); __r18Pr=v43MakeInjuryProposal(__r17.t,__r17.injured); __r18Ids=v60ManualInjuryCandidates(__r17.t).map(p=>p.id); __r17.injured.foreign=false; __r17.t.roster1.filter(id=>id!==__r17.injured.id).slice(0,FOREIGN_ROSTER_CAP).forEach(id=>S.players[id].foreign=true); S.players[__r18Ids[0]].foreign=true; __r18Before=JSON.stringify([__r17.t.roster1,__r17.t.roster2,__r18Pr]);');
+assert(g('!v43ResolveInjuryProposal(__r18Pr.id,"manual",__r18Ids[0]).ok && JSON.stringify([__r17.t.roster1,__r17.t.roster2,__r18Pr])===__r18Before'), 'r018 自選不得突破一軍洋將上限');
+g('S.players[__r18Ids[0]].foreign=false; __r17.injured.injury=null;');
+assert(g('!v43ResolveInjuryProposal(__r18Pr.id,"manual",__r18Ids[0]).ok && JSON.stringify([__r17.t.roster1,__r17.t.roster2,__r18Pr])===__r18Before'), 'r018 暫選後傷者康復，確認不得強制下放');
+g('S=JSON.parse(__r17Saved); UI=JSON.parse(__r17UI); ensureV43();');
+
+/* r019：暫時名單超編只提醒，不得阻止例行賽或季後賽推進。 */
+console.log("\n--- r019 暫時超編不阻擋模擬 ---");
+const r19RosterData = fs.readFileSync("01-data-engine.js", "utf8");
+const r19RosterDash = fs.readFileSync("05-ui-dashboard.js", "utf8");
+assert(r19RosterData.includes("function rosterBlockingIssues(team)"), "r019 名單規則區分致命出賽缺口與編制提醒");
+assert(r19RosterDash.includes("rosterBlockingIssues(team)") && r19RosterDash.includes("名單編制提醒・比賽可繼續") && r19RosterDash.includes("暫時超編不影響比賽"), "r019 主控台超編顯示非阻擋提醒並保留名單入口");
+assert(r19RosterDash.includes("rosterBlockingIssues(S.teams[S.userTeamId])") && r19RosterDash.includes("名單編制提醒・比賽可繼續"), "r019 季後賽同樣只阻擋無法出賽的必要守位缺口");
+g(`var __r19PitcherId=Object.keys(S.players).find(id=>S.players[id]&&S.players[id].isPitcher);
+var __r19BatterIds=Object.keys(S.players).filter(id=>S.players[id]&&!S.players[id].isPitcher).slice(0,28);
+var __r19OverTeam={roster1:[__r19PitcherId].concat(__r19BatterIds),roster2:[],rosterDev:[]};
+var __r19OverIssues=rosterIssues(__r19OverTeam); var __r19OverBlocks=rosterBlockingIssues(__r19OverTeam);`);
+assert(g("__r19PitcherId && __r19BatterIds.length===28 && __r19OverIssues.some(i=>i.indexOf('1軍超編')>=0) && __r19OverBlocks.length===0"), "r019 一軍29人仍保留超編提醒但不列為模擬阻擋");
+g("var __r19NoPitcher={roster1:__r19BatterIds.slice(0,8),roster2:[],rosterDev:[]}; var __r19NoBatter={roster1:[__r19PitcherId],roster2:[],rosterDev:[]};");
+assert(g("rosterBlockingIssues(__r19NoPitcher).some(i=>i.indexOf('沒有任何投手')>=0) && rosterBlockingIssues(__r19NoBatter).some(i=>i.indexOf('沒有任何野手')>=0)"), "r019 缺少投手或野手仍正確阻擋無法出賽狀態");
+g(`var __r19SavedState=JSON.stringify(S), __r19SavedUI=JSON.stringify(UI);
+var __r19Team=S.teams[S.userTeamId]; var __r19TeamPlayers=Object.values(S.players).filter(p=>p && p.team===__r19Team.id);
+var __r19Pitcher=__r19TeamPlayers.find(p=>p.isPitcher); var __r19Hitters=__r19TeamPlayers.filter(p=>!p.isPitcher).slice(0,28);
+__r19Team.roster1=[__r19Pitcher.id].concat(__r19Hitters.map(p=>p.id));
+__r19Team.roster2=(__r19Team.roster2||[]).filter(id=>!__r19Team.roster1.includes(id));
+__r19Team.rosterDev=(__r19Team.rosterDev||[]).filter(id=>!__r19Team.roster1.includes(id));
+S.gameStarted=true; S.currentDay=1; S.springCampDoneYear=S.seasonYear; UI.screen='dashboard'; UI.tabs=UI.tabs||{}; UI.tabs.dash='game';
+renderDashboard(); var __r19OverDashboard=app.innerHTML; var __r19OverDayHandler=document.getElementById('btn-day').onclick;`);
+assert(g("__r19OverDashboard.includes('目前 29 人') && __r19OverDashboard.includes('名單編制提醒・比賽可繼續') && __r19OverDashboard.includes('模擬下一天') && !__r19OverDashboard.includes('暫停比賽模擬') && typeof __r19OverDayHandler==='function'"), "r019 renderer實際呈現29人提醒且例行賽模擬按鈕可用");
+g(`__r19Team.roster1=__r19Hitters.slice(0,8).map(p=>p.id); renderDashboard(); var __r19MissingPitcherDashboard=app.innerHTML;`);
+assert(g("__r19MissingPitcherDashboard.includes('沒有任何投手') && __r19MissingPitcherDashboard.includes('暫停比賽模擬') && !__r19MissingPitcherDashboard.includes('模擬下一天')"), "r019 renderer仍阻擋完全缺少投手的不可出賽名單");
+g('S=JSON.parse(__r19SavedState); UI=JSON.parse(__r19SavedUI);');
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

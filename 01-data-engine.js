@@ -1096,6 +1096,16 @@ function rosterIssues(team) {
   return issues;
 }
 
+// 暫時超編可在下一次選秀後整編，不應鎖住世界推進；只有一軍缺少必要投手或野手才屬於不可出賽。
+function rosterBlockingIssues(team) {
+  if (!team || !Array.isArray(team.roster1)) return ["一軍名單資料不足，無法出賽"];
+  const r1 = team.roster1.map(id => S.players[id]).filter(Boolean);
+  const blockers = [];
+  if (!r1.some(p => p.isPitcher)) blockers.push("1軍目前沒有任何投手，無法出賽");
+  if (!r1.some(p => !p.isPitcher)) blockers.push("1軍目前沒有任何野手，無法出賽");
+  return blockers;
+}
+
 /* ---------- 交易系統 ---------- */
 /* v32：交易截止日改為「季後賽前一個月」（例行賽最後30個比賽日不可交易）；
    休賽季窗口改為「選秀會結束後」才重新開放（finishDraft 設 draftDoneYear）。 */
