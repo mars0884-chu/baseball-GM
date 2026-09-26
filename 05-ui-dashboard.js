@@ -62,13 +62,17 @@ function v60CompatVisualScene(key, alt, kicker, title, detail, extraClass) {
 }
 function v60KickRenderedSceneImages() {
   try {
-    const images = document.querySelectorAll("#app .v60-visual-scene img");
-    images.forEach(img => {
-      if (img.complete && img.naturalWidth > 0) return;
-      // 動態 innerHTML 新增圖片時，部分瀏覽器雖顯示 eager，仍未開始請求；插入後切換一次才會排入下載。
-      img.loading = "lazy";
-      img.loading = "eager";
-    });
+    const kick = () => {
+      const images = document.querySelectorAll("#app .v60-visual-scene img");
+      images.forEach(img => {
+        if (img.complete && img.naturalWidth > 0) return;
+        // 等下一幀讓瀏覽器先登記動態 DOM，再觸發下載排程。
+        img.loading = "lazy";
+        img.loading = "eager";
+      });
+    };
+    if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") window.requestAnimationFrame(kick);
+    else setTimeout(kick, 0);
   } catch (e) {
     console.error("場景圖片載入觸發失敗：", e);
   }
