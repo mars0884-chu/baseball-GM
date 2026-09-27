@@ -1279,6 +1279,11 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-ability-track b{background:#2455D8;}
 .v60-ability-track+small{font-size:14px;color:#294967;}
 .v60-injury-picker .v60-roster-swap-grid{grid-template-columns:minmax(0,1fr) 16px minmax(0,1fr);}
+.v60-lineup-table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:8px;border-radius:8px;}
+.v60-lineup-table-wrap:focus-visible{outline:3px solid #143CFF;outline-offset:2px;}
+.v60-lineup-quickread{display:flex;flex-wrap:wrap;gap:5px 14px;align-items:center;margin:4px 0 10px;padding:8px 10px;border:1px solid #B7D3F5;border-radius:10px;background:#F8FBFF;color:#294967;font-size:14px;line-height:1.35;}
+.v60-lineup-quickread span{white-space:nowrap;}
+.v60-lineup-quickread b{color:#1459B8;}
 @media(max-width:520px){
   .cdact-card .v60-compact-scene.v60-visual-scene{grid-template-columns:minmax(0,1fr);gap:4px;}
   .cdact-card .v60-compact-scene .v60-visual-scene-art{height:112px;min-height:112px;}
@@ -1290,4 +1295,6 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
   .v60-roster-swap-arrow{height:20px;transform:rotate(90deg);}
   .v60-roster-swap-player{padding:9px;}
   .v60-roster-swap-player b{font-size:16px;}
+  .v60-lineup-quickread{gap:5px 10px;padding:7px 8px;font-size:13px;}
+  .v60-lineup-table-wrap .stattable{min-width:520px;margin-bottom:0;}
 }

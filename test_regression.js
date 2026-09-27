@@ -81,7 +81,7 @@ if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
   assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
 } else {
   assert((v59SingleFileSource.match(/<script defer src="0[0-6]-[^\"]+\.js\?v=/g) || []).length === 7, "v59 public shell loads the seven ordered modular scripts");
-  assert(v59SingleFileSource.includes("v60-r023-finance-deals") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r023 public shell uses a fresh cache key without duplicating module source");
+  assert(v59SingleFileSource.includes("v60-r024-lineup-reading") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r024 public shell uses a fresh cache key without duplicating module source");
 }
 
 /* ---------- v60-001 視覺恢復候選 ---------- */
@@ -120,7 +120,7 @@ assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceS
 const v60NewsRendererSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderNewsCard"), v60DashboardSource.indexOf("function renderSponsorMissionCard"));
 assert((v60NewsRendererSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60NewsRendererSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60NewsRendererSource.indexOf('v56ContentSummary("news"') < 0 && v60NewsRendererSource.indexOf("icon('news')") < 0, "v60 新聞 renderer 僅保留完整 PNG，不再輸出新聞 SVG");
 assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('v60CompatArtFallbackUrl') >= 0 && v60DashboardSource.indexOf('safeLoading') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准圖片路徑、PNG fallback 與 lazy loading 已接入");
-assert(v60SwSource.indexOf('baseballgm-v60-r023-finance-deals') >= 0, "r023 Service Worker cache key 已更新");
+assert(v60SwSource.indexOf('baseballgm-v60-r024-lineup-reading') >= 0, "r024 Service Worker cache key 已更新");
 assert(v60DashboardSource.includes('v60CompatArtImageAttrs(key, "eager", false)') && v60DashboardSource.includes('window.requestAnimationFrame(kick)') && v60DashboardSource.includes('img.loading = "lazy";\n        img.loading = "eager";') && v60DashboardSource.includes('v60KickRenderedSceneImages(); return r;'), "動態插入場景圖後下一幀觸發載入，確保瀏覽器啟動請求");
 assert(v60DashboardSource.includes('__v60CurrentScreen !== v60LastRenderedScreen') && v60DashboardSource.includes('window.scrollTo(0, 0)'), "切換新畫面先回到頁首，避免沿用舊長頁捲動位置");
 
@@ -4357,7 +4357,19 @@ const v60CopySpring = v60PrepDash.slice(v60PrepDash.indexOf("function renderSpri
 const v60CopyMarketing = v60PrepFinance.slice(v60PrepFinance.indexOf("function renderMarketing()"), v60PrepFinance.indexOf("function formatMoney("));
 const v60CopyFinanceOverview = v60PrepFinance.slice(v60PrepFinance.indexOf("const finOverviewPanel = `"), v60PrepFinance.indexOf("const finTicketPanel = `"));
 const v60CopyDashboardHero = v60PrepDash.slice(v60PrepDash.indexOf("function v57DashboardHero"), v60PrepDash.indexOf("function uiTabs"));
-assert(v60CopyLineup.includes("教練每日重排、代排板凳") && v60CopyLineup.includes("純GM須付代價接管") && !v60CopyLineup.includes("想貫徹意志：換方針、換教練，或累積信任"), "v60-011 先發頁保留控制權與接管代價、刪除重複解說");
+assert(v60CopyLineup.includes("v60-lineup-quickread") && v60CopyLineup.includes("8守位＋DH") && v60CopyLineup.includes("前棒打席較多") && v60CopyLineup.includes("aria-pressed") && v60CopyLineup.includes("隔日由教練重排") && v60CopyLineup.includes("v60-lineup-table-wrap") && v60CopyLineup.includes("lineupHasOutOfPosition") && !v60CopyLineup.includes("棒次順序會影響打席分配") && !v60CopyLineup.includes("教練每日重排、代排板凳") && !v60CopyLineup.includes("想貫徹意志：換方針、換教練，或累積信任"), "v60-r024 先發頁以可見短句取代長說明，保留守位／打序規則、控制權與當日生效提醒");
+const v60BenchRolesSource = v60RosterSource.slice(v60RosterSource.indexOf("function renderBenchRolesSection"), v60RosterSource.indexOf("function setBenchRole"));
+assert(v60BenchRolesSource.includes("限健康非先發野手；分差3分內觸發，替補成績另計") && v60BenchRolesSource.includes("小機率追平／超前・重接觸與長打") && v60BenchRolesSource.includes("近戰追平／超前・重速度與盜壘") && v60BenchRolesSource.includes("小幅領先守分・重守備") && !v60BenchRolesSource.includes("foldNote(") && !v60BenchRolesSource.includes("先發名單內或傷兵不可指派"), "v60-r024 板凳替補將觸發條件常駐、效果貼近各角色，移除摺疊重複說明");
+g(`var __v60LineupTeam=S.teams[S.userTeamId], __v60LineupSaved=__v60LineupTeam.lineup.map(s=>({...s}));
+__v60LineupTeam.lineup.forEach(s=>{var p=S.players[s.playerId];if(p&&p.positions&&p.positions[0])s.position=p.positions[0].pos;});
+renderLineup(); var __v60NoMoveNote=!app.innerHTML.includes('守備%星號代表移防');
+var __v60First=__v60LineupTeam.lineup[0], __v60FirstPlayer=__v60First&&S.players[__v60First.playerId];
+var __v60OutPos=__v60FirstPlayer&&LINEUP_FIELD_POSITIONS.find(pos=>!__v60FirstPlayer.positions.some(x=>x.pos===pos));
+if(__v60OutPos){__v60First.position=__v60OutPos;renderLineup();}
+var __v60MoveNote=!!__v60OutPos&&app.innerHTML.includes('守備%星號代表移防');
+__v60LineupTeam.lineup=__v60LineupSaved; renderLineup();`);
+assert(g("app.innerHTML.includes('限健康非先發野手；分差3分內觸發，替補成績另計。') && app.innerHTML.includes('小機率追平／超前・重接觸與長打') && app.innerHTML.includes('小幅領先守分・重守備')"), "v60-r024 先發頁 renderer 實際輸出常駐條件與板凳角色效果");
+assert(g("__v60NoMoveNote && __v60MoveNote"), "v60-r024 守備移防短註只在有移防時顯示，且該情況仍可見");
 assert(v60CopyRotation.includes("依序輪值；至少1人") && v60CopyRotation.includes("第1順位優先處理救援機會") && !v60CopyRotation.includes("下一場比賽由輪值中的下一位投手登板"), "v60-011 輪值說明保留順位、至少一人與消耗取捨");
 assert(v60CopyCoaches.includes("專精加成對應能力") && v60CopyCoaches.includes("總教練全隊小幅加成") && v60CopyCoaches.includes("職位空缺時加成歸零") && !v60CopyCoaches.includes("約20%機率教練會帶有特殊能力"), "v60-011 教練頁保留實際效果與續約後果，移除版本沿革及機率冗述");
 assert(v60CopySpring.includes("現況／上限") && v60CopySpring.includes("aria-label=\"綜合能力 ${ovr}／天花板") && v60CopySpring.includes("單項上限") && !v60CopySpring.includes("成果報告可查"), "v60-011 春訓數值改用一次圖例、短標與可讀輔助標籤");

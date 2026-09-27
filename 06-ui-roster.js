@@ -179,9 +179,9 @@ function renderBenchRolesSection(team) {
   const inLineup = new Set((team.lineup || []).map(s => s.playerId));
   const bench = team.roster1.map(id => S.players[id]).filter(p => p && !p.isPitcher && !inLineup.has(p.id) && !isInjured(p));
   const roles = [
-    { key: "pinchHit", label: "代打", hint: "近戰落後/平手時小機率追平・超前（重接觸長打）", sortBy: p => (p.contact * 0.5 + p.power * 0.5) },
-    { key: "pinchRun", label: "代跑", hint: "近戰時靠速度多搶1分（重速度盜壘）", sortBy: p => (p.speed * 0.6 + (p.steal || 0) * 0.4) },
-    { key: "defSub", label: "代守", hint: "小幅領先時守下1分（重守備）", sortBy: p => p.fielding }
+    { key: "pinchHit", label: "代打", hint: "小機率追平／超前・重接觸與長打", sortBy: p => (p.contact * 0.5 + p.power * 0.5) },
+    { key: "pinchRun", label: "代跑", hint: "近戰追平／超前・重速度與盜壘", sortBy: p => (p.speed * 0.6 + (p.steal || 0) * 0.4) },
+    { key: "defSub", label: "代守", hint: "小幅領先守分・重守備", sortBy: p => p.fielding }
   ];
   const rowHtml = r => {
     const list = bench.slice().sort((a, b) => r.sortBy(b) - r.sortBy(a));
@@ -206,9 +206,9 @@ function renderBenchRolesSection(team) {
   };
   return `<div class="card">
     <div class="eyebrow">${icon('refresh')} 板凳替補指派（代打／代跑／代守）</div>
-    ${foldNote(`<p class="sub dark">為板凳（一軍非先發的健康野手）指定近戰替補專員。<b>只在近戰（分差3分內）</b>局面發動：代打／代跑幫落後或平手的自家追平・超前1分，代守幫小幅領先守下1分；被指派者會累計替補出賽成績。先發名單內或傷兵不可指派。</p>`)}
-    ${coachMode ? `<p class="draftnote muted">教練模式：專員由教練每天依專長自動指派（下方為今日指派）。</p>` : ""}
-    ${bench.length === 0 ? `<p class="draftnote muted">目前一軍沒有可用的板凳野手（先發之外的健康野手）。</p>` : (coachMode ? roles.map(roRowHtml).join("") : roles.map(rowHtml).join(""))}
+    <p class="draftnote muted">限健康非先發野手；分差3分內觸發，替補成績另計。</p>
+    ${coachMode ? `<p class="draftnote muted">教練每日依專長指派（今日名單）。</p>` : ""}
+    ${bench.length === 0 ? `<p class="draftnote muted">無可用健康板凳野手。</p>` : (coachMode ? roles.map(roRowHtml).join("") : roles.map(rowHtml).join(""))}
   </div>`;
 }
 function setBenchRole(roleKey, pid) {
@@ -227,9 +227,9 @@ function renderCaptainProposalCard(team) {
   const cands = (typeof coachCaptainCandidates === "function") ? coachCaptainCandidates(team) : [];
   return `<div class="card">
     <div class="eyebrow">Ⓒ 隊長（教練提名制）</div>
-    <p class="sub dark">${curCap ? `隊長：<b>${curCap.name}</b>・` : "未任命・"}全隊近戰抗壓提升、狀況偏正；每季限任一次。</p>
-    ${can ? (cands.length === 0 ? `<p class="draftnote muted">教練目前提不出合適人選（一軍健康球員不足）。</p>` : `
-      <p class="sub dark">教練提名以下人選，由你圈選任命：</p>
+    <p class="sub dark">${curCap ? `隊長：<b>${curCap.name}</b>・` : "未任命・"}全隊抗壓提升、狀況偏正；每季限1次。</p>
+    ${can ? (cands.length === 0 ? `<p class="draftnote muted">教練暫無合適人選（一軍健康球員不足）。</p>` : `
+      <p class="sub dark">教練提名・GM擇一：</p>
       ${cands.map(p => `<div class="rowline" style="margin:4px 0;"><b>${p.name}</b> <span class="muted">${p.age}歲・忠誠${p.loyalty || 50}・士氣${p.morale || 70}・抗壓${p.composure || 50}・綜合${Math.round(trueOverall(p))}</span> <button class="pickbtn captain-appoint-btn" data-id="${p.id}" ${team.captainId === p.id ? "disabled" : ""}>${team.captainId === p.id ? "現任" : "任命"}</button></div>`).join("")}`)
     : `<p class="draftnote muted">本季已任命過隊長（${curCap ? curCap.name : ""}），需等下個球季才能更換。</p>`}
   </div>`;
@@ -249,11 +249,17 @@ function renderLineup() {
       return effectivePositionFielding(b, slotPos) - effectivePositionFielding(a, slotPos);
     });
   const issues = lineupPositionIssues(team);
+  const lineupHasOutOfPosition = team.lineup.some(slot => {
+    const player = S.players[slot.playerId];
+    return player && slot.position !== "DH" && !player.positions.some(x => x.pos === slot.position);
+  });
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${team.name}</div><h1>先發棒次與守位</h1></div>
       ${renderRosterNav("lineup")}
-      ${foldNote(`<p class="sub dark" style="margin-bottom:10px;">棒次順序會影響打席分配（越前面打席越多）。本聯盟採指定打擊制（DH），投手不用打擊，打線需排滿8個守位＋DH共9人；守位選擇會自動避免與其他先發重複。也可以將球員「移防」到非本職守位出賽，但守備成功率會依守位落差程度下降（例如游擊手臨時去守外野，落差比游擊手改守二壘更明顯）。</p>`)}
+      <div class="v60-lineup-quickread" role="group" aria-label="打線設定重點">
+        <span><b>9人</b>・8守位＋DH</span><span><b>棒次</b>・前棒打席較多</span><span><b>守位</b>・先發不重複</span><span><b>移防</b>・守備依落差下降</span>
+      </div>
       ${issues.length > 0 ? `<div class="card issuecard"><div class="eyebrow">打線守位提醒</div><ul class="issuelist">${issues.map(i => `<li>${i}</li>`).join("")}</ul></div>` : ""}
       ${(() => {
         /* v40⑤：打線交給教練——戰術方針＋輪休策略（預設教練排線；GM可切回手排）。
@@ -285,8 +291,8 @@ function renderLineup() {
                <div class="btnrow"><button id="btn-takeover-confirm" class="btn-danger-solid">我明白，仍要接管</button><button id="btn-takeover-cancel" class="btn-secondary">先算了</button></div>
              </div>` : ""}`
           : `<div class="btnrow" style="flex-wrap:wrap;gap:6px;">
-            <button id="btn-lm-coach" class="${coachMode ? "btn-primary" : "btn-secondary"}">交給教練（依方針每日排線）</button>
-            <button id="btn-lm-manual" class="${coachMode ? "btn-secondary" : "btn-primary"}">GM親自手排</button>
+            <button id="btn-lm-coach" class="${coachMode ? "btn-primary" : "btn-secondary"}" aria-pressed="${coachMode ? "true" : "false"}">交給教練（每日依方針排線）</button>
+            <button id="btn-lm-manual" class="${coachMode ? "btn-secondary" : "btn-primary"}" aria-pressed="${coachMode ? "false" : "true"}">GM親自手排</button>
             <button id="btn-delegate" class="btn-outline">${icon('handshake')} 全面放權（轉為純GM模式）</button>
           </div>`;
         return `<div class="card">
@@ -303,10 +309,10 @@ function renderLineup() {
           ${(typeof TACTICS_ROTATION !== "undefined") ? `<div class="tacticrow"><span>投手輪值</span>
             <select id="sel-tactic-rotation">${TACTICS_ROTATION.map(o => `<option value="${o.key}" ${(team.tactics.rotation || "five") === o.key ? "selected" : ""}>${o.label}——${o.desc}</option>`).join("")}</select>
           </div>` : ""}
-          <p class="draftnote muted">${manualOk ? "教練每日重排、代排板凳；固定打線請切GM手排。" : "今日預覽；純GM須付代價接管才能手排。"}</p>` : `
-          <p class="draftnote muted">${pureGm ? "接管中・本季由你手排。" : "GM手排・可調棒次與板凳。"}</p>`}
+          <p class="draftnote muted">${manualOk ? "手排只維持當日，隔日由教練重排。" : "純GM須接管後才能手排。"}</p>` : ""}
         </div>${renderCaptainProposalCard(team)}`;
       })()}
+      <div class="v60-lineup-table-wrap" role="region" tabindex="0" aria-label="先發棒次與能力數據，可左右滑動檢視">
       <table class="stattable">
         <thead><tr><th>棒次</th><th>姓名</th><th>守位</th><th>接觸</th><th>長打</th><th>選球</th><th>速度</th><th>守備%</th><th>抗壓</th><th></th></tr></thead>
         <tbody>
@@ -334,7 +340,8 @@ function renderLineup() {
           }).join("")}
         </tbody>
       </table>
-      <p class="draftnote muted">＊守備%欄位標有星號代表該球員目前是「移防」到非本職守位出賽，數值已反映能力下降。</p>
+      </div>
+      ${lineupHasOutOfPosition ? `<p class="draftnote muted">＊守備%星號代表移防，數值已扣除守位落差。</p>` : ""}
       ${renderBenchRolesSection(team)}
       ${picking !== null && picking !== undefined ? `
       <div class="card">
