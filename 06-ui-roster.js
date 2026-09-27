@@ -842,7 +842,7 @@ function renderFreeAgents() {
         <div class="sb-row small"><div class="sb-label">前瞻評估精準度</div><div class="sb-value small">${effAcc}</div></div>
         <div class="sb-row small"><div class="sb-label">名單狀態</div><div class="sb-value small">1軍 ${team.roster1.length}/28・2軍 ${team.roster2.length}/32</div></div>
       </div>
-      <p class="sub dark" style="margin-bottom:10px;">合約到期後選擇不續留的球員會出現在這裡，可隨時簽下補強（需支付簽約金，約為年薪的30%）。本土球員在聯盟打滾多年，能力值為公開的真實數字；「未來看漲/看跌」則是本土球探的前瞻評估，精準度越高越可靠。</p>
+      <p class="sub dark" style="margin-bottom:10px;">未續約的本土球員會進入市場；能力公開，生涯走勢是球探預測。簽約金約年薪30%。</p>
       ${posFilterBarHtml(faAllAgents, "faPosFilter")}
       <div class="btnrow" style="align-items:center;">
         <select id="sort-fa" class="sortselect" style="flex:1;">
@@ -932,6 +932,14 @@ function renderInternationalMarket() {
   const intlFiltered = applyPosFilter(agents, "intlPosFilter");
   const exclusiveCount = intlAllAgents.filter(p => p.exclusive).length;
   const fCount = foreignCountOnRoster1(team);
+  const pageKey = [S.seasonYear, UI.intlSort || "default", UI.intlSortDir === -1 ? -1 : 1, UI.intlPosFilter || "all"].join(":");
+  if (UI.intlMarketPageKey !== pageKey) { UI.intlMarketPageKey = pageKey; UI.intlMarketPage = 0; }
+  const pageSize = 2;
+  const pageCount = Math.max(1, Math.ceil(intlFiltered.length / pageSize));
+  const page = Math.max(0, Math.min(pageCount - 1, Number(UI.intlMarketPage) || 0));
+  UI.intlMarketPage = page;
+  const visibleInternational = intlFiltered.slice(page * pageSize, page * pageSize + pageSize);
+  const pager = `<nav class="v60-draft-pager" aria-label="國際球員分頁"><button data-intl-page="${page - 1}" ${page === 0 ? "disabled" : ""}>上一頁</button><span>${page + 1}／${pageCount} 頁・${intlFiltered.length} 人</span><button data-intl-page="${page + 1}" ${page === pageCount - 1 ? "disabled" : ""}>下一頁</button></nav>`;
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${team.name}</div><h1>國際球員市場</h1></div>
@@ -956,8 +964,9 @@ function renderInternationalMarket() {
         </select>
         ${sortDirButtonHtml("intlSortDir")}
       </div>
-      <p class="sub dark" style="margin-bottom:10px;">每年休賽季重新開放一批海外球員（未簽約者留在原聯盟）。世界共40國，球員素質受國家棒球等級（S~D）影響。所有數值皆為國際球探的評估值，精準度越高落差越小。標示「獨家情報」的是球探人脈獨家挖掘的菁英人選，其他球團接觸不到；提升球探能力與球探辦公室等級可以挖到更多、更好的獨家人才。目前1軍 ${team.roster1.length}/28、2軍 ${team.roster2.length}/32。</p>
-      ${intlFiltered.length === 0 ? `<p class="sub dark">目前沒有可簽約的國際球員，請等下個休賽季再來看看。</p>` : intlFiltered.map(p => `
+      <p class="sub dark" style="margin-bottom:10px;">休賽季刷新，未簽者續留；40國等級影響素質。能力為球探估值，精準度越高越可信；獨家情報僅本隊可談。名單：1軍 ${team.roster1.length}/28・2軍 ${team.roster2.length}/32。</p>
+      <p class="draftnote muted" aria-label="球探數據圖例">能力均為球探估值；已評估人選顯示目前 → 天花板。</p>
+      ${intlFiltered.length === 0 ? `<p class="sub dark">目前沒有可簽人選。</p>` : `${pager}${visibleInternational.map(p => `
       <div class="card draftcard">
         <div class="draftcard-head">
           ${(() => { try { return (typeof themePlayerPhoto === "function") ? themePlayerPhoto(p.id, { player: p, teamId: null, isAway: false }) : ""; } catch(_){ return ""; } })()}
@@ -973,31 +982,31 @@ function renderInternationalMarket() {
         </div>
         <div class="attrgrid">
           ${p.scouted ? `
-          <div class="draftnote muted" style="grid-column:1/-1;margin:0 0 2px;">逐項能力：現在(評估) → 該項預估天花板（與談判桌同一份球探報告，選前即可全覽）</div>
           ${scoutedAttrRows(p)}` : `
           ${p.isPitcher ? `
-            <div class="attr"><span>球速(評估)</span><b>${velocityKmh(p.scouted.velocity)} km/h</b></div>
-            <div class="attr"><span>控球(評估)</span><b>${p.scouted.control}</b></div>
-            <div class="attr"><span>體力(評估)</span><b>${p.scouted.stamina}</b></div>
-            <div class="attr"><span>抗壓(評估)</span><b>${p.scouted.composure}</b></div>
+            <div class="attr"><span>球速</span><b>${velocityKmh(p.scouted.velocity)} km/h</b></div>
+            <div class="attr"><span>控球</span><b>${p.scouted.control}</b></div>
+            <div class="attr"><span>體力</span><b>${p.scouted.stamina}</b></div>
+            <div class="attr"><span>抗壓</span><b>${p.scouted.composure}</b></div>
             <div class="attr"><span>球路數</span><b>${p.pitches.length} 種</b></div>
           ` : `
-            <div class="attr"><span>接觸(評估)</span><b>${p.scouted.contact}</b></div>
-            <div class="attr"><span>長打(評估)</span><b>${p.scouted.power}</b></div>
-            <div class="attr"><span>選球(評估)</span><b>${p.scouted.eye}</b></div>
-            <div class="attr"><span>速度(評估)</span><b>${p.scouted.speed}</b></div>
-            <div class="attr"><span>盜壘(評估)</span><b>${p.scouted.steal}</b></div>
-            <div class="attr"><span>守備(評估)</span><b>${p.scouted.fielding}%</b></div>
-            <div class="attr"><span>臂力(評估)</span><b>${p.scouted.arm}</b></div>
-            <div class="attr"><span>抗壓(評估)</span><b>${p.scouted.composure}</b></div>
+            <div class="attr"><span>接觸</span><b>${p.scouted.contact}</b></div>
+            <div class="attr"><span>長打</span><b>${p.scouted.power}</b></div>
+            <div class="attr"><span>選球</span><b>${p.scouted.eye}</b></div>
+            <div class="attr"><span>速度</span><b>${p.scouted.speed}</b></div>
+            <div class="attr"><span>盜壘</span><b>${p.scouted.steal}</b></div>
+            <div class="attr"><span>守備</span><b>${p.scouted.fielding}%</b></div>
+            <div class="attr"><span>臂力</span><b>${p.scouted.arm}</b></div>
+            <div class="attr"><span>抗壓</span><b>${p.scouted.composure}</b></div>
           `}`}
         </div>
         <div class="draftnote">${p.archetype} ・ ${p.maturity}</div>
         <div class="draftnote muted">${p.scoutConfidence}${p.exclusive ? " ・ 球探獨家人脈，僅本隊可接觸簽約" : ""}</div>
-      </div>`).join("")}
+      </div>`).join("")}`}
       <div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>
     </div>`;
   document.getElementById("sort-intl").onchange = e => { UI.intlSort = e.target.value; render(); };
+  app.querySelectorAll("[data-intl-page]").forEach(btn => { btn.onclick = () => { UI.intlMarketPage = Number(btn.dataset.intlPage); render(); window.scrollTo(0, 0); }; });
   wirePosFilterButtons();
   wireSortDirButtons();
   app.querySelectorAll(".sign-intl-btn").forEach(btn => {
@@ -1019,7 +1028,7 @@ function renderScouts() {
       <div class="topbar"><div class="eyebrow">${team.name}</div><h1>球探室</h1></div>
       ${renderRosterNav("scouts")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      <p class="sub dark" style="margin-bottom:10px;">球探至少配置3位：國內球探（負責選秀評估準確度）、國際球探（負責國際球員市場的評估準確度，也決定每年能挖到多少「獨家人選」）、交易球探（負責評估交易對象的球探準確度）。${scoutAccuracyBonus(team) > 0 ? `目前球探辦公室 Lv.${scoutOfficeLevel(team)}，所有球探有效準確度 +${scoutAccuracyBonus(team)}。` : "升級「硬體建設→球探辦公室」可提升所有球探的有效準確度。"}</p>
+      <p class="sub dark" style="margin-bottom:10px;">三職分工：國內→選秀／育成、國際→海外估值／獨家人選數、交易→對手估值。空缺＝盲評；${scoutAccuracyBonus(team) > 0 ? `球探辦公室 Lv.${scoutOfficeLevel(team)}：全員準確度 +${scoutAccuracyBonus(team)}。` : "升級球探辦公室可提升全員準確度。"}</p>
       <table class="stattable">
         <thead><tr><th>類別</th><th>姓名</th><th>準確度</th><th>專精</th><th>合約</th><th>年薪</th><th></th></tr></thead>
         <tbody>
@@ -1071,7 +1080,7 @@ function renderScouts() {
         var canDiscover = !UI.v54DiscoveredThisOffseason;
         return `<div class="card" style="margin-top:16px;">
           <div class="eyebrow">發掘業餘新秀（育成候選）</div>
-          <p class="sub dark">國內球探利用人脈尋找 15-20 歲的業餘球員。每個休賽季可發掘一次，球探準確度越高，候選品質越好。目前育成名單 ${devCount}/25 人。</p>
+          <p class="sub dark">休賽季可發掘 15–20 歲育成新秀 1 次；球探越準，候選越好。名單 ${devCount}/25。</p>
           ${canDiscover ? `<div class="btnrow" style="align-items:center;">
             <select id="v54-discover-dir" class="sortselect" style="flex:1;">
               ${V54_DISCOVERY_DIRECTIONS.map(function(d) { return '<option value="' + d.key + '"' + (d.key === curDir ? ' selected' : '') + '>' + d.label + '</option>'; }).join("")}

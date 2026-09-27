@@ -602,6 +602,7 @@ function renderFacilities() {
   ensureFinance(team); ensureFacility(team); ensureFacilities(team);
   const canUpgrade = S.currentDay === 0;
   const ftab = FACILITY_TABS.includes(UI.facilityTab) ? UI.facilityTab : "球場";
+  const stadiumPanel = UI.facilityStadiumPanel === "levels" ? "levels" : "build";
   const cur = facilityInfo(team);
   const next = FACILITY_LEVELS.find(f => f.level === team.facility.level + 1);
   let body = "";
@@ -613,13 +614,13 @@ function renderFacilities() {
     const perCap = stadiumPerCapitaSpend(team, 1);
     body = `
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([
-        ["等級", `Lv.${cur.level}`], ["容量", `${cur.capacity.toLocaleString()} 人`], ["格位", `${built.length}/${slotMax}`],
-        ["效果", `消費+${Math.round(eff.spendPct * 100)}%・進場+${(eff.attPct * 100).toFixed(1)}%`],
+        ["消費", `+${Math.round(eff.spendPct * 100)}%`], ["進場", `+${(eff.attPct * 100).toFixed(1)}%`],
         ["人均", `${perCap.toFixed(1)} 元`], ["完備", `${(stadiumCompleteness(team) * 100).toFixed(1)}%`]
       ], "球場建設摘要") : ""}
       <p class="v60-state-line">年度維護 ${formatMoney(eff.maintenance)}${eff.aged > 0 ? `・${icon('warn')} ${eff.aged} 座老舊` : ""}</p>
-      <div class="divlabel">已建設施（${built.length}/${slotMax}格）${canUpgrade ? "" : "・春訓期間才能建造/拆除/重建"}</div>
       ${eff.aged > 0 ? `<p class="v60-state-line">${icon('warn')} 老舊效果減半；可重建恢復，每休賽季限 1 座。</p>` : ""}
+      ${stadiumPanel === "build" ? `
+      <div class="divlabel">已建設施${canUpgrade ? "" : "・春訓可改建"}</div>
       ${built.length === 0 ? `<p class="v60-state-line">尚無格位設施；建設可提升人均消費與進場率。</p>` : `
       <table class="stattable">
         <thead><tr><th>設施</th><th>屋齡</th><th>效果</th><th>年維護費</th><th></th></tr></thead>
@@ -637,16 +638,20 @@ function renderFacilities() {
       <p class="v60-state-line">拆除退回 ${Math.round(STADIUM_DEMOLISH_REFUND * 100)}%；重建費為建設費 ${Math.round(STADIUM_REBUILD_COST * 100)}%。</p>`}
       <div class="divlabel">建造新設施（可重複建造同類，效果疊加）</div>
       ${built.length >= slotMax ? `<p class="sub dark">格位已滿：升級球場等級可獲得更多格位。</p>` : ""}
-      ${STADIUM_FACILITY_TYPES.map(t => {
+      <div class="v60-stadium-build-grid">${STADIUM_FACILITY_TYPES.map(t => {
         const owned = built.filter(k => k === t.key).length;
         const fx = [t.spendPct ? `人均消費 +${Math.round(t.spendPct * 100)}%` : "", t.attPct ? `進場率 +${(t.attPct * 100).toFixed(1)}%` : "", t.popBoost ? `季末人氣 +${t.popBoost}` : ""].filter(Boolean).join("・");
         const affordable = team.finance.budget >= t.cost;
-        return `<div class="card">
-          <div class="eyebrow">${iconVal(t.icon)} ${t.label}${owned > 0 ? `・已建 ${owned} 座` : ""}</div>
-          ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["效果", fx || "—"], ["建設", formatMoney(t.cost)], ["維護", formatMoney(Math.round(t.cost * t.maintPct))]], `${t.label}摘要`) : `<p class="sub dark" style="margin:4px 0;">${fx}｜建設費 ${formatMoney(t.cost)}</p>`}
-          <button class="pickbtn btn-build-stadium" data-key="${t.key}" ${canUpgrade && affordable && built.length < slotMax ? "" : "disabled"}>建造</button>
-        </div>`;
-      }).join("")}
+        const canBuild = canUpgrade && affordable && built.length < slotMax;
+        const buildLabel = canBuild ? "建造" : (built.length >= slotMax ? "滿額" : (!canUpgrade ? "球季鎖定" : "預算不足"));
+        return `<article class="v60-stadium-build-row">
+          <div class="v60-stadium-build-name">${iconVal(t.icon)} ${t.label}${owned > 0 ? `<span class="v60-stadium-owned">已建 ${owned}</span>` : ""}</div>
+          <div class="v60-stadium-build-effect">${fx || "無額外效果"}</div>
+          <div class="v60-stadium-build-cost"><span>建設 ${formatMoney(t.cost)}</span><span>維護 ${formatMoney(Math.round(t.cost * t.maintPct))}/年</span></div>
+          <button class="pickbtn btn-build-stadium" data-key="${t.key}" ${canBuild ? "" : "disabled"}>${buildLabel}</button>
+        </article>`;
+      }).join("")}</div>` : ""}
+      ${stadiumPanel === "levels" ? `
       <div class="divlabel">硬體等級一覽</div>
       <table class="stattable">
         <thead><tr><th>等級</th><th>名稱</th><th>容量</th><th>格位</th><th>升級費用</th><th></th></tr></thead>
@@ -658,7 +663,7 @@ function renderFacilities() {
           </tr>`).join("")}
         </tbody>
       </table>
-      ${!next ? `<p class="sub dark">已經是最高等級的球場硬體！</p>` : ""}`;
+      ${!next ? `<p class="sub dark">已經是最高等級的球場硬體！</p>` : ""}` : ""}`;
   } else if (ftab === "訓練基地") {
     const groups = [...new Set(TRAINING_ITEMS.map(it => it.group))];
     body = `
@@ -756,12 +761,17 @@ function renderFacilities() {
       <div class="tabrow v57-facility-tabs">
         ${FACILITY_TABS.map(t => `<button class="tab fac-tab ${ftab === t ? "active" : ""}" data-factab="${t}">${t}</button>`).join("")}
       </div>
+      ${ftab === "球場" ? `<div class="tabrow v60-stadium-subtabs" role="tablist" aria-label="球場管理分類">
+        <button type="button" class="tab stadium-subtab ${stadiumPanel === "build" ? "active" : ""}" role="tab" aria-selected="${stadiumPanel === "build"}" data-stadium-panel="build">附屬設施・${team.facility.stadiumSlots.length}/${stadiumSlotCount(team)}</button>
+        <button type="button" class="tab stadium-subtab ${stadiumPanel === "levels" ? "active" : ""}" role="tab" aria-selected="${stadiumPanel === "levels"}" data-stadium-panel="levels">球場等級</button>
+      </div>` : ""}
       ${v57Visual}
-       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["窗口", canUpgrade ? "春訓可操作" : "球季鎖定"], ["預算", formatMoney(team.finance.budget)], ["頁面", ftab]], "硬體建設摘要") : ""}
+      <p class="v60-state-line">${canUpgrade ? "春訓可操作" : "球季鎖定"}・預算 ${formatMoney(team.finance.budget)}</p>
       ${body}
       <div class="btnrow"><button id="btn-back" class="btn-secondary">返回主控台</button></div>
     </div>`;
   app.querySelectorAll(".fac-tab").forEach(btn => { btn.onclick = () => { UI.facilityTab = btn.dataset.factab; UI.flash = null; render(); }; });
+  app.querySelectorAll(".stadium-subtab").forEach(btn => { btn.onclick = () => { UI.facilityStadiumPanel = btn.dataset.stadiumPanel; UI.flash = null; render(); window.scrollTo(0, 0); }; });
   const btn = document.getElementById("btn-upgrade-facility");
   if (btn) btn.onclick = () => upgradeFacility(next.level);
   app.querySelectorAll(".btn-build-stadium").forEach(b => { b.onclick = () => buildStadiumFacility(b.dataset.key); });     // v30
@@ -2173,7 +2183,8 @@ function scoutCeilingReport(p, team, kind) {
   const scout = kind === "international" ? (team.scouts || {}).international : (team.scouts || {}).domestic;
   const acc = effectiveScoutAccuracy(team, scout);
   if (!p.scoutCeilingRpt || p.scoutCeilingRpt.year !== S.seasonYear) {
-    const est = scoutedEstimate(p.potential, acc);
+    // 談判頁是唯讀呈現；沿用球員／球季／市場類型的確定性霧化，不能消耗模擬共用亂數。
+    const est = (typeof v46Fog === "function") ? v46Fog(p.potential, acc, (p.id || p.name || "?") + ":nego-ceiling:" + kind) : 50;
     p.scoutCeilingRpt = { year: S.seasonYear, val: est, grade: gradeFromValue(est), acc };
   }
   return p.scoutCeilingRpt;
