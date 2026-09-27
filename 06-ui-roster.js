@@ -34,6 +34,7 @@ function wirePosFilterButtons() {
     btn.onclick = function() {
       UI[btn.dataset.filterkey] = btn.dataset.filterval;
       if (btn.dataset.filterkey === "rosterPosFilter") { UI.rosterPitcherPage = 0; UI.rosterBatterPage = 0; }
+      if (btn.dataset.filterkey === "listingPosFilter") UI.listingPage = 0;
       render();
     };
   });
@@ -1577,6 +1578,16 @@ function v60RosterPagerHtml(page, uiPageKey, label, totalCount) {
     <button type="button" class="btn-outline roster-page-btn" data-page-key="${uiPageKey}" data-page-step="1" data-page-count="${page.pageCount}" aria-label="${label}下一頁" ${page.page === page.pageCount - 1 ? "disabled" : ""}>下一頁</button>
   </nav>`;
 }
+function wireV60RosterPager() {
+  app.querySelectorAll(".roster-page-btn").forEach(btn => {
+    btn.onclick = () => {
+      const pageKey = btn.dataset.pageKey;
+      const maxPage = Math.max(0, Number(btn.dataset.pageCount) - 1);
+      UI[pageKey] = Math.max(0, Math.min(maxPage, (Number(UI[pageKey]) || 0) + Number(btn.dataset.pageStep || 0)));
+      render();
+    };
+  });
+}
 
 function renderRoster() {
   const team = S.teams[S.userTeamId];
@@ -1689,14 +1700,7 @@ function renderRoster() {
   if (sortBEl) sortBEl.onchange = (e) => { UI.batterSort = e.target.value; UI.rosterBatterPage = 0; render(); };
   wirePosFilterButtons();
   wireSortDirButtons();
-  app.querySelectorAll(".roster-page-btn").forEach(btn => {
-    btn.onclick = () => {
-      const pageKey = btn.dataset.pageKey;
-      const maxPage = Math.max(0, Number(btn.dataset.pageCount) - 1);
-      UI[pageKey] = Math.max(0, Math.min(maxPage, (Number(UI[pageKey]) || 0) + Number(btn.dataset.pageStep || 0)));
-      renderRoster();
-    };
-  });
+  wireV60RosterPager();
   /* v54 A2：育成方針下拉 */
   var devPolPitch = document.getElementById("v54-dev-policy-pitcher");
   if (devPolPitch) devPolPitch.onchange = function(e) { team.devPolicyPitcher = e.target.value; UI.flash = "投手育成方針已變更為「" + (e.target.options[e.target.selectedIndex].text) + "」。"; persist(); render(); };
@@ -2813,33 +2817,45 @@ function renderListingScreen() {
     const listed = new Set(S.v43.listings || []);
     const all = team.roster1.concat(team.roster2).map(id => S.players[id]).filter(Boolean);
     const listFiltered = applyPosFilter(all, "listingPosFilter");
+    const listingPage = v60RosterPageSlice(listFiltered, "listingPage");
     const openOffers = (S.v43.offers || []).filter(o => o.status === "open");
+    const playerName = p => `${p.name}${isInjured(p) ? ` <span class="injurytag">傷</span>` : ""}`;
+    const positionLabel = p => p.isPitcher ? `投手・${p.role || "投手"}` : `野手・${p.positions.map(x => POS_LABEL[x.pos]).join("/")}`;
+    const listingAction = p => listed.has(p.id)
+      ? `<span class="v43listedtag">掛牌中</span> <button class="movebtn v43-unlist-btn" data-id="${p.id}">撤牌</button>`
+      : `<button class="pickbtn v43-list-btn" data-id="${p.id}">掛牌</button>`;
     const row = p => `<tr>
-      <td>${p.name}${isInjured(p) ? ` <span class="injurytag">傷</span>` : ""}</td>
-      <td>${p.level}</td><td>${p.isPitcher ? "投" : "野"}</td>
-      <td>${p.isPitcher ? (p.role || "投手") : p.positions.map(x => POS_LABEL[x.pos]).join("/")}</td>
+      <td>${playerName(p)}</td>
+      <td>${p.level}</td>
+      <td>${positionLabel(p)}</td>
       <td>${p.age}</td><td>${v43SalaryLabel(p)}</td>
-      <td>${listed.has(p.id)
-        ? `<span class="v43listedtag">掛牌中</span> <button class="movebtn v43-unlist-btn" data-id="${p.id}">撤牌</button>`
-        : `<button class="pickbtn v43-list-btn" data-id="${p.id}">掛牌</button>`}</td>
+      <td>${listingAction(p)}</td>
     </tr>`;
+    const mobileCard = p => `<article class="v60-listing-card">
+      <div class="v60-listing-card-info"><strong class="v60-listing-card-name">${playerName(p)}</strong>
+        <div class="v60-listing-card-meta"><span>${p.level}・${positionLabel(p)}・${p.age}歲</span><b>年薪 ${v43SalaryLabel(p)}</b></div>
+      </div><div class="v60-listing-card-action">${listingAction(p)}</div>
+    </article>`;
     app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${team.name}</div><h1>掛牌交易市場</h1></div>
       ${renderRosterNav("listing")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      <p class="sub dark" style="margin-bottom:10px;">把想釋出的球員掛上市場，各隊會依需求主動開出條件（選手、現金、選手加錢、多換一、一換多都可能），條件會寄到主控台的<b>郵件中樞</b>由你抉擇——你也可以全部拒絕。掛牌不代表一定要交易。</p>
-      ${openOffers.length > 0 ? `<div class="card issuecard"><div class="eyebrow">${icon('mail-box')} 目前有 ${openOffers.length} 份待回應報價</div><p class="sub dark">到主控台「${icon('mail')} 郵件」或「${icon('clipboard')} 待辦」查看並抉擇。</p></div>` : ""}
+      <p class="v60-state-line">可能收到現金、球員或混合報價（多換一／一換多）；到郵件或待辦決定接受或拒絕。掛牌不等於成交。</p>
+      ${openOffers.length > 0 ? `<div class="card issuecard"><div class="eyebrow">待回覆 ${openOffers.length} 份報價</div><p class="sub dark">前往郵件或待辦接受／拒絕。</p></div>` : ""}
       ${posFilterBarHtml(all, "listingPosFilter")}
-      <table class="stattable">
-        <thead><tr><th>姓名</th><th>層級</th><th>型</th><th>守位</th><th>年齡</th><th>年薪</th><th>操作</th></tr></thead>
-        <tbody>${listFiltered.map(row).join("")}</tbody>
+      ${v60RosterPagerHtml(listingPage, "listingPage", "掛牌交易", listFiltered.length)}
+      <table class="stattable v60-listing-table">
+        <thead><tr><th>姓名</th><th>層級</th><th>類型／守位</th><th>年齡</th><th>年薪</th><th>操作</th></tr></thead>
+        <tbody>${listingPage.items.map(row).join("")}</tbody>
       </table>
+      <div class="v60-listing-cards" aria-label="目前頁球員掛牌名單">${listingPage.items.map(mobileCard).join("")}</div>
       <div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>
     </div>`;
     app.querySelectorAll(".v43-list-btn").forEach(b => { b.onclick = () => { const r = v43ListPlayer(b.dataset.id); UI.flash = r.msg; render(); }; });
     app.querySelectorAll(".v43-unlist-btn").forEach(b => { b.onclick = () => { const r = v43UnlistPlayer(b.dataset.id); UI.flash = r.msg; render(); }; });
     wirePosFilterButtons();
+    wireV60RosterPager();
     document.getElementById("btn-back").onclick = () => { UI.screen = "dashboard"; render(); };
     if (typeof wireRosterNav === "function") wireRosterNav();
   } catch (e) {

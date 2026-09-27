@@ -81,7 +81,7 @@ if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
   assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
 } else {
   assert((v59SingleFileSource.match(/<script defer src="0[0-6]-[^\"]+\.js\?v=/g) || []).length === 7, "v59 public shell loads the seven ordered modular scripts");
-  assert(v59SingleFileSource.includes("v60-r025-roster-pages") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r025 public shell uses a fresh cache key without duplicating module source");
+  assert(v59SingleFileSource.includes("v60-r026-listing-pages") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r026 public shell uses a fresh cache key without duplicating module source");
 }
 
 /* ---------- v60-001 視覺恢復候選 ---------- */
@@ -120,7 +120,7 @@ assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceS
 const v60NewsRendererSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderNewsCard"), v60DashboardSource.indexOf("function renderSponsorMissionCard"));
 assert((v60NewsRendererSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60NewsRendererSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60NewsRendererSource.indexOf('v56ContentSummary("news"') < 0 && v60NewsRendererSource.indexOf("icon('news')") < 0, "v60 新聞 renderer 僅保留完整 PNG，不再輸出新聞 SVG");
 assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('v60CompatArtFallbackUrl') >= 0 && v60DashboardSource.indexOf('safeLoading') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准圖片路徑、PNG fallback 與 lazy loading 已接入");
-assert(v60SwSource.indexOf('baseballgm-v60-r025-roster-pages') >= 0, "r025 Service Worker cache key 已更新");
+assert(v60SwSource.indexOf('baseballgm-v60-r026-listing-pages') >= 0, "r026 Service Worker cache key 已更新");
 assert(v60DashboardSource.includes('v60CompatArtImageAttrs(key, "eager", false)') && v60DashboardSource.includes('window.requestAnimationFrame(kick)') && v60DashboardSource.includes('img.loading = "lazy";\n        img.loading = "eager";') && v60DashboardSource.includes('v60KickRenderedSceneImages(); return r;'), "動態插入場景圖後下一幀觸發載入，確保瀏覽器啟動請求");
 assert(v60DashboardSource.includes('__v60CurrentScreen !== v60LastRenderedScreen') && v60DashboardSource.includes('window.scrollTo(0, 0)'), "切換新畫面先回到頁首，避免沿用舊長頁捲動位置");
 
@@ -4426,7 +4426,7 @@ assert(v60StandingsSource.includes('label: "分組戰績"') && v60StandingsSourc
 /* v60-014：球員名單每頁限8人，分頁只改呈現，不裁切球員資料或動作。 */
 console.log("\n--- v60-014 球員名單分頁與長頁操作改善 ---");
 const v60RosterPageSource = v60RosterSource.slice(v60RosterSource.indexOf("const V60_ROSTER_PAGE_SIZE"), v60RosterSource.indexOf("function openPlayerDetail"));
-assert(v60RosterPageSource.includes("const V60_ROSTER_PAGE_SIZE = 8") && v60RosterPageSource.includes("v60RosterPageSlice(pitchers") && v60RosterPageSource.includes("v60RosterPageSlice(filteredBatters") && v60RosterPageSource.includes("pitcherPage.items.map") && v60RosterPageSource.includes("batterPage.items.map") && v60RosterPageSource.includes("data-page-key") && v60RosterPageSource.includes("renderRoster();"), "v60-014 投手與野手分開分頁，分頁保留既有名單列及按鈕");
+assert(v60RosterPageSource.includes("const V60_ROSTER_PAGE_SIZE = 8") && v60RosterPageSource.includes("v60RosterPageSlice(pitchers") && v60RosterPageSource.includes("v60RosterPageSlice(filteredBatters") && v60RosterPageSource.includes("pitcherPage.items.map") && v60RosterPageSource.includes("batterPage.items.map") && v60RosterPageSource.includes("data-page-key") && v60RosterPageSource.includes("wireV60RosterPager();"), "v60-014 投手與野手分開分頁，分頁保留既有名單列及按鈕");
 assert(v60RosterPageSource.indexOf('v60RosterPagerHtml(pitcherPage') < v60RosterPageSource.indexOf('<div class="v60-roster-table-wrap"><table') && v60RosterPageSource.indexOf('v60RosterPagerHtml(batterPage') < v60RosterPageSource.lastIndexOf('<div class="v60-roster-table-wrap"><table'), "v60-014 分頁控制置於各名單表格前，避免被底部固定返回列遮擋");
 assert(v60StyleSource.includes(".v60-roster-pager") && v60StyleSource.includes("min-height:44px") && v60StyleSource.includes("@media(max-width:520px)"), "v60-014 分頁控制具備手機版排版、觸控尺寸與焦點樣式");
 g(`var __v60RosterSavedUI=JSON.stringify(UI), __v60RosterTeam=S.teams[S.userTeamId], __v60RosterSavedIds=__v60RosterTeam.roster1.slice(), __v60RosterSavedLineup=(__v60RosterTeam.lineup||[]).map(s=>({...s})), __v60RosterSavedRotation=(__v60RosterTeam.rotation||[]).slice(), __v60RosterSavedBullpen=JSON.stringify(__v60RosterTeam.bullpenOrder||{}), __v60RosterSavedPlayers=S.players, __v60RosterSavedHtml=app.innerHTML;
@@ -4458,6 +4458,28 @@ S.pendingContractRenewals=[];renderContractRenewals();
 var __v60RenewalDoneDom=app.innerHTML.includes('待續約名單已清空。')&&app.innerHTML.includes('前往選秀會')&&app.innerHTML.includes('v60-renewal-actions single')&&!app.innerHTML.includes('btn-auto-renew-all');
 S.pendingContractRenewals=JSON.parse(__v60RenewalSavedPending);UI=JSON.parse(__v60RenewalSavedUI);app.innerHTML=__v60RenewalSavedHtml;`);
 assert(g("__v60RenewalPendingDom && __v60RenewalDoneDom"), "v60-015 續約 renderer 實際呈現待辦／完成兩種狀態及正確主要操作");
+
+/* v60-016：掛牌市場依人員分頁，保留每頁原掛牌／撤牌操作。 */
+console.log("\n--- v60-016 掛牌市場分頁與文字精簡 ---");
+const v60ListingStart = v60RosterSource.indexOf("function renderListingScreen()");
+const v60ListingEnd = v60RosterSource.indexOf("/* ---------- v43③", v60ListingStart);
+const v60ListingSource = v60RosterSource.slice(v60ListingStart, v60ListingEnd);
+assert(v60ListingSource.includes('v60RosterPageSlice(listFiltered, "listingPage")') && v60ListingSource.includes('v60RosterPagerHtml(listingPage, "listingPage", "掛牌交易", listFiltered.length)') && v60ListingSource.includes("listingPage.items.map(row)") && v60ListingSource.includes("listingPage.items.map(mobileCard)") && v60ListingSource.includes("wireV60RosterPager()") && !v60ListingSource.includes("listFiltered.map(row)"), "v60-016 掛牌清單每頁呈現分頁資料，桌面表格與手機卡片保留掛牌／撤牌");
+assert(v60RosterSource.includes('if (btn.dataset.filterkey === "listingPosFilter") UI.listingPage = 0') && v60RosterSource.includes('v60-listing-cards') && v60StyleSource.includes(".v60-listing-card-action .v43-list-btn"), "v60-016 守位篩選回到首頁，窄螢幕使用可觸控卡片操作");
+g(`var __v60ListingSavedS=JSON.stringify(S),__v60ListingSavedUI=JSON.stringify(UI),__v60ListingSavedHtml=app.innerHTML;
+var __v60ListingTotal=S.teams[S.userTeamId].roster1.concat(S.teams[S.userTeamId].roster2).length;
+UI.screen='listing';UI.listingPosFilter='all';UI.listingPage=0;renderListingScreen();
+var __v60ListingTableStart=app.innerHTML.indexOf('<table class="stattable v60-listing-table">'),__v60ListingTableEnd=app.innerHTML.indexOf('</table>',__v60ListingTableStart)+8;
+var __v60ListingTable=app.innerHTML.slice(__v60ListingTableStart,__v60ListingTableEnd),__v60ListingRows=(__v60ListingTable.match(/<tr>/g)||[]).length-1;
+var __v60ListingFirstName=(__v60ListingTable.match(/<tr>\\s*<td>([\\s\\S]*?)<\\/td>/)||[])[1]||'';
+var __v60ListingNavVisible=app.innerHTML.indexOf('v60-roster-pager')<__v60ListingTableStart&&app.innerHTML.includes('共 '+__v60ListingTotal+' 人');
+var __v60ListingActionCount=(__v60ListingTable.match(/v43-list-btn|v43-unlist-btn/g)||[]).length;
+var __v60ListingMobileCards=(app.innerHTML.match(/class="v60-listing-card"/g)||[]).length;
+UI.listingPage=1;renderListingScreen();__v60ListingTableStart=app.innerHTML.indexOf('<table class="stattable v60-listing-table">');__v60ListingTableEnd=app.innerHTML.indexOf('</table>',__v60ListingTableStart)+8;
+__v60ListingTable=app.innerHTML.slice(__v60ListingTableStart,__v60ListingTableEnd);var __v60ListingPageTwoRows=(__v60ListingTable.match(/<tr>/g)||[]).length-1;
+var __v60ListingPageTwoName=(__v60ListingTable.match(/<tr>\\s*<td>([\\s\\S]*?)<\\/td>/)||[])[1]||'';
+S=JSON.parse(__v60ListingSavedS);UI=JSON.parse(__v60ListingSavedUI);app.innerHTML=__v60ListingSavedHtml;`);
+assert(g("__v60ListingTotal > 8 && __v60ListingRows===8 && __v60ListingPageTwoRows===Math.min(8,__v60ListingTotal-8) && __v60ListingFirstName!==__v60ListingPageTwoName && __v60ListingNavVisible && __v60ListingActionCount===8 && __v60ListingMobileCards===8"), "v60-016 renderer 實際輸出每頁8人、翻頁換人、桌面操作與手機卡片資料均完整");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);
