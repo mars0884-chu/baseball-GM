@@ -11,7 +11,8 @@
 - 實際 renderer：390px 文件寬度 390px；320px 文件寬度 320px；兩者每頁 8 張卡，操作按鈕 68×44px。320px 翻至頁尾後最後球員卡仍完整位於返回操作列上方。點擊下一頁由第 1/8 頁切至第 2/8 頁並更換球員；切投手後回到第 1/4 頁。掛牌後顯示「掛牌中／撤牌」，撤牌可返回原狀態。桌面 1280px 維持表格及掛牌操作。renderer 呼叫共享亂數 0 次，瀏覽器例外 0。
 - 本輪程式：`06-ui-roster.js`、`style.css`、`index.html`、`sw.js`、`test_regression.js`；更新 r026 靜態資源與 Service Worker cache key。修正並加強共用分頁器及 v60-014／v60-016 regression assertions。
 - 本輪驗證：`node test_regression.js` 1,783 通過／0 失敗；`node smoke_multiyear.js` 15 年＋全畫面渲染 PASS；`node smoke_puregm.js` 純 GM 15 年 PASS；JS syntax 與 `git diff --check` PASS。Mars 真機／最終視覺接受不由自動化代替。
-- 素材、Save schema、球員資料、報價／交易規則、模擬及正式 `current/` 未變更。公開 Pages HTTP 驗證與推送狀態以本節後續記錄為準。
+- 素材、Save schema、球員資料、報價／交易規則、模擬及正式 `current/` 未變更。
+- 2026-09-28，程式提交 `63c8787` 已推送 `main`；GitHub Pages 首頁、`06-ui-roster.js`、`style.css` 與 `sw.js` 四項均回應 HTTP 200，回傳內容確認包含 r026 cache key／手機卡片 renderer／CSS／Service Worker cache key。本核驗證明公開靜態來源已更新，不等同公開瀏覽器互動或 Mars 真機／視覺接受。
 
 ## r025：球員名單依守位分頁（《模擬職棒3》經營分類原則延伸）
 
