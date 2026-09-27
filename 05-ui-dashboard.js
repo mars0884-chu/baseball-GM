@@ -188,10 +188,10 @@ function v57DashboardHero(team) {
     return `<span class="v60-stadium-stage ${reached ? "reached" : "locked"}"><b>Lv${level}</b>${labels[level]}</span>`;
   }).join("");
   return `<section class="v57-dashboard-hero" data-v57-dashboard-hero="true" aria-label="球場升級計畫">
-    <div class="v57-dashboard-hero-heading"><span class="v57-facility-kicker">STADIUM VISUAL・DASHBOARD</span><h2>主場球場</h2><span>目前 Lv.${currentLevel}・${labels[currentLevel] || "球場升級中"}</span></div>
+    <div class="v57-dashboard-hero-heading"><span class="v57-facility-kicker">STADIUM VISUAL・DASHBOARD</span><h2>主場球場</h2><span>目前 Lv.${currentLevel}</span></div>
     <div class="v60-dashboard-featured">
     <div class="v60-dashboard-featured-art">${src ? `<img src="${src}" alt="Lv${currentLevel} ${labels[currentLevel] || "主場球場"}" data-v60-art-source="approved-stadium-png" ${v60CompatArtImageAttrs(profile.artKey, "eager", true)}>` : `<div class="v57-dashboard-art-missing">素材未載入</div>`}</div>
-      <div class="v60-dashboard-featured-copy"><span class="v60-dashboard-kicker">HOME STADIUM</span><strong>${labels[currentLevel] || "主場球場"}</strong>${v60VisualMetricRail([
+      <div class="v60-dashboard-featured-copy"><strong>${labels[currentLevel] || "主場球場"}</strong>${v60VisualMetricRail([
         ["容量", facility ? `${facility.capacity.toLocaleString()} 人` : "—"],
         ["格位", slots != null && built != null ? `${built}/${slots}` : "—"],
         ["預算", team.finance ? formatMoney(team.finance.budget) : "—"]
@@ -1790,7 +1790,7 @@ function renderSpringCamp() {
         <button class="tab ${UI.springTab === "2軍" ? "active" : ""}" data-tab="2軍">2軍（${team.roster2.length}人）</button>
       </div>
       ${v60SpringPositionTabs(players, springPositionKey)}
-      <div class="spring-list-context"><b>${UI.springTab}・${springPositionLabel}</b><span>共 ${visiblePlayers.length} 人</span></div>
+      <div class="spring-list-context"><b>${UI.springTab}・${springPositionLabel}</b><span>現況／上限・${visiblePlayers.length}人</span></div>
       <div class="btnrow"><button id="btn-spring-auto" class="btn-secondary">AI一鍵建議（${UI.springTab}全員）</button></div>
       <nav class="v60-choice-pager" aria-label="春訓名單分頁"><button id="spring-prev" ${UI.springPage === 0 ? 'disabled' : ''}>上一頁</button><span>${UI.springPage + 1}/${springPages}</span><button id="spring-next" ${UI.springPage === springPages - 1 ? 'disabled' : ''}>下一頁</button></nav>
       <table class="stattable">
@@ -1799,14 +1799,14 @@ function renderSpringCamp() {
           ${visiblePlayers.length === 0 ? `<tr><td colspan="2" class="spring-empty-state">此分類目前沒有球員</td></tr>` : pagePlayers.map(p => {
             const ovr = Math.round(trueOverall(p));
             return `<tr>
-            <td><b>${p.name}</b><span class="v60-inline-meta">${p.isPitcher ? "投手" : "野手"}${hasTrait(p, "grinder") ? "・練習狂" : ""}・${p.age}歲</span><div class="v60-ability-track" role="img" aria-label="綜合能力${ovr}，天花板${Math.max(ovr,p.potential)}"><i style="width:${Math.max(0,Math.min(100,p.potential))}%"></i><b style="width:${Math.max(0,Math.min(100,ovr))}%"></b></div><small>目前 ${ovr}／上限 ${Math.max(ovr,p.potential)}</small></td>
+            <td><b>${p.name}</b><span class="v60-inline-meta">${p.isPitcher ? "投手" : "野手"}${hasTrait(p, "grinder") ? "・練習狂" : ""}・${p.age}歲</span><div class="v60-ability-track" role="img" aria-label="綜合能力${ovr}，天花板${Math.max(ovr,p.potential)}"><i style="width:${Math.max(0,Math.min(100,p.potential))}%"></i><b style="width:${Math.max(0,Math.min(100,ovr))}%"></b></div><small aria-label="綜合能力 ${ovr}／天花板 ${Math.max(ovr,p.potential)}">${ovr}／${Math.max(ovr,p.potential)}</small></td>
             <td><select class="sortselect spring-menu-select" aria-label="${p.name}訓練項目" data-id="${p.id}">
               ${springMenuFor(p).map(m => { const cur = menuAttrOf(p, m.key); const capped = cur >= p.potential; return `<option value="${m.key}" ${camp.assignments[p.id] === m.key ? "selected" : ""}>${m.label} ${cur}${nation.specialties.includes(m.key) ? '・專長' : ''}${capped ? '・滿' : ''}</option>`; }).join("")}
             </select></td>
           </tr>`;}).join("")}
         </tbody>
       </table>
-      <div class="v60-training-limit"><span>單項成長</span><b>目前 → 最多 +5</b><span>不超過潛力・專長加成・成果報告可查</span></div>
+      <div class="v60-training-limit"><span>單項上限</span><b>最多 +5</b><span>不超潛力</span></div>
       <div class="btnrow"><button id="btn-spring-go" class="btn-primary">確認出發春訓${cost > 0 ? `（支付 ${formatMoney(cost)}）` : "（母國・免費）"}</button></div>
     </div>`;
   document.getElementById("spring-nation").onchange = e => setSpringNation(e.target.value);

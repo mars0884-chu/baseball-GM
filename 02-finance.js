@@ -1578,9 +1578,9 @@ function dealScenarioTable(offer) {
   const rows = [
     { label: "勝率45%・無季後賽", v: dealSeasonRevenue(offer, 0.45, false) },
     { label: "勝率55%・無季後賽", v: dealSeasonRevenue(offer, 0.55, false) },
-    { label: "勝率65%＋季後賽", v: dealSeasonRevenue(offer, 0.65, true) }
+    { label: "勝率65%・含季後賽", v: dealSeasonRevenue(offer, 0.65, true) }
   ];
-  return rows.map(r => `<div class="sb-row small"><div class="sb-label">${r.label}</div><div class="sb-value small">${formatMoney(r.v)}</div></div>`).join("");
+  return `<div class="v60-deal-scenario-values" role="list" aria-label="${offer.label}收入試算">${rows.map(r => `<span role="listitem" aria-label="${r.label}：${formatMoney(r.v)}"><strong>${formatMoney(r.v)}</strong></span>`).join("")}</div>`;
 }
 function ensureAnnualDeals(team) {
   ensureFinance(team);
@@ -2565,16 +2565,16 @@ function renderMarketing() {
       <div class="topbar"><div class="eyebrow">${team.name} ・ ${cal.dateLabel}</div><h1>行銷企劃</h1></div>
       ${renderRosterNav("marketing")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      ${typeof v60CompatVisualScene === "function" ? v60CompatVisualScene("marketing_command_center_v58", "行銷企劃中心場景", "MARKETING VISUAL", "行銷企劃中心", "活動配置與投入", "v60-marketing-scene") : ""}
+      ${typeof v60CompatVisualScene === "function" ? v60CompatVisualScene("marketing_command_center_v58", "行銷企劃中心場景", "MARKETING VISUAL", "年度活動", "活動配置與投入", "v60-marketing-scene") : ""}
       ${typeof renderCdActivitiesCard === "function" ? renderCdActivitiesCard() : ""}
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["人氣", `${team.finance.popularity}/100`], ["已投", `${(team.finance.marketingCampaigns || []).length} 項`], ["周邊", `+${Math.round((team.finance.marketingMerchPct || 0) * 100)}%`], ["進場", `+${Math.round((team.finance.marketingAttPct || 0) * 100)}%`]], "行銷企劃摘要") : ""}
-      <p class="v60-state-line">${canPlan ? "春訓期間可複選；點擊活動卡即可投入或取消。" : "本季已鎖定，休賽季再規劃。"}</p>
+      <p class="v60-state-line">${canPlan ? "春訓可多選。" : "本季已鎖定。"}</p>
       <div class="v60-campaign-list">${MARKETING_CAMPAIGNS.map(c => {
         const active = (team.finance.marketingCampaigns || []).includes(c.key);
         const shortEffects = [c.popBoost ? `人氣+${c.popBoost}${c.key === "endorse" ? "（人氣王再+2）" : ""}` : "", c.merchPct ? `周邊+${Math.round(c.merchPct * 100)}%` : "", c.attPct ? `進場+${Math.round(c.attPct * 100)}%` : ""].filter(Boolean).join("・");
         return `
         <div class="card dealcard v60-campaign-choice ${active ? "dealchosen" : ""}">
-          <div class="v60-campaign-title"><strong>${c.label}${active ? "（已投入）" : ""}</strong><span>${formatMoney(c.cost)}</span></div>
+          <div class="v60-campaign-title"><strong>${c.label}</strong><span>${formatMoney(c.cost)}</span></div>
           <p class="v60-campaign-effects">${shortEffects}</p>
           ${canPlan ? `<div class="btnrow"><button class="${active ? "btn-danger" : "btn-secondary"} marketing-btn" data-plan="${c.key}">${active ? "取消" : "投入"}</button></div>` : ""}
         </div>`;
@@ -2621,24 +2621,22 @@ function renderFinance() {
   const finOverviewPanel = `
       ${warns.length > 0 ? `<div class="card issuecard"><div class="eyebrow">財務提醒</div><ul class="issuelist">${warns.map(w => `<li>${w}</li>`).join("")}</ul></div>` : ""}
       <div class="scoreboard">
-        <div class="sb-row"><span class="sb-label">目前預算</span><span class="sb-value" style="font-size:22px;">${formatMoney(team.finance.budget)}</span></div>
+        ${typeof v60PreseasonWindow === "function" && v60PreseasonWindow() ? "" : `<div class="sb-row"><span class="sb-label">目前預算</span><span class="sb-value" style="font-size:22px;">${formatMoney(team.finance.budget)}</span></div>`}
         <div class="sb-row"><span class="sb-label">球隊人氣</span><span class="sb-value small">${team.finance.popularity} / 100</span></div>
         <div class="sb-row"><span class="sb-label">目前薪資總額</span><span class="sb-value small">${formatMoney(team.finance.payroll)}</span></div>
         <div class="sb-row"><span class="sb-label">聯盟奢侈稅門檻</span><span class="sb-value small">${formatMoney(taxThreshold)}</span></div>
       </div>
       ${(typeof payBreakdownHtml === "function") ? payBreakdownHtml(team, S.players) : ""}
 
-      <div class="divlabel">球迷三維度（他們不下令，但他們施壓）</div>
-      <div class="scoreboard">
-        <div class="sb-row"><span class="sb-label">${icon('chart-up')} 期待值${(S.fanExpect||50)>=75?"（王朝詛咒·門檻已升高）":""}</span><span class="sb-value small">${Math.round(S.fanExpect||50)} / 100</span></div>
-        <div class="sb-row"><span class="sb-label">${icon('hourglass')} 耐心（老闆耐心乘數）</span><span class="sb-value small">${Math.round(S.fanPatience||60)} / 100</span></div>
-        <div class="sb-row"><span class="sb-label">${icon('heart')} 認同（票房·贊助·FA意願·主場）</span><span class="sb-value small">${Math.round(S.fanIdentify||55)} / 100</span></div>
-      </div>
-      <div class="sb-row"><span class="sb-label">${icon('book-open')} 數據素養${(S.fanDataLiteracy||8)>=50?"（球迷已能讀懂進階數據）":(S.fanDataLiteracy||8)>=25?"（論壇開始討論 OPS+）":""}</span><span class="sb-value small">${Math.round(S.fanDataLiteracy||8)} / 100</span></div>
-      ${Array.isArray(S.fanTradeMemory)&&S.fanTradeMemory.length>0?`<div class="sb-row"><span class="sb-label">${icon('ghost')} 交易記憶（球迷還記得）</span><span class="sb-value small">${S.fanTradeMemory.slice(0,3).map(m=>m.name+"（"+m.yearsLeft+"年）").join("、")}</span></div>`:""}
-      </div>
-       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["期待", `${Math.round(S.fanExpect||50)}/100`], ["耐心", `${Math.round(S.fanPatience||60)}/100`], ["認同", `${Math.round(S.fanIdentify||55)}/100`], ["數據素養", `${Math.round(S.fanDataLiteracy||8)}/100`]], "球迷壓力摘要") : ""}
-       <p class="v60-state-line">期待未達標會增加不滿；認同與數據素養隨長期經營累積。</p>
+      <div class="divlabel">球迷壓力</div>
+      ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([
+        [`期待${(S.fanExpect||50)>=75 ? "・門檻↑" : ""}`, `${Math.round(S.fanExpect||50)}/100`],
+        ["耐心・老闆", `${Math.round(S.fanPatience||60)}/100`],
+        ["認同・票贊／FA／主場", `${Math.round(S.fanIdentify||55)}/100`],
+        [`素養${(S.fanDataLiteracy||8)>=50 ? "・進階" : (S.fanDataLiteracy||8)>=25 ? "・OPS+" : ""}`, `${Math.round(S.fanDataLiteracy||8)}/100`]
+      ], "球迷壓力摘要") : `<div class="scoreboard"><div class="sb-row"><span class="sb-label">期待・耐心・認同・素養</span><span class="sb-value small">${Math.round(S.fanExpect||50)}／${Math.round(S.fanPatience||60)}／${Math.round(S.fanIdentify||55)}／${Math.round(S.fanDataLiteracy||8)}</span></div></div>`}
+      <p class="v60-state-line">期待低於目標→不滿；認同影響票贊／FA／主場；素養隨年成長。</p>
+      ${Array.isArray(S.fanTradeMemory)&&S.fanTradeMemory.length>0?`<div class="sb-row"><span class="sb-label">球迷記憶</span><span class="sb-value small">${S.fanTradeMemory.slice(0,3).map(m=>m.name+"（"+m.yearsLeft+"年）").join("、")}</span></div>`:""}
 
       <div class="divlabel">球隊文化（你十年行為的沉澱）</div>
       <div class="scoreboard">
@@ -2660,28 +2658,28 @@ function renderFinance() {
       </div>
        <p class="v60-state-line">城市資料每年緩慢演化，影響票房、贊助與球迷根基。</p>
 
-      <div class="divlabel">本季預估損益（依目前人氣/戰績/已簽合約估算，非最終數字）</div>
+      <div class="divlabel">本季預估損益・以目前戰績試算</div>
       <table class="stattable">
-        <thead><tr><th>項目</th><th>預估金額</th></tr></thead>
+        <thead><tr><th>項目</th><th>金額</th></tr></thead>
         <tbody>
-          <tr><td>預估門票收入（均進場約${forecast.projectedAttendance.toLocaleString()}人）</td><td>${formatMoney(forecast.ticketRevenue)}</td></tr>
-          <tr><td>轉播收入${team.finance.broadcastDeal ? `（已簽${typeof team.finance.broadcastDeal === "object" ? team.finance.broadcastDeal.label : "定額約"}，依目前勝率估）` : "（預設估算，尚未簽約）"}</td><td>${formatMoney(forecast.broadcastRevenue)}</td></tr>
-          <tr><td>贊助收入${team.finance.sponsorDeal ? `（已簽${typeof team.finance.sponsorDeal === "object" ? team.finance.sponsorDeal.label : "定額約"}，依目前勝率估）` : "（預設估算，尚未簽約）"}</td><td>${formatMoney(forecast.sponsorRevenue)}</td></tr>
-          <tr><td>周邊/販賣部收入（主場人次×人均消費）</td><td>${formatMoney(forecast.merchRevenue)}</td></tr>
-          <tr><td>客場贏球分潤收入（贏抽8%・輸抽2%）</td><td>${formatMoney(forecast.gateShareIncome)}</td></tr>
-          <tr class="me"><td>預估總收入</td><td>${formatMoney(forecast.totalRevenue)}</td></tr>
-          <tr><td>目前薪資支出</td><td>${formatMoney(forecast.payroll)}</td></tr>
-          <tr><td>球場設施維護費</td><td>${formatMoney(forecast.maintenanceCost)}</td></tr>
-          <tr><td>支付客隊分潤</td><td>${formatMoney(forecast.gateSharePaid)}</td></tr>
-          <tr><td>預估奢侈稅</td><td>${formatMoney(forecast.luxuryTax)}</td></tr>
-          <tr class="me"><td>預估淨損益</td><td style="${forecast.projectedNet < 0 ? "color:var(--redline);" : ""}">${forecast.projectedNet >= 0 ? "+" : ""}${formatMoney(forecast.projectedNet)}</td></tr>
+          <tr><td>門票・均進場 ${forecast.projectedAttendance.toLocaleString()} 人</td><td>${formatMoney(forecast.ticketRevenue)}</td></tr>
+          <tr><td>轉播・${team.finance.broadcastDeal ? `已簽 ${typeof team.finance.broadcastDeal === "object" ? team.finance.broadcastDeal.label : "定額"}` : "未簽・預設"}</td><td>${formatMoney(forecast.broadcastRevenue)}</td></tr>
+          <tr><td>贊助・${team.finance.sponsorDeal ? `已簽 ${typeof team.finance.sponsorDeal === "object" ? team.finance.sponsorDeal.label : "定額"}` : "未簽・預設"}</td><td>${formatMoney(forecast.sponsorRevenue)}</td></tr>
+          <tr><td>周邊收入</td><td>${formatMoney(forecast.merchRevenue)}</td></tr>
+          <tr><td>客場分潤收入（8%／2%）</td><td>${formatMoney(forecast.gateShareIncome)}</td></tr>
+          <tr class="me"><td>總收入</td><td>${formatMoney(forecast.totalRevenue)}</td></tr>
+          <tr><td>薪資</td><td>${formatMoney(forecast.payroll)}</td></tr>
+          <tr><td>設施維護</td><td>${formatMoney(forecast.maintenanceCost)}</td></tr>
+          <tr><td>客場分潤支出</td><td>${formatMoney(forecast.gateSharePaid)}</td></tr>
+          <tr><td>奢侈稅</td><td>${formatMoney(forecast.luxuryTax)}</td></tr>
+          <tr class="me"><td>淨損益</td><td style="${forecast.projectedNet < 0 ? "color:var(--redline);" : ""}">${forecast.projectedNet >= 0 ? "+" : ""}${formatMoney(forecast.projectedNet)}</td></tr>
         </tbody>
       </table>
-      ${forecast.projectedNet < 0 ? `<p class="sub dark" style="color:var(--redline);">目前估算本季可能虧損，建議提早調整票價策略或洽談轉播/贊助合約，不要等到季末才發現。</p>` : ""}`;
+      ${forecast.projectedNet < 0 ? `<p class="sub dark" style="color:var(--redline);">預估本季虧損：可調票價或重談轉播／贊助。</p>` : ""}`;
   const finTicketPanel = `
       <div class="divlabel">票價策略</div>
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["目前", `${team.finance.ticketPrice} 元/張`], ["上限", `${team.finance.ticketPriceCap} 元`], ["預估進場", `${estimateAttendancePct(team, team.finance.ticketPrice)}%`], ["窗口", canChangeTicket ? "春訓可調" : "下季再調"]], "票價策略摘要") : ""}
-       <p class="v60-state-line">${canChangeTicket ? "春訓可調一次；票價愈高，預估進場率愈低。" : "本季已開打；票價下季再調。"} 爆滿可能逐年提高上限（最高 ${TICKET_PRICE_CEIL_MAX} 元）。</p>
+       <p class="v60-state-line">${canChangeTicket ? "春訓限調一次；票價提高會降低進場率。" : "本季已鎖定；下季可調。"} 滿場逐年提高上限（最高 ${TICKET_PRICE_CEIL_MAX} 元）。</p>
       <div class="teamgrid">
         ${TICKET_PRICE_PRESETS.map(t => `
           <button class="teamcard ticket-tier-btn" data-tier="${t.key}" style="${team.finance.ticketPrice === Math.min(t.price, team.finance.ticketPriceCap) ? "border:2px solid var(--gold-2);" : ""}" ${(canChangeTicket && t.price <= team.finance.ticketPriceCap) ? "" : "disabled"}>
@@ -2694,23 +2692,20 @@ function renderFinance() {
       </label>
       ${canChangeTicket ? `<div class="btnrow"><button id="btn-custom-ticket" class="btn-secondary">套用自訂票價</button></div>` : ""}`;
   const finDealsPanel = `
+      <div class="v60-deal-scenario-key" role="group" aria-label="試算情境：45%與55%勝率未進季後賽；65%勝率進季後賽"><b>情境</b><span>45%・無季後</span><span>55%・無季後</span><span>65%・含季後</span></div>
       ${["broadcast", "sponsor"].map(kind => {
         // v29：轉播/贊助方案卡——保證金＋浮動條款＋三情境試算全部攤開，看懂再簽
         const offers = kind === "broadcast" ? team.finance.broadcastOffers : team.finance.sponsorOffers;
         const cur = kind === "broadcast" ? team.finance.broadcastDeal : team.finance.sponsorDeal;
         const curKey = cur && typeof cur === "object" ? cur.key : null;
         return `
-      <div class="divlabel">${kind === "broadcast" ? "轉播" : "贊助"}合約（每年可重新洽談）</div>
-       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["方案", `${offers.length} 種`], ["比較", "保證金／浮動"], ["操作", canChangeTicket ? "可重談" : "已鎖定"]], `${kind === "broadcast" ? "轉播" : "贊助"}策略摘要`) : ""}
-       <p class="v60-state-line">${canChangeTicket ? "先比三種方案，再決定是否簽約；未簽沿用預設估算。" : `本季${kind === "broadcast" ? "轉播" : "贊助"}已鎖定，休賽季再談。`}</p>
+      <div class="divlabel">${kind === "broadcast" ? "轉播" : "贊助"}合約</div>
+       <p class="v60-state-line">${canChangeTicket ? "春訓可簽；未簽採預設。" : `本季${kind === "broadcast" ? "轉播" : "贊助"}已鎖定。`}</p>
       ${offers.map(o => `
         <div class="card dealcard ${curKey === o.key ? "dealchosen" : ""}">
           <div class="eyebrow">${o.label}${curKey === o.key ? "（本季已簽）" : ""}</div>
            ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["保證金", formatMoney(o.base)], ["戰績分潤", o.winBonusPer10 ? `每±10% ${formatMoney(o.winBonusPer10)}` : "無"], ["季後賽", o.playoffBonus ? formatMoney(o.playoffBonus) : "無"]], `${o.label}條款摘要`) : `<p class="sub dark" style="margin:4px 0;">${o.desc}</p>`}
           <div class="scoreboard" style="margin:6px 0;">
-            <div class="sb-row small"><div class="sb-label">保證金（穩拿）</div><div class="sb-value small">${formatMoney(o.base)}</div></div>
-            <div class="sb-row small"><div class="sb-label">戰績分潤</div><div class="sb-value small">${o.winBonusPer10 ? `勝率每±10%，${kind === "broadcast" ? "分潤" : "獎金"}±${formatMoney(o.winBonusPer10)}` : "無（定額合約）"}</div></div>
-            <div class="sb-row small"><div class="sb-label">季後賽加碼</div><div class="sb-value small">${o.playoffBonus ? formatMoney(o.playoffBonus) : "無"}</div></div>
             ${dealScenarioTable(o)}
           </div>
           ${canChangeTicket ? `<div class="btnrow"><button class="btn-secondary deal-btn" data-kind="${kind}" data-id="${o.id}">${curKey === o.key ? "已簽此方案" : `簽下${o.label}`}</button></div>` : ""}

@@ -227,7 +227,7 @@ function renderCaptainProposalCard(team) {
   const cands = (typeof coachCaptainCandidates === "function") ? coachCaptainCandidates(team) : [];
   return `<div class="card">
     <div class="eyebrow">Ⓒ 隊長（教練提名制）</div>
-    <p class="sub dark">${curCap ? `現任隊長：<b>${curCap.name}</b>。` : "目前尚未任命隊長。"}隊長在陣期間全隊近戰抗壓提升、狀況偏正向；一季只能任命一次。</p>
+    <p class="sub dark">${curCap ? `隊長：<b>${curCap.name}</b>・` : "未任命・"}全隊近戰抗壓提升、狀況偏正；每季限任一次。</p>
     ${can ? (cands.length === 0 ? `<p class="draftnote muted">教練目前提不出合適人選（一軍健康球員不足）。</p>` : `
       <p class="sub dark">教練提名以下人選，由你圈選任命：</p>
       ${cands.map(p => `<div class="rowline" style="margin:4px 0;"><b>${p.name}</b> <span class="muted">${p.age}歲・忠誠${p.loyalty || 50}・士氣${p.morale || 70}・抗壓${p.composure || 50}・綜合${Math.round(trueOverall(p))}</span> <button class="pickbtn captain-appoint-btn" data-id="${p.id}" ${team.captainId === p.id ? "disabled" : ""}>${team.captainId === p.id ? "現任" : "任命"}</button></div>`).join("")}`)
@@ -271,10 +271,10 @@ function renderLineup() {
         const eff = (typeof effTacticsOf === "function") ? effTacticsOf(team) : null;
         const arcDef = (hc && hc.archetype && typeof COACH_ARCHETYPES === "object") ? COACH_ARCHETYPES[hc.archetype] : null;
         const deviated = eff && (eff.offense !== team.tactics.offense || eff.rest !== team.tactics.rest);
-        const coachLine = hc ? `<p class="sub dark" style="margin:6px 0 2px;">總教練 <b>${hc.name}</b>${arcDef ? `・<b>${arcDef.label}</b>（${arcDef.desc}）` : ""}・信任 ${Math.round(hc.trust || 55)}${eff ? `・認同度 ${Math.round((eff.agreement || 1) * 100)}%・執行度 ${Math.round((eff.execution || 1) * 100)}%` : ""}</p>
-          ${deviated ? `<p class="draftnote" style="color:var(--redline);">${icon('warn')} 方針與教練哲學差距過大，執行被折射——教練實際採用：${tacticsOffenseDef(eff.offense).label}／${tacticsRestDef(eff.rest).label}。想貫徹意志：換方針、換教練，或累積信任。</p>` : ""}` : "";
+        const coachLine = hc ? `<p class="sub dark" style="margin:6px 0 2px;">總教練 <b>${hc.name}</b>${arcDef ? `・<b>${arcDef.label}</b>` : ""}・信任 ${Math.round(hc.trust || 55)}${eff ? `・認同度 ${Math.round((eff.agreement || 1) * 100)}%・執行度 ${Math.round((eff.execution || 1) * 100)}%` : ""}</p>
+          ${deviated ? `<p class="draftnote" style="color:var(--redline);">${icon('warn')} 實際採用：${tacticsOffenseDef(eff.offense).label}／${tacticsRestDef(eff.rest).label}。可調方針或更換教練。</p>` : ""}` : "";
         const modeHeader = pureGm
-          ? `<p class="sub dark"><b>純GM模式</b>：現場全權委任總教練${tkv ? `——<b style="color:var(--redline)">接管中</b>（第${tkv.seasonYear}季起・續期${tkv.renewals}次），本季由你手排。` : "，每日打線由教練依哲學執行你的方針。"}</p>
+          ? `<p class="sub dark"><b>純GM</b>・${tkv ? `<b style="color:var(--redline)">接管中</b>（第${tkv.seasonYear}季・續期${tkv.renewals}次），本季由你手排。` : "教練依哲學執行方針。"}</p>
              <div class="btnrow" style="flex-wrap:wrap;gap:6px;">
                ${tkv ? `<button id="btn-takeover-end" class="btn-secondary">${icon('dove')} 還權給教練（信任部分回復）</button>` : `<button id="btn-takeover-start" class="btn-danger">${icon('bolt')} 接管兵符（有代價）</button>`}
              </div>
@@ -303,8 +303,8 @@ function renderLineup() {
           ${(typeof TACTICS_ROTATION !== "undefined") ? `<div class="tacticrow"><span>投手輪值</span>
             <select id="sel-tactic-rotation">${TACTICS_ROTATION.map(o => `<option value="${o.key}" ${(team.tactics.rotation || "five") === o.key ? "selected" : ""}>${o.label}——${o.desc}</option>`).join("")}</select>
           </div>` : ""}
-          <p class="draftnote muted">教練每天開打前依上述方針重排打線並指派板凳專員；下方棒次表為「今日教練排陣預覽」${manualOk ? "，手動調整將於明天被教練重排（要固定打線請切回GM手排）" : "。純GM模式下沒有手排入口——想介入現場，只能付代價接管"}。</p>` : `
-          <p class="draftnote muted">${pureGm ? "接管中：打線由你手排，教練暫時靠邊站（信任持續低迷）。" : "GM手排模式：打線由你固定安排，教練不介入；板凳專員也改由你在下方指派。"}</p>`}
+          <p class="draftnote muted">${manualOk ? "教練每日重排、代排板凳；固定打線請切GM手排。" : "今日預覽；純GM須付代價接管才能手排。"}</p>` : `
+          <p class="draftnote muted">${pureGm ? "接管中・本季由你手排。" : "GM手排・可調棒次與板凳。"}</p>`}
         </div>${renderCaptainProposalCard(team)}`;
       })()}
       <table class="stattable">
@@ -485,10 +485,10 @@ function renderRotation() {
   const candidates = team.roster1.map(id => S.players[id])
     .filter(p => p && p.isPitcher && !usedIds.has(p.id) && (tab === "先發" || p.role === tab));
   const tabDesc = {
-    "先發": "輪值會依序循環先發，下一場比賽由輪值中的下一位投手登板。人數不限（至少1人），可自由增減：人少輪得快、消耗大，人多則每人出賽間隔長。",
-    "中繼": "中繼投手的順序決定登板優先權，越前面越常被優先派上場中繼。人數可自由增減。",
-    "布局": "布局投手的順序決定登板優先權，通常在終結者上場前的關鍵局數登板。人數可自由增減。",
-    "終結": "終結者的順序決定救援優先權，第1順位在有救援機會時會優先登板。人數可自由增減。"
+    "先發": "依序輪值；至少1人。人少消耗快、人多間隔長。可增減。",
+    "中繼": "依順位決定中繼優先權。可增減。",
+    "布局": "依順位接手關鍵局數。可增減。",
+    "終結": "第1順位優先處理救援機會。可增減。"
   };
   app.innerHTML = `
     <div class="wrap">
@@ -1163,11 +1163,11 @@ function renderCoaches() {
           }).join("")}
         </tbody>
       </table>
-      <p class="sub dark">每位教練的專精會直接加成對應能力（例如打擊教練加成打擊、投手教練加成球速控球），總教練提供全隊小幅加成。約20%機率教練會帶有特殊能力（${icon('star-solid')}標記），加成更明顯。<b>v31：合約到期不再自動暫代</b>——休賽季須逐一續約談判，談不成或不續約則職位空缺（加成歸零），須在此到自由市場簽人補上。</p>
+      <p class="sub dark">專精加成對應能力；總教練全隊小幅加成。${icon('star-solid')}為特殊能力。到期須續約；職位空缺時加成歸零。</p>
       ${picking ? `
       <div class="card">
         <div class="eyebrow">聘僱新教練：${picking}（${level}）・${S.coaches[staff[picking]] ? `現任指導力 ${S.coaches[staff[picking]].teaching}` : "目前空缺"}</div>
-        <p class="sub dark" style="margin-bottom:10px;">候選人包含幾位退休球員轉任人選與新聘教練人選，並排比較指導力／特殊能力後再決定。</p>
+        <p class="sub dark" style="margin-bottom:10px;">比較指導力與特殊能力後聘用。</p>
         <div class="teamgrid" style="grid-template-columns:1fr;gap:10px;">
           ${candidates.map((cand, idx) => {
             const curT = S.coaches[staff[picking]] ? S.coaches[staff[picking]].teaching : 0;

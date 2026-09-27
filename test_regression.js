@@ -72,7 +72,7 @@ assert(g("typeof renderMarketing==='function' && typeof renderSpringCamp==='func
 assert(g("typeof renderHallOfFame==='function' && typeof dashMailPanel==='function' && typeof renderNewsCard==='function'"), "v58 information visual render entrypoints");
 assert(g("renderNewsCard.toString().includes('新聞摘要') && renderNewsCard.toString().includes('newsroom_v58')"), "v58 empty-news state still renders newsroom scene");
 assert(g("dashMailPanel.toString().includes('目前沒有郵件') && dashMailPanel.toString().includes('mailroom_v58')"), "v58 empty-mail state still renders mailroom scene");
-assert(g("renderMarketing.toString().includes('v60VisualMetricRail') && renderMarketing.toString().includes('春訓期間可複選')"), "v60-002 marketing information hierarchy uses visible metrics");
+assert(g("renderMarketing.toString().includes('v60VisualMetricRail') && renderMarketing.toString().includes('春訓可多選')"), "v60-002 marketing information hierarchy uses visible metrics");
 assert(g("renderSpringCamp.toString().includes('v60VisualMetricRail') && renderCdActivitiesCard.toString().includes('international_exchange_v58') && renderCdActivitiesCard.toString().includes('overseas_marketing_v58')"), "v60-002 activity screens use visible metrics and approved scenes");
 assert(g("renderNewsCard.toString().includes('aria-label=\"新聞跑馬燈\"') && renderHallOfFame.toString().includes('v60-state-line')"), "v60-002 repeated information becomes visible state guidance");
 const v59SingleFileSource = fs.readFileSync("index.html", "utf8");
@@ -81,7 +81,7 @@ if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
   assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
 } else {
   assert((v59SingleFileSource.match(/<script defer src="0[0-6]-[^\"]+\.js\?v=/g) || []).length === 7, "v59 public shell loads the seven ordered modular scripts");
-  assert(v59SingleFileSource.includes("v60-r020-preseasonflow") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r020 public shell uses a fresh cache key without duplicating module source");
+  assert(v59SingleFileSource.includes("v60-r021-textcompact") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r021 public shell uses a fresh cache key without duplicating module source");
 }
 
 /* ---------- v60-001 視覺恢復候選 ---------- */
@@ -120,7 +120,7 @@ assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceS
 const v60NewsRendererSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderNewsCard"), v60DashboardSource.indexOf("function renderSponsorMissionCard"));
 assert((v60NewsRendererSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60NewsRendererSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60NewsRendererSource.indexOf('v56ContentSummary("news"') < 0 && v60NewsRendererSource.indexOf("icon('news')") < 0, "v60 新聞 renderer 僅保留完整 PNG，不再輸出新聞 SVG");
 assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('v60CompatArtFallbackUrl') >= 0 && v60DashboardSource.indexOf('safeLoading') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准圖片路徑、PNG fallback 與 lazy loading 已接入");
-assert(v60SwSource.indexOf('baseballgm-v60-r020-preseasonflow') >= 0, "v60-005 Service Worker cache key 已更新");
+assert(v60SwSource.indexOf('baseballgm-v60-r021-textcompact') >= 0, "r021 Service Worker cache key 已更新");
 assert(v60DashboardSource.includes('v60CompatArtImageAttrs(key, "eager", false)') && v60DashboardSource.includes('window.requestAnimationFrame(kick)') && v60DashboardSource.includes('img.loading = "lazy";\n        img.loading = "eager";') && v60DashboardSource.includes('v60KickRenderedSceneImages(); return r;'), "動態插入場景圖後下一幀觸發載入，確保瀏覽器啟動請求");
 assert(v60DashboardSource.includes('__v60CurrentScreen !== v60LastRenderedScreen') && v60DashboardSource.includes('window.scrollTo(0, 0)'), "切換新畫面先回到頁首，避免沿用舊長頁捲動位置");
 
@@ -134,7 +134,7 @@ assert(v60FinanceSource.indexOf("JPEG") < 0 && v60FinanceSource.indexOf("v60Comp
 assert(v60RosterSource.indexOf("名人堂摘要") >= 0 && v60RosterSource.indexOf("v60-state-line") >= 0, "v60-002 名人堂保留可見狀態摘要");
 assert(v60StyleSource.indexOf(".v60-visual-metric-rail") >= 0 && v60StyleSource.indexOf("@media(max-width:520px)") >= 0, "v60-002 指標列具備手機 responsive layout");
 if (v60PublicSource) {
-assert(v60PublicSource.indexOf("v60-r020") >= 0 && v60PublicSource.indexOf("v60-r020-preseasonflow") >= 0 && v60PublicSource.indexOf(".jpg") >= 0 && v60PublicSource.indexOf("__v60PublicArtFallbackPaths") >= 0 && v60PublicSource.indexOf(".png") >= 0, "v60-005 public shell 更新場景快取版本並使用 JPEG 主路徑與核准 PNG fallback");
+assert(v60PublicSource.indexOf("v60-r021") >= 0 && v60PublicSource.indexOf("v60-r021-textcompact") >= 0 && v60PublicSource.indexOf(".jpg") >= 0 && v60PublicSource.indexOf("__v60PublicArtFallbackPaths") >= 0 && v60PublicSource.indexOf(".png") >= 0, "r021 public shell 保留 JPEG 主路徑與核准 PNG fallback");
 } else {
   console.log("v60-002 public shell check: NOT RUN（public_deployment 不屬於固定 20 檔 Modular ZIP，乾淨解壓時不存在）");
 }
@@ -1723,7 +1723,7 @@ assert(g("typeof foldNote==='function' && foldNote('<p>x</p>').indexOf('<details
 g("UI.screen='dashboard'; render();");
 assert(g("app.innerHTML.indexOf('foldNote(')<0"), "v39⑥ 主控台無模板逸出（摺疊正確求值）");
 g("UI.screen='marketing'; render(); var __v39mk=app.innerHTML; UI.screen='dashboard'; render();");
-assert(g("__v39mk.indexOf('v60-visual-metric-rail')>=0 && __v39mk.indexOf('春訓期間可複選')>=0"), "v39⑥ 行銷畫面改為可見指標資訊層級");
+assert(g("__v39mk.indexOf('v60-visual-metric-rail')>=0 && __v39mk.indexOf('春訓可多選')>=0"), "v39⑥ 行銷畫面改為可見指標資訊層級");
 g("UI.screen='agency'; render(); var __v39ag=app.innerHTML; UI.screen='dashboard'; render();");
 assert(g("__v39ag.indexOf('<details class=\"fold\"')>=0 && __v39ag.indexOf('foldNote(')<0"), "v39⑥ 經紀人事務所說明已收進摺疊區");
 
@@ -4347,6 +4347,28 @@ g(`var __v60CutBefore=S.forcedCutRequired, __v60RenewBefore=S.pendingContractRen
 var __v60CutStage=v60PreseasonNextStage().screen; S.forcedCutRequired=false; var __v60RenewStage=v60PreseasonNextStage().screen;
 S.forcedCutRequired=__v60CutBefore; S.pendingContractRenewals=__v60RenewBefore;`);
 assert(g('__v60CutStage==="financeCuts" && __v60RenewStage==="contractRenewals"'), "v60-010 下一步優先保留赤字裁員與球員續約入口");
+
+/* v60-011：縮短重複說明，不隱藏玩法或改變資料出口。 */
+console.log("\n--- v60-011 常用管理畫面文字精簡 ---");
+const v60CopyLineup = v60PrepRoster.slice(v60PrepRoster.indexOf("function renderLineup()"), v60PrepRoster.indexOf("function addRotationSlot("));
+const v60CopyRotation = v60PrepRoster.slice(v60PrepRoster.indexOf("function renderRotation()"), v60PrepRoster.indexOf("function renderCoaches("));
+const v60CopyCoaches = v60PrepRoster.slice(v60PrepRoster.indexOf("function renderCoaches("), v60PrepRoster.indexOf("function renderStandings("));
+const v60CopySpring = v60PrepDash.slice(v60PrepDash.indexOf("function renderSpringCamp()"), v60PrepDash.indexOf("function renderSpringReport("));
+const v60CopyMarketing = v60PrepFinance.slice(v60PrepFinance.indexOf("function renderMarketing()"), v60PrepFinance.indexOf("function formatMoney("));
+const v60CopyFinanceOverview = v60PrepFinance.slice(v60PrepFinance.indexOf("const finOverviewPanel = `"), v60PrepFinance.indexOf("const finTicketPanel = `"));
+const v60CopyDashboardHero = v60PrepDash.slice(v60PrepDash.indexOf("function v57DashboardHero"), v60PrepDash.indexOf("function uiTabs"));
+assert(v60CopyLineup.includes("教練每日重排、代排板凳") && v60CopyLineup.includes("純GM須付代價接管") && !v60CopyLineup.includes("想貫徹意志：換方針、換教練，或累積信任"), "v60-011 先發頁保留控制權與接管代價、刪除重複解說");
+assert(v60CopyRotation.includes("依序輪值；至少1人") && v60CopyRotation.includes("第1順位優先處理救援機會") && !v60CopyRotation.includes("下一場比賽由輪值中的下一位投手登板"), "v60-011 輪值說明保留順位、至少一人與消耗取捨");
+assert(v60CopyCoaches.includes("專精加成對應能力") && v60CopyCoaches.includes("總教練全隊小幅加成") && v60CopyCoaches.includes("職位空缺時加成歸零") && !v60CopyCoaches.includes("約20%機率教練會帶有特殊能力"), "v60-011 教練頁保留實際效果與續約後果，移除版本沿革及機率冗述");
+assert(v60CopySpring.includes("現況／上限") && v60CopySpring.includes("aria-label=\"綜合能力 ${ovr}／天花板") && v60CopySpring.includes("單項上限") && !v60CopySpring.includes("成果報告可查"), "v60-011 春訓數值改用一次圖例、短標與可讀輔助標籤");
+assert(v60CopyMarketing.includes("春訓可多選") && v60CopyMarketing.includes("年度活動") && !v60CopyMarketing.includes("點擊活動卡即可投入或取消") && !v60CopyMarketing.includes("（已投入）"), "v60-011 行銷頁移除按鈕已表達的重複操作文案");
+assert(v60PrepFinance.includes("預估本季虧損：可調票價或重談轉播／贊助") && v60PrepFinance.includes("春訓限調一次；票價提高會降低進場率") && v60PrepFinance.includes("春訓可簽；未簽採預設"), "v60-011 財務保留預估風險與下一步、縮短說明句");
+assert(v60CopyFinanceOverview.includes("球迷壓力摘要") && v60CopyFinanceOverview.includes("認同・票贊／FA／主場") && v60CopyFinanceOverview.includes("素養${(S.fanDataLiteracy||8)>=50 ? \"・進階\""), "v60-011 財務以單一可視指標列呈現球迷數值與關鍵門檻");
+assert(!v60CopyFinanceOverview.includes("老闆耐心乘數") && !v60CopyFinanceOverview.includes("球迷三維度（他們不下令，但他們施壓）") && v60CopyFinanceOverview.includes("球迷記憶"), "v60-011 財務移除同值重複列表、保留獨有交易記憶");
+assert(v60CopyDashboardHero.includes("<span>目前 Lv.${currentLevel}</span>") && !v60CopyDashboardHero.includes("HOME STADIUM") && v60CopyDashboardHero.includes("<strong>${labels[currentLevel] || \"主場球場\"}</strong>"), "v60-011 主畫面球場主視覺移除重複場名，保留等級與球場名稱");
+const v60ScenarioHtml = g("dealScenarioTable({label:'標準',base:50000,winBonusPer10:1000,playoffBonus:3000})");
+assert(v60ScenarioHtml.includes("勝率45%・無季後賽") && v60ScenarioHtml.includes("勝率55%・無季後賽") && v60ScenarioHtml.includes("勝率65%・含季後賽") && v60ScenarioHtml.includes('role="list"') && (v60ScenarioHtml.match(/role="listitem" aria-label=/g) || []).length === 3, "v60-011 合約情境以共用欄名搭配三筆有完整輔助標籤的金額");
+assert(v60PrepFinance.includes("v60-deal-scenario-key") && v60PrepFinance.includes("45%・無季後") && v60PrepFinance.includes("55%・無季後") && v60PrepFinance.includes("65%・含季後"), "v60-011 合約頁只顯示一次三種試算情境定義");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);
