@@ -1,6 +1,16 @@
-# v60-r024 先發管理閱讀減量與全遊戲文字減量進度
+# v60-r025 球員名單分頁與全遊戲文字減量進度
 
 本目錄是 GitHub Pages 公開部署殼層，不取代離線交付包，也不代表 Mars 正式接受。
+
+## r025：球員名單依守位分頁（《模擬職棒3》經營分類原則延伸）
+
+- 延續 r022／r024 對 PS2《模擬職棒3》的參考：只借用球團管理按人員／決策主題分區、資訊與操作相鄰的原則，不宣稱原作使用相同網頁分頁樣式，也不複製原作素材、文案或玩法。來源沿用 [SEGA 作品目錄](https://www.sega.jp/game/?page=32) 及 [PS2 攻略資料索引](https://www.sheepplus.com/yakyutsuku3/)。
+- 球員名單原本「全部」同時展開整份投手表與野手表；改成各表每頁最多 8 人，頁碼直接顯示總人數，上一頁／下一頁控制保留 44px 觸控高度。此為呈現分頁，不是收合說明，也不刪球員、數據或升降軍操作。
+- 投手、野手各自記錄暫時頁碼；守位篩選、排序、1軍／2軍／育成切換會重設合適頁碼。分頁狀態只留在暫存 UI，不寫入 Save；沒有模擬或名單規則變更。
+- 驗證：`node test_regression.js` 1,780 通過／0 失敗；`node smoke_multiyear.js` 15 年＋全畫面渲染 PASS；`node smoke_puregm.js` 純 GM 15 年 PASS；三支相關 JS `node --check` 與 `git diff --check` PASS。Regression 以 11 人 fixture 確認每頁 8＋3 人且翻頁更換列；呈現狀態留在暫存 UI，不進 Save。
+- 隔離瀏覽器以實際 renderer 檢查 390px、320px：頁面寬度皆未超出 viewport；手機數據表限於表格容器水平捲動；分頁放在表格前且按鈕可見，320px 實際按下一頁由 P1/P2 換為 P9/P10。名單區下方既有固定返回列不再遮住翻頁控制。
+- 續約 renderer 以 320px、12 人待處理狀態實際呈現常駐規則與固定操作列（兩個 48px 按鈕）；清空待辦後實際呈現單一「前往選秀會」按鈕。測試使用隔離瀏覽器，不代表 Mars 真機驗證。
+- GitHub Pages r025 公開來源仍待推送後重新查驗；本機瀏覽器證據不等於公開部署或 Mars 視覺接受。
 
 ## r024：先發管理資訊精簡（《模擬職棒3》內容結構參考）
 
@@ -12,7 +22,7 @@
 - 本輪改動：`06-ui-roster.js`、`style.css`、`test_regression.js`、`index.html`、`sw.js`。`node --check 06-ui-roster.js`、`node --check test_regression.js` 與 `git diff --check` 通過。
 - `node test_regression.js`：1,773 通過／0 失敗；`node smoke_multiyear.js`：15 年＋全畫面渲染通過；`node smoke_puregm.js`：純 GM 15 年通過。最終回歸另驗證先發 renderer 實際輸出常駐條件及板凳角色效果。
 - 隔離瀏覽器使用實際先發畫面驗證：390px 與 320px viewport 的文件寬度都未超過 viewport；數據表保留 520px 內容寬，限於具名、可聚焦的表格區左右滑動。摘要、教練／手排狀態及實際移防註記均在 renderer DOM 出現；測試亦確認無移防時不顯示註記。之後的板凳文案只改模板文字，回歸會執行該 renderer；未對最終文字版本重新擷取截圖，亦非 Mars 視覺核准。
-- GitHub Pages 尚待本輪推送後重新查驗；不得把本機瀏覽器證據當成公開部署證據。
+- 2026-09-27，r024 commit `1c56fba` 已推送 `main`；公開頁面、先發模組、CSS 與 Service Worker 均回應 HTTP 200，回傳內容含 r024 cache key 與更新後的先發／板凳文案。這是靜態來源核驗，不等同 Mars 視覺核准或公開頁瀏覽器互動驗收。
 
 ## r023：財務合約與戰績榜文字減量
 

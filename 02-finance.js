@@ -2542,11 +2542,11 @@ function renderContractRenewals() {
   const ids = S.pendingContractRenewals || [];
   const list = ids.map(id => S.players[id]).filter(Boolean);
   app.innerHTML = `
-    <div class="wrap">
+    <div class="wrap v60-renewal-screen">
       <div class="topbar"><div class="eyebrow">${team.name}</div><h1>合約續約談判</h1></div>
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      ${foldNote(`<p class="sub dark" style="margin-bottom:10px;">以下球員本季合約到期，請逐一決定「談約」（互動式議價，最多5次機會）或「不續約」（直接釋出進自由球員市場）。也可以一鍵依市場行情自動續約全部人。</p>`)}
-      ${list.length === 0 ? `<div class="card"><p class="sub dark">所有待續約球員都已處理完畢！</p></div>` : `
+      <p class="v60-state-line">待處理 ${list.length} 人・每人談約最多 5 次・不續約即釋出。</p>
+      ${list.length === 0 ? `<div class="card"><p class="sub dark">待續約名單已清空。</p></div>` : `
       <table class="stattable">
         <thead><tr><th>姓名</th><th>年齡</th><th>類型</th><th>目前年薪</th><th></th></tr></thead>
         <tbody>
@@ -2555,9 +2555,11 @@ function renderContractRenewals() {
             <button class="movebtn decline-btn" data-id="${p.id}">不續約</button>
           </td></tr>`).join("")}
         </tbody>
-      </table>
-      <div class="btnrow"><button id="btn-auto-renew-all" class="btn-secondary">全部依市場行情自動續約</button></div>`}
-      <div class="btnrow"><button id="btn-renewals-continue" class="btn-primary" ${list.length > 0 ? "disabled" : ""}>前往選秀會</button></div>
+      </table>`}
+      <div class="v60-renewal-actions ${list.length === 0 ? "single" : ""}">
+        ${list.length > 0 ? `<button id="btn-auto-renew-all" class="btn-secondary">全部按行情續約</button>` : ""}
+        <button id="btn-renewals-continue" class="btn-primary" ${list.length > 0 ? "disabled" : ""}>${list.length > 0 ? "處理完續約再選秀" : "前往選秀會"}</button>
+      </div>
     </div>`;
   app.querySelectorAll(".renew-btn").forEach(btn => { btn.onclick = () => startNegotiation("renewal", btn.dataset.id, { teamId: team.id }); });
   app.querySelectorAll(".decline-btn").forEach(btn => { btn.onclick = () => declineContractRenewal(btn.dataset.id); });

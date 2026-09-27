@@ -81,7 +81,7 @@ if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
   assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
 } else {
   assert((v59SingleFileSource.match(/<script defer src="0[0-6]-[^\"]+\.js\?v=/g) || []).length === 7, "v59 public shell loads the seven ordered modular scripts");
-  assert(v59SingleFileSource.includes("v60-r024-lineup-reading") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r024 public shell uses a fresh cache key without duplicating module source");
+  assert(v59SingleFileSource.includes("v60-r025-roster-pages") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r025 public shell uses a fresh cache key without duplicating module source");
 }
 
 /* ---------- v60-001 視覺恢復候選 ---------- */
@@ -120,7 +120,7 @@ assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceS
 const v60NewsRendererSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderNewsCard"), v60DashboardSource.indexOf("function renderSponsorMissionCard"));
 assert((v60NewsRendererSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60NewsRendererSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60NewsRendererSource.indexOf('v56ContentSummary("news"') < 0 && v60NewsRendererSource.indexOf("icon('news')") < 0, "v60 新聞 renderer 僅保留完整 PNG，不再輸出新聞 SVG");
 assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('v60CompatArtFallbackUrl') >= 0 && v60DashboardSource.indexOf('safeLoading') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准圖片路徑、PNG fallback 與 lazy loading 已接入");
-assert(v60SwSource.indexOf('baseballgm-v60-r024-lineup-reading') >= 0, "r024 Service Worker cache key 已更新");
+assert(v60SwSource.indexOf('baseballgm-v60-r025-roster-pages') >= 0, "r025 Service Worker cache key 已更新");
 assert(v60DashboardSource.includes('v60CompatArtImageAttrs(key, "eager", false)') && v60DashboardSource.includes('window.requestAnimationFrame(kick)') && v60DashboardSource.includes('img.loading = "lazy";\n        img.loading = "eager";') && v60DashboardSource.includes('v60KickRenderedSceneImages(); return r;'), "動態插入場景圖後下一幀觸發載入，確保瀏覽器啟動請求");
 assert(v60DashboardSource.includes('__v60CurrentScreen !== v60LastRenderedScreen') && v60DashboardSource.includes('window.scrollTo(0, 0)'), "切換新畫面先回到頁首，避免沿用舊長頁捲動位置");
 
@@ -4422,6 +4422,42 @@ assert(v60FinanceDealsSource.includes('class="btn-secondary deal-btn v60-deal-si
 assert(v60StyleSource.includes(".v60-deal-terms-key") && v60StyleSource.includes(".v60-deal-sign{flex:0 0 auto;width:auto") && v60StyleSource.includes("min-height:44px;margin:0"), "v60-013 條款欄名共用且手機簽約按鈕不滿版並保留觸控高度");
 const v60StandingsSource = v60RosterSource.slice(v60RosterSource.indexOf("function renderStandings"), v60RosterSource.indexOf("// v25排序全面升級"));
 assert(v60StandingsSource.includes('label: "分組戰績"') && v60StandingsSource.includes('label: "打者排行"') && v60StandingsSource.includes('label: "投手排行"') && !v60StandingsSource.includes("先選聯盟，再選分組戰績"), "v60-013 戰績榜保留明確分頁並移除重複操作說明");
+
+/* v60-014：球員名單每頁限8人，分頁只改呈現，不裁切球員資料或動作。 */
+console.log("\n--- v60-014 球員名單分頁與長頁操作改善 ---");
+const v60RosterPageSource = v60RosterSource.slice(v60RosterSource.indexOf("const V60_ROSTER_PAGE_SIZE"), v60RosterSource.indexOf("function openPlayerDetail"));
+assert(v60RosterPageSource.includes("const V60_ROSTER_PAGE_SIZE = 8") && v60RosterPageSource.includes("v60RosterPageSlice(pitchers") && v60RosterPageSource.includes("v60RosterPageSlice(filteredBatters") && v60RosterPageSource.includes("pitcherPage.items.map") && v60RosterPageSource.includes("batterPage.items.map") && v60RosterPageSource.includes("data-page-key") && v60RosterPageSource.includes("renderRoster();"), "v60-014 投手與野手分開分頁，分頁保留既有名單列及按鈕");
+assert(v60RosterPageSource.indexOf('v60RosterPagerHtml(pitcherPage') < v60RosterPageSource.indexOf('<div class="v60-roster-table-wrap"><table') && v60RosterPageSource.indexOf('v60RosterPagerHtml(batterPage') < v60RosterPageSource.lastIndexOf('<div class="v60-roster-table-wrap"><table'), "v60-014 分頁控制置於各名單表格前，避免被底部固定返回列遮擋");
+assert(v60StyleSource.includes(".v60-roster-pager") && v60StyleSource.includes("min-height:44px") && v60StyleSource.includes("@media(max-width:520px)"), "v60-014 分頁控制具備手機版排版、觸控尺寸與焦點樣式");
+g(`var __v60RosterSavedUI=JSON.stringify(UI), __v60RosterTeam=S.teams[S.userTeamId], __v60RosterSavedIds=__v60RosterTeam.roster1.slice(), __v60RosterSavedLineup=(__v60RosterTeam.lineup||[]).map(s=>({...s})), __v60RosterSavedRotation=(__v60RosterTeam.rotation||[]).slice(), __v60RosterSavedBullpen=JSON.stringify(__v60RosterTeam.bullpenOrder||{}), __v60RosterSavedPlayers=S.players, __v60RosterSavedHtml=app.innerHTML;
+var __v60RosterPitcherSeed=__v60RosterSavedIds.map(id=>S.players[id]).find(p=>p&&p.isPitcher), __v60RosterBatterSeed=__v60RosterSavedIds.map(id=>S.players[id]).find(p=>p&&!p.isPitcher);
+S.players=Object.assign({},S.players); var __v60RosterSyntheticIds=[];
+for(var i=0;i<11;i++){
+  if(__v60RosterPitcherSeed){var pid='__v60_roster_p_'+i;S.players[pid]={...__v60RosterPitcherSeed,id:pid,name:'分頁測試投手'+i,injury:null};__v60RosterSyntheticIds.push(pid);}
+  if(__v60RosterBatterSeed){var bid='__v60_roster_b_'+i;S.players[bid]={...__v60RosterBatterSeed,id:bid,name:'分頁測試野手'+i,injury:null};__v60RosterSyntheticIds.push(bid);}
+}
+__v60RosterTeam.roster1=__v60RosterSyntheticIds; UI.rosterTab='1軍';UI.rosterPosFilter='all';UI.pitcherSort='default';UI.batterSort='default';UI.rosterPitcherPage=0;UI.rosterBatterPage=0;
+renderRoster();var __v60RosterTableStart=app.innerHTML.indexOf('<table class="stattable">'),__v60RosterTableEnd=app.innerHTML.indexOf('</table>',__v60RosterTableStart)+8;
+var __v60RosterFirstTable=app.innerHTML.slice(__v60RosterTableStart,__v60RosterTableEnd),__v60RosterPageOneIds=__v60RosterFirstTable.split('<tr data-id="').slice(1).map(x=>x.split('"')[0]);
+var __v60RosterHasPageNav=app.innerHTML.includes('data-page-total="2"')&&app.innerHTML.includes('第 1/2 頁・共 11 人');
+UI.rosterPitcherPage=1;renderRoster();__v60RosterTableStart=app.innerHTML.indexOf('<table class="stattable">');__v60RosterTableEnd=app.innerHTML.indexOf('</table>',__v60RosterTableStart)+8;
+__v60RosterFirstTable=app.innerHTML.slice(__v60RosterTableStart,__v60RosterTableEnd);var __v60RosterPageTwoIds=__v60RosterFirstTable.split('<tr data-id="').slice(1).map(x=>x.split('"')[0]);
+var __v60RosterPaginationWorks=__v60RosterPageOneIds.length===8&&__v60RosterPageTwoIds.length===3&&__v60RosterPageOneIds[0]!==__v60RosterPageTwoIds[0]&&app.innerHTML.includes('第 2/2 頁・共 11 人');
+S.players=__v60RosterSavedPlayers;__v60RosterTeam.roster1=__v60RosterSavedIds;__v60RosterTeam.lineup=__v60RosterSavedLineup;__v60RosterTeam.rotation=__v60RosterSavedRotation;__v60RosterTeam.bullpenOrder=JSON.parse(__v60RosterSavedBullpen);UI=JSON.parse(__v60RosterSavedUI);app.innerHTML=__v60RosterSavedHtml;`);
+assert(g("__v60RosterPitcherSeed && __v60RosterBatterSeed && __v60RosterHasPageNav && __v60RosterPaginationWorks"), "v60-014 renderer以11人測試名單輸出8+3人、頁碼正確且頁面內容確實切換");
+
+/* v60-015：續約決策常駐可見，長名單時主要流程按鈕固定可操作。 */
+console.log("\n--- v60-015 續約決策文字與常駐操作列 ---");
+const v60RenewalSource = v60FinanceSource.slice(v60FinanceSource.indexOf("function renderContractRenewals()"), v60FinanceSource.indexOf("function renderMarketing()"));
+assert(v60RenewalSource.includes("待處理 ${list.length} 人・每人談約最多 5 次・不續約即釋出") && !v60RenewalSource.includes("foldNote(") && v60RenewalSource.includes("v60-renewal-actions") && v60RenewalSource.includes("全部按行情續約") && v60RenewalSource.includes("處理完續約再選秀"), "v60-015 續約規則直接可見、移除摺疊說明並保留全員續約／前往選秀操作");
+assert(v60StyleSource.includes(".v60-renewal-actions{position:fixed") && v60StyleSource.includes(".v60-renewal-screen{padding-bottom") && v60StyleSource.includes("env(safe-area-inset-bottom)") && v60StyleSource.includes(".v60-renewal-actions button{min-width:0;min-height:48px;}"), "v60-015 續約主要操作固定在可視範圍、底部內容保留安全間距與觸控高度");
+g(`var __v60RenewalSavedUI=JSON.stringify(UI),__v60RenewalSavedPending=JSON.stringify(S.pendingContractRenewals||[]),__v60RenewalSavedHtml=app.innerHTML,__v60RenewalTeam=S.teams[S.userTeamId];
+S.pendingContractRenewals=__v60RenewalTeam.roster1.slice(0,2);renderContractRenewals();
+var __v60RenewalPendingDom=app.innerHTML.includes('待處理 2 人・每人談約最多 5 次・不續約即釋出')&&app.innerHTML.includes('全部按行情續約')&&app.innerHTML.includes('disabled')&&app.innerHTML.includes('處理完續約再選秀')&&!app.innerHTML.includes('<details');
+S.pendingContractRenewals=[];renderContractRenewals();
+var __v60RenewalDoneDom=app.innerHTML.includes('待續約名單已清空。')&&app.innerHTML.includes('前往選秀會')&&app.innerHTML.includes('v60-renewal-actions single')&&!app.innerHTML.includes('btn-auto-renew-all');
+S.pendingContractRenewals=JSON.parse(__v60RenewalSavedPending);UI=JSON.parse(__v60RenewalSavedUI);app.innerHTML=__v60RenewalSavedHtml;`);
+assert(g("__v60RenewalPendingDom && __v60RenewalDoneDom"), "v60-015 續約 renderer 實際呈現待辦／完成兩種狀態及正確主要操作");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

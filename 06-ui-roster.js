@@ -33,6 +33,7 @@ function wirePosFilterButtons() {
   app.querySelectorAll(".pos-filter-btn").forEach(function(btn) {
     btn.onclick = function() {
       UI[btn.dataset.filterkey] = btn.dataset.filterval;
+      if (btn.dataset.filterkey === "rosterPosFilter") { UI.rosterPitcherPage = 0; UI.rosterBatterPage = 0; }
       render();
     };
   });
@@ -79,7 +80,12 @@ function wireRosterNav() {
   document.querySelectorAll(".navtab").forEach(btn => {
     btn.onclick = () => {
       UI.screen = btn.dataset.screen;
-      if (btn.dataset.rostertab) UI.rosterTab = btn.dataset.rostertab;
+      if (btn.dataset.rostertab) {
+        if (UI.rosterTab !== btn.dataset.rostertab) {
+          UI.rosterPosFilter = "all"; UI.rosterPitcherPage = 0; UI.rosterBatterPage = 0;
+        }
+        UI.rosterTab = btn.dataset.rostertab;
+      }
       UI.lineupPicker = null; UI.rotationPicker = null; UI.coachPicker = null; UI.scoutPicker = null; UI.scoutCandidates = null; UI.flash = null;
       render();
     };
@@ -1555,6 +1561,23 @@ function lineupRotationWarnings(team) {
   return issues;
 }
 
+const V60_ROSTER_PAGE_SIZE = 8;
+function v60RosterPageSlice(list, uiPageKey) {
+  const pageCount = Math.max(1, Math.ceil(list.length / V60_ROSTER_PAGE_SIZE));
+  const rawPage = Number(UI[uiPageKey]);
+  const page = Number.isFinite(rawPage) ? Math.min(pageCount - 1, Math.max(0, Math.floor(rawPage))) : 0;
+  UI[uiPageKey] = page;
+  return { items: list.slice(page * V60_ROSTER_PAGE_SIZE, (page + 1) * V60_ROSTER_PAGE_SIZE), page, pageCount };
+}
+function v60RosterPagerHtml(page, uiPageKey, label, totalCount) {
+  if (page.pageCount <= 1) return "";
+  return `<nav class="v60-roster-pager" role="group" aria-label="${label}名單分頁">
+    <button type="button" class="btn-outline roster-page-btn" data-page-key="${uiPageKey}" data-page-step="-1" data-page-count="${page.pageCount}" aria-label="${label}上一頁" ${page.page === 0 ? "disabled" : ""}>上一頁</button>
+    <span aria-live="polite" data-page-total="${page.pageCount}">第 ${page.page + 1}/${page.pageCount} 頁・共 ${totalCount} 人</span>
+    <button type="button" class="btn-outline roster-page-btn" data-page-key="${uiPageKey}" data-page-step="1" data-page-count="${page.pageCount}" aria-label="${label}下一頁" ${page.page === page.pageCount - 1 ? "disabled" : ""}>下一頁</button>
+  </nav>`;
+}
+
 function renderRoster() {
   const team = S.teams[S.userTeamId];
   ensureLineup(team); ensureRotation(team); ensureBullpenOrder(team, S.players);
@@ -1566,6 +1589,8 @@ function renderRoster() {
   const showPitchers = rosterPosF === "all" || rosterPosF === "P";
   const showBatters = rosterPosF === "all" || rosterPosF !== "P";
   const filteredBatters = rosterPosF === "all" || rosterPosF === "P" ? batters : batters.filter(p => posFilterGroup(p) === rosterPosF);
+  const pitcherPage = v60RosterPageSlice(pitchers, "rosterPitcherPage");
+  const batterPage = v60RosterPageSlice(filteredBatters, "rosterBatterPage");
   const actionLabel = UI.rosterTab === "1軍" ? "下放2軍" : (UI.rosterTab === "育成" ? "詳細" : "升上1軍");
   const warnings = UI.rosterTab === "1軍" ? lineupRotationWarnings(team) : [];
   app.innerHTML = `
@@ -1626,10 +1651,11 @@ function renderRoster() {
         </select>
         ${sortDirButtonHtml("pitcherSortDir")}
       </div>
+      ${v60RosterPagerHtml(pitcherPage, "rosterPitcherPage", "投手", pitchers.length)}
       <div class="v60-roster-table-wrap"><table class="stattable">
         <thead><tr><th>姓名</th><th>狀況</th><th>年齡</th><th>角色</th><th>先發位置</th><th>球速(km/h)</th><th>控球</th><th>體力</th><th>疲勞</th><th>抗壓</th><th></th></tr></thead>
         <tbody>
-          ${pitchers.map(p => `<tr data-id="${p.id}"><td class="rowlink" data-id="${p.id}">${nameWithDutyTag(p)}</td><td>${conditionTagHtml(p)}</td><td>${p.age}</td><td>${p.role}</td><td>${UI.rosterTab === "1軍" ? pitcherRoleTag(team, p) : "－"}</td><td>${velocityKmh(p.velocity)}</td><td>${p.control}</td><td>${p.stamina}</td><td>${fatigueOf(p) > 70 ? `<b style="color:#c0392b;">${fatigueOf(p)}</b>` : fatigueOf(p)}</td><td>${p.composure}</td><td><button class="movebtn" data-id="${p.id}">${actionLabel}</button></td></tr>`).join("")}
+          ${pitcherPage.items.map(p => `<tr data-id="${p.id}"><td class="rowlink" data-id="${p.id}">${nameWithDutyTag(p)}</td><td>${conditionTagHtml(p)}</td><td>${p.age}</td><td>${p.role}</td><td>${UI.rosterTab === "1軍" ? pitcherRoleTag(team, p) : "－"}</td><td>${velocityKmh(p.velocity)}</td><td>${p.control}</td><td>${p.stamina}</td><td>${fatigueOf(p) > 70 ? `<b style="color:#c0392b;">${fatigueOf(p)}</b>` : fatigueOf(p)}</td><td>${p.composure}</td><td><button class="movebtn" data-id="${p.id}">${actionLabel}</button></td></tr>`).join("")}
         </tbody>
       </table></div>` : ""}
       ${showBatters ? `<div class="divlabel">野手（${filteredBatters.length}）</div>
@@ -1648,27 +1674,36 @@ function renderRoster() {
         </select>
         ${sortDirButtonHtml("batterSortDir")}
       </div>
+      ${v60RosterPagerHtml(batterPage, "rosterBatterPage", "野手", filteredBatters.length)}
       <div class="v60-roster-table-wrap"><table class="stattable">
         <thead><tr><th>姓名</th><th>狀況</th><th>年齡</th><th>守位</th><th>先發</th><th>接觸</th><th>長打</th><th>選球</th><th>觸擊</th><th>速度</th><th>守備%</th><th></th></tr></thead>
         <tbody>
-          ${filteredBatters.map(p => `<tr data-id="${p.id}"><td class="rowlink" data-id="${p.id}">${nameWithDutyTag(p)}</td><td>${conditionTagHtml(p)}</td><td>${p.age}</td><td>${p.positions.map(x => POS_LABEL[x.pos]).join("/")}</td><td>${UI.rosterTab === "1軍" ? batterLineupTag(team, p) : "－"}</td><td>${p.contact}</td><td>${p.power}</td><td>${p.eye}</td><td>${p.bunting || "-"}</td><td>${p.speed}</td><td>${p.fielding}</td><td><button class="movebtn" data-id="${p.id}">${actionLabel}</button></td></tr>`).join("")}
+          ${batterPage.items.map(p => `<tr data-id="${p.id}"><td class="rowlink" data-id="${p.id}">${nameWithDutyTag(p)}</td><td>${conditionTagHtml(p)}</td><td>${p.age}</td><td>${p.positions.map(x => POS_LABEL[x.pos]).join("/")}</td><td>${UI.rosterTab === "1軍" ? batterLineupTag(team, p) : "－"}</td><td>${p.contact}</td><td>${p.power}</td><td>${p.eye}</td><td>${p.bunting || "-"}</td><td>${p.speed}</td><td>${p.fielding}</td><td><button class="movebtn" data-id="${p.id}">${actionLabel}</button></td></tr>`).join("")}
         </tbody>
       </table></div>` : ""}
       <div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>
     </div>`;
   var sortPEl = document.getElementById("sort-pitcher");
-  if (sortPEl) sortPEl.onchange = (e) => { UI.pitcherSort = e.target.value; render(); };
+  if (sortPEl) sortPEl.onchange = (e) => { UI.pitcherSort = e.target.value; UI.rosterPitcherPage = 0; render(); };
   var sortBEl = document.getElementById("sort-batter");
-  if (sortBEl) sortBEl.onchange = (e) => { UI.batterSort = e.target.value; render(); };
+  if (sortBEl) sortBEl.onchange = (e) => { UI.batterSort = e.target.value; UI.rosterBatterPage = 0; render(); };
   wirePosFilterButtons();
   wireSortDirButtons();
+  app.querySelectorAll(".roster-page-btn").forEach(btn => {
+    btn.onclick = () => {
+      const pageKey = btn.dataset.pageKey;
+      const maxPage = Math.max(0, Number(btn.dataset.pageCount) - 1);
+      UI[pageKey] = Math.max(0, Math.min(maxPage, (Number(UI[pageKey]) || 0) + Number(btn.dataset.pageStep || 0)));
+      renderRoster();
+    };
+  });
   /* v54 A2：育成方針下拉 */
   var devPolPitch = document.getElementById("v54-dev-policy-pitcher");
   if (devPolPitch) devPolPitch.onchange = function(e) { team.devPolicyPitcher = e.target.value; UI.flash = "投手育成方針已變更為「" + (e.target.options[e.target.selectedIndex].text) + "」。"; persist(); render(); };
   var devPolBat = document.getElementById("v54-dev-policy-batter");
   if (devPolBat) devPolBat.onchange = function(e) { team.devPolicyBatter = e.target.value; UI.flash = "野手育成方針已變更為「" + (e.target.options[e.target.selectedIndex].text) + "」。"; persist(); render(); };
   app.querySelectorAll(".tab").forEach(btn => {
-    btn.onclick = () => { UI.flash = null; UI.rosterTab = btn.dataset.tab; render(); };
+    btn.onclick = () => { UI.flash = null; UI.rosterTab = btn.dataset.tab; UI.rosterPitcherPage = 0; UI.rosterBatterPage = 0; render(); };
   });
   app.querySelectorAll(".rowlink").forEach(td => {
     td.onclick = () => openPlayerDetail(td.dataset.id);

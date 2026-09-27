@@ -1197,6 +1197,11 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .spring-empty-state{padding:24px 10px!important;text-align:center!important;color:#4A6386!important;}
 .v60-sticky-actions{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom));z-index:30;margin:12px -8px 0;padding:8px 8px calc(8px + env(safe-area-inset-bottom));border:1px solid #B7D3F5;border-radius:12px;background:rgba(234,245,255,.95);box-shadow:0 -5px 18px rgba(20,60,255,.12);backdrop-filter:blur(7px);}
 .v60-sticky-actions button{min-height:48px;}
+.v60-renewal-screen{padding-bottom:calc(126px + env(safe-area-inset-bottom));}
+.v60-renewal-actions{position:fixed;left:50%;bottom:calc(8px + env(safe-area-inset-bottom));z-index:80;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:min(calc(100vw - 32px),488px);padding:8px 10px calc(8px + env(safe-area-inset-bottom));transform:translateX(-50%);border:1px solid #B7D3F5;border-radius:12px;background:rgba(234,245,255,.97);box-shadow:0 -5px 18px rgba(20,60,120,.18);backdrop-filter:blur(9px);}
+.v60-renewal-actions.single{grid-template-columns:1fr;}
+.v60-renewal-actions button{min-width:0;min-height:48px;}
+.v60-renewal-actions button:focus-visible{outline:3px solid #21C9D6;outline-offset:2px;}
 .v60-marketing-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px -8px 0;padding:8px 8px calc(8px + env(safe-area-inset-bottom));}
 .v60-marketing-action-column{min-width:0;padding:6px;border:1px solid #B7D3F5;border-radius:10px;background:rgba(255,255,255,.78);}
 .v60-marketing-action-column .sortselect{width:100%;margin-top:6px;}
@@ -1210,6 +1215,9 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
   .spring-position-tabs .pos-count{font-size:9px;}
   .spring-list-context{font-size:11px;}
   .v60-sticky-actions{margin-left:-4px;margin-right:-4px;padding-left:6px;padding-right:6px;}
+  .v60-renewal-screen{padding-bottom:calc(124px + env(safe-area-inset-bottom));}
+  .v60-renewal-actions{gap:5px;padding:6px 6px calc(7px + env(safe-area-inset-bottom));}
+  .v60-renewal-actions button{padding:8px 3px;font-size:13px;}
   .v60-marketing-actions{margin-left:-4px;margin-right:-4px;padding-left:6px;padding-right:6px;}
   .v60-marketing-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;}
   .v60-marketing-action-column{padding:4px;}
@@ -1236,6 +1244,11 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-preseason-links button:focus-visible,.v60-preseason-finance:focus-visible{outline:3px solid #21C9D6;outline-offset:2px;}
 .v60-roster-table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px;border-radius:4px;}
 .v60-roster-table-wrap .stattable{margin-bottom:0;}
+.v60-roster-pager{display:grid;grid-template-columns:minmax(72px,1fr) auto minmax(72px,1fr);gap:8px;align-items:center;margin:8px 0 16px;padding:7px;border:1px solid #B7D3F5;border-radius:10px;background:#F8FBFF;}
+.v60-roster-pager button{min-height:44px;padding:7px 10px;}
+.v60-roster-pager button:focus-visible{outline:3px solid #21C9D6;outline-offset:2px;}
+.v60-roster-pager button:disabled{opacity:.48;cursor:not-allowed;}
+.v60-roster-pager span{color:#1459B8;font-size:13px;font-weight:800;text-align:center;white-space:nowrap;}
 @media(max-width:520px){
   .v60-preseason-dock{padding:5px 6px 6px;}
   .v60-preseason-finance{gap:2px;padding:5px 3px;}
@@ -1247,6 +1260,9 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
   .v60-preseason-links button{min-height:42px;padding:4px 1px;font-size:11px;}
   .v60-preseason-links button:first-child small{font-size:9px;}
   .v60-roster-table-wrap .stattable{min-width:680px;}
+  .v60-roster-pager{gap:4px;padding:5px 3px;}
+  .v60-roster-pager button{padding:6px 3px;font-size:12px;}
+  .v60-roster-pager span{font-size:11px;}
 }
 @media(max-width:350px){.v60-preseason-links{grid-template-columns:repeat(4,minmax(0,1fr));}}
 
