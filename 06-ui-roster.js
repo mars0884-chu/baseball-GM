@@ -1469,7 +1469,6 @@ function renderStandings() {
   var leagueBhtml = leagueContent("B");
   app.innerHTML = '<div class="wrap">' +
     '<div class="topbar"><div class="eyebrow">' + S.leagueName + '</div><h1>戰績榜</h1></div>' +
-    '<p class="draftnote muted v60-standings-hint">先選聯盟，再選分組戰績、打者排行或投手排行；每個排行獨立一頁，不必一直往下拉。</p>' +
     uiTabs("standings", [
       { key: "leagueA", label: "海風聯盟", html: leagueAhtml },
       { key: "leagueB", label: "山岳聯盟", html: leagueBhtml }

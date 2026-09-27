@@ -81,7 +81,7 @@ if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
   assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
 } else {
   assert((v59SingleFileSource.match(/<script defer src="0[0-6]-[^\"]+\.js\?v=/g) || []).length === 7, "v59 public shell loads the seven ordered modular scripts");
-  assert(v59SingleFileSource.includes("v60-r022-scoutmarket") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r022 public shell uses a fresh cache key without duplicating module source");
+  assert(v59SingleFileSource.includes("v60-r023-finance-deals") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r023 public shell uses a fresh cache key without duplicating module source");
 }
 
 /* ---------- v60-001 視覺恢復候選 ---------- */
@@ -120,7 +120,7 @@ assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceS
 const v60NewsRendererSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderNewsCard"), v60DashboardSource.indexOf("function renderSponsorMissionCard"));
 assert((v60NewsRendererSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60NewsRendererSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60NewsRendererSource.indexOf('v56ContentSummary("news"') < 0 && v60NewsRendererSource.indexOf("icon('news')") < 0, "v60 新聞 renderer 僅保留完整 PNG，不再輸出新聞 SVG");
 assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('v60CompatArtFallbackUrl') >= 0 && v60DashboardSource.indexOf('safeLoading') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准圖片路徑、PNG fallback 與 lazy loading 已接入");
-assert(v60SwSource.indexOf('baseballgm-v60-r022-scoutmarket') >= 0, "r022 Service Worker cache key 已更新");
+assert(v60SwSource.indexOf('baseballgm-v60-r023-finance-deals') >= 0, "r023 Service Worker cache key 已更新");
 assert(v60DashboardSource.includes('v60CompatArtImageAttrs(key, "eager", false)') && v60DashboardSource.includes('window.requestAnimationFrame(kick)') && v60DashboardSource.includes('img.loading = "lazy";\n        img.loading = "eager";') && v60DashboardSource.includes('v60KickRenderedSceneImages(); return r;'), "動態插入場景圖後下一幀觸發載入，確保瀏覽器啟動請求");
 assert(v60DashboardSource.includes('__v60CurrentScreen !== v60LastRenderedScreen') && v60DashboardSource.includes('window.scrollTo(0, 0)'), "切換新畫面先回到頁首，避免沿用舊長頁捲動位置");
 
@@ -134,7 +134,7 @@ assert(v60FinanceSource.indexOf("JPEG") < 0 && v60FinanceSource.indexOf("v60Comp
 assert(v60RosterSource.indexOf("名人堂摘要") >= 0 && v60RosterSource.indexOf("v60-state-line") >= 0, "v60-002 名人堂保留可見狀態摘要");
 assert(v60StyleSource.indexOf(".v60-visual-metric-rail") >= 0 && v60StyleSource.indexOf("@media(max-width:520px)") >= 0, "v60-002 指標列具備手機 responsive layout");
 if (v60PublicSource) {
-assert(v60PublicSource.indexOf("v60-r022") >= 0 && v60PublicSource.indexOf("v60-r022-scoutmarket") >= 0 && v60PublicSource.indexOf(".jpg") >= 0 && v60PublicSource.indexOf("__v60PublicArtFallbackPaths") >= 0 && v60PublicSource.indexOf(".png") >= 0, "r022 public shell 保留核准圖片路徑與 PNG fallback");
+assert(v60PublicSource.indexOf("v60-r023") >= 0 && v60PublicSource.indexOf("v60-r023-finance-deals") >= 0 && v60PublicSource.indexOf(".jpg") >= 0 && v60PublicSource.indexOf("__v60PublicArtFallbackPaths") >= 0 && v60PublicSource.indexOf(".png") >= 0, "r023 public shell 保留核准圖片路徑與 PNG fallback");
 } else {
   console.log("v60-002 public shell check: NOT RUN（public_deployment 不屬於固定 20 檔 Modular ZIP，乾淨解壓時不存在）");
 }
@@ -4399,6 +4399,17 @@ const v60NegotiationScoutRandomCalls = g(`(function(){
   return calls;
 })()`);
 assert(v60NegotiationScoutRandomCalls === 0, "v60-012 談判球探天花板改用確定性霧化，不消耗模擬共用亂數");
+
+/* v60-013：財務合約按決策類型分頁，縮短同屏比較長度。 */
+console.log("\n--- v60-013 財務合約比較文字減量 ---");
+const v60FinanceDealsSource = v60FinanceSource.slice(v60FinanceSource.indexOf("const renderDealGroup = kind =>"), v60FinanceSource.indexOf("const finReportPanel"));
+assert(v60FinanceSource.includes("const renderDealGroup = kind =>") && v60FinanceDealsSource.includes('uiTabs("financeDeals"'), "v60-013 轉播與贊助使用清楚的次層工作頁籤");
+assert(v60FinanceDealsSource.includes('key: "broadcast", label: "轉播合約"') && v60FinanceDealsSource.includes('key: "sponsor", label: "贊助合約"'), "v60-013 兩種合約入口均可辨識");
+assert(v60FinanceDealsSource.includes("team.finance.broadcastOffers") && v60FinanceDealsSource.includes("team.finance.sponsorOffers") && v60FinanceDealsSource.includes("dealScenarioTable(o)"), "v60-013 六種方案、條款與三情境試算仍完整輸出");
+assert(v60FinanceDealsSource.includes('class="btn-secondary deal-btn v60-deal-sign"') && v60FinanceDealsSource.includes('aria-label="${curKey === o.key ? `本季已簽${o.label}` : `簽下${o.label}`}"') && v60FinanceDealsSource.includes('>${curKey === o.key ? "已簽" : "簽約"}</button>') && v60FinanceSource.includes("chooseDeal(btn.dataset.kind"), "v60-013 簽約按鈕文字精簡但仍有方案專屬無障礙名稱並沿用原交易流程");
+assert(v60StyleSource.includes(".v60-deal-terms-key") && v60StyleSource.includes(".v60-deal-sign{flex:0 0 auto;width:auto") && v60StyleSource.includes("min-height:44px;margin:0"), "v60-013 條款欄名共用且手機簽約按鈕不滿版並保留觸控高度");
+const v60StandingsSource = v60RosterSource.slice(v60RosterSource.indexOf("function renderStandings"), v60RosterSource.indexOf("// v25排序全面升級"));
+assert(v60StandingsSource.includes('label: "分組戰績"') && v60StandingsSource.includes('label: "打者排行"') && v60StandingsSource.includes('label: "投手排行"') && !v60StandingsSource.includes("先選聯盟，再選分組戰績"), "v60-013 戰績榜保留明確分頁並移除重複操作說明");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

@@ -2702,26 +2702,35 @@ function renderFinance() {
         <input id="in-custom-ticket" type="number" min="${TICKET_PRICE_FLOOR}" max="${team.finance.ticketPriceCap}" placeholder="輸入金額，AI會估算進場成數" ${canChangeTicket ? "" : "disabled"} />
       </label>
       ${canChangeTicket ? `<div class="btnrow"><button id="btn-custom-ticket" class="btn-secondary">套用自訂票價</button></div>` : ""}`;
-  const finDealsPanel = `
-      <div class="v60-deal-scenario-key" role="group" aria-label="試算情境：45%與55%勝率未進季後賽；65%勝率進季後賽"><b>情境</b><span>45%・無季後</span><span>55%・無季後</span><span>65%・含季後</span></div>
-      ${["broadcast", "sponsor"].map(kind => {
-        // v29：轉播/贊助方案卡——保證金＋浮動條款＋三情境試算全部攤開，看懂再簽
-        const offers = kind === "broadcast" ? team.finance.broadcastOffers : team.finance.sponsorOffers;
-        const cur = kind === "broadcast" ? team.finance.broadcastDeal : team.finance.sponsorDeal;
-        const curKey = cur && typeof cur === "object" ? cur.key : null;
-        return `
-      <div class="divlabel">${kind === "broadcast" ? "轉播" : "贊助"}合約</div>
-       <p class="v60-state-line">${canChangeTicket ? "春訓可簽；未簽採預設。" : `本季${kind === "broadcast" ? "轉播" : "贊助"}已鎖定。`}</p>
+  const renderDealGroup = kind => {
+    // 轉播與贊助分開瀏覽，方案、三種預估情境與簽約操作仍完整保留。
+    const offers = kind === "broadcast" ? team.finance.broadcastOffers : team.finance.sponsorOffers;
+    const cur = kind === "broadcast" ? team.finance.broadcastDeal : team.finance.sponsorDeal;
+    const curKey = cur && typeof cur === "object" ? cur.key : null;
+    const label = kind === "broadcast" ? "轉播" : "贊助";
+    return `
+      <div class="divlabel">${label}合約</div>
+      <p class="v60-state-line">${canChangeTicket ? "春訓可簽；未簽採預設。" : `本季${label}已鎖定。`}</p>
+      <div class="v60-deal-terms-key" role="group" aria-label="合約條款欄位"><span>保證金</span><span>戰績分潤</span><span>季後賽</span></div>
       ${offers.map(o => `
-        <div class="card dealcard ${curKey === o.key ? "dealchosen" : ""}">
-          <div class="eyebrow">${o.label}${curKey === o.key ? "（本季已簽）" : ""}</div>
-           ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["保證金", formatMoney(o.base)], ["戰績分潤", o.winBonusPer10 ? `每±10% ${formatMoney(o.winBonusPer10)}` : "無"], ["季後賽", o.playoffBonus ? formatMoney(o.playoffBonus) : "無"]], `${o.label}條款摘要`) : `<p class="sub dark" style="margin:4px 0;">${o.desc}</p>`}
-          <div class="scoreboard" style="margin:6px 0;">
-            ${dealScenarioTable(o)}
+        <div class="card dealcard v60-deal-compact ${curKey === o.key ? "dealchosen" : ""}">
+          <div class="v60-deal-compact-head"><div class="eyebrow">${o.label}${curKey === o.key ? "（本季已簽）" : ""}</div>
+            ${canChangeTicket ? `<button class="btn-secondary deal-btn v60-deal-sign" data-kind="${kind}" data-id="${o.id}" aria-label="${curKey === o.key ? `本季已簽${o.label}` : `簽下${o.label}`}">${curKey === o.key ? "已簽" : "簽約"}</button>` : ""}
           </div>
-          ${canChangeTicket ? `<div class="btnrow"><button class="btn-secondary deal-btn" data-kind="${kind}" data-id="${o.id}">${curKey === o.key ? "已簽此方案" : `簽下${o.label}`}</button></div>` : ""}
+          <div class="v60-deal-terms" role="list" aria-label="${o.label}條款">
+            <span role="listitem" aria-label="保證金 ${formatMoney(o.base)}"><strong>${formatMoney(o.base)}</strong></span>
+            <span role="listitem" aria-label="戰績分潤 ${o.winBonusPer10 ? `每勝率±10% ${formatMoney(o.winBonusPer10)}` : "無"}"><strong>${o.winBonusPer10 ? `每±10% ${formatMoney(o.winBonusPer10)}` : "無"}</strong></span>
+            <span role="listitem" aria-label="季後賽加碼 ${o.playoffBonus ? formatMoney(o.playoffBonus) : "無"}"><strong>${o.playoffBonus ? formatMoney(o.playoffBonus) : "無"}</strong></span>
+          </div>
+          ${dealScenarioTable(o)}
         </div>`).join("")}`;
-      }).join("")}`;
+  };
+  const finDealsPanel = `
+      <div class="v60-deal-scenario-key" role="group" aria-label="試算情境：45%與55%勝率未進季後賽；65%勝率進季後賽"><span>45%・無季後</span><span>55%・無季後</span><span>65%・含季後</span></div>
+      ${uiTabs("financeDeals", [
+        { key: "broadcast", label: "轉播合約", html: renderDealGroup("broadcast") },
+        { key: "sponsor", label: "贊助合約", html: renderDealGroup("sponsor") }
+      ])}`;
   const finReportPanel = `
       ${report ? `
       <div class="divlabel">上季收支報告（第${report.year}年）</div>
