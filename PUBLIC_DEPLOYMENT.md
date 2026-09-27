@@ -10,7 +10,7 @@
 - 驗證：`node test_regression.js` 1,780 通過／0 失敗；`node smoke_multiyear.js` 15 年＋全畫面渲染 PASS；`node smoke_puregm.js` 純 GM 15 年 PASS；三支相關 JS `node --check` 與 `git diff --check` PASS。Regression 以 11 人 fixture 確認每頁 8＋3 人且翻頁更換列；呈現狀態留在暫存 UI，不進 Save。
 - 隔離瀏覽器以實際 renderer 檢查 390px、320px：頁面寬度皆未超出 viewport；手機數據表限於表格容器水平捲動；分頁放在表格前且按鈕可見，320px 實際按下一頁由 P1/P2 換為 P9/P10。名單區下方既有固定返回列不再遮住翻頁控制。
 - 續約 renderer 以 320px、12 人待處理狀態實際呈現常駐規則與固定操作列（兩個 48px 按鈕）；清空待辦後實際呈現單一「前往選秀會」按鈕。測試使用隔離瀏覽器，不代表 Mars 真機驗證。
-- GitHub Pages r025 公開來源仍待推送後重新查驗；本機瀏覽器證據不等於公開部署或 Mars 視覺接受。
+- 2026-09-27，r025 程式提交 `da7f55e` 已推送 `main`；公開 Pages 首頁、名單模組、財務模組、CSS 與 Service Worker 均回應 HTTP 200，並確認回傳 r025 cache key、每頁 8 人 renderer、續約摘要／固定操作列及 r025 SW cache key。這是公開靜態來源部署核驗，不等於公開瀏覽器互動或 Mars 真機／視覺接受。
 
 ## r024：先發管理資訊精簡（《模擬職棒3》內容結構參考）
 
