@@ -1327,6 +1327,23 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-lineup-quickread{display:flex;flex-wrap:wrap;gap:5px 14px;align-items:center;margin:4px 0 10px;padding:8px 10px;border:1px solid #B7D3F5;border-radius:10px;background:#F8FBFF;color:#294967;font-size:14px;line-height:1.35;}
 .v60-lineup-quickread span{white-space:nowrap;}
 .v60-lineup-quickread b{color:#1459B8;}
+.v60-lineup-mobile{display:none;}
+.v60-lineup-mobile-legend,.v60-lineup-mobile-metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;}
+.v60-lineup-mobile-legend{margin:6px 0;padding:6px 8px;border-radius:8px;background:#EAF2FC;color:#36577F;font-size:11px;font-weight:800;text-align:center;}
+.v60-lineup-mobile-player{min-width:0;margin:0 0 8px;padding:9px;border:1px solid #B7D3F5;border-radius:11px;background:#F8FBFF;box-shadow:0 2px 6px rgba(20,60,120,.06);}
+.v60-lineup-mobile-head{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;margin-bottom:8px;padding-bottom:7px;border-bottom:1px solid #D7E6F7;}
+.v60-lineup-mobile-identity{display:flex;align-items:center;gap:7px;min-width:0;}
+.v60-lineup-mobile-identity>span{display:grid;place-items:center;flex:none;width:27px;height:27px;border-radius:50%;background:#143CFF;color:#FFF;font-size:12px;font-weight:900;}
+.v60-lineup-mobile-identity>strong{overflow-wrap:anywhere;color:#17233B;font-size:16px;line-height:1.25;}
+.v60-lineup-mobile-head select{width:118px;min-width:0;min-height:44px;padding:5px;border:1px solid #9BC8F5;border-radius:8px;background:#FFF;color:#17233B;font-size:13px;}
+.v60-lineup-mobile-position{color:#1459B8;font-size:14px;font-weight:800;white-space:nowrap;}
+.v60-lineup-mobile-metric{display:grid;justify-items:center;gap:4px;min-width:0;color:#17385E;}
+.v60-lineup-mobile-metric>span{font-size:13px;font-weight:900;line-height:1.1;white-space:nowrap;}
+.v60-lineup-mobile-metric>i{display:block;width:100%;height:6px;overflow:hidden;border-radius:5px;background:#DCE8F6;}
+.v60-lineup-mobile-metric>i>b{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#2455D8,#21C9D6);}
+.v60-lineup-mobile-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:8px;}
+.v60-lineup-mobile-actions button{min-width:46px;min-height:44px;padding:6px 8px;}
+.v60-lineup-mobile-actions button:last-child{min-width:64px;}
 @media(max-width:520px){
   .v60-campaign-row{grid-template-columns:minmax(78px,1.55fr) repeat(3,minmax(31px,.58fr)) 54px;gap:3px;padding:8px 5px;}
   .v60-campaign-grid.is-locked .v60-campaign-row{grid-template-columns:minmax(78px,1.55fr) repeat(3,minmax(31px,.58fr));}
@@ -1351,7 +1368,16 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
   .v60-roster-swap-player{padding:9px;}
   .v60-roster-swap-player b{font-size:16px;}
   .v60-lineup-quickread{gap:5px 10px;padding:7px 8px;font-size:13px;}
-  .v60-lineup-table-wrap .stattable{min-width:520px;margin-bottom:0;}
+  .v60-lineup-table-wrap{display:none;}
+  .v60-lineup-mobile{display:block;margin:0 0 10px;}
+  .v60-lineup-mobile-legend,.v60-lineup-mobile-metrics{gap:3px;}
+  .v60-lineup-mobile-legend{font-size:10px;}
+  .v60-lineup-mobile-player{padding:8px;}
+  .v60-lineup-mobile-head select{width:108px;min-height:44px;font-size:12px;}
+  .v60-lineup-mobile-metric>span{font-size:12px;}
+  .v60-lineup-mobile-actions{gap:4px;}
+  .v60-lineup-mobile-actions button{min-width:44px;min-height:44px;padding:6px;}
+  .v60-lineup-mobile-actions button:last-child{min-width:58px;}
 }
 @media(max-width:350px){
   .v60-campaign-row{grid-template-columns:minmax(68px,1.4fr) repeat(3,minmax(29px,.58fr)) 50px;gap:2px;padding-right:4px;padding-left:4px;}
@@ -1360,6 +1386,12 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
   .v60-campaign-name>span{font-size:9px;}
   .v60-campaign-metric>span{font-size:11px;}
   .v60-campaign-row button{font-size:11px;}
+  .v60-lineup-mobile-legend,.v60-lineup-mobile-metrics{gap:2px;}
+  .v60-lineup-mobile-legend{padding-right:5px;padding-left:5px;font-size:9px;}
+  .v60-lineup-mobile-player{padding:7px;}
+  .v60-lineup-mobile-head select{width:96px;min-height:44px;font-size:11px;}
+  .v60-lineup-mobile-identity>strong{font-size:15px;}
+  .v60-lineup-mobile-metric>span{font-size:11px;}
 }
 
 /* v60-r028 春訓成果：手機以逐人變化卡與增幅條替代表格窄欄；桌面保留表格。 */

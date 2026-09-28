@@ -261,6 +261,73 @@ function renderLineup() {
     const player = S.players[slot.playerId];
     return player && slot.position !== "DH" && !player.positions.some(x => x.pos === slot.position);
   });
+  const lineupMobilePage = v60RosterPageSlice(team.lineup, "lineupPage", 3);
+  const renderLineupMobilePlayer = (slot, i) => {
+    const p = S.players[slot.playerId];
+    if (!p) return "";
+    const knownPositions = new Set(p.positions.map(x => x.pos));
+    const allOptions = LINEUP_FIELD_POSITIONS.concat(["DH"]);
+    const moved = slot.position !== "DH" && !knownPositions.has(slot.position);
+    const defense = effectivePositionFielding(p, slot.position);
+    const metrics = [
+      ["接觸", p.contact], ["長打", p.power], ["選球", p.eye],
+      ["速度", p.speed], ["守備", defense], ["抗壓", p.composure]
+    ];
+    return `<article class="v60-lineup-mobile-player" aria-label="第 ${i + 1} 棒 ${p.name}">
+      <div class="v60-lineup-mobile-head">
+        <div class="v60-lineup-mobile-identity"><span>${i + 1}</span><strong>${p.name}</strong></div>
+        ${manualOk41 ? `<select class="lineup-pos-select" data-idx="${i}" aria-label="第 ${i + 1} 棒守位">${allOptions.map(pos => `<option value="${pos}" ${pos === slot.position ? "selected" : ""}>${POS_LABEL[pos]}${(pos !== "DH" && !knownPositions.has(pos)) ? "（移防）" : ""}</option>`).join("")}</select>` : `<span class="v60-lineup-mobile-position">${POS_LABEL[slot.position]}${moved ? "・移防" : ""}</span>`}
+      </div>
+      <div class="v60-lineup-mobile-metrics" role="group" aria-label="${p.name}能力數值">${metrics.map(([label, value]) => {
+        const amount = Math.max(0, Math.min(100, Number(value) || 0));
+        const display = label === "守備" && moved ? `${value}*` : String(value);
+        return `<div class="v60-lineup-mobile-metric" aria-label="${label} ${display}"><span>${display}</span><i aria-hidden="true"><b style="width:${amount}%"></b></i></div>`;
+      }).join("")}</div>
+      ${manualOk41 ? `<div class="v60-lineup-mobile-actions">
+        <button type="button" class="movebtn lineup-order-btn" data-idx="${i}" data-dir="-1" aria-label="第 ${i + 1} 棒上移" title="棒次上移" ${i === 0 ? "disabled" : ""}>▲</button>
+        <button type="button" class="movebtn lineup-order-btn" data-idx="${i}" data-dir="1" aria-label="第 ${i + 1} 棒下移" title="棒次下移" ${i === team.lineup.length - 1 ? "disabled" : ""}>▼</button>
+        <button type="button" class="movebtn lineup-swap-btn" data-idx="${i}" aria-label="更換第 ${i + 1} 棒球員">更換</button>
+      </div>` : ""}
+    </article>`;
+  };
+  const lineupContentHtml = `
+      <div class="v60-lineup-table-wrap" role="region" tabindex="0" aria-label="先發棒次與能力數據，可左右滑動檢視">
+      <table class="stattable">
+        <thead><tr><th>棒次</th><th>姓名</th><th>守位</th><th>接觸</th><th>長打</th><th>選球</th><th>速度</th><th>守備%</th><th>抗壓</th><th></th></tr></thead>
+        <tbody>
+          ${team.lineup.map((slot, i) => {
+            const p = S.players[slot.playerId];
+            if (!p) return "";
+            const knownPositions = new Set(p.positions.map(x => x.pos));
+            const allOptions = LINEUP_FIELD_POSITIONS.concat(["DH"]);
+            const effRating = effectivePositionFielding(p, slot.position);
+            return `<tr>
+              <td>${i + 1}</td>
+              <td>${p.name}</td>
+              <td>
+                ${manualOk41 ? `<select class="lineup-pos-select" data-idx="${i}">
+                  ${allOptions.map(pos => `<option value="${pos}" ${pos === slot.position ? "selected" : ""}>${POS_LABEL[pos]}${(pos !== "DH" && !knownPositions.has(pos)) ? "（移防）" : ""}</option>`).join("")}
+                </select>` : `${POS_LABEL[slot.position]}${(slot.position !== "DH" && !knownPositions.has(slot.position)) ? "（移防）" : ""}`}
+              </td>
+              <td>${p.contact}</td><td>${p.power}</td><td>${p.eye}</td><td>${p.speed}</td><td>${effRating}${(slot.position !== "DH" && !knownPositions.has(slot.position)) ? "*" : ""}</td><td>${p.composure}</td>
+              ${manualOk41 ? `<td class="lineup-actions">
+                <button class="movebtn lineup-order-btn" data-idx="${i}" data-dir="-1" ${i === 0 ? "disabled" : ""} title="棒次上移">▲</button>
+                <button class="movebtn lineup-order-btn" data-idx="${i}" data-dir="1" ${i === team.lineup.length - 1 ? "disabled" : ""} title="棒次下移">▼</button>
+                <button class="movebtn lineup-swap-btn" data-idx="${i}">更換</button>
+              </td>` : `<td class="lineup-actions"><span class="muted">教練調度</span></td>`}
+            </tr>`;
+          }).join("")}
+        </tbody>
+      </table>
+      </div>
+      <section class="v60-lineup-mobile" aria-label="先發能力與棒次">
+        ${v60RosterPagerHtml(lineupMobilePage, "lineupPage", "先發", team.lineup.length)}
+        <div class="v60-lineup-mobile-legend" role="group" aria-label="下列數字依序為接觸、長打、選球、速度、守備與抗壓，能力條為百分制">
+          <span>接觸</span><span>長打</span><span>選球</span><span>速度</span><span>守備</span><span>抗壓</span>
+        </div>
+        <div class="v60-lineup-mobile-players">${lineupMobilePage.items.map((slot, pageIndex) => renderLineupMobilePlayer(slot, lineupMobilePage.page * lineupMobilePage.pageSize + pageIndex)).join("")}</div>
+      </section>
+      ${lineupHasOutOfPosition ? `<p class="draftnote muted">＊守備%星號代表移防，數值已扣除守位落差。</p>` : ""}`;
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${team.name}</div><h1>先發棒次與守位</h1></div>
@@ -269,6 +336,7 @@ function renderLineup() {
         <span><b>9人</b>・8守位＋DH</span><span><b>棒次</b>・前棒打席較多</span><span><b>守位</b>・先發不重複</span><span><b>移防</b>・守備依落差下降</span>
       </div>
       ${issues.length > 0 ? `<div class="card issuecard"><div class="eyebrow">打線守位提醒</div><ul class="issuelist">${issues.map(i => `<li>${i}</li>`).join("")}</ul></div>` : ""}
+      ${lineupContentHtml}
       ${(() => {
         /* v40⑤：打線交給教練——戰術方針＋輪休策略（預設教練排線；GM可切回手排）。
            教練模式下每天開打前依方針重排打線並指派板凳專員；下方棒次表在教練模式為「今日教練排陣預覽」。 */
@@ -320,36 +388,6 @@ function renderLineup() {
           <p class="draftnote muted">${manualOk ? "手排只維持當日，隔日由教練重排。" : "純GM須接管後才能手排。"}</p>` : ""}
         </div>${renderCaptainProposalCard(team)}`;
       })()}
-      <div class="v60-lineup-table-wrap" role="region" tabindex="0" aria-label="先發棒次與能力數據，可左右滑動檢視">
-      <table class="stattable">
-        <thead><tr><th>棒次</th><th>姓名</th><th>守位</th><th>接觸</th><th>長打</th><th>選球</th><th>速度</th><th>守備%</th><th>抗壓</th><th></th></tr></thead>
-        <tbody>
-          ${team.lineup.map((slot, i) => {
-            const p = S.players[slot.playerId];
-            if (!p) return "";
-            const knownPositions = new Set(p.positions.map(x => x.pos));
-            const allOptions = LINEUP_FIELD_POSITIONS.concat(["DH"]);
-            const effRating = effectivePositionFielding(p, slot.position);
-            return `<tr>
-              <td>${i + 1}</td>
-              <td>${p.name}</td>
-              <td>
-                ${manualOk41 ? `<select class="lineup-pos-select" data-idx="${i}">
-                  ${allOptions.map(pos => `<option value="${pos}" ${pos === slot.position ? "selected" : ""}>${POS_LABEL[pos]}${(pos !== "DH" && !knownPositions.has(pos)) ? "（移防）" : ""}</option>`).join("")}
-                </select>` : `${POS_LABEL[slot.position]}${(slot.position !== "DH" && !knownPositions.has(slot.position)) ? "（移防）" : ""}`}
-              </td>
-              <td>${p.contact}</td><td>${p.power}</td><td>${p.eye}</td><td>${p.speed}</td><td>${effRating}${(slot.position !== "DH" && !knownPositions.has(slot.position)) ? "*" : ""}</td><td>${p.composure}</td>
-              ${manualOk41 ? `<td class="lineup-actions">
-                <button class="movebtn lineup-order-btn" data-idx="${i}" data-dir="-1" ${i === 0 ? "disabled" : ""} title="棒次上移">▲</button>
-                <button class="movebtn lineup-order-btn" data-idx="${i}" data-dir="1" ${i === team.lineup.length - 1 ? "disabled" : ""} title="棒次下移">▼</button>
-                <button class="movebtn lineup-swap-btn" data-idx="${i}">更換</button>
-              </td>` : `<td class="lineup-actions"><span class="muted">教練調度</span></td>`}
-            </tr>`;
-          }).join("")}
-        </tbody>
-      </table>
-      </div>
-      ${lineupHasOutOfPosition ? `<p class="draftnote muted">＊守備%星號代表移防，數值已扣除守位落差。</p>` : ""}
       ${renderBenchRolesSection(team)}
       ${picking !== null && picking !== undefined ? `
       <div class="card">
@@ -425,6 +463,7 @@ function renderLineup() {
   });
   document.getElementById("btn-back").onclick = () => { UI.lineupPicker = null; UI.screen = "dashboard"; render(); };
   wireRosterNav();
+  wireV60RosterPager();
 }
 
 /* ---------- 投手輪值管理 ---------- */

@@ -81,7 +81,7 @@ if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
   assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
 } else {
   assert((v59SingleFileSource.match(/<script defer src="0[0-6]-[^\"]+\.js\?v=/g) || []).length === 7, "v59 public shell loads the seven ordered modular scripts");
-  assert(v59SingleFileSource.includes("v60-r029-marketing-matrix") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r029 public shell uses a fresh cache key without duplicating module source");
+  assert(v59SingleFileSource.includes("v60-r030-lineup-paged-cards") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r030 public shell uses a fresh cache key without duplicating module source");
 }
 
 /* ---------- v60-001 視覺恢復候選 ---------- */
@@ -120,7 +120,7 @@ assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceS
 const v60NewsRendererSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderNewsCard"), v60DashboardSource.indexOf("function renderSponsorMissionCard"));
 assert((v60NewsRendererSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60NewsRendererSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60NewsRendererSource.indexOf('v56ContentSummary("news"') < 0 && v60NewsRendererSource.indexOf("icon('news')") < 0, "v60 新聞 renderer 僅保留完整 PNG，不再輸出新聞 SVG");
 assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('v60CompatArtFallbackUrl') >= 0 && v60DashboardSource.indexOf('safeLoading') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准圖片路徑、PNG fallback 與 lazy loading 已接入");
-assert(v60SwSource.indexOf('baseballgm-v60-r029-marketing-matrix') >= 0, "r029 Service Worker cache key 已更新");
+assert(v60SwSource.indexOf('baseballgm-v60-r030-lineup-paged-cards') >= 0, "r030 Service Worker cache key 已更新");
 assert(v60DashboardSource.includes('v60CompatArtImageAttrs(key, "eager", false)') && v60DashboardSource.includes('window.requestAnimationFrame(kick)') && v60DashboardSource.includes('img.loading = "lazy";\n        img.loading = "eager";') && v60DashboardSource.includes('v60KickRenderedSceneImages(); return r;'), "動態插入場景圖後下一幀觸發載入，確保瀏覽器啟動請求");
 assert(v60DashboardSource.includes('__v60CurrentScreen !== v60LastRenderedScreen') && v60DashboardSource.includes('window.scrollTo(0, 0)'), "切換新畫面先回到頁首，避免沿用舊長頁捲動位置");
 
@@ -4445,6 +4445,34 @@ __v60RosterFirstTable=app.innerHTML.slice(__v60RosterTableStart,__v60RosterTable
 var __v60RosterPaginationWorks=__v60RosterPageOneIds.length===8&&__v60RosterPageTwoIds.length===3&&__v60RosterPageOneIds[0]!==__v60RosterPageTwoIds[0]&&app.innerHTML.includes('第 2/2 頁・共 11 人');
 S.players=__v60RosterSavedPlayers;__v60RosterTeam.roster1=__v60RosterSavedIds;__v60RosterTeam.lineup=__v60RosterSavedLineup;__v60RosterTeam.rotation=__v60RosterSavedRotation;__v60RosterTeam.bullpenOrder=JSON.parse(__v60RosterSavedBullpen);UI=JSON.parse(__v60RosterSavedUI);app.innerHTML=__v60RosterSavedHtml;`);
 assert(g("__v60RosterPitcherSeed && __v60RosterBatterSeed && __v60RosterHasPageNav && __v60RosterPaginationWorks"), "v60-014 renderer以11人測試名單輸出8+3人、頁碼正確且頁面內容確實切換");
+
+/* v60-020：先發棒次手機卡片化，保留能力、移防標記與手排操作。 */
+console.log("\n--- v60-020 先發棒次手機分頁卡片與文字減量 ---");
+const v60LineupSource = v60RosterSource.slice(v60RosterSource.indexOf("function renderLineup()"), v60RosterSource.indexOf("/* ---------- 投手輪值管理 ---------- */"));
+assert(v60LineupSource.includes('v60RosterPageSlice(team.lineup, "lineupPage", 3)') && v60LineupSource.includes('v60RosterPagerHtml(lineupMobilePage, "lineupPage", "先發", team.lineup.length)') && v60LineupSource.includes("lineupMobilePage.items.map"), "v60-020 手機先發每頁3人且分頁只呈現當頁球員");
+assert(v60LineupSource.includes('"接觸", p.contact') && v60LineupSource.includes('"長打", p.power') && v60LineupSource.includes('"選球", p.eye') && v60LineupSource.includes('"速度", p.speed') && v60LineupSource.includes('"守備", defense') && v60LineupSource.includes('"抗壓", p.composure') && v60LineupSource.includes('`${value}*`'), "v60-020 六項精確能力、視覺量尺與移防扣分星號均保留");
+assert(v60LineupSource.includes('class="lineup-pos-select"') && v60LineupSource.includes('class="movebtn lineup-order-btn"') && v60LineupSource.includes('class="movebtn lineup-swap-btn"') && v60LineupSource.includes('aria-label="第 ${i + 1} 棒上移"') && v60LineupSource.includes("wireV60RosterPager();"), "v60-020 手機守位、棒次與換人操作接回既有事件流程");
+assert(v60LineupSource.indexOf("${lineupContentHtml}") < v60LineupSource.indexOf('排線權責（v41）'), "v60-020 先發資料提前於教練策略區，減少抵達名單前的縱向捲動");
+assert(v60LineupSource.includes('<table class="stattable">') && v60LineupSource.includes('class="v60-lineup-mobile"') && v60StyleSource.includes(".v60-lineup-mobile{display:none;}") && v60StyleSource.includes(".v60-lineup-table-wrap{display:none;}") && v60StyleSource.includes(".v60-lineup-mobile{display:block;"), "v60-020 桌面保留完整表格、手機改用分頁卡片不顯示橫向寬表");
+g(`var __v60LineupInitialS=JSON.stringify(S),__v60LineupInitialUI=JSON.stringify(UI),__v60LineupInitialHtml=app.innerHTML;
+var __v60LineupTeam=S.teams[S.userTeamId];S.gameMode='gm_coach';__v60LineupTeam.lineupMode='manual';
+if(__v60LineupTeam.lineup.length<7) __v60LineupTeam.lineup=autoLineup(__v60LineupTeam,S.players);
+ensureLineup(__v60LineupTeam);ensureTactics(__v60LineupTeam);if(typeof ensureV41==='function')ensureV41();
+var __v60LineupSlot=__v60LineupTeam.lineup[0],__v60LineupPlayer=S.players[__v60LineupSlot.playerId],__v60LineupAlt=LINEUP_FIELD_POSITIONS.find(pos=>pos!==__v60LineupSlot.position);
+if(__v60LineupAlt)__v60LineupPlayer.positions=[{...__v60LineupPlayer.positions[0],pos:__v60LineupAlt}];
+UI.lineupPicker=null;UI.lineupPage=0;var __v60LineupBeforeRender=JSON.stringify(S);renderLineup();
+var __v60LineupFirstHtml=app.innerHTML,__v60LineupCardCount=(__v60LineupFirstHtml.match(/<article class="v60-lineup-mobile-player"/g)||[]).length;
+var __v60LineupMetrics=(__v60LineupFirstHtml.match(/class="v60-lineup-mobile-metric"/g)||[]).length;
+var __v60LineupTableRows=((__v60LineupFirstHtml.match(/<tbody>[\\s\\S]*?<\\/tbody>/)||[''])[0].match(/<tr>/g)||[]).length;
+var __v60LineupFirstName=(__v60LineupFirstHtml.match(/class="v60-lineup-mobile-identity"><span>1<\\/span><strong>([^<]+)/)||[])[1]||'';
+var __v60LineupHasA11yAndManual=['aria-label="接觸 ', 'aria-label="長打 ', 'aria-label="選球 ', 'aria-label="速度 ', 'aria-label="守備 ', 'aria-label="抗壓 ', 'lineup-pos-select', 'lineup-order-btn', 'lineup-swap-btn'].every(x=>__v60LineupFirstHtml.includes(x));
+var __v60LineupMovedMarked=!!__v60LineupAlt&&__v60LineupFirstHtml.includes('守備 ' + effectivePositionFielding(__v60LineupPlayer,__v60LineupSlot.position) + '*');
+var __v60LineupPagerAndState=__v60LineupFirstHtml.includes('第 1/3 頁・共 ' + __v60LineupTeam.lineup.length + ' 人')&&JSON.stringify(S)===__v60LineupBeforeRender;
+UI.lineupPage=1;renderLineup();var __v60LineupSecondHtml=app.innerHTML;
+var __v60LineupSecondName=(__v60LineupSecondHtml.match(/class="v60-lineup-mobile-identity"><span>4<\\/span><strong>([^<]+)/)||[])[1]||'';
+var __v60LineupSecondWorks=(__v60LineupSecondHtml.match(/<article class="v60-lineup-mobile-player"/g)||[]).length===3&&__v60LineupSecondHtml.includes('第 2/3 頁')&&__v60LineupSecondName!==__v60LineupFirstName&&JSON.stringify(S)===__v60LineupBeforeRender;
+S=JSON.parse(__v60LineupInitialS);UI=JSON.parse(__v60LineupInitialUI);app.innerHTML=__v60LineupInitialHtml;`);
+assert(g("__v60LineupTeam.lineup.length>=7 && __v60LineupCardCount===3 && __v60LineupMetrics===18 && __v60LineupTableRows===__v60LineupTeam.lineup.length && __v60LineupHasA11yAndManual && __v60LineupMovedMarked && __v60LineupPagerAndState && __v60LineupSecondWorks"), "v60-020 實際renderer保留6項數值與全表資料、每頁3人，翻頁更換球員且不修改遊戲存檔");
 
 /* v60-015：續約決策常駐可見，長名單時主要流程按鈕固定可操作。 */
 console.log("\n--- v60-015 續約決策文字與常駐操作列 ---");
