@@ -8,10 +8,10 @@
 - 本輪延續處理已確認的高負擔管理頁：球場設施 12 種分 3 頁、每頁 4 種；訓練基地按 6 個專項切換，只呈現該類項目。行銷企劃 7 案分 3＋3＋1 頁；財務總覽分「營運／球迷／收支」。球員名單分投手／野手、每頁 8 人，野手仍可依捕手／內野／外野篩選。
 - 球員詳情曾在窄手機量到 2,295px 長頁。自家現役球員改按「能力／成績／調度／人事」分區；非自家球員使用「能力／成績」。返回名單仍固定在操作列；能力、合約、狀況、傷病史、完整成績、隊長／特訓、升降級、轉任、釋出與確認取消入口均保留，頁籤只變更呈現，不改 Save 或模擬資料。
 - 隔離瀏覽器以新 Service Worker cache key `v60-r035-player-management-tabs` 實測：球員四分頁於 320×844、390×844、1280×800 均可切換，文件寬度未超出 viewport；最長顯示頁分別為 1,235px、1,066px、986px。改職務選單後仍停在人事分頁；開啟釋出確認再取消，取消後原釋出入口仍在。上述高度來自隔離新局樣本，沒有拿不同球員狀態推算全遊戲減量百分比。
-- 文字處理採「分組、視覺比較、分頁」而非 `<details>` 收合；遊戲規則、精確數據與操作均保留。40 個路由入口有 renderer smoke 覆蓋，但本候選沒有主張 40 個畫面每頁都同幅度減字，也沒有證據支持「全遊戲總文字已減少 50%」，故不宣稱達成該百分比。沒有為追求數字而刪除敘事、選項或年度結果等獨有內容。
+- 文字處理採「分組、視覺比較、分頁」而非 `<details>` 收合；遊戲規則、精確數據與操作均保留。40 個路由入口已盤點，但自動 renderer smoke 只覆蓋清單中的主要頁面與多個情境，不是 40 頁全數逐頁驗收。本候選沒有主張 40 個畫面每頁都同幅度減字，也沒有證據支持「全遊戲總文字已減少 50%」，故不宣稱達成該百分比。沒有為追求數字而刪除敘事、選項或年度結果等獨有內容。
 - Regression：`node test_regression.js` 為 1,812 通過／0 失敗；`node smoke_multiyear.js` 15 年＋全畫面 renderer PASS；`node smoke_puregm.js` 純 GM 15 年 PASS。修改模組 `node --check` 與 `git diff --check` PASS。沒有修改 Save schema、遊戲平衡、模擬規則或核准美術。
 - 本輪 Pages 程式：`02-finance.js`、`06-ui-roster.js`、`index.html`、`style.css`、`sw.js`、`test_regression.js` 與本部署紀錄。正式 `current/`、正式 delivery／Art ZIP、manifest、SHA、`CURRENT_PACKAGE.json` 均不在本次範圍；工作區原有 `manifest.webmanifest` 修改不納入本次提交。
-- GitHub Pages 無快取部署核驗與 commit ID：待推送後補記。
+- 2026-09-28，程式提交 `266ed2c198bf734d0ed9ac7a9cb02d5df8606d20` 已推送 `main`；[GitHub Pages 建置](https://github.com/mars0884-chu/baseball-GM/actions/runs/36417516111)完成且成功。首次無快取查詢仍取得舊內容；等待建置後用新查詢再次確認首頁、`02-finance.js`、`06-ui-roster.js`、`style.css`、`sw.js` 全部 HTTP 200，並逐一找到 r035 cache／renderer／樣式標記。這證明公開靜態資源已更新，不等於 Mars 真機／視覺接受。
 
 ## r030：先發棒次手機能力卡與名單分頁
 
