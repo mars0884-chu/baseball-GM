@@ -16,11 +16,12 @@ function posFilterGroup(p) {
   if (["LF","CF","RF"].includes(pos)) return "OF";
   return "IF"; // DH 等罕見情況歸內野
 }
-function posFilterBarHtml(players, uiKey) {
+function posFilterBarHtml(players, uiKey, options) {
   var current = UI[uiKey] || "all";
   var counts = { all: players.length, P: 0, C: 0, IF: 0, OF: 0 };
   for (var i = 0; i < players.length; i++) counts[posFilterGroup(players[i])]++;
-  return '<div class="pos-filter-bar">' + POS_FILTER_GROUPS.map(function(g) {
+  var groups = options && options.excludePitchers ? POS_FILTER_GROUPS.filter(function(g) { return g.key !== "P"; }) : POS_FILTER_GROUPS;
+  return '<div class="pos-filter-bar">' + groups.map(function(g) {
     return '<button class="pos-filter-btn' + (current === g.key ? ' active' : '') + '" data-filterkey="' + uiKey + '" data-filterval="' + g.key + '">' + g.label + '<span class="pos-count">' + counts[g.key] + '</span></button>';
   }).join('') + '</div>';
 }
@@ -1611,11 +1612,12 @@ function v60RosterPageSlice(list, uiPageKey, requestedPageSize) {
   UI[uiPageKey] = page;
   return { items: list.slice(page * pageSize, (page + 1) * pageSize), page, pageCount, pageSize };
 }
-function v60RosterPagerHtml(page, uiPageKey, label, totalCount) {
+function v60RosterPagerHtml(page, uiPageKey, label, totalCount, totalUnit) {
   if (page.pageCount <= 1) return "";
+  const unit = totalUnit || "人";
   return `<nav class="v60-roster-pager" role="group" aria-label="${label}名單分頁">
     <button type="button" class="btn-outline roster-page-btn" data-page-key="${uiPageKey}" data-page-step="-1" data-page-count="${page.pageCount}" aria-label="${label}上一頁" ${page.page === 0 ? "disabled" : ""}>上一頁</button>
-    <span aria-live="polite" data-page-total="${page.pageCount}">第 ${page.page + 1}/${page.pageCount} 頁・共 ${totalCount} 人</span>
+    <span aria-live="polite" data-page-total="${page.pageCount}">第 ${page.page + 1}/${page.pageCount} 頁・共 ${totalCount} ${unit}</span>
     <button type="button" class="btn-outline roster-page-btn" data-page-key="${uiPageKey}" data-page-step="1" data-page-count="${page.pageCount}" aria-label="${label}下一頁" ${page.page === page.pageCount - 1 ? "disabled" : ""}>下一頁</button>
   </nav>`;
 }
@@ -1637,9 +1639,10 @@ function renderRoster() {
   const list = ids.map(id => S.players[id]);
   const pitchers = applySort(list.filter(p => p.isPitcher), PITCHER_SORTS, UI.pitcherSort || "default", UI.pitcherSortDir);
   const batters = applySort(list.filter(p => !p.isPitcher), BATTER_SORTS, UI.batterSort || "default", UI.batterSortDir);
+  const rosterGroup = UI.rosterGroup === "batters" ? "batters" : "pitchers";
   const rosterPosF = UI.rosterPosFilter || "all";
-  const showPitchers = rosterPosF === "all" || rosterPosF === "P";
-  const showBatters = rosterPosF === "all" || rosterPosF !== "P";
+  const showPitchers = rosterGroup === "pitchers";
+  const showBatters = rosterGroup === "batters";
   const filteredBatters = rosterPosF === "all" || rosterPosF === "P" ? batters : batters.filter(p => posFilterGroup(p) === rosterPosF);
   const pitcherPage = v60RosterPageSlice(pitchers, "rosterPitcherPage");
   const batterPage = v60RosterPageSlice(filteredBatters, "rosterBatterPage");
@@ -1650,7 +1653,11 @@ function renderRoster() {
       <div class="topbar"><div class="eyebrow">${team.name}</div><h1>球員名單</h1></div>
       ${renderRosterNav(UI.rosterTab === "2軍" ? "roster2" : "roster1")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      ${posFilterBarHtml(list, "rosterPosFilter")}
+      <div class="v60-roster-side-tabs" role="tablist" aria-label="球員類型">
+        <button type="button" class="v60-roster-side-tab ${showPitchers ? "active" : ""}" role="tab" aria-selected="${showPitchers}" data-roster-group="pitchers">投手 <span>${pitchers.length}</span></button>
+        <button type="button" class="v60-roster-side-tab ${showBatters ? "active" : ""}" role="tab" aria-selected="${showBatters}" data-roster-group="batters">野手 <span>${batters.length}</span></button>
+      </div>
+      ${showBatters ? posFilterBarHtml(batters, "rosterPosFilter", { excludePitchers: true }) : ""}
       ${warnings.length > 0 ? `<div class="card issuecard"><div class="eyebrow">先發陣容提醒</div><ul class="issuelist">${warnings.map(i => `<li>${i}</li>`).join("")}</ul><p class="sub dark">前往「先發打線」或「投手輪值/牛棚」分頁即可調整。</p></div>` : ""}
       ${(team.roster1.length !== 28 || team.roster2.length !== 32) ? `<p class="sub dark" style="margin-bottom:12px;">名單人數已偏離編制（1軍限28人／2軍限32人），暫時超編或缺編都不影響比賽進行，會在下次選秀會後自動整編回正常編制。</p>` : ""}
       ${UI.rosterTab === "育成" ? (() => {
@@ -1742,6 +1749,18 @@ function renderRoster() {
   wirePosFilterButtons();
   wireSortDirButtons();
   wireV60RosterPager();
+  app.querySelectorAll(".v60-roster-side-tab").forEach(btn => {
+    btn.onclick = () => {
+      const nextGroup = btn.dataset.rosterGroup === "batters" ? "batters" : "pitchers";
+      if (UI.rosterGroup !== nextGroup) {
+        UI.rosterGroup = nextGroup;
+        UI.rosterPosFilter = "all";
+        UI.rosterPitcherPage = 0;
+        UI.rosterBatterPage = 0;
+      }
+      render();
+    };
+  });
   /* v54 A2：育成方針下拉 */
   var devPolPitch = document.getElementById("v54-dev-policy-pitcher");
   if (devPolPitch) devPolPitch.onchange = function(e) { team.devPolicyPitcher = e.target.value; UI.flash = "投手育成方針已變更為「" + (e.target.options[e.target.selectedIndex].text) + "」。"; persist(); render(); };
@@ -2170,6 +2189,40 @@ function renderPlayerDetail() {
   }
   const isMidSeason = S.currentDay > 0 && S.currentDay < (S.schedule ? S.schedule.length : 129);
   const isOwnActivePlayer = !p.retired && team && team.id === S.userTeamId;
+  const injuryHistoryHtml = (p.injuryHistory || []).length > 0 ? `
+      <div class="divlabel">傷病史（近${Math.min(20, p.injuryHistory.length)}筆）</div>
+      <table class="stattable">
+        <thead><tr><th>年度</th><th>傷勢</th><th>部位</th><th>等級</th><th>天數</th><th>備註</th></tr></thead>
+        <tbody>${p.injuryHistory.slice().reverse().map(h => `<tr>
+          <td>第${h.year}年</td><td>${h.recur ? ""+icon('refresh')+"" : ""}${h.name}</td><td>${h.part}</td><td>${h.severityLabel}</td><td>${h.days}</td>
+          <td>${h.method === "surgery" ? "手術" : (h.method === "conservative" ? "保守" : "－")}${h.downgraded ? `・後遺症（${h.downgraded}）` : ""}</td>
+        </tr>`).join("")}</tbody>
+      </table>
+      <p class="draftnote muted">中重度傷病史越多，日後受傷與同部位復發的風險越高（復健中心可削減）；${icon('refresh')}＝舊傷復發。</p>` : "";
+  const rosterManagementHtml = isOwnActivePlayer ? `
+      ${renderCaptainSection(p, team)}
+      ${renderMidTrainingSection(p, team)}
+      ${renderV54RosterMoveCard(p, team)}` : "";
+  const roleLocked = isOwnActivePlayer && roleOfferLockedThisYear(p);
+  const personnelHtml = isOwnActivePlayer ? `
+      <div class="card">
+        <div class="eyebrow">球隊事務</div>
+        <p class="sub dark">${isMidSeason ? "球季進行中：仍可徵詢兼任教練／球探（現役球員在球季中意願很低），或直接釋出球員。" : "休賽季：可建議球員退休轉任教練／球探（單次判定，婉拒後本休賽季不再考慮），或直接釋出球員。"}</p>
+        <select id="role-suggest-select" class="sortselect" ${roleLocked ? "disabled" : ""}>
+          ${(() => { const sel = UI.suggestRole || "coach|1軍|總教練"; const opt = v => (v === sel ? " selected" : ""); return `<optgroup label="教練（1軍）">${COACH_ROLES.map(r => `<option value="coach|1軍|${r}"${opt(`coach|1軍|${r}`)}>1軍 ${r}</option>`).join("")}</optgroup>
+          <optgroup label="教練（2軍）">${COACH_ROLES.map(r => `<option value="coach|2軍|${r}"${opt(`coach|2軍|${r}`)}>2軍 ${r}</option>`).join("")}</optgroup>
+          <optgroup label="球探"><option value="scout||domestic"${opt("scout||domestic")}>國內球探</option><option value="scout||international"${opt("scout||international")}>國際球探</option><option value="scout||trade"${opt("scout||trade")}>交易球探</option></optgroup>`; })()}
+        </select>
+        ${roleLocked ? "" : (() => { const sel = UI.suggestRole || "coach|1軍|總教練"; const [selType, selLevel, selRole] = sel.split("|"); return renderRoleComparison(p, S.teams[S.userTeamId], selType, selLevel, selRole); })()}
+        <div class="btnrow"><button id="btn-suggest-role" class="btn-secondary" ${roleLocked ? "disabled" : ""}>${roleLocked ? "本休賽季已婉拒過" : (isMidSeason ? "徵詢兼任（單次判定）" : "建議退休轉任（單次判定）")}</button></div>
+        ${UI.releaseConfirmId === p.id ? `
+        <div class="card resetcard" style="margin-top:10px;">
+          <div class="eyebrow">確認釋出</div>
+          <p class="sub dark">確定要將 ${p.name} 釋出至自由球員市場嗎？他將立即離隊，之後可能被其他球隊簽走。</p>
+          ${(typeof renderReleaseImpact === "function") ? renderReleaseImpact(p, S.teams[S.userTeamId]) : ""}
+          <div class="btnrow"><button id="btn-release-cancel" class="btn-secondary">取消</button><button id="btn-release-confirm" class="btn-danger-solid">確定釋出</button></div>
+        </div>` : `<div class="btnrow"><button id="btn-release-player" class="btn-danger">釋出至自由球員市場</button></div>`}
+      </div>` : "";
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar">
@@ -2201,59 +2254,15 @@ function renderPlayerDetail() {
         <p class="sub dark">${p.injury.name}${p.injury.part ? `（${p.injury.part}）` : ""}，預計還需 ${p.injury.daysLeft} 天恢復（共 ${p.injury.totalDays} 天）・復健進度 ${Math.round((p.injury.totalDays - p.injury.daysLeft) / p.injury.totalDays * 100)}%。傷癒前無法出賽，打線與投手調度會自動跳過他。</p>
         <div class="injurybar"><div style="width:${Math.round((p.injury.totalDays - p.injury.daysLeft) / p.injury.totalDays * 100)}%"></div></div>
       </div>`) : ""}
-      ${renderCaptainSection(p, team)}
-      ${renderMidTrainingSection(p, team)}
-      ${body}
-      ${playerStatsSectionHtml(p)}
-      ${(p.injuryHistory || []).length > 0 ? `
-      <div class="divlabel">傷病史（近${Math.min(20, p.injuryHistory.length)}筆）</div>
-      <table class="stattable">
-        <thead><tr><th>年度</th><th>傷勢</th><th>部位</th><th>等級</th><th>天數</th><th>備註</th></tr></thead>
-        <tbody>${p.injuryHistory.slice().reverse().map(h => `<tr>
-          <td>第${h.year}年</td><td>${h.recur ? ""+icon('refresh')+"" : ""}${h.name}</td><td>${h.part}</td><td>${h.severityLabel}</td><td>${h.days}</td>
-          <td>${h.method === "surgery" ? "手術" : (h.method === "conservative" ? "保守" : "－")}${h.downgraded ? `・後遺症（${h.downgraded}）` : ""}</td>
-        </tr>`).join("")}</tbody>
-      </table>
-      <p class="draftnote muted">中重度傷病史越多，日後受傷與同部位復發的風險越高（復健中心可削減）；${icon('refresh')}＝舊傷復發。</p>` : ""}
-      ${isOwnActivePlayer ? renderV54RosterMoveCard(p, team) : ""}
+      <div class="v60-player-detail-tabs ${isOwnActivePlayer ? "" : "is-external"}">${uiTabs("playerDetail", [
+        { key: "profile", label: "能力", html: body },
+        { key: "stats", label: "成績", html: playerStatsSectionHtml(p) + injuryHistoryHtml },
+        ...(isOwnActivePlayer ? [
+          { key: "rosterManagement", label: "調度", html: rosterManagementHtml },
+          { key: "personnel", label: "人事", html: personnelHtml }
+        ] : [])
+      ])}</div>
       <div class="btnrow"><button id="btn-back" class="btn-outline">返回名單</button></div>
-      ${isOwnActivePlayer ? (() => {
-        const sel = UI.suggestRole || "coach|1軍|總教練";
-        const [selType, selLevel, selRole] = sel.split("|");
-        const opt = v => (v === sel ? " selected" : "");
-        const locked = roleOfferLockedThisYear(p);
-        return `
-      <div class="card">
-        <div class="eyebrow">球隊事務</div>
-        <p class="sub dark">${isMidSeason ? "球季進行中：仍可徵詢兼任教練／球探（現役球員在球季中意願很低），或直接釋出球員。" : "休賽季：可建議球員退休轉任教練／球探（單次判定，婉拒後本休賽季不再考慮），或直接釋出球員。"}</p>
-        <select id="role-suggest-select" class="sortselect" ${locked ? "disabled" : ""}>
-          <optgroup label="教練（1軍）">${COACH_ROLES.map(r => `<option value="coach|1軍|${r}"${opt(`coach|1軍|${r}`)}>1軍 ${r}</option>`).join("")}</optgroup>
-          <optgroup label="教練（2軍）">${COACH_ROLES.map(r => `<option value="coach|2軍|${r}"${opt(`coach|2軍|${r}`)}>2軍 ${r}</option>`).join("")}</optgroup>
-          <optgroup label="球探">
-            <option value="scout||domestic"${opt("scout||domestic")}>國內球探</option>
-            <option value="scout||international"${opt("scout||international")}>國際球探</option>
-            <option value="scout||trade"${opt("scout||trade")}>交易球探</option>
-          </optgroup>
-        </select>
-        ${locked ? "" : renderRoleComparison(p, S.teams[S.userTeamId], selType, selLevel, selRole)}
-        <div class="btnrow">
-          <button id="btn-suggest-role" class="btn-secondary" ${locked ? "disabled" : ""}>${locked ? "本休賽季已婉拒過" : (isMidSeason ? "徵詢兼任（單次判定）" : "建議退休轉任（單次判定）")}</button>
-        </div>
-        ${UI.releaseConfirmId === p.id ? `
-        <div class="card resetcard" style="margin-top:10px;">
-          <div class="eyebrow">確認釋出</div>
-          <p class="sub dark">確定要將 ${p.name} 釋出至自由球員市場嗎？他將立即離隊，之後可能被其他球隊簽走。</p>
-          ${(typeof renderReleaseImpact === "function") ? renderReleaseImpact(p, S.teams[S.userTeamId]) : ""}
-          <div class="btnrow">
-            <button id="btn-release-cancel" class="btn-secondary">取消</button>
-            <button id="btn-release-confirm" class="btn-danger-solid">確定釋出</button>
-          </div>
-        </div>` : `
-        <div class="btnrow">
-          <button id="btn-release-player" class="btn-danger">釋出至自由球員市場</button>
-        </div>`}
-      </div>`;
-      })() : ""}
     </div>`;
   document.getElementById("btn-back").onclick = () => { if (UI.prevRosterTab) { UI.rosterTab = UI.prevRosterTab; } UI.screen = UI.playerDetailReturn || "roster"; UI.playerDetailReturn = null; render(); };
   wireCoachRefusalCard();

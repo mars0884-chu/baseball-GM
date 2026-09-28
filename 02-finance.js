@@ -621,7 +621,7 @@ function renderFacilities() {
       ${eff.aged > 0 ? `<p class="v60-state-line">${icon('warn')} 老舊效果減半；可重建恢復，每休賽季限 1 座。</p>` : ""}
       ${stadiumPanel === "build" ? `
       <div class="divlabel">已建設施${canUpgrade ? "" : "・春訓可改建"}</div>
-      ${built.length === 0 ? `<p class="v60-state-line">尚無格位設施；建設可提升人均消費與進場率。</p>` : `
+      ${built.length === 0 ? `<p class="v60-state-line">尚無設施</p>` : `
       <table class="stattable">
         <thead><tr><th>設施</th><th>屋齡</th><th>效果</th><th>年維護費</th><th></th></tr></thead>
         <tbody>${built.map((k, i) => {
@@ -636,11 +636,14 @@ function renderFacilities() {
         }).join("")}</tbody>
       </table>
       <p class="v60-state-line">拆除退回 ${Math.round(STADIUM_DEMOLISH_REFUND * 100)}%；重建費為建設費 ${Math.round(STADIUM_REBUILD_COST * 100)}%。</p>`}
-      <div class="divlabel">建造新設施（可重複建造同類，效果疊加）</div>
+      <div class="divlabel">建造設施・效果可疊加</div>
       ${built.length >= slotMax ? `<p class="sub dark">格位已滿：升級球場等級可獲得更多格位。</p>` : ""}
-      <div class="v60-stadium-build-grid">${STADIUM_FACILITY_TYPES.map(t => {
+      ${(() => {
+        const page = v60RosterPageSlice(STADIUM_FACILITY_TYPES, "facilityBuildPage", 4);
+        return `${v60RosterPagerHtml(page, "facilityBuildPage", "球場設施", STADIUM_FACILITY_TYPES.length, "種設施")}
+      <div class="v60-stadium-build-grid">${page.items.map(t => {
         const owned = built.filter(k => k === t.key).length;
-        const fx = [t.spendPct ? `人均消費 +${Math.round(t.spendPct * 100)}%` : "", t.attPct ? `進場率 +${(t.attPct * 100).toFixed(1)}%` : "", t.popBoost ? `季末人氣 +${t.popBoost}` : ""].filter(Boolean).join("・");
+        const fx = [t.spendPct ? `消費 +${Math.round(t.spendPct * 100)}%` : "", t.attPct ? `進場 +${(t.attPct * 100).toFixed(1)}%` : "", t.popBoost ? `人氣 +${t.popBoost}` : ""].filter(Boolean).join("・");
         const affordable = team.finance.budget >= t.cost;
         const canBuild = canUpgrade && affordable && built.length < slotMax;
         const buildLabel = canBuild ? "建造" : (built.length >= slotMax ? "滿額" : (!canUpgrade ? "球季鎖定" : "預算不足"));
@@ -650,7 +653,8 @@ function renderFacilities() {
           <div class="v60-stadium-build-cost"><span>建設 ${formatMoney(t.cost)}</span><span>維護 ${formatMoney(Math.round(t.cost * t.maintPct))}/年</span></div>
           <button class="pickbtn btn-build-stadium" data-key="${t.key}" ${canBuild ? "" : "disabled"}>${buildLabel}</button>
         </article>`;
-      }).join("")}</div>` : ""}
+      }).join("")}</div>`;
+      })()}` : ""}
       ${stadiumPanel === "levels" ? `
       <div class="divlabel">硬體等級一覽</div>
       <table class="stattable">
@@ -666,12 +670,17 @@ function renderFacilities() {
       ${!next ? `<p class="sub dark">已經是最高等級的球場硬體！</p>` : ""}` : ""}`;
   } else if (ftab === "訓練基地") {
     const groups = [...new Set(TRAINING_ITEMS.map(it => it.group))];
+    const trainingGroup = groups.includes(UI.facilityTrainingGroup) ? UI.facilityTrainingGroup : groups[0];
+    UI.facilityTrainingGroup = trainingGroup;
     body = `
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["項目", `${TRAINING_ITEMS.length} 項`], ["最高", `Lv.${TRAINING_MAX_LEVEL}`], ["生效", "休賽季結算"]], "訓練基地摘要") : ""}
-      ${groups.map(g => `
-      <div class="card">
-        <div class="eyebrow">${g}</div>
-        ${TRAINING_ITEMS.filter(it => it.group === g).map(it => {
+      <div class="v60-facility-training-tabs" role="tablist" aria-label="訓練專項">
+        ${groups.map(g => `<button type="button" class="tab v60-facility-training-tab ${trainingGroup === g ? "active" : ""}" role="tab" aria-selected="${trainingGroup === g}" data-training-group="${g}">${g.replace("項目", "")}<span>${TRAINING_ITEMS.filter(it => it.group === g).length}</span></button>`).join("")}
+      </div>
+      <div class="card v60-facility-training-card">
+        <div class="eyebrow">${trainingGroup.replace("項目", "專項")}</div>
+        <div class="v60-facility-training-legend"><span>訓練效果</span><span>下一級費用</span></div>
+        ${TRAINING_ITEMS.filter(it => it.group === trainingGroup).map(it => {
           const lv = trainingLevel(team, it.key);
           const maxed = lv >= TRAINING_MAX_LEVEL;
              const cost = maxed ? 0 : TRAINING_UPGRADE_COSTS[lv] * 10000;
@@ -679,12 +688,12 @@ function renderFacilities() {
             return `<div class="facilityrow">
               <div class="facilityinfo">
                 <div class="facilityname">${it.label} <span class="facilitylv ${maxed ? "max" : ""}">Lv.${lv}${maxed ? "・MAX" : ""}</span></div>
-               <div class="facilitydesc">${maxed ? `效果：${effect}・已達上限` : `效果：${effect}・升級 ${formatMoney(cost)}`}</div>
+               <div class="facilitydesc"><span>${effect}</span><b>${maxed ? "已滿" : formatMoney(cost)}</b></div>
             </div>
             ${maxed ? "" : `<button class="upbtn train-up-btn" data-key="${it.key}" ${canUpgrade && team.finance.budget >= cost ? "" : "disabled"}>升級</button>`}
           </div>`;
         }).join("")}
-      </div>`).join("")}`;
+      </div>`;
   } else if (ftab === "醫療室") {
     const lv = medicalLevel(team);
     const maxed = lv >= MEDICAL_MAX_LEVEL;
@@ -771,12 +780,14 @@ function renderFacilities() {
       <div class="btnrow"><button id="btn-back" class="btn-secondary">返回主控台</button></div>
     </div>`;
   app.querySelectorAll(".fac-tab").forEach(btn => { btn.onclick = () => { UI.facilityTab = btn.dataset.factab; UI.flash = null; render(); }; });
+  app.querySelectorAll(".v60-facility-training-tab").forEach(btn => { btn.onclick = () => { UI.facilityTrainingGroup = btn.dataset.trainingGroup; UI.flash = null; render(); window.scrollTo(0, 0); }; });
   app.querySelectorAll(".stadium-subtab").forEach(btn => { btn.onclick = () => { UI.facilityStadiumPanel = btn.dataset.stadiumPanel; UI.flash = null; render(); window.scrollTo(0, 0); }; });
   const btn = document.getElementById("btn-upgrade-facility");
   if (btn) btn.onclick = () => upgradeFacility(next.level);
   app.querySelectorAll(".btn-build-stadium").forEach(b => { b.onclick = () => buildStadiumFacility(b.dataset.key); });     // v30
   app.querySelectorAll(".btn-demolish-stadium").forEach(b => { b.onclick = () => demolishStadiumFacility(Number(b.dataset.idx)); }); // v30
   app.querySelectorAll(".btn-rebuild-stadium").forEach(b => { b.onclick = () => rebuildStadiumFacility(Number(b.dataset.idx)); }); // v31重建老舊設施
+  wireV60RosterPager();
   app.querySelectorAll(".train-up-btn").forEach(b => { b.onclick = () => upgradeTrainingItem(b.dataset.key); });
   const mbtn = document.getElementById("btn-upgrade-medical");
   if (mbtn) mbtn.onclick = () => upgradeMedical();
@@ -2589,6 +2600,7 @@ function renderMarketing() {
   ensureMarketingPlan(team);
   const canPlan = S.currentDay === 0;
   const cal = getGameCalendar();
+  const campaignPage = v60RosterPageSlice(MARKETING_CAMPAIGNS, "marketingPage", 3);
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${team.name} ・ ${cal.dateLabel}</div><h1>行銷企劃</h1></div>
@@ -2597,11 +2609,12 @@ function renderMarketing() {
       ${typeof v60CompatVisualScene === "function" ? v60CompatVisualScene("marketing_command_center_v58", "行銷企劃中心場景", "MARKETING VISUAL", "年度活動", "活動配置與投入", "v60-marketing-scene") : ""}
       ${typeof renderCdActivitiesCard === "function" ? renderCdActivitiesCard() : ""}
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["人氣", `${team.finance.popularity}/100`], ["已投", `${(team.finance.marketingCampaigns || []).length} 項`], ["周邊", `+${Math.round((team.finance.marketingMerchPct || 0) * 100)}%`], ["進場", `+${Math.round((team.finance.marketingAttPct || 0) * 100)}%`]], "行銷企劃摘要") : ""}
-      ${canPlan ? '<p class="v60-state-line">春訓可多選；空白＝無加成。</p>' : ""}
+      ${canPlan ? '<p class="v60-state-line">春訓可多選・空白無加成。</p>' : ""}
+      ${v60RosterPagerHtml(campaignPage, "marketingPage", "行銷企劃", MARKETING_CAMPAIGNS.length, "項")}
       <div class="v60-campaign-grid ${canPlan ? "is-planning" : "is-locked"}" role="table" aria-label="年度行銷企劃成效比較">
         <div class="v60-campaign-row v60-campaign-heading" role="row">
           <div role="columnheader">企劃／費用</div><div role="columnheader">人氣</div><div role="columnheader">周邊</div><div role="columnheader">進場</div>${canPlan ? '<div role="columnheader">操作</div>' : ""}
-        </div>${MARKETING_CAMPAIGNS.map(c => {
+        </div>${campaignPage.items.map(c => {
         const active = (team.finance.marketingCampaigns || []).includes(c.key);
         const metric = (label, value, suffix, max) => {
           const amount = Number(value) || 0;
@@ -2623,6 +2636,7 @@ function renderMarketing() {
   app.querySelectorAll(".marketing-btn").forEach(btn => {
     btn.onclick = () => toggleMarketingCampaign(btn.dataset.plan);
   });
+  wireV60RosterPager();
   wireCdActivitiesActions();
   document.getElementById('btn-marketing-facilities').onclick = () => { UI.screen = 'facilities'; render(); };
   document.getElementById("btn-back").onclick = () => { UI.screen = "dashboard"; render(); };
@@ -2656,7 +2670,7 @@ function renderFinance() {
   const taxThreshold = Math.round(avgPayroll * 1.3);
   const forecast = projectSeasonFinance(team);
   /* v40 A案分頁：財務拆四頁——📊總覽（預算/預估損益）／🎟️票價／📺合約（轉播·贊助）／📜上季報告。 */
-  const finOverviewPanel = `
+  const finOperationsPanel = `
       ${warns.length > 0 ? `<div class="card issuecard"><div class="eyebrow">財務提醒</div><ul class="issuelist">${warns.map(w => `<li>${w}</li>`).join("")}</ul></div>` : ""}
       <div class="scoreboard">
         ${typeof v60PreseasonWindow === "function" && v60PreseasonWindow() ? "" : `<div class="sb-row"><span class="sb-label">目前預算</span><span class="sb-value" style="font-size:22px;">${formatMoney(team.finance.budget)}</span></div>`}
@@ -2666,6 +2680,8 @@ function renderFinance() {
       </div>
       ${(typeof payBreakdownHtml === "function") ? payBreakdownHtml(team, S.players) : ""}
 
+      `;
+  const finCommunityPanel = `
       <div class="divlabel">球迷壓力</div>
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([
         [`期待${(S.fanExpect||50)>=75 ? "・門檻↑" : ""}`, `${Math.round(S.fanExpect||50)}/100`],
@@ -2696,6 +2712,8 @@ function renderFinance() {
       </div>
        <p class="v60-state-line">城市資料每年緩慢演化，影響票房、贊助與球迷根基。</p>
 
+      `;
+  const finProjectionPanel = `
       <div class="divlabel">本季預估損益・以目前戰績試算</div>
       <table class="stattable">
         <thead><tr><th>項目</th><th>金額</th></tr></thead>
@@ -2713,7 +2731,12 @@ function renderFinance() {
           <tr class="me"><td>淨損益</td><td style="${forecast.projectedNet < 0 ? "color:var(--redline);" : ""}">${forecast.projectedNet >= 0 ? "+" : ""}${formatMoney(forecast.projectedNet)}</td></tr>
         </tbody>
       </table>
-      ${forecast.projectedNet < 0 ? `<p class="sub dark" style="color:var(--redline);">預估本季虧損：可調票價或重談轉播／贊助。</p>` : ""}`;
+      ${forecast.projectedNet < 0 ? `<p class="sub dark" style="color:var(--redline);">預估虧損：調票價或重談轉播／贊助。</p>` : ""}`;
+  const finOverviewPanel = `<div class="v60-finance-overview">${uiTabs("financeOverview", [
+    { key: "operations", label: "營運", html: finOperationsPanel },
+    { key: "community", label: "球迷", html: finCommunityPanel },
+    { key: "projection", label: "收支", html: finProjectionPanel }
+  ])}</div>`;
   const finTicketPanel = `
       <div class="divlabel">票價策略</div>
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["目前", `${team.finance.ticketPrice} 元/張`], ["上限", `${team.finance.ticketPriceCap} 元`], ["預估進場", `${estimateAttendancePct(team, team.finance.ticketPrice)}%`], ["窗口", canChangeTicket ? "春訓可調" : "下季再調"]], "票價策略摘要") : ""}
