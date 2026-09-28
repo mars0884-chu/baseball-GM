@@ -81,7 +81,7 @@ if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
   assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
 } else {
   assert((v59SingleFileSource.match(/<script defer src="0[0-6]-[^\"]+\.js\?v=/g) || []).length === 7, "v59 public shell loads the seven ordered modular scripts");
-  assert(v59SingleFileSource.includes("v60-r026-listing-pages") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r026 public shell uses a fresh cache key without duplicating module source");
+  assert(v59SingleFileSource.includes("v60-r027-finance-cuts") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r027 public shell uses a fresh cache key without duplicating module source");
 }
 
 /* ---------- v60-001 視覺恢復候選 ---------- */
@@ -120,7 +120,7 @@ assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceS
 const v60NewsRendererSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderNewsCard"), v60DashboardSource.indexOf("function renderSponsorMissionCard"));
 assert((v60NewsRendererSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60NewsRendererSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60NewsRendererSource.indexOf('v56ContentSummary("news"') < 0 && v60NewsRendererSource.indexOf("icon('news')") < 0, "v60 新聞 renderer 僅保留完整 PNG，不再輸出新聞 SVG");
 assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('v60CompatArtFallbackUrl') >= 0 && v60DashboardSource.indexOf('safeLoading') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准圖片路徑、PNG fallback 與 lazy loading 已接入");
-assert(v60SwSource.indexOf('baseballgm-v60-r026-listing-pages') >= 0, "r026 Service Worker cache key 已更新");
+assert(v60SwSource.indexOf('baseballgm-v60-r027-finance-cuts') >= 0, "r027 Service Worker cache key 已更新");
 assert(v60DashboardSource.includes('v60CompatArtImageAttrs(key, "eager", false)') && v60DashboardSource.includes('window.requestAnimationFrame(kick)') && v60DashboardSource.includes('img.loading = "lazy";\n        img.loading = "eager";') && v60DashboardSource.includes('v60KickRenderedSceneImages(); return r;'), "動態插入場景圖後下一幀觸發載入，確保瀏覽器啟動請求");
 assert(v60DashboardSource.includes('__v60CurrentScreen !== v60LastRenderedScreen') && v60DashboardSource.includes('window.scrollTo(0, 0)'), "切換新畫面先回到頁首，避免沿用舊長頁捲動位置");
 
@@ -4480,6 +4480,34 @@ __v60ListingTable=app.innerHTML.slice(__v60ListingTableStart,__v60ListingTableEn
 var __v60ListingPageTwoName=(__v60ListingTable.match(/<tr>\\s*<td>([\\s\\S]*?)<\\/td>/)||[])[1]||'';
 S=JSON.parse(__v60ListingSavedS);UI=JSON.parse(__v60ListingSavedUI);app.innerHTML=__v60ListingSavedHtml;`);
 assert(g("__v60ListingTotal > 8 && __v60ListingRows===8 && __v60ListingPageTwoRows===Math.min(8,__v60ListingTotal-8) && __v60ListingFirstName!==__v60ListingPageTwoName && __v60ListingNavVisible && __v60ListingActionCount===8 && __v60ListingMobileCards===8"), "v60-016 renderer 實際輸出每頁8人、翻頁換人、桌面操作與手機卡片資料均完整");
+
+/* v60-017：財務赤字裁員名單分頁；精簡必要說明並以薪資比較條呈現候選差異。 */
+console.log("\n--- v60-017 財務裁員頁分頁與手機視覺化 ---");
+const v60FinanceCutsStart = v60FinanceSource.indexOf("function renderFinanceCuts()");
+const v60FinanceCutsEnd = v60FinanceSource.indexOf("/* ---------- 合約續約談判", v60FinanceCutsStart);
+const v60FinanceCutsSource = v60FinanceSource.slice(v60FinanceCutsStart, v60FinanceCutsEnd);
+assert(v60FinanceCutsSource.includes('applyPosFilter(list, "financeCutsPosFilter")') && v60FinanceCutsSource.includes('v60RosterPageSlice(filtered, "financeCutsPage")') && v60FinanceCutsSource.includes("page.items.map(row)") && v60FinanceCutsSource.includes("page.items.map(mobileCard)") && v60FinanceCutsSource.includes("wireV60RosterPager()") && !v60FinanceCutsSource.includes("list.map(p => `<tr>"), "v60-017 裁員候選依守位篩選並分頁，桌面操作與手機卡片共用同一候選頁");
+assert(v60FinanceCutsSource.includes("v60-finance-cut-salary-rail") && v60FinanceCutsSource.includes("不會回收轉會金") && !v60FinanceCutsSource.includes("才能繼續下個球季") && v60RosterSource.includes('if (btn.dataset.filterkey === "financeCutsPosFilter") UI.financeCutsPage = 0'), "v60-017 薪資比較視覺與短說明保留裁員代價，篩選回到第一頁");
+assert(v60StyleSource.includes(".v60-finance-cut-cards{display:grid") && v60StyleSource.includes(".v60-finance-cut-card>.cut-btn{width:68px;min-height:48px"), "v60-017 手機候選卡改為薪資比較條，釋出觸控目標至少68×48px");
+g(`var __v60CutsSavedS=JSON.stringify(S),__v60CutsSavedUI=JSON.stringify(UI),__v60CutsSavedHtml=app.innerHTML;
+var __v60CutsTeam=S.teams[S.userTeamId],__v60CutsOldR1=__v60CutsTeam.roster1.slice(),__v60CutsOldR2=__v60CutsTeam.roster2.slice(),__v60CutsOldPlayers=S.players;
+var __v60CutsPitcher=Object.values(S.players).find(p=>p&&p.isPitcher),__v60CutsBatter=Object.values(S.players).find(p=>p&&!p.isPitcher);
+S.players=Object.assign({},S.players);var __v60CutsIds=[];
+for(var ci=0;ci<11;ci++){var cid='__v60_finance_cut_'+ci,cp=ci<9?__v60CutsPitcher:__v60CutsBatter;S.players[cid]={...cp,id:cid,name:'裁員測試'+ci,salary:(12-ci)*1000000,level:ci<6?'1軍':'2軍'};__v60CutsIds.push(cid);}
+__v60CutsTeam.roster1=__v60CutsIds.slice(0,6);__v60CutsTeam.roster2=__v60CutsIds.slice(6);
+UI.screen='financeCuts';UI.financeCutsPosFilter='all';UI.financeCutsPage=0;renderFinanceCuts();
+var __v60CutsTableStart=app.innerHTML.indexOf('<table class="stattable v60-finance-cut-table">'),__v60CutsTableEnd=app.innerHTML.indexOf('</table>',__v60CutsTableStart)+8;
+var __v60CutsTable=app.innerHTML.slice(__v60CutsTableStart,__v60CutsTableEnd),__v60CutsRows=(__v60CutsTable.match(/<tr>/g)||[]).length-1;
+var __v60CutsFirstName=(__v60CutsTable.match(/<tr><td>([^<]+)/)||[])[1]||'';
+var __v60CutsActions=(__v60CutsTable.match(/class="movebtn cut-btn"/g)||[]).length;
+var __v60CutsMobileCards=(app.innerHTML.match(/class="v60-finance-cut-card"/g)||[]).length;
+var __v60CutsSalaryBars=(app.innerHTML.match(/v60-finance-cut-salary-rail/g)||[]).length;
+UI.financeCutsPage=1;renderFinanceCuts();__v60CutsTableStart=app.innerHTML.indexOf('<table class="stattable v60-finance-cut-table">');__v60CutsTableEnd=app.innerHTML.indexOf('</table>',__v60CutsTableStart)+8;
+__v60CutsTable=app.innerHTML.slice(__v60CutsTableStart,__v60CutsTableEnd);var __v60CutsPageTwoRows=(__v60CutsTable.match(/<tr>/g)||[]).length-1;
+var __v60CutsPageTwoName=(__v60CutsTable.match(/<tr><td>([^<]+)/)||[])[1]||'';
+UI.financeCutsPosFilter='P';UI.financeCutsPage=0;renderFinanceCuts();var __v60CutsPitcherTotal=app.innerHTML.includes('共 9 人');
+S=JSON.parse(__v60CutsSavedS);UI=JSON.parse(__v60CutsSavedUI);app.innerHTML=__v60CutsSavedHtml;`);
+assert(g("__v60CutsRows===8 && __v60CutsActions===8 && __v60CutsMobileCards===8 && __v60CutsSalaryBars===8 && __v60CutsPageTwoRows===3 && __v60CutsFirstName!==__v60CutsPageTwoName && __v60CutsPitcherTotal"), "v60-017 renderer 實際呈現11人分為8＋3頁、頁間換人、桌面釋出按鈕及手機薪資條完整");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

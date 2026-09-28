@@ -35,6 +35,7 @@ function wirePosFilterButtons() {
       UI[btn.dataset.filterkey] = btn.dataset.filterval;
       if (btn.dataset.filterkey === "rosterPosFilter") { UI.rosterPitcherPage = 0; UI.rosterBatterPage = 0; }
       if (btn.dataset.filterkey === "listingPosFilter") UI.listingPage = 0;
+      if (btn.dataset.filterkey === "financeCutsPosFilter") UI.financeCutsPage = 0;
       render();
     };
   });
