@@ -8,7 +8,8 @@
 - 將先發能力與棒次移到教練戰術／隊長資訊之前，球員核心資料不必先滑過整段策略區才看到。這是先發單一畫面的手機編排與資料視覺化，不是刪除其他頁面資訊，也不宣稱全遊戲文字已減少 50%。
 - 本機隔離瀏覽器的實際 375px 寬手機畫面已載入新 renderer：頁面呈現第 1/3 頁、每頁 3 人、六項數字與量尺，且教練策略區位於名單之後；Regression 另確認完整桌面表仍保留、翻頁換人及渲染不更動遊戲存檔。未以此取代 Mars 真機／視覺接受。
 - 本輪程式：`06-ui-roster.js`、`style.css`、`index.html`、`sw.js`、`test_regression.js` 與本部署紀錄；公開殼層及 Service Worker cache key 更新為 `v60-r030-lineup-paged-cards`。正式 `current/`、正式 delivery、Art ZIP、manifest、SHA 與 `CURRENT_PACKAGE.json` 均未修改；既有未提交 `manifest.webmanifest` 刻意保留且不納入本輪提交。
-- 回歸／煙霧測試與公開 Pages 部署核驗完成後補記於下方提交紀錄；測試結果不等同 Mars 真機／視覺核准。
+- 驗證：`node test_regression.js` 1,803 通過／0 失敗；`node smoke_multiyear.js` 15 年＋全畫面渲染 PASS；`node smoke_puregm.js` 純 GM 15 年 PASS；`node --check 06-ui-roster.js`、`node --check sw.js`、`node --check test_regression.js`、`git diff --check` PASS。Regression 實際執行 renderer，確認 9 人完整桌面表、手機每頁 3 人／18 個能力值、翻頁換人、移防星號及 `S` 不變。啟動時既有 v60-002 public-shell check 顯示 `NOT RUN`（固定模組解壓目錄不含公開部署目錄）；本輪另外直接核對公開 Pages。
+- 2026-09-28，程式提交 `e86c7b6` 已推送 `main`。GitHub Pages 公開首頁、`06-ui-roster.js`、`style.css`、`sw.js` 的無快取複查均 HTTP 200，並各自含 r030 shell、手機 renderer、手機 CSS、Service Worker cache key 標記。推送後第一次立即請求曾先取得未含 r030 標記的舊首頁；稍後複查確認 Pages 已更新。正式包未改；既有 `manifest.webmanifest` 工作區修改未納入提交。公開資源更新不等同 Mars 真機／視覺接受。
 
 ## r029：行銷企劃共用成效矩陣
 
