@@ -1,6 +1,6 @@
-/* 決勝GM v60 Service Worker：離線快取 App Shell（春訓成果分頁）。
+/* 決勝GM v60 Service Worker：離線快取 App Shell（行銷企劃成效矩陣）。
    ASSETS 同時涵蓋模組版(7支JS+css)與單檔版(index.html)；缺檔以 allSettled 略過不整批失敗。 */
-const CACHE = "baseballgm-v60-r028-spring-report";
+const CACHE = "baseballgm-v60-r029-marketing-matrix";
 const ASSETS = [
   "./", "./index.html", "./style.css", "./manifest.webmanifest",
   "./icon-192.png", "./icon-512.png", "./icon-180.png",
@@ -11,7 +11,7 @@ const ASSETS = [
 self.addEventListener("install", (e) => {
   e.waitUntil((async () => {
     const c = await caches.open(CACHE);
-    const results = await Promise.allSettled(ASSETS.map((u) => c.add(u.endsWith('.html') || u === './' ? u : u + '?v=v60-r028-spring-report')));
+    const results = await Promise.allSettled(ASSETS.map((u) => c.add(u.endsWith('.html') || u === './' ? u : u + '?v=v60-r029-marketing-matrix')));
     const failures = results.filter(r => r.status === 'rejected');
     if (failures.length) { console.error('[離線核心快取未完成]', failures); throw Error('離線核心下載未完成，保留原版本'); }
     self.skipWaiting();

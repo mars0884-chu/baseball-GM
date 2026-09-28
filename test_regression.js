@@ -81,7 +81,7 @@ if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
   assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
 } else {
   assert((v59SingleFileSource.match(/<script defer src="0[0-6]-[^\"]+\.js\?v=/g) || []).length === 7, "v59 public shell loads the seven ordered modular scripts");
-  assert(v59SingleFileSource.includes("v60-r028-spring-report") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r028 public shell uses a fresh cache key without duplicating module source");
+  assert(v59SingleFileSource.includes("v60-r029-marketing-matrix") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r029 public shell uses a fresh cache key without duplicating module source");
 }
 
 /* ---------- v60-001 視覺恢復候選 ---------- */
@@ -120,7 +120,7 @@ assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceS
 const v60NewsRendererSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderNewsCard"), v60DashboardSource.indexOf("function renderSponsorMissionCard"));
 assert((v60NewsRendererSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60NewsRendererSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60NewsRendererSource.indexOf('v56ContentSummary("news"') < 0 && v60NewsRendererSource.indexOf("icon('news')") < 0, "v60 新聞 renderer 僅保留完整 PNG，不再輸出新聞 SVG");
 assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('v60CompatArtFallbackUrl') >= 0 && v60DashboardSource.indexOf('safeLoading') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准圖片路徑、PNG fallback 與 lazy loading 已接入");
-assert(v60SwSource.indexOf('baseballgm-v60-r028-spring-report') >= 0, "r028 Service Worker cache key 已更新");
+assert(v60SwSource.indexOf('baseballgm-v60-r029-marketing-matrix') >= 0, "r029 Service Worker cache key 已更新");
 assert(v60DashboardSource.includes('v60CompatArtImageAttrs(key, "eager", false)') && v60DashboardSource.includes('window.requestAnimationFrame(kick)') && v60DashboardSource.includes('img.loading = "lazy";\n        img.loading = "eager";') && v60DashboardSource.includes('v60KickRenderedSceneImages(); return r;'), "動態插入場景圖後下一幀觸發載入，確保瀏覽器啟動請求");
 assert(v60DashboardSource.includes('__v60CurrentScreen !== v60LastRenderedScreen') && v60DashboardSource.includes('window.scrollTo(0, 0)'), "切換新畫面先回到頁首，避免沿用舊長頁捲動位置");
 
@@ -4538,6 +4538,29 @@ __v60SpringTable=app.innerHTML.slice(__v60SpringTableStart,__v60SpringTableEnd);
 var __v60SpringSecondTeamCards=(app.innerHTML.match(/<article class="v60-spring-report-player">/g)||[]).length;
 S=JSON.parse(__v60SpringSavedS);UI=JSON.parse(__v60SpringSavedUI);app.innerHTML=__v60SpringSavedHtml;`);
 assert(g("__v60SpringRows===6 && __v60SpringCards===6 && __v60SpringPager && __v60SpringFirstHasAllGains && __v60SpringNoSave && __v60SpringPageTwoRows===5 && __v60SpringFirstName!==__v60SpringPageTwoName && __v60SpringSecondTeamRows===3 && __v60SpringSecondTeamCards===3"), "v60-018 renderer 保留主練／連動／特性精確成長、六人分頁、翻頁更換與軍別切換，且不改 S");
+
+/* v60-019 行銷方案改以共用成效欄＋量尺呈現，減少重複標籤而保留每項精確值。 */
+console.log("\n--- v60-019 行銷成效矩陣與文字減量 ---");
+const v60MarketingRenderer = v60FinanceSource.slice(v60FinanceSource.indexOf("function renderMarketing()"), v60FinanceSource.indexOf("function formatMoney("));
+assert(v60MarketingRenderer.includes('role="table" aria-label="年度行銷企劃成效比較"') && v60MarketingRenderer.includes("v60-campaign-metric") && v60MarketingRenderer.includes("人氣王再+2") && v60MarketingRenderer.includes("空白＝無加成") && !v60MarketingRenderer.includes("v60-campaign-effects"), "v60-019 行銷方案以共用欄頭和成效量尺取代逐項重複標籤，保留零效果與人氣王條件");
+assert(v60StyleSource.includes(".v60-campaign-grid") && v60StyleSource.includes(".v60-campaign-metric>i>b") && v60StyleSource.includes(".v60-campaign-grid.is-locked") && v60StyleSource.includes("@media(max-width:350px)"), "v60-019 行銷成效矩陣支援鎖定／規劃狀態與窄手機版型");
+g(`var __v60MarketingSavedS=JSON.stringify(S),__v60MarketingSavedUI=JSON.stringify(UI),__v60MarketingSavedHtml=app.innerHTML;
+var __v60MarketingTeam=S.teams[S.userTeamId];S.gameStarted=true;S.currentDay=0;ensureMarketingPlan(__v60MarketingTeam);__v60MarketingTeam.finance.marketingYear=S.seasonYear;__v60MarketingTeam.finance.marketingCampaigns=["social","endorse"];recomputeMarketingEffects(__v60MarketingTeam);ensureCdActivities();ensureNationBonds();
+var __v60MarketingOldRandom=Math.random,__v60MarketingRandomCalls=0,__v60MarketingError=null,__v60MarketingPure=false,__v60MarketingPlanningHtml="",__v60MarketingLockedHtml="";
+Math.random=function(){__v60MarketingRandomCalls++;throw new Error("純渲染不得抽亂數")};
+try{var __v60MarketingPlanBefore=JSON.stringify(S);renderMarketing();__v60MarketingPlanningHtml=app.innerHTML;var __v60MarketingPlanPure=JSON.stringify(S)===__v60MarketingPlanBefore;S.currentDay=1;var __v60MarketingLockBefore=JSON.stringify(S);renderMarketing();__v60MarketingLockedHtml=app.innerHTML;var __v60MarketingLockPure=JSON.stringify(S)===__v60MarketingLockBefore;__v60MarketingPure=__v60MarketingPlanPure&&__v60MarketingLockPure}catch(e){__v60MarketingError=String(e)}finally{Math.random=__v60MarketingOldRandom}
+var __v60MarketingRowCount=(__v60MarketingPlanningHtml.match(/class="v60-campaign-row v60-campaign-choice/g)||[]).length;
+var __v60MarketingMetricCount=(__v60MarketingPlanningHtml.match(/class="v60-campaign-metric"/g)||[]).length;
+var __v60MarketingHeaderCount=(__v60MarketingPlanningHtml.match(/role="columnheader">人氣<\\/div>/g)||[]).length;
+var __v60MarketingDataKept=MARKETING_CAMPAIGNS.every(function(c){return __v60MarketingPlanningHtml.includes(c.label)&&__v60MarketingPlanningHtml.includes(formatMoney(c.cost));})&&__v60MarketingPlanningHtml.includes('role="columnheader">人氣</div>')&&__v60MarketingPlanningHtml.includes('role="columnheader">周邊</div>')&&__v60MarketingPlanningHtml.includes('role="columnheader">進場</div>')&&__v60MarketingPlanningHtml.includes('aria-label="社群經營：人氣+2"')&&__v60MarketingPlanningHtml.includes('aria-label="社群經營：周邊+3%"')&&__v60MarketingPlanningHtml.includes('aria-label="家庭日／球迷回饋季：進場+5%"')&&__v60MarketingPlanningHtml.includes("人氣王再+2（需有特質）")&&__v60MarketingPlanningHtml.includes("空白＝無加成")&&__v60MarketingPlanningHtml.includes("進場無加成")&&!__v60MarketingPlanningHtml.includes(">—</span>");
+var __v60MarketingActions=(__v60MarketingPlanningHtml.match(/class="(?:btn-danger|btn-secondary) marketing-btn"/g)||[]).length;
+var __v60MarketingLockPreserved=__v60MarketingLockedHtml.includes("球季中・已鎖定")&&!__v60MarketingLockedHtml.includes("marketing-btn")&&__v60MarketingLockedHtml.includes("已投")&&!__v60MarketingLockedHtml.includes("本季已鎖定");
+var __v60MarketingRandomFree=__v60MarketingRandomCalls===0&&__v60MarketingError===null&&__v60MarketingPure;
+S=JSON.parse(__v60MarketingSavedS);UI=JSON.parse(__v60MarketingSavedUI);app.innerHTML=__v60MarketingSavedHtml;`);
+assert(g("__v60MarketingRowCount===7 && __v60MarketingMetricCount===21 && __v60MarketingHeaderCount===1 && __v60MarketingActions===7"), "v60-019 renderer 輸出七項企劃、21個量尺、共用欄頭與七個原操作");
+assert(g("__v60MarketingDataKept"), "v60-019 費用／加成精確值、條件與空白零效果語意均保留");
+assert(g("__v60MarketingLockPreserved"), "v60-019 球季鎖定與已投入方案狀態均保留");
+assert(g("__v60MarketingRandomFree"), "v60-019 規劃／鎖定畫面渲染不改 Save 且不消耗亂數");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

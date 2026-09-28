@@ -2597,17 +2597,26 @@ function renderMarketing() {
       ${typeof v60CompatVisualScene === "function" ? v60CompatVisualScene("marketing_command_center_v58", "行銷企劃中心場景", "MARKETING VISUAL", "年度活動", "活動配置與投入", "v60-marketing-scene") : ""}
       ${typeof renderCdActivitiesCard === "function" ? renderCdActivitiesCard() : ""}
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["人氣", `${team.finance.popularity}/100`], ["已投", `${(team.finance.marketingCampaigns || []).length} 項`], ["周邊", `+${Math.round((team.finance.marketingMerchPct || 0) * 100)}%`], ["進場", `+${Math.round((team.finance.marketingAttPct || 0) * 100)}%`]], "行銷企劃摘要") : ""}
-      <p class="v60-state-line">${canPlan ? "春訓可多選。" : "本季已鎖定。"}</p>
-      <div class="v60-campaign-list">${MARKETING_CAMPAIGNS.map(c => {
+      ${canPlan ? '<p class="v60-state-line">春訓可多選；空白＝無加成。</p>' : ""}
+      <div class="v60-campaign-grid ${canPlan ? "is-planning" : "is-locked"}" role="table" aria-label="年度行銷企劃成效比較">
+        <div class="v60-campaign-row v60-campaign-heading" role="row">
+          <div role="columnheader">企劃／費用</div><div role="columnheader">人氣</div><div role="columnheader">周邊</div><div role="columnheader">進場</div>${canPlan ? '<div role="columnheader">操作</div>' : ""}
+        </div>${MARKETING_CAMPAIGNS.map(c => {
         const active = (team.finance.marketingCampaigns || []).includes(c.key);
-        const shortEffects = [c.popBoost ? `人氣+${c.popBoost}${c.key === "endorse" ? "（人氣王再+2）" : ""}` : "", c.merchPct ? `周邊+${Math.round(c.merchPct * 100)}%` : "", c.attPct ? `進場+${Math.round(c.attPct * 100)}%` : ""].filter(Boolean).join("・");
+        const metric = (label, value, suffix, max) => {
+          const amount = Number(value) || 0;
+          const visible = amount ? `+${amount}${suffix}` : "";
+          const fill = Math.max(0, Math.min(100, Math.round(amount / max * 100)));
+          return `<div class="v60-campaign-metric" role="cell" aria-label="${c.label}：${label}${amount ? visible : "無加成"}"><span>${visible}</span><i aria-hidden="true"><b style="width:${fill}%"></b></i></div>`;
+        };
         return `
-        <div class="card dealcard v60-campaign-choice ${active ? "dealchosen" : ""}">
-          <div class="v60-campaign-title"><strong>${c.label}</strong><span>${formatMoney(c.cost)}</span></div>
-          <p class="v60-campaign-effects">${shortEffects}</p>
-          ${canPlan ? `<div class="btnrow"><button class="${active ? "btn-danger" : "btn-secondary"} marketing-btn" data-plan="${c.key}">${active ? "取消" : "投入"}</button></div>` : ""}
+        <div class="v60-campaign-row v60-campaign-choice ${active ? "is-active dealchosen" : ""}" role="row" aria-label="${c.label}${active ? "・已投入" : ""}">
+          <div class="v60-campaign-name" role="rowheader"><strong>${c.label}</strong><span>${formatMoney(c.cost)}${active ? '<b class="v60-campaign-active">已投</b>' : ""}</span>${c.key === "endorse" ? '<small class="v60-campaign-condition">人氣王再+2（需有特質）</small>' : ""}</div>
+          ${metric("人氣", c.popBoost, "", 8)}${metric("周邊", Math.round(c.merchPct * 100), "%", 25)}${metric("進場", Math.round(c.attPct * 100), "%", 5)}
+          ${canPlan ? `<div class="v60-campaign-action" role="cell"><button class="${active ? "btn-danger" : "btn-secondary"} marketing-btn" data-plan="${c.key}">${active ? "取消" : "投入"}</button></div>` : ""}
         </div>`;
-      }).join("")}</div>
+      }).join("")}
+      </div>
       <button id="btn-marketing-facilities" class="btn-outline">球場容量與收入上限 →</button>
       <div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>
     </div>`;

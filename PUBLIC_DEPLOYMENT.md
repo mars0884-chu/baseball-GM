@@ -1,6 +1,16 @@
-# v60-r028 春訓成果頁分頁與文字精簡進度
+# v60-r029 行銷企劃成效矩陣與文字精簡進度
 
 本目錄是 GitHub Pages 公開部署殼層，不取代離線交付包，也不代表 Mars 正式接受。
+
+## r029：行銷企劃共用成效矩陣
+
+- 七項年度企劃由逐卡重複寫「人氣／周邊／進場」改成共用欄名、精確加成數字與相對量尺；企劃名稱、費用、所有效果、七個春訓投入／取消操作、已投入狀態都保留。明星代言的「人氣王再+2」條件留在該企劃列。
+- 零加成改以空量尺表示，只在春訓頁提示一次「空白＝無加成」；球季中不再重複「本季已鎖定」，因上方交流／海外活動卡已有球季鎖定狀態。未以收合或隱藏必要規則替代資訊。
+- 最終程式碼本機隔離瀏覽器，320px 手機內容寬 305px：文件寬 305px、矩陣寬約 273px／scrollWidth 271px；七列與七個投入操作完整，沒有水平溢位。1280px 桌面：頁面寬 1265px、矩陣寬 488px／scrollWidth 486px；七列與操作完整，沒有欄位裁切。投入「社群經營」後，預算 6000萬→5700萬元、摘要顯示 1 項且按鈕轉為「取消」。
+- 以上是行銷單頁資訊編排與量尺化，不代表全遊戲文字減少 50%；沒有用不同遊戲階段的整頁字數作前後百分比比較。
+- 本輪程式：`02-finance.js`、`style.css`、`index.html`、`sw.js`、`test_regression.js` 與本部署紀錄；正式 `current/`、正式 delivery、Art ZIP、manifest、SHA、`CURRENT_PACKAGE.json` 均未修改。
+- 本輪驗證：`node test_regression.js` 1797 通過／0 失敗、`node smoke_multiyear.js` PASS、`node smoke_puregm.js` PASS；`node --check 02-finance.js`、`node --check sw.js`、`node --check test_regression.js` 與 `git diff --check` PASS。Regression 另確認 7 項方案／21 個效果格、費用與精確加成、明星條件、球季鎖定、投入操作，以及渲染不改 Save／不消耗亂數。
+- GitHub Pages 公開端點與部署 commit 將於推送後補記；在確認 r029 標記可由無快取請求取得前，不宣稱公開部署完成。
 
 ## r028：春訓成果依軍別／六人分頁與手機成效卡
 
@@ -11,8 +21,6 @@
 - Regression fixture 確認 11 人按 6＋5 分頁、2 軍內容、主練／連動／特性及「維持」均保留、翻頁更換人選且 `S` 未改；沒有更動模擬、亂數、球員能力或 Save schema。
 - 本輪程式：`05-ui-dashboard.js`、`06-ui-roster.js`、`style.css`、`index.html`、`sw.js`、`test_regression.js`、本部署紀錄；靜態資源／Service Worker cache key 更新為 r028。正式 `current/`、正式 package、Art ZIP、manifest、SHA 與 `CURRENT_PACKAGE.json` 均未修改。
 - 驗證：`node test_regression.js` 1,791 通過／0 失敗；`node smoke_multiyear.js` 15 年＋全畫面渲染 PASS；`node smoke_puregm.js` 純 GM 15 年 PASS；修改的 3 個 JavaScript `node --check` 與 `git diff --check` PASS。隔離瀏覽器頁面錯誤 0。2026-09-28，提交 `13fcd21` 推送 `main`；公開 Pages 首頁、兩支 UI 模組、CSS、Service Worker 皆 HTTP 200，無快取請求確認 r028 專屬 renderer／樣式／cache key 標記。這只證明公開靜態來源更新，不等於 Mars 真機／視覺接受。
-
-## r027：財務赤字裁員頁分頁與年薪比較
 
 ## r027：財務赤字裁員候選分頁與年薪比較
 
