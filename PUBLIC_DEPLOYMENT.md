@@ -10,7 +10,7 @@
 - 以上是行銷單頁資訊編排與量尺化，不代表全遊戲文字減少 50%；沒有用不同遊戲階段的整頁字數作前後百分比比較。
 - 本輪程式：`02-finance.js`、`style.css`、`index.html`、`sw.js`、`test_regression.js` 與本部署紀錄；正式 `current/`、正式 delivery、Art ZIP、manifest、SHA、`CURRENT_PACKAGE.json` 均未修改。
 - 本輪驗證：`node test_regression.js` 1797 通過／0 失敗、`node smoke_multiyear.js` PASS、`node smoke_puregm.js` PASS；`node --check 02-finance.js`、`node --check sw.js`、`node --check test_regression.js` 與 `git diff --check` PASS。Regression 另確認 7 項方案／21 個效果格、費用與精確加成、明星條件、球季鎖定、投入操作，以及渲染不改 Save／不消耗亂數。
-- GitHub Pages 公開端點與部署 commit 將於推送後補記；在確認 r029 標記可由無快取請求取得前，不宣稱公開部署完成。
+- 2026-09-28，程式提交 `bdf88a6` 已推送 `main`；[公開 Pages](https://mars0884-chu.github.io/baseball-GM/) 首頁、`index.html`、`02-finance.js`、`style.css`、`sw.js` 以無快取 GET 均回應 HTTP 200，且逐一確認 r029 HTML／renderer／CSS／Service Worker 專屬標記。此證明公開靜態資源已更新，不等同 Mars 真機／視覺接受。
 
 ## r028：春訓成果依軍別／六人分頁與手機成效卡
 
