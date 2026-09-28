@@ -1825,7 +1825,40 @@ function renderSpringReport() {
   if (!camp || !camp.report) { UI.screen = "dashboard"; render(); return; }
   const r = camp.report;
   UI.springReportTab = UI.springReportTab || "1軍";
-  const lines = r.lines.filter(l => l.level === UI.springReportTab);
+  const allLines = Array.isArray(r.lines) ? r.lines : [];
+  const lines = allLines.filter(l => l.level === UI.springReportTab);
+  const page = v60RosterPageSlice(lines, "springReportPage", 6);
+  const changesOf = line => Array.isArray(line.changes) ? line.changes : [];
+  const gainKinds = [
+    { key: "main", label: "主練", test: c => !c.linked && !c.traitSpill },
+    { key: "linked", label: "連動", test: c => !!c.linked && !c.traitSpill },
+    { key: "trait", label: "特性", test: c => !!c.traitSpill }
+  ];
+  const renderGains = line => {
+    const changes = changesOf(line);
+    if (!changes.length) return `<div class="v60-spring-report-stays">維持</div>`;
+    return `<div class="v60-spring-report-groups">${gainKinds.map(kind => {
+      const selected = changes.filter(kind.test);
+      if (!selected.length) return "";
+      return `<div class="v60-spring-report-group is-${kind.key}"><b>${kind.label}</b><div>${selected.map(c => {
+        const from = Number(c.from), to = Number(c.to);
+        const delta = Number.isFinite(from) && Number.isFinite(to) ? Math.max(0, Math.round(to - from)) : 0;
+        const width = Math.min(100, delta * 20);
+        const label = v60UiEscape(c.label || "能力");
+        return `<span class="v60-spring-report-gain" role="img" aria-label="${kind.label} ${label} 增加 ${delta}"><span>${label}</span><i aria-hidden="true"><b style="width:${width}%"></b></i><strong>+${delta}</strong></span>`;
+      }).join("")}</div></div>`;
+    }).join("")}</div>`;
+  };
+  const desktopRows = page.items.map(line => {
+    const changes = changesOf(line);
+    const compactChanges = changes.length === 0 ? "維持" : changes.map(c => `${v60UiEscape(c.label || "能力")}+${Math.max(0, Number(c.to) - Number(c.from) || 0)}`).join("・");
+    return `<tr><td><b>${v60UiEscape(line.name)}</b></td><td>${v60UiEscape(line.menu)}</td><td>${compactChanges}</td></tr>`;
+  }).join("");
+  const mobileCards = page.items.map(line => `<article class="v60-spring-report-player">
+    <div class="v60-spring-report-player-head"><strong>${v60UiEscape(line.name)}</strong><span>${v60UiEscape(line.menu)}</span></div>
+    ${renderGains(line)}
+  </article>`).join("");
+  const pager = v60RosterPagerHtml(page, "springReportPage", "春訓成果", lines.length);
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${S.leagueName} ・ 第${S.seasonYear}年</div><h1>春訓成果報告</h1></div>
@@ -1834,7 +1867,7 @@ function renderSpringReport() {
         <div class="sb-row small"><div class="sb-label">春訓地點</div><div class="sb-value small">${r.nation}（${r.grade}級）</div></div>
         <div class="sb-row small"><div class="sb-label">花費</div><div class="sb-value small">${r.cost === 0 ? "免費（母國）" : formatMoney(r.cost)}</div></div>
       </div>
-      ${v60VisualMetricRail([["1軍成果", `${r.lines.filter(l => l.level === "1軍").length} 人`], ["2軍成果", `${r.lines.filter(l => l.level === "2軍").length} 人`], ["事件", `${(r.events || []).length} 件`]], "春訓成果摘要")}
+      ${v60VisualMetricRail([["1軍", `${allLines.filter(l => l.level === "1軍").length} 人`], ["2軍", `${allLines.filter(l => l.level === "2軍").length} 人`], ["事件", `${(r.events || []).length} 件`]], "春訓成果摘要")}
       ${r.events && r.events.length > 0 ? `
       <div class="card">
         <div class="eyebrow">春訓特殊事件</div>
@@ -1844,19 +1877,20 @@ function renderSpringReport() {
         <button class="tab ${UI.springReportTab === "1軍" ? "active" : ""}" data-tab="1軍">1軍成果</button>
         <button class="tab ${UI.springReportTab === "2軍" ? "active" : ""}" data-tab="2軍">2軍成果</button>
       </div>
-      <table class="stattable">
-        <thead><tr><th>球員</th><th>成效</th></tr></thead>
-        <tbody>
-          ${lines.map(l => {
-            const compactChanges = l.changes.length === 0 ? "維持" : l.changes.map(c => `${c.label}+${Math.max(0, c.to - c.from)}`).join("・");
-            return `<tr><td><b>${l.name}</b><span class="v60-inline-meta">${l.menu}</span></td><td>${compactChanges}</td></tr>`;
-          }).join("")}
-        </tbody>
+      ${pager}
+      <table class="stattable v60-spring-report-table">
+        <thead><tr><th>球員</th><th>春訓項目</th><th>成效</th></tr></thead>
+        <tbody>${desktopRows || `<tr><td colspan="3" class="spring-empty-state">目前沒有成果</td></tr>`}</tbody>
       </table>
+      <div class="v60-spring-report-cards" aria-label="${UI.springReportTab}春訓成果">
+        ${mobileCards || `<div class="spring-empty-state">目前沒有成果</div>`}
+      </div>
+      ${pager}
       ${v60VisualMetricRail([["主練", "主要提升"], ["連動", "相關能力"], ["特性", "額外提升"]], "春訓成果判定")}
       <div class="btnrow"><button id="btn-spring-done" class="btn-primary">春訓結束，迎接開幕戰！</button></div>
     </div>`;
-  app.querySelectorAll(".tab").forEach(btn => { btn.onclick = () => { UI.springReportTab = btn.dataset.tab; render(); }; });
+  app.querySelectorAll(".tab").forEach(btn => { btn.onclick = () => { UI.springReportPage = 0; UI.springReportTab = btn.dataset.tab; render(); }; });
+  wireV60RosterPager();
   document.getElementById("btn-spring-done").onclick = () => {
     UI.flash = `第 ${S.seasonYear} 年球季正式開幕！`;
     UI.screen = "dashboard";

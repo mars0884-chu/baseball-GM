@@ -1564,12 +1564,13 @@ function lineupRotationWarnings(team) {
 }
 
 const V60_ROSTER_PAGE_SIZE = 8;
-function v60RosterPageSlice(list, uiPageKey) {
-  const pageCount = Math.max(1, Math.ceil(list.length / V60_ROSTER_PAGE_SIZE));
+function v60RosterPageSlice(list, uiPageKey, requestedPageSize) {
+  const pageSize = Number.isInteger(requestedPageSize) && requestedPageSize > 0 ? requestedPageSize : V60_ROSTER_PAGE_SIZE;
+  const pageCount = Math.max(1, Math.ceil(list.length / pageSize));
   const rawPage = Number(UI[uiPageKey]);
   const page = Number.isFinite(rawPage) ? Math.min(pageCount - 1, Math.max(0, Math.floor(rawPage))) : 0;
   UI[uiPageKey] = page;
-  return { items: list.slice(page * V60_ROSTER_PAGE_SIZE, (page + 1) * V60_ROSTER_PAGE_SIZE), page, pageCount };
+  return { items: list.slice(page * pageSize, (page + 1) * pageSize), page, pageCount, pageSize };
 }
 function v60RosterPagerHtml(page, uiPageKey, label, totalCount) {
   if (page.pageCount <= 1) return "";

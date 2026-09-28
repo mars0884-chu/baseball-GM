@@ -81,7 +81,7 @@ if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
   assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
 } else {
   assert((v59SingleFileSource.match(/<script defer src="0[0-6]-[^\"]+\.js\?v=/g) || []).length === 7, "v59 public shell loads the seven ordered modular scripts");
-  assert(v59SingleFileSource.includes("v60-r027-finance-cuts") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r027 public shell uses a fresh cache key without duplicating module source");
+  assert(v59SingleFileSource.includes("v60-r028-spring-report") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r028 public shell uses a fresh cache key without duplicating module source");
 }
 
 /* ---------- v60-001 視覺恢復候選 ---------- */
@@ -120,7 +120,7 @@ assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceS
 const v60NewsRendererSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderNewsCard"), v60DashboardSource.indexOf("function renderSponsorMissionCard"));
 assert((v60NewsRendererSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60NewsRendererSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60NewsRendererSource.indexOf('v56ContentSummary("news"') < 0 && v60NewsRendererSource.indexOf("icon('news')") < 0, "v60 新聞 renderer 僅保留完整 PNG，不再輸出新聞 SVG");
 assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('v60CompatArtFallbackUrl') >= 0 && v60DashboardSource.indexOf('safeLoading') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准圖片路徑、PNG fallback 與 lazy loading 已接入");
-assert(v60SwSource.indexOf('baseballgm-v60-r027-finance-cuts') >= 0, "r027 Service Worker cache key 已更新");
+assert(v60SwSource.indexOf('baseballgm-v60-r028-spring-report') >= 0, "r028 Service Worker cache key 已更新");
 assert(v60DashboardSource.includes('v60CompatArtImageAttrs(key, "eager", false)') && v60DashboardSource.includes('window.requestAnimationFrame(kick)') && v60DashboardSource.includes('img.loading = "lazy";\n        img.loading = "eager";') && v60DashboardSource.includes('v60KickRenderedSceneImages(); return r;'), "動態插入場景圖後下一幀觸發載入，確保瀏覽器啟動請求");
 assert(v60DashboardSource.includes('__v60CurrentScreen !== v60LastRenderedScreen') && v60DashboardSource.includes('window.scrollTo(0, 0)'), "切換新畫面先回到頁首，避免沿用舊長頁捲動位置");
 
@@ -4508,6 +4508,36 @@ var __v60CutsPageTwoName=(__v60CutsTable.match(/<tr><td>([^<]+)/)||[])[1]||'';
 UI.financeCutsPosFilter='P';UI.financeCutsPage=0;renderFinanceCuts();var __v60CutsPitcherTotal=app.innerHTML.includes('共 9 人');
 S=JSON.parse(__v60CutsSavedS);UI=JSON.parse(__v60CutsSavedUI);app.innerHTML=__v60CutsSavedHtml;`);
 assert(g("__v60CutsRows===8 && __v60CutsActions===8 && __v60CutsMobileCards===8 && __v60CutsSalaryBars===8 && __v60CutsPageTwoRows===3 && __v60CutsFirstName!==__v60CutsPageTwoName && __v60CutsPitcherTotal"), "v60-017 renderer 實際呈現11人分為8＋3頁、頁間換人、桌面釋出按鈕及手機薪資條完整");
+
+/* v60-018：春訓成果按一／二軍分頁，每頁六人；手機用主練／連動／特性增幅卡取代窄表格。 */
+console.log("\n--- v60-018 春訓成果報告閱讀減量 ---");
+const v60SpringReportStart = v60DashboardSource.indexOf("function renderSpringReport()");
+const v60SpringReportEnd = v60DashboardSource.indexOf("/* ---------- v31-B 季後自主訓練", v60SpringReportStart);
+const v60SpringReportSource = v60DashboardSource.slice(v60SpringReportStart, v60SpringReportEnd);
+assert(v60SpringReportSource.includes('v60RosterPageSlice(lines, "springReportPage", 6)') && v60SpringReportSource.includes('v60RosterPagerHtml(page, "springReportPage", "春訓成果", lines.length)') && v60SpringReportSource.includes("page.items.map(line =>"), "v60-018 春訓成果按軍別分頁、每頁最多六人且保留完整名單");
+assert(v60SpringReportSource.includes("v60-spring-report-cards") && v60SpringReportSource.includes("traitSpill") && v60SpringReportSource.includes("wireV60RosterPager()") && v60SpringReportSource.includes("UI.springReportPage = 0"), "v60-018 手機卡呈現主練／連動／特性，切換軍別重設頁碼");
+assert(v60RosterSource.includes("function v60RosterPageSlice(list, uiPageKey, requestedPageSize)") && v60RosterSource.includes("Number.isInteger(requestedPageSize)") && v60StyleSource.includes(".v60-spring-report-gain>i>b") && v60StyleSource.includes(".v60-spring-report-table{display:none;"), "v60-018 可調頁數不改既有八人頁，手機改用可讀增幅條");
+g(`var __v60SpringSavedS=JSON.stringify(S),__v60SpringSavedUI=JSON.stringify(UI),__v60SpringSavedHtml=app.innerHTML;
+var __v60SpringLines=[];
+for(var si=0;si<11;si++){__v60SpringLines.push({name:'春訓測試'+si,level:'1軍',menu:'速度訓練',changes:si===0?[{label:'球速',from:140,to:144},{label:'球威',from:55,to:57,linked:true},{label:'抗壓',from:60,to:61,linked:true,traitSpill:true}]:(si===1?[]:[{label:'速度',from:50,to:52}])});}
+for(var sj=0;sj<3;sj++){__v60SpringLines.push({name:'二軍測試'+sj,level:'2軍',menu:'守備訓練',changes:[{label:'守備',from:40,to:42}]});}
+S.springCamp={year:S.seasonYear,executed:true,report:{nation:'海嶺共和國',grade:'A',cost:0,events:[],lines:__v60SpringLines}};
+UI.screen='springReport';UI.springReportTab='1軍';UI.springReportPage=0;
+var __v60SpringBefore=JSON.stringify(S);renderSpringReport();
+var __v60SpringTableStart=app.innerHTML.indexOf('<table class="stattable v60-spring-report-table">'),__v60SpringTableEnd=app.innerHTML.indexOf('</table>',__v60SpringTableStart)+8;
+var __v60SpringTable=app.innerHTML.slice(__v60SpringTableStart,__v60SpringTableEnd),__v60SpringRows=(__v60SpringTable.match(/<tr>/g)||[]).length-1;
+var __v60SpringCards=(app.innerHTML.match(/<article class="v60-spring-report-player">/g)||[]).length;
+var __v60SpringFirstName=(__v60SpringTable.match(/<tr><td><b>([^<]+)/)||[])[1]||'';
+var __v60SpringFirstHasAllGains=app.innerHTML.includes('主練 球速 增加 4')&&app.innerHTML.includes('連動 球威 增加 2')&&app.innerHTML.includes('特性 抗壓 增加 1')&&app.innerHTML.includes('維持');
+var __v60SpringPager=app.innerHTML.includes('第 1/2 頁・共 11 人'),__v60SpringNoSave=JSON.stringify(S)===__v60SpringBefore;
+UI.springReportPage=1;renderSpringReport();__v60SpringTableStart=app.innerHTML.indexOf('<table class="stattable v60-spring-report-table">');__v60SpringTableEnd=app.innerHTML.indexOf('</table>',__v60SpringTableStart)+8;
+__v60SpringTable=app.innerHTML.slice(__v60SpringTableStart,__v60SpringTableEnd);var __v60SpringPageTwoRows=(__v60SpringTable.match(/<tr>/g)||[]).length-1;
+var __v60SpringPageTwoName=(__v60SpringTable.match(/<tr><td><b>([^<]+)/)||[])[1]||'';
+UI.springReportTab='2軍';UI.springReportPage=0;renderSpringReport();__v60SpringTableStart=app.innerHTML.indexOf('<table class="stattable v60-spring-report-table">');__v60SpringTableEnd=app.innerHTML.indexOf('</table>',__v60SpringTableStart)+8;
+__v60SpringTable=app.innerHTML.slice(__v60SpringTableStart,__v60SpringTableEnd);var __v60SpringSecondTeamRows=(__v60SpringTable.match(/<tr>/g)||[]).length-1;
+var __v60SpringSecondTeamCards=(app.innerHTML.match(/<article class="v60-spring-report-player">/g)||[]).length;
+S=JSON.parse(__v60SpringSavedS);UI=JSON.parse(__v60SpringSavedUI);app.innerHTML=__v60SpringSavedHtml;`);
+assert(g("__v60SpringRows===6 && __v60SpringCards===6 && __v60SpringPager && __v60SpringFirstHasAllGains && __v60SpringNoSave && __v60SpringPageTwoRows===5 && __v60SpringFirstName!==__v60SpringPageTwoName && __v60SpringSecondTeamRows===3 && __v60SpringSecondTeamCards===3"), "v60-018 renderer 保留主練／連動／特性精確成長、六人分頁、翻頁更換與軍別切換，且不改 S");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);
