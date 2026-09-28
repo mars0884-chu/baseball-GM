@@ -10,7 +10,7 @@
 - 390×844：第一頁 6 卡、第 1/5 頁共 28 人；按下一頁後人選更換為第 2/5 頁。切換 2 軍後為第 1/6 頁共 32 人，顯示 6 卡。320×844：文件寬度 305px 等於可用寬度，無水平溢位，手機卡片顯示、表格隱藏；春訓結束操作完整位於畫面寬度內。1280×800：桌面表格顯示，當頁 6 列；手機卡片容器隱藏。隔離瀏覽器錯誤 0。
 - Regression fixture 確認 11 人按 6＋5 分頁、2 軍內容、主練／連動／特性及「維持」均保留、翻頁更換人選且 `S` 未改；沒有更動模擬、亂數、球員能力或 Save schema。
 - 本輪程式：`05-ui-dashboard.js`、`06-ui-roster.js`、`style.css`、`index.html`、`sw.js`、`test_regression.js`、本部署紀錄；靜態資源／Service Worker cache key 更新為 r028。正式 `current/`、正式 package、Art ZIP、manifest、SHA 與 `CURRENT_PACKAGE.json` 均未修改。
-- 驗證：`node test_regression.js` 1,791 通過／0 失敗；`node smoke_multiyear.js` 15 年＋全畫面渲染 PASS；`node smoke_puregm.js` 純 GM 15 年 PASS；修改的 3 個 JavaScript `node --check` 與 `git diff --check` PASS。隔離瀏覽器頁面錯誤 0。公開 Pages HTTP 核驗待推送後執行；自動驗收與靜態部署不等同 Mars 真機／視覺接受。
+- 驗證：`node test_regression.js` 1,791 通過／0 失敗；`node smoke_multiyear.js` 15 年＋全畫面渲染 PASS；`node smoke_puregm.js` 純 GM 15 年 PASS；修改的 3 個 JavaScript `node --check` 與 `git diff --check` PASS。隔離瀏覽器頁面錯誤 0。2026-09-28，提交 `13fcd21` 推送 `main`；公開 Pages 首頁、兩支 UI 模組、CSS、Service Worker 皆 HTTP 200，無快取請求確認 r028 專屬 renderer／樣式／cache key 標記。這只證明公開靜態來源更新，不等於 Mars 真機／視覺接受。
 
 ## r027：財務赤字裁員頁分頁與年薪比較
 
