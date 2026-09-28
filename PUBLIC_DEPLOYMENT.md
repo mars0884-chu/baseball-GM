@@ -12,7 +12,8 @@
 - 1280×800 桌面使用原表格，第一頁 8 列及 8 個釋出操作均存在；手機卡片隱藏。renderer 呼叫共享亂數 0 次；頁碼存在 `UI` 暫存層，不寫入 `S`，財務／釋出規則未改。
 - 本輪程式：`02-finance.js`、`06-ui-roster.js`、`style.css`、`index.html`、`sw.js`、`test_regression.js`；Service Worker／靜態資源版本更新為 r027。
 - 驗證：`node test_regression.js` 1,787 通過／0 失敗；`node smoke_multiyear.js` 15 年＋全畫面渲染 PASS；`node smoke_puregm.js` 純 GM 15 年 PASS；相關 JavaScript syntax 與 `git diff --check` PASS。這些自動驗證不等同 Mars 真機／視覺接受。
-- 本輪未變更素材、Save schema、正式 `current/`、外層正式 package、Art ZIP、manifest、SHA 或 `CURRENT_PACKAGE.json`。公開 Pages HTTP 狀態將於推送後另行核對。
+- 本輪未變更素材、Save schema、正式 `current/`、外層正式 package、Art ZIP、manifest、SHA 或 `CURRENT_PACKAGE.json`。
+- 2026-09-28，程式提交 `eef439d` 已推送 `main`；GitHub Pages 首頁、`02-finance.js`、`style.css` 與 `sw.js` 均回應 HTTP 200，分別確認 r027 查詢版本、手機裁員卡、薪資比較條與 Service Worker cache key 標記。這證明公開靜態資源已更新，不等同玩家瀏覽器互動驗收或 Mars 真機／視覺接受。
 
 ## r026：掛牌交易市場分頁與手機卡片
 
