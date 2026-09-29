@@ -81,7 +81,7 @@ if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
   assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
 } else {
   assert((v59SingleFileSource.match(/<script defer src="0[0-6]-[^\"]+\.js\?v=/g) || []).length === 7, "v59 public shell loads the seven ordered modular scripts");
-  assert(v59SingleFileSource.includes("v60-r036-lineup-work-tabs") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r036 public shell uses a fresh cache key without duplicating module source");
+  assert(v59SingleFileSource.includes("v60-r037-visual-tutorial-guide") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r037 public shell uses a fresh cache key without duplicating module source");
 }
 
 /* ---------- v60-001 視覺恢復候選 ---------- */
@@ -120,7 +120,7 @@ assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceS
 const v60NewsRendererSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderNewsCard"), v60DashboardSource.indexOf("function renderSponsorMissionCard"));
 assert((v60NewsRendererSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60NewsRendererSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60NewsRendererSource.indexOf('v56ContentSummary("news"') < 0 && v60NewsRendererSource.indexOf("icon('news')") < 0, "v60 新聞 renderer 僅保留完整 PNG，不再輸出新聞 SVG");
 assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('v60CompatArtFallbackUrl') >= 0 && v60DashboardSource.indexOf('safeLoading') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准圖片路徑、PNG fallback 與 lazy loading 已接入");
-assert(v60SwSource.indexOf('baseballgm-v60-r036-lineup-work-tabs') >= 0, "r036 Service Worker cache key 已更新");
+assert(v60SwSource.indexOf('baseballgm-v60-r037-visual-tutorial-guide') >= 0, "r037 Service Worker cache key 已更新");
 assert(v60DashboardSource.includes('v60CompatArtImageAttrs(key, "eager", false)') && v60DashboardSource.includes('window.requestAnimationFrame(kick)') && v60DashboardSource.includes('img.loading = "lazy";\n        img.loading = "eager";') && v60DashboardSource.includes('v60KickRenderedSceneImages(); return r;'), "動態插入場景圖後下一幀觸發載入，確保瀏覽器啟動請求");
 assert(v60DashboardSource.includes('__v60CurrentScreen !== v60LastRenderedScreen') && v60DashboardSource.includes('window.scrollTo(0, 0)'), "切換新畫面先回到頁首，避免沿用舊長頁捲動位置");
 
@@ -1384,8 +1384,9 @@ assert(g("UI.screen==='draft' && !S.draft.active && (S.draft.picks||[]).length==
 
 /* --- 11. 新手教學 --- */
 assert(g("typeof renderTutorial==='function' && tutorialSections().length===9"), "v35 教學畫面與九大章節齊備");
-assert(g("(function(){ try{ UI.screen='tutorial'; UI.tutorialOpen='finance'; render(); return app.innerHTML.includes('避免赤字') && app.innerHTML.includes('強制裁員'); }catch(e){ return false; } })()"), "v35 教學財務章節含避免赤字說明");
-assert(g("(function(){ UI.tutorialOpen='basics'; render(); return app.innerHTML.includes('信任歸零＝解職'); })()"), "v35 教學基本規則含信任機制");
+assert(g("(function(){ try{ UI.screen='tutorial'; UI.tutorialPage=0; render(); return (app.innerHTML.match(/data-guide-page=/g)||[]).length===9 && (app.innerHTML.match(/data-guide-section=/g)||[]).length===1 && app.innerHTML.includes('role=\"tablist\"') && !app.innerHTML.includes('tut-toggle') && !app.innerHTML.includes('<details'); }catch(e){ return false; } })()"), "v60-r037 教學改為九章分頁，內容直接呈現且非收合");
+assert(g("(function(){ const text=tutorialSections().map(section=>section.title+section.html).join(' '); return text.includes('控管赤字 6 招') && text.includes('強制釋出高薪球員') && text.includes('信任歸零 → 解職') && text.includes('選秀・每年 6 輪') && text.includes('第二次解職 → 永久出局') && text.includes('IndexedDB'); })()"), "v60-r037 教學章節資料保留財務、信任、補強、生涯與存檔規則");
+assert(g("(function(){ return (app.innerHTML.match(/data-guide-page=/g)||[]).length===9 && app.innerHTML.includes('aria-label=\"教學章節\"') && app.innerHTML.includes('data-guide-step=\"1\"'); })()"), "v60-r037 教學章節索引與前後章操作存在");
 assert(g("(function(){ UI.tutorialReturn='dashboard'; document.getElementById('btn-tut-back').onclick(); return UI.screen==='dashboard'; })()"), "v35 教學返回鍵運作");
 g("UI.screen='dashboard'; render();");
 assert(g("app.innerHTML.includes('新手教學')"), "v35 主控台有教學入口");

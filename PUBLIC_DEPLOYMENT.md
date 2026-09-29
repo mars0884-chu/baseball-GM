@@ -1,6 +1,15 @@
-# v60-r036 先發管理分頁與文字減量進度
+# v60-r037 新手教學章節分頁與文字減量進度
 
 本目錄是 GitHub Pages 公開部署殼層，不取代離線交付包，也不代表 Mars 正式接受。
+
+## r037：新手教學九章導覽與可見規則卡
+
+- 新手教學由手風琴改成九個章節分頁，每頁只呈現一組視覺卡片／流程／因果規則；章節可由頁首直接選取，也能用上一章／下一章切換。不是摺疊或刪除章節，原有規則與數據仍可逐頁讀取。
+- 以相同章節模型計算標題＋內文的全部字元，包含 r036 首次載入時尚未展開的章節：3,008→2,129，減少 29.2%。此為新手教學單頁內容量，不代表全遊戲減少 50%。目前 390×844 手機第一章畫面高 798px；整頁九章常駐的長頁已拆成可直接選擇的章節畫面，避免一次閱讀九段長文。
+- Playwright 隔離瀏覽器逐一點擊九章，確認每章標題、內容、頁碼與單一選中頁籤同步；上一章／下一章、方向鍵循環操作有效。分頁控制至少 44px，320×844、390×844、1280×900 均無水平溢位；各章規則可見，沒有 `<details>`／手風琴；操作前後遊戲 `S` 完全相同，render 未呼叫共享亂數。
+- Regression：`node test_regression.js` 為 1,820 通過／0 失敗；`node smoke_multiyear.js` 15 年＋全畫面 render PASS；`node smoke_puregm.js` 純 GM 15 年 PASS；`node --check 05-ui-dashboard.js`、`node --check test_regression.js`、`node --check sw.js` 與 `git diff --check` PASS。隔離瀏覽器渲染 30 個主要路由無 JavaScript 例外，教學九章於 320×844、390×844、1280×900 互動及響應式驗證 PASS。
+- 本輪修改：`05-ui-dashboard.js`、`style.css`、`index.html`、`sw.js`、`test_regression.js` 與本部署紀錄。Service Worker／靜態資源版本為 `v60-r037-visual-tutorial-guide`。工作區原有 `manifest.webmanifest` 修改保留且不納入提交；正式 `current/`、delivery／Art ZIP、正式 manifest／SHA、`CURRENT_PACKAGE.json` 及 lineage 均未修改。
+- 全遊戲文字量減少 50% 仍未被證明或完成；春訓、行銷、國際球員市場等畫面仍包含必要的人員、效果、估值及操作資料。本候選僅完成教學頁本批減量與導航，不將單頁比例冒稱全遊戲結果。
 
 ## r036：先發／教練分頁與可見規則短列
 

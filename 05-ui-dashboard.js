@@ -1202,78 +1202,104 @@ const DRAFT_SORTS = {
 };
 
 /* ==== v35 新手教學：各系統功能說明／遊玩注意事項／基本規則定義 ====
-   手風琴式章節，點標題展開；純唯讀畫面，任何流程階段都可安全進出。 */
+   r037 將收合式長文改為可見流程圖、數據卡與因果列；純唯讀，任何流程階段均可進出。 */
 function tutorialSections() {
   return [
-    { key: "basics", title: ""+icon('target')+" 遊戲目標與基本規則", html: `
-      <p class="sub dark">你是職棒球團的 <b>GM（總經理）</b>：組建陣容、養成球員、經營財務、回應高層期待，帶隊爭冠並讓自己的 GM 生涯走得長久。</p>
-      <p class="sub dark"><b>聯盟結構</b>：20 支球隊（4 個分區 × 5 隊）、例行賽 126 場；各分區龍頭與成績較佳球隊晉級季後賽，層層對決產生年度冠軍。每逢第 5、9、13 年還會舉辦國際賽。</p>
-      <p class="sub dark"><b>名單規則</b>：1軍上限 28 人、2軍上限 32 人、育成上限 25 人；1軍外籍球員有名額上限。先發打線 9 人、先發輪值加牛棚要備妥，人手不足時主控台會擋住模擬並提示你先補齊。</p>
-      <p class="sub dark"><b>最重要的一條</b>：高層對你的<b>信任度（0~100）</b>就是你的命。每季開幕前高層會開出 KPI 年度目標，季末依達成與否加減信任；<b>信任歸零＝解職</b>。生涯僅有一次「東山再起」機會，第二次遭解職就是永久出局。</p>` },
-    { key: "cycle", title: ""+icon('calendar')+" 一年怎麼玩：年度循環總覽", html: `
-      <p class="sub dark">每一年依序經歷：<b>春訓 → 例行賽 → 季後賽 →（國際賽年）→ 休賽季</b>。</p>
-      <p class="sub dark"><b>春訓</b>：開幕前必經。留在母國免費，海外移地訓練依國家等級收費、成效更好（預算吃緊就留母國）。</p>
-      <p class="sub dark"><b>例行賽</b>：主控台可「模擬下一天／快轉一週／模擬至球季結束」。連續模擬遇到<b>先發傷兵、AI 交易提案、KPI 季中檢視、交易風聲</b>會自動暫停等你決策。</p>
-      <p class="sub dark"><b>休賽季</b>依序：異動摘要（財務結算＋KPI 考核）→（若赤字）強制裁員 → 球員合約續約談判 → 教練/球探到期續約 → 新人選秀 → 自主訓練與傳承 → 下一季春訓。順序是固定的，錯過的階段不會回頭，請在各階段把事情辦完。</p>
-      <p class="sub dark"><b>應酬窗口</b>：休賽季摘要頁可前往代理人事務所應酬，進入選秀流程前記得把飯局跑完（每個經紀人類型每年限一次）。</p>` },
-    { key: "roster", title: ""+icon('cap')+" 陣容管理與球員養成", html: `
-      <p class="sub dark"><b>看懂球員</b>：野手看接觸／長打／選球／速度／守備等，投手看球速／控球／體力／抗壓與球路。「現況」是目前實力、「天花板」是潛力上限；年齡與顛峰期決定成長或衰退。</p>
-      <p class="sub dark"><b>狀況與疲勞</b>：球員有 5 級狀況起伏；投手登板累積疲勞，牛棚連投會下滑，記得輪替。</p>
-      <p class="sub dark"><b>傷病</b>：受傷後需復健天數；重傷要你拍板「手術（花錢、恢復慢、後遺症最少）或保守（免費、降評與復發風險較高）」。傷病史越多的球員越容易再受傷。</p>
-      <p class="sub dark"><b>養成管道</b>：春訓（全隊）、季中特訓（單點強化）、季後自主訓練（全員小幅成長、可能領悟後天特質），資深老將還可能把特質「傳承」給年輕高潛力後輩。</p>
-      <p class="sub dark"><b>打線與輪值</b>：先發棒次守位、投手輪值與牛棚順序都可自訂；懶得調可用系統建議，但關鍵戰力請自己確認。</p>` },
-    { key: "staff", title: ""+icon('brain')+" 教練團與球探", html: `
-      <p class="sub dark"><b>教練團</b>：1軍/2軍各 8 個職位，專精直接加成對應能力（打擊教練加打擊、投手教練加投球…），總教練提供全隊小幅加成；約 2 成教練帶特殊能力（${icon('star-solid')}），加成更明顯。可隨時更換或 1軍/2軍互換。</p>
-      <p class="sub dark"><b>球探三席</b>：國內（選秀評估與獨家新秀）、國際（國際市場評估與獨家人選數量）、交易（評估他隊球員）。精準度越高，看到的數字越接近真實；「球探辦公室」設施可再加成。</p>
-      <p class="sub dark"><b>到期續約（重要）</b>：教練/球探合約到期不會自動暫代——休賽季會逐一進入續約談判，出價 ≥ 期望必成交、年限每少 1 年所需薪資 +25%。談破或不續約，該職位<b>空缺、加成歸零（球探評估變成盲評）</b>，直到你去「教練團／球探室」自由市場補人為止。</p>` },
-    { key: "finance", title: ""+icon('money')+" 財務經營與避免赤字（必讀）", html: `
-      <p class="sub dark"><b>收入</b>：主場門票（逐場結算）、客場贏球分潤、轉播與贊助合約、贊助商任務獎金、球場格位設施收益。<b>支出</b>：球員薪資、教練/球探薪資、球場維護、行銷、春訓/手術/情蒐等雜項，薪資過高還會被課奢侈稅。</p>
-      <p class="sub dark"><b>赤字的代價</b>：季末結算若預算為負，休賽季會被<b>強制裁員</b>釋出高薪球員（無回收金額），戰力大失血；財務吃緊也會讓退休球員拒絕轉任、影響 KPI 財務目標。</p>
-      <p class="sub dark"><b>避免赤字的訣竅</b>：
-        ①簽約前先看「財務」頁的薪資總額與聯盟平均，別讓薪資失控；
-        ②票價別貪心——人氣不夠時把票價拉到上限，上座率會崩（需求會隨票價與人氣調整），季均上座率 ≥90% 才能調升票價上限；
-        ③設施投資分期進行，球場維護費會隨屋齡上升，留足周轉金；
-        ④長約集中在顛峰期前的球員，老將給短約；
-        ⑤行銷活動可開可關，虧損季先關省錢；
-        ⑥手術、海外春訓、應酬都是選配支出，預算緊就從簡。</p>` },
-    { key: "market", title: ""+icon('refresh')+" 補強管道：選秀／交易／FA／國際市場", html: `
-      <p class="sub dark"><b>選秀</b>：每年休賽季 6 輪。新秀數值是球探「評估值」，精準度越高越可信；新秀薪資有硬上限、簽約金依評級。談約 5 次談不成該新秀直接放棄加盟。可放棄順位保留彈性。</p>
-      <p class="sub dark"><b>交易</b>：窗口為「選秀結束後～球季結束前 30 天」。用交易球探評估對方球員，注意雙方價值平衡；AI 之間也會互相交易，留意風聲情報（可攔截、勸留或觀望）。AI 也會主動向你提案，好感度影響開價。</p>
-      <p class="sub dark"><b>自由球員（FA）</b>：合約到期不續留的本土球員；能力是公開真實數字，「看漲/持平/衰退」是本土球探的前瞻評估。簽下需付約年薪 30% 的簽約金。</p>
-      <p class="sub dark"><b>國際市場</b>：每年休賽季刷新一批海外球員，數值為國際球探評估值；「獨家情報」人選只有你能接觸。注意 1軍外籍名額上限。</p>` },
-    { key: "agency", title: ""+icon('scout')+" 代理人事務所與人脈", html: `
-      <p class="sub dark">聯盟有 7 型經紀人事務所，各自代理不同性格的球員。<b>情蒐</b>可在談約中花錢摸清經紀人底細與期望底線。</p>
-      <p class="sub dark"><b>應酬（休賽季限定）</b>：花 300~800萬 與某型經紀人博感情提升好感；好感 4 以上開始拿到旗下球員動向情報，好感滿 10（莫逆之交）可獲「獨家引薦」——獨家談判權外加談約門檻 5% 折扣。</p>
-      <p class="sub dark">好感是長期投資：談約更順、提案更便宜。預算許可時，每個休賽季固定跑幾攤划算的飯局。</p>` },
-    { key: "career", title: ""+icon('chart-up')+" GM 生涯：KPI、信任、委任與東山再起", html: `
-      <p class="sub dark"><b>KPI</b>：每季開幕前高層開出年度目標（成績類＋經營類），難度越高沒達成扣越少；季中檢視可能加碼或讓你選擇降標（降標後達成獎勵減半）。連 2 年全達成高層胃口變大、連 2 年全滅會被留校察看（懲罰加重）。奪冠另有信任紅利 +8。</p>
-      <p class="sub dark"><b>解職與東山再起</b>：信任歸零即解職。此時可接受其他球團邀約東山再起（生涯戰績累計不歸零），邀約品質看你的業界聲望；也可選擇「沉潛一年」（生涯限一次，歸來聲望 +5、邀約重抽）。<b>東山再起僅此一次——第二次解職＝永久出局。</b></p>
-      <p class="sub dark"><b>委任</b>：新東家可能附帶 2 季委任（重建／爭冠／止血），KPI 與財務規則會隨委任調整，接受前看清楚條件。奪冠後也可以功成身退主動跳槽，不消耗東山再起機會、還累積話題聲望。</p>` },
-    { key: "saves", title: ""+icon('save')+" 存檔與操作注意", html: `
-      <p class="sub dark"><b>自動存檔</b>：每次操作後自動保存，中途關閉遊戲再開會回到目前流程階段（選秀中回選秀、談約中回談約清單）。</p>
-      <p class="sub dark"><b>手動槽位</b>：主控台「存檔管理」提供 3 個手動槽位，建議在重大決策前（選秀、豪賭交易）先存一份。</p>
-      <p class="sub dark"><b>匯出／匯入 JSON</b>：換裝置或清瀏覽器資料前務必匯出備份——存檔放在瀏覽器內（IndexedDB），清除瀏覽器資料會連進度一起清掉。</p>
-      <p class="sub dark"><b>重置</b>：主控台最下方「重新開始」會清除自動存檔且無法復原，按之前請三思或先匯出。</p>` }
+    { key: "basics", short: "規則", title: "聯盟與GM目標", html: `
+      <p class="v60-guide-lead">你管理陣容、育成與財務，完成高層目標，帶隊爭冠並延續 GM 生涯。</p>
+      <div class="v60-guide-stat-grid" aria-label="聯盟規模">
+        <div><b>20 隊</b><span>4 分區 × 5 隊</span></div><div><b>126 場</b><span>例行賽</span></div><div><b>季後賽</b><span>分區龍頭＋佳績隊伍晉級</span></div>
+      </div>
+      <div class="v60-guide-rule-strip"><span>1軍 ≤28</span><span>2軍 ≤32</span><span>育成 ≤25</span><span>1軍外籍名額受限</span></div>
+      <p class="v60-guide-cause">打線 9 人＋先發輪值／牛棚備齊；人手不足 → 主控台暫停模擬並提示補人。</p>
+      <p class="v60-guide-alert"><b>信任 0–100</b><span>每季開幕前訂 KPI，季末依達成調整；信任歸零 → 解職。</span></p>` },
+    { key: "cycle", short: "年度", title: "一年流程", html: `
+      <ol class="v60-guide-year-grid" aria-label="年度循環">
+        <li><b>春訓</b><span>開幕前必經</span></li><li><b>例行賽</b><span>每日推進／快轉</span></li><li><b>季後賽</b><span>層層對決爭冠</span></li><li><b>休賽季</b><span>財務、人事與選秀</span></li>
+      </ol>
+      <p class="v60-guide-cause">第 5、9、13 年舉辦國際賽。母國春訓免費；海外依國家等級收費、效果較佳，預算緊留母國。</p>
+      <div class="v60-guide-pair"><article><b>例行賽操作</b><span>模擬下一天／快轉一週／至季末</span></article><article><b>自動暫停決策</b><span>先發傷兵・AI交易提案・KPI季中檢視・交易風聲</span></article></div>
+      <h3 class="v60-guide-subtitle">休賽季固定順序</h3>
+      <ol class="v60-guide-steps"><li>財務結算＋KPI</li><li>若赤字：強制裁員</li><li>球員續約</li><li>教練／球探續約</li><li>新人選秀</li><li>自主訓練＋傳承</li><li>下一季春訓</li></ol>
+      <p class="v60-guide-alert"><b>不可回頭</b><span>階段順序固定。代理人應酬在休賽季摘要、選秀前辦；每類經紀人每年一次。</span></p>` },
+    { key: "roster", short: "陣容", title: "球員、傷病與養成", html: `
+      <div class="v60-guide-pair"><article><b>野手</b><span>接觸・長打・選球・速度・守備</span></article><article><b>投手</b><span>球速・控球・體力・抗壓・球路</span></article></div>
+      <p class="v60-guide-cause">現況＝目前實力；天花板＝潛力上限。年齡與顛峰期 → 成長或衰退。</p>
+      <div class="v60-guide-rule-strip"><span>狀況 5 級起伏</span><span>登板 → 疲勞累積</span><span>牛棚連投 → 能力下滑</span><span>安排輪替</span></div>
+      <div class="v60-guide-pair"><article><b>手術</b><span>付費・恢復較慢・後遺症較少</span></article><article><b>保守治療</b><span>免費・降評與復發風險較高</span></article></div>
+      <p class="v60-guide-cause">受傷需復健天數；傷病史越多 → 再受傷風險越高。</p>
+      <div class="v60-guide-rule-strip"><span>春訓：全隊</span><span>季中特訓：單點</span><span>季後：全員小幅成長／可能領悟特質</span><span>老將特質 → 年輕高潛力球員</span></div>
+      <p class="v60-guide-cause">先發守位／棒次、輪值與牛棚順序可自訂；也可採系統建議，關鍵戰力請自行確認。</p>` },
+    { key: "staff", short: "幕僚", title: "教練與球探", html: `
+      <div class="v60-guide-pair"><article><b>教練</b><span>1軍、2軍各 8 職；專精加成對應能力，總教練小幅加成全隊。約 20% 帶特殊能力；可更換或跨軍互換。</span></article><article><b>球探三席</b><span>國內：選秀／獨家新秀；國際：市場估值／獨家人選；交易：評估他隊。準度越高越接近真實；球探辦公室再加成。</span></article></div>
+      <h3 class="v60-guide-subtitle">合約到期後果</h3>
+      <p class="v60-guide-cause">休賽季逐一談續約；出價 ≥ 期望 → 必成交。年限每少 1 年 → 薪資要求 +25%。</p>
+      <p class="v60-guide-alert"><b>談破／不續 → 職位空缺、加成歸零</b><span>球探改盲評；到教練團／球探室自由市場補人。</span></p>` },
+    { key: "finance", short: "財務", title: "財務決策", html: `
+      <div class="v60-guide-finance"><article><b>收入</b><span>主場門票（逐場）・客場贏球分潤・轉播／贊助合約・贊助任務獎金・球場設施收益</span></article><article><b>支出</b><span>球員／教練／球探薪資・球場維護・行銷・春訓／手術／情蒐；薪資過高另課奢侈稅</span></article></div>
+      <p class="v60-guide-alert"><b>季末預算為負 → 休賽季強制釋出高薪球員（無回收）</b><span>戰力受損，也可能影響退休球員轉任與 KPI 財務目標。</span></p>
+      <h3 class="v60-guide-subtitle">控管赤字 6 招</h3>
+      <ol class="v60-guide-six"><li>簽約前比薪資總額與聯盟平均</li><li>人氣低別硬拉票價；季均上座率 ≥90% 才能提高票價上限</li><li>設施分期；維護費隨屋齡升，留周轉金</li><li>長約給顛峰期前球員；老將短約</li><li>虧損季關閉可選行銷</li><li>預算緊：手術、海外春訓、應酬量力而為</li></ol>` },
+    { key: "market", short: "補強", title: "選秀、交易與自由市場", html: `
+      <div class="v60-guide-market-grid">
+        <article><b>選秀・每年 6 輪</b><span>數值是球探估值；準度越高越可信。新秀薪資有硬上限、簽約金看評級；談約失敗 5 次 → 放棄加盟；可放棄順位。</span></article>
+        <article><b>交易・選秀後至季末前 30 天</b><span>用交易球探估值並看雙方平衡。AI 互相交易會有風聲，可攔截／勸留／觀望；AI 也會提案，好感影響開價。</span></article>
+        <article><b>自由球員 FA</b><span>未續約本土球員入市；能力是真實公開值，生涯走勢是本土球探預測；簽約金約年薪 30%。</span></article>
+        <article><b>國際市場・休賽季刷新</b><span>海外球員數值是國際球探估值；獨家情報只有你能接觸；1軍外籍名額受限。</span></article>
+      </div>` },
+    { key: "agency", short: "人脈", title: "代理人與情報", html: `
+      <div class="v60-guide-stat-grid" aria-label="代理人關係門檻"><div><b>7 型</b><span>代理不同性格球員</span></div><div><b>好感 ≥4</b><span>取得客戶動向</span></div><div><b>好感 10</b><span>獨家引薦・談約門檻 -5%</span></div></div>
+      <p class="v60-guide-cause">談約時付費情蒐 → 了解經紀人底細與期望底線。</p>
+      <p class="v60-guide-rule-strip"><span>休賽季限定</span><span>每類型每年 1 次</span><span>應酬 300–800 萬</span><span>好感高 → 談約更順、提案更便宜</span></p>` },
+    { key: "career", short: "生涯", title: "KPI、信任與委任", html: `
+      <div class="v60-guide-pair"><article><b>年度 KPI</b><span>開幕前公布成績＋經營目標；難度越高，未達扣信任越少。季中可加碼或降標；降標後達成獎勵減半。</span></article><article><b>連年結果</b><span>連 2 年全達成 → 高層提高目標；連 2 年全未達 → 留校察看、懲罰加重。奪冠信任 +8。</span></article></div>
+      <p class="v60-guide-cause">信任歸零 → 解職；接受新球團可東山再起，生涯戰績累計保留，邀約看業界聲望。東山再起僅 1 次，第二次解職 → 永久出局。</p>
+      <p class="v60-guide-rule-strip"><span>沉潛一年：生涯限 1 次</span><span>回歸聲望 +5</span><span>重抽邀約</span></p>
+      <p class="v60-guide-cause">新東家可能附 2 季委任（重建／爭冠／止血），期間 KPI 與財務規則會變，接受前先看條件。奪冠後可主動跳槽：不耗東山再起，累積話題聲望。</p>` },
+    { key: "saves", short: "存檔", title: "存檔與重置", html: `
+      <ol class="v60-guide-steps"><li>每次操作後自動存檔；重開回到目前階段（選秀／談約等）。</li><li>存檔管理有 3 個手動槽；選秀、重大交易前先存。</li><li>換裝置或清瀏覽器資料前匯出 JSON；進度存在瀏覽器 IndexedDB，清資料會一併刪除。</li><li>主控台「重新開始」會清除自動存檔且無法復原；先匯出備份。</li></ol>` }
   ];
 }
 function renderTutorial() {
-  const open = UI.tutorialOpen || null;
   const sections = tutorialSections();
+  const activeIndex = Number.isInteger(UI.tutorialPage) ? Math.max(0, Math.min(sections.length - 1, UI.tutorialPage)) : 0;
+  const section = sections[activeIndex];
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">GAME GUIDE</div><h1>${icon('book')} 新手教學</h1></div>
-      <p class="sub dark" style="margin-bottom:10px;">第一次接手球團？點各章節標題展開說明。看完「財務經營與避免赤字」再開季，可以少走很多冤枉路。</p>
-      ${sections.map(s => `
-        <div class="card" style="padding:0;overflow:hidden;">
-          <button class="tut-toggle" data-key="${s.key}" style="display:block;width:100%;text-align:left;background:none;border:none;padding:14px 16px;cursor:pointer;">
-            <span class="eyebrow" style="margin:0;">${s.title}　<span style="float:right;">${open === s.key ? "▲" : "▼"}</span></span>
-          </button>
-          ${open === s.key ? `<div style="padding:0 16px 14px;">${s.html}</div>` : ""}
-        </div>`).join("")}
+      <nav class="v60-guide-index" role="tablist" aria-label="教學章節">
+        ${sections.map((s, index) => `<button type="button" role="tab" id="guide-tab-${s.key}" data-guide-page="${index}" aria-controls="guide-panel" aria-selected="${index === activeIndex}"${index === activeIndex ? ' tabindex="0"' : ' tabindex="-1"'}>${s.short}</button>`).join("")}
+      </nav>
+      <div class="v60-guide-pager" aria-label="教學章節導覽">
+        <button type="button" class="btn-outline" data-guide-step="-1"${activeIndex === 0 ? " disabled" : ""}>上一章</button>
+        <span aria-live="polite">${activeIndex + 1} / ${sections.length}</span>
+        <button type="button" class="btn-primary" data-guide-step="1"${activeIndex === sections.length - 1 ? " disabled" : ""}>下一章</button>
+      </div>
+      <section class="v60-guide-section card" id="guide-panel" role="tabpanel" tabindex="0" aria-labelledby="guide-tab-${section.key}" data-guide-section="${section.key}">
+        <header><span>${String(activeIndex + 1).padStart(2, "0")}</span><h2>${section.title}</h2></header>
+        <div class="v60-guide-section-body">${section.html}</div>
+      </section>
       <div class="btnrow"><button id="btn-tut-back" class="btn-outline">返回</button></div>
     </div>`;
-  app.querySelectorAll(".tut-toggle").forEach(btn => {
-    btn.onclick = () => { UI.tutorialOpen = (UI.tutorialOpen === btn.dataset.key) ? null : btn.dataset.key; render(); };
+  app.querySelectorAll("[data-guide-page]").forEach(button => {
+    button.onclick = () => { UI.tutorialPage = Number(button.dataset.guidePage); render(); };
+    button.onkeydown = event => {
+      const last = sections.length - 1;
+      let nextIndex = activeIndex;
+      if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (activeIndex + 1) % sections.length;
+      else if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (activeIndex + last) % sections.length;
+      else if (event.key === "Home") nextIndex = 0;
+      else if (event.key === "End") nextIndex = last;
+      else return;
+      event.preventDefault();
+      UI.tutorialPage = nextIndex;
+      render();
+      const nextTab = document.getElementById(`guide-tab-${sections[nextIndex].key}`);
+      if (nextTab) nextTab.focus();
+    };
+  });
+  app.querySelectorAll("[data-guide-step]").forEach(button => {
+    button.onclick = () => { UI.tutorialPage = activeIndex + Number(button.dataset.guideStep); render(); };
   });
   document.getElementById("btn-tut-back").onclick = () => {
     UI.screen = UI.tutorialReturn || "dashboard";
