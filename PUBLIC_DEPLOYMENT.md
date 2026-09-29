@@ -12,7 +12,7 @@
 - 驗證：`node test_regression.js` 1,819 通過／0 失敗；`node smoke_multiyear.js` 15 年及全畫面 render PASS；`node smoke_puregm.js` 純 GM 15 年 PASS；`node --check 02-finance.js`、`node --check 05-ui-dashboard.js`、`node --check 06-ui-roster.js`、`node --check test_regression.js`、`node --check sw.js` 與 `git diff --check` PASS。
 - 公開殼層／Service Worker cache key：`v60-r036-lineup-work-tabs`。正式 `current/`、delivery／Art ZIP、正式 manifest／SHA、`CURRENT_PACKAGE.json` 及正式 package lineage 均不在本次範圍。工作區原有 `manifest.webmanifest` 修改保留且不納入提交。
 - 全遊戲文字減半尚未證明或宣稱完成；春訓、行銷、球員市集等畫面仍含必要的選項、球員資料與數值。本輪只按可讀性稽核把高負擔說明改短，並將先發／教練資訊分頁；不以收合、刪除資料或多加裝飾圖示假稱減量。
-- GitHub／Pages 推送與無快取公開資源複查：待本輪提交後填入。
+- 2026-09-29，程式提交 `5340bf07688ff935ec4102b0e1b415e3ccac3166` 已推送 `main`；[GitHub Actions 建置與 Pages 部署](https://github.com/mars0884-chu/baseball-GM/actions/runs/36560099929)結果 `success`。部署剛結束時第一次查詢仍取得 r035 首頁；稍後以唯一查詢參數與 `no-cache` 重查，首頁、`06-ui-roster.js`、`05-ui-dashboard.js`、`02-finance.js`、`style.css`、`sw.js` 全部 HTTP 200，並分別確認 r036 shell、先發分頁、代理人規則、票價規則及 cache key 標記。公開版已更新；這不代表 Mars 真機／視覺接受。
 
 ## r035：長頁資訊分區與文字負擔整理
 
