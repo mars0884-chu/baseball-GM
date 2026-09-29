@@ -2740,7 +2740,7 @@ function renderFinance() {
   const finTicketPanel = `
       <div class="divlabel">票價策略</div>
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["目前", `${team.finance.ticketPrice} 元/張`], ["上限", `${team.finance.ticketPriceCap} 元`], ["預估進場", `${estimateAttendancePct(team, team.finance.ticketPrice)}%`], ["窗口", canChangeTicket ? "春訓可調" : "下季再調"]], "票價策略摘要") : ""}
-       <p class="v60-state-line">${canChangeTicket ? "春訓限調一次；票價提高會降低進場率。" : "本季已鎖定；下季可調。"} 滿場逐年提高上限（最高 ${TICKET_PRICE_CEIL_MAX} 元）。</p>
+       <p class="v60-state-line" aria-label="票價規則">${canChangeTicket ? "春訓限調1次" : "本季鎖定・下季可調"} · 漲價→進場率降 · 滿場上限逐年升至 ${TICKET_PRICE_CEIL_MAX} 元</p>
       <div class="teamgrid">
         ${TICKET_PRICE_PRESETS.map(t => `
           <button class="teamcard ticket-tier-btn" data-tier="${t.key}" style="${team.finance.ticketPrice === Math.min(t.price, team.finance.ticketPriceCap) ? "border:2px solid var(--gold-2);" : ""}" ${(canChangeTicket && t.price <= team.finance.ticketPriceCap) ? "" : "disabled"}>

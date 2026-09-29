@@ -246,6 +246,12 @@ function renderCaptainProposalCard(team) {
 function renderLineup() {
   const team = S.teams[S.userTeamId];
   ensureLineup(team);
+  // r036：單一畫面原本總會渲染教練區；分頁後仍在首次進頁完成相同惰性初始化，避免切頁才改到存檔。
+  ensureTactics(team);
+  if (typeof ensureV41 === "function") ensureV41();
+  if (typeof effTacticsOf === "function") effTacticsOf(team);
+  team.benchRoles = team.benchRoles || {};
+  const lineupPanel = UI.lineupPanel === "coach" ? "coach" : "lineup";
   const manualOk41 = (typeof canManualLineup === "function") ? canManualLineup() : true; // v41①：純GM且未接管→手排控制項不render（不是disable，是不存在）
   const usedIds = new Set(team.lineup.map(s => s.playerId));
   const picking = UI.lineupPicker;
@@ -333,16 +339,35 @@ function renderLineup() {
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${team.name}</div><h1>先發棒次與守位</h1></div>
       ${renderRosterNav("lineup")}
-      <div class="v60-lineup-quickread" role="group" aria-label="打線設定重點">
-        <span><b>9人</b>・8守位＋DH</span><span><b>棒次</b>・前棒打席較多</span><span><b>守位</b>・先發不重複</span><span><b>移防</b>・守備依落差下降</span>
+      <div class="tabrow v60-lineup-view-tabs" role="tablist" aria-label="打線管理工作頁">
+        <button type="button" id="lineup-tab-batting" class="tab ${lineupPanel === "lineup" ? "active" : ""}" role="tab" tabindex="${lineupPanel === "lineup" ? "0" : "-1"}" aria-selected="${lineupPanel === "lineup"}" aria-controls="lineup-panel-batting" data-lineup-panel="lineup">先發打線</button>
+        <button type="button" id="lineup-tab-coach" class="tab ${lineupPanel === "coach" ? "active" : ""}" role="tab" tabindex="${lineupPanel === "coach" ? "0" : "-1"}" aria-selected="${lineupPanel === "coach"}" aria-controls="lineup-panel-coach" data-lineup-panel="coach">教練調度</button>
       </div>
-      ${issues.length > 0 ? `<div class="card issuecard"><div class="eyebrow">打線守位提醒</div><ul class="issuelist">${issues.map(i => `<li>${i}</li>`).join("")}</ul></div>` : ""}
-      ${lineupContentHtml}
+      ${lineupPanel === "lineup" ? `<section id="lineup-panel-batting" role="tabpanel" aria-labelledby="lineup-tab-batting">
+        <div class="v60-lineup-quickread" role="group" aria-label="打線設定重點">
+          <span><b>9人</b>・8守位＋DH</span><span><b>棒次</b>・前棒打席較多</span><span><b>守位</b>・先發不重複</span><span><b>移防</b>・守備依落差下降</span>
+        </div>
+        ${issues.length > 0 ? `<div class="card issuecard"><div class="eyebrow">打線守位提醒</div><ul class="issuelist">${issues.map(i => `<li>${i}</li>`).join("")}</ul></div>` : ""}
+        ${lineupContentHtml}
+        ${picking !== null && picking !== undefined ? `
+        <div class="card">
+          <div class="eyebrow">選擇第 ${picking + 1} 棒人選（守位：${POS_LABEL[slotPos]}）</div>
+          ${candidates.length === 0 ? `<p class="sub dark">1軍已無其他可用野手，請先調整名單。</p>` : `
+          <table class="stattable">
+            <thead><tr><th>姓名</th><th>年齡</th><th>主守位</th><th>接觸</th><th>長打</th><th>選球</th><th>速度</th><th>此守位守備%</th><th></th></tr></thead>
+            <tbody>
+              ${candidates.map(p => {
+                const eligible = slotPos === "DH" || p.positions.some(x => x.pos === slotPos);
+                return `<tr><td>${p.name}</td><td>${p.age}</td><td>${POS_LABEL[p.positions[0].pos]}</td><td>${p.contact}</td><td>${p.power}</td><td>${p.eye}</td><td>${p.speed}</td><td>${effectivePositionFielding(p, slotPos)}${eligible ? "" : "（移防）"}</td><td><button class="pickbtn" data-id="${p.id}">選他</button></td></tr>`;
+              }).join("")}
+            </tbody>
+          </table>`}
+          <div class="btnrow"><button id="btn-cancel-lineup-pick" class="btn-secondary">取消</button></div>
+        </div>` : ""}
+      </section>` : `<section id="lineup-panel-coach" role="tabpanel" aria-labelledby="lineup-tab-coach">
       ${(() => {
         /* v40⑤：打線交給教練——戰術方針＋輪休策略（預設教練排線；GM可切回手排）。
            教練模式下每天開打前依方針重排打線並指派板凳專員；下方棒次表在教練模式為「今日教練排陣預覽」。 */
-        ensureTactics(team);
-        if (typeof ensureV41 === "function") ensureV41();
         const coachMode = team.lineupMode === "coach";
         /* v41①②⑤：排線權責改由 S.gameMode 上游決定——
            純GM（未接管）：手排入口「不存在」（不是disable）；提供放權後唯一的收權管道「接管」（有代價）。
@@ -354,7 +379,7 @@ function renderLineup() {
         const eff = (typeof effTacticsOf === "function") ? effTacticsOf(team) : null;
         const arcDef = (hc && hc.archetype && typeof COACH_ARCHETYPES === "object") ? COACH_ARCHETYPES[hc.archetype] : null;
         const deviated = eff && (eff.offense !== team.tactics.offense || eff.rest !== team.tactics.rest);
-        const coachLine = hc ? `<p class="sub dark" style="margin:6px 0 2px;">總教練 <b>${hc.name}</b>${arcDef ? `・<b>${arcDef.label}</b>` : ""}・信任 ${Math.round(hc.trust || 55)}${eff ? `・認同度 ${Math.round((eff.agreement || 1) * 100)}%・執行度 ${Math.round((eff.execution || 1) * 100)}%` : ""}</p>
+        const coachLine = hc ? `<p class="v60-state-line" aria-label="總教練狀態"><b>${hc.name}</b>${arcDef ? `・${arcDef.label}` : ""} · 信任${Math.round(hc.trust || 55)}${eff ? ` · 認同${Math.round((eff.agreement || 1) * 100)}% · 執行${Math.round((eff.execution || 1) * 100)}%` : ""}</p>
           ${deviated ? `<p class="draftnote" style="color:var(--redline);">${icon('warn')} 實際採用：${tacticsOffenseDef(eff.offense).label}／${tacticsRestDef(eff.rest).label}。可調方針或更換教練。</p>` : ""}` : "";
         const modeHeader = pureGm
           ? `<p class="sub dark"><b>純GM</b>・${tkv ? `<b style="color:var(--redline)">接管中</b>（第${tkv.seasonYear}季・續期${tkv.renewals}次），本季由你手排。` : "教練依哲學執行方針。"}</p>
@@ -390,26 +415,31 @@ function renderLineup() {
         </div>${renderCaptainProposalCard(team)}`;
       })()}
       ${renderBenchRolesSection(team)}
-      ${picking !== null && picking !== undefined ? `
-      <div class="card">
-        <div class="eyebrow">選擇第 ${picking + 1} 棒人選（守位：${POS_LABEL[slotPos]}）</div>
-        ${candidates.length === 0 ? `<p class="sub dark">1軍已無其他可用野手，請先調整名單。</p>` : `
-        <table class="stattable">
-          <thead><tr><th>姓名</th><th>年齡</th><th>主守位</th><th>接觸</th><th>長打</th><th>選球</th><th>速度</th><th>此守位守備%</th><th></th></tr></thead>
-          <tbody>
-            ${candidates.map(p => {
-              const eligible = slotPos === "DH" || p.positions.some(x => x.pos === slotPos);
-              return `<tr><td>${p.name}</td><td>${p.age}</td><td>${POS_LABEL[p.positions[0].pos]}</td><td>${p.contact}</td><td>${p.power}</td><td>${p.eye}</td><td>${p.speed}</td><td>${effectivePositionFielding(p, slotPos)}${eligible ? "" : "（移防）"}</td><td><button class="pickbtn" data-id="${p.id}">選他</button></td></tr>`;
-            }).join("")}
-          </tbody>
-        </table>`}
-        <div class="btnrow"><button id="btn-cancel-lineup-pick" class="btn-secondary">取消</button></div>
-      </div>` : ""}
+      </section>`}
       <div class="btnrow">
-        ${manualOk41 ? `<button id="btn-auto-lineup" class="btn-secondary">自動排列</button>` : ""}
+        ${manualOk41 && lineupPanel === "lineup" ? `<button id="btn-auto-lineup" class="btn-secondary">自動排列</button>` : ""}
         <button id="btn-back" class="btn-outline">返回</button>
       </div>
     </div>`;
+  const lineupPanelTabs = [...app.querySelectorAll("[data-lineup-panel]")];
+  lineupPanelTabs.forEach((btn, index) => {
+    btn.onclick = () => {
+      UI.lineupPanel = btn.dataset.lineupPanel;
+      if (UI.lineupPanel !== "lineup") UI.lineupPicker = null;
+      render();
+      window.scrollTo(0, 0);
+    };
+    btn.onkeydown = event => {
+      const nextIndex = event.key === "ArrowRight" || event.key === "ArrowDown" ? (index + 1) % lineupPanelTabs.length
+        : event.key === "ArrowLeft" || event.key === "ArrowUp" ? (index + lineupPanelTabs.length - 1) % lineupPanelTabs.length
+        : event.key === "Home" ? 0 : event.key === "End" ? lineupPanelTabs.length - 1 : -1;
+      if (nextIndex < 0) return;
+      event.preventDefault();
+      const nextPanel = lineupPanelTabs[nextIndex].dataset.lineupPanel;
+      lineupPanelTabs[nextIndex].click();
+      app.querySelector(`[data-lineup-panel="${nextPanel}"]`)?.focus();
+    };
+  });
   app.querySelectorAll(".lineup-pos-select").forEach(sel => {
     sel.onchange = (e) => setLineupSlotPosition(Number(sel.dataset.idx), e.target.value);
   });
@@ -540,10 +570,10 @@ function renderRotation() {
   const candidates = team.roster1.map(id => S.players[id])
     .filter(p => p && p.isPitcher && !usedIds.has(p.id) && (tab === "先發" || p.role === tab));
   const tabDesc = {
-    "先發": "依序輪值；至少1人。人少消耗快、人多間隔長。可增減。",
-    "中繼": "依順位決定中繼優先權。可增減。",
-    "布局": "依順位接手關鍵局數。可增減。",
-    "終結": "第1順位優先處理救援機會。可增減。"
+    "先發": "依序輪值 · 至少1人 · 少人耗體快／多人間隔長 · 可增減",
+    "中繼": "順位決定接手先後 · 可增減",
+    "布局": "順位決定關鍵局接手 · 可增減",
+    "終結": "第1順位優先救援 · 可增減"
   };
   app.innerHTML = `
     <div class="wrap">
@@ -552,7 +582,7 @@ function renderRotation() {
       <div class="tabrow">
         ${BULLPEN_TABS.map(t => `<button class="tab rot-tab ${tab === t ? "active" : ""}" data-rotationtab="${t}">${t}</button>`).join("")}
       </div>
-      <p class="sub dark" style="margin-bottom:10px;">${tabDesc[tab]}（目前 ${arr.length} 人）</p>
+      <p class="v60-state-line" aria-label="輪值規則">${tabDesc[tab]} · 目前 ${arr.length} 人</p>
       <table class="stattable">
         <thead><tr><th>順位</th><th>姓名</th><th>狀況</th><th>年齡</th><th>球速(km/h)</th><th>控球</th><th>體力</th><th>疲勞</th><th>抗壓</th><th></th></tr></thead>
         <tbody>
@@ -897,7 +927,7 @@ function renderFreeAgents() {
         <div class="sb-row small"><div class="sb-label">前瞻評估精準度</div><div class="sb-value small">${effAcc}</div></div>
         <div class="sb-row small"><div class="sb-label">名單狀態</div><div class="sb-value small">1軍 ${team.roster1.length}/28・2軍 ${team.roster2.length}/32</div></div>
       </div>
-      <p class="sub dark" style="margin-bottom:10px;">未續約的本土球員會進入市場；能力公開，生涯走勢是球探預測。簽約金約年薪30%。</p>
+      <p class="v60-state-line" aria-label="自由球員市場規則">本土未續→入市 · 能力公開 · 生涯＝球探預測 · 簽約金≈年薪30%</p>
       ${posFilterBarHtml(faAllAgents, "faPosFilter")}
       <div class="btnrow" style="align-items:center;">
         <select id="sort-fa" class="sortselect" style="flex:1;">
@@ -1019,8 +1049,8 @@ function renderInternationalMarket() {
         </select>
         ${sortDirButtonHtml("intlSortDir")}
       </div>
-      <p class="sub dark" style="margin-bottom:10px;">休賽季刷新，未簽者續留；40國等級影響素質。能力為球探估值，精準度越高越可信；獨家情報僅本隊可談。名單：1軍 ${team.roster1.length}/28・2軍 ${team.roster2.length}/32。</p>
-      <p class="draftnote muted" aria-label="球探數據圖例">能力均為球探估值；已評估人選顯示目前 → 天花板。</p>
+      <p class="v60-state-line" aria-label="國際市場規則">休賽更新・未簽留存 · 40國分級影響素質 · 球探估值（準度見上） · 獨家限本隊 · 名單 1軍 ${team.roster1.length}/28・2軍 ${team.roster2.length}/32</p>
+      <p class="draftnote muted" aria-label="球探數據圖例">已評估：現況→天花板</p>
       ${intlFiltered.length === 0 ? `<p class="sub dark">目前沒有可簽人選。</p>` : `${pager}${visibleInternational.map(p => `
       <div class="card draftcard">
         <div class="draftcard-head">
@@ -1083,7 +1113,7 @@ function renderScouts() {
       <div class="topbar"><div class="eyebrow">${team.name}</div><h1>球探室</h1></div>
       ${renderRosterNav("scouts")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      <p class="sub dark" style="margin-bottom:10px;">三職分工：國內→選秀／育成、國際→海外估值／獨家人選數、交易→對手估值。空缺＝盲評；${scoutAccuracyBonus(team) > 0 ? `球探辦公室 Lv.${scoutOfficeLevel(team)}：全員準確度 +${scoutAccuracyBonus(team)}。` : "升級球探辦公室可提升全員準確度。"}</p>
+      <p class="v60-state-line" aria-label="球探職務與效果">國內選秀／育成 · 國際海外估值／獨家人選 · 交易估對手 · 缺員盲評 · ${scoutAccuracyBonus(team) > 0 ? `辦公室全員準度+${scoutAccuracyBonus(team)}` : "升級辦公室→準度↑"}</p>
       <table class="stattable">
         <thead><tr><th>類別</th><th>姓名</th><th>準確度</th><th>專精</th><th>合約</th><th>年薪</th><th></th></tr></thead>
         <tbody>
@@ -1135,7 +1165,7 @@ function renderScouts() {
         var canDiscover = !UI.v54DiscoveredThisOffseason;
         return `<div class="card" style="margin-top:16px;">
           <div class="eyebrow">發掘業餘新秀（育成候選）</div>
-          <p class="sub dark">休賽季可發掘 15–20 歲育成新秀 1 次；球探越準，候選越好。名單 ${devCount}/25。</p>
+          <p class="v60-state-line" aria-label="育成新秀發掘規則">發掘15–20歲 · 休賽季1次 · 準度↑→品質↑ · ${devCount}/25</p>
           ${canDiscover ? `<div class="btnrow" style="align-items:center;">
             <select id="v54-discover-dir" class="sortselect" style="flex:1;">
               ${V54_DISCOVERY_DIRECTIONS.map(function(d) { return '<option value="' + d.key + '"' + (d.key === curDir ? ' selected' : '') + '>' + d.label + '</option>'; }).join("")}
@@ -1227,7 +1257,7 @@ function renderCoaches() {
           }).join("")}
         </tbody>
       </table>
-      <p class="sub dark">專精加成對應能力；總教練全隊小幅加成。${icon('star-solid')}為特殊能力。到期須續約；職位空缺時加成歸零。</p>
+      <p class="v60-state-line" aria-label="教練效果">專精→能力加成 · 總教練→全隊小幅加成 · ★特殊 · 空缺／逾期未續→0加成</p>
       ${picking ? `
       <div class="card">
         <div class="eyebrow">聘僱新教練：${picking}（${level}）・${S.coaches[staff[picking]] ? `現任指導力 ${S.coaches[staff[picking]].teaching}` : "目前空缺"}</div>
@@ -3044,7 +3074,7 @@ function renderHallOfFame() {
     // 殿堂成員卡
     let membersHtml = "";
     if (hof.length === 0) {
-      membersHtml = `<div class="card"><p class="sub muted">尚無殿堂成員。退休球員達到生涯里程碑門檻時，系統會自動提名候選。</p></div>`;
+      membersHtml = `<div class="card"><p class="v60-state-line" aria-label="名人堂狀態">尚無入選者 · 生涯里程碑達標→自動提名</p></div>`;
     } else {
       membersHtml = hof.map(h => {
         const cs = h.careerStats || {};
@@ -3468,8 +3498,7 @@ function v55DirectorPanelHtml(team) {
     /* 未聘用：顯示聘任按鈕 */
     return '<div class="card" style="margin:8px 0;">' +
       '<div class="eyebrow">' + icon('chart') + ' 數據分析主管（未聘任）</div>' +
-      '<p class="sub dark">聘用分析主管可提升可見數據層級、啟用運氣校正與套利警訊。' +
-      '這是全遊戲投報率最高的一次聘任。</p>' +
+      '<p class="v60-state-line" aria-label="分析主管效果">聘任解鎖：可見數據層級 · 運氣校正 · 套利警訊</p>' +
       (S.currentDay === 0 ? '<div class="btnrow"><button id="v55-hire-director" class="btn-secondary">' + icon('plus') + ' 聘任分析主管</button></div>' : '<p class="draftnote muted">聘任僅限休賽季（春訓前）。</p>') +
       '</div>';
   } catch (_) { return ""; }

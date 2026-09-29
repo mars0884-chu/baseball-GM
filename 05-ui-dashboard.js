@@ -2491,7 +2491,7 @@ function renderAgency() {
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${team.name}</div><h1>${icon('scout')} 代理人事務所</h1></div>
-      ${foldNote(`<p class="sub dark">這裡管理你與各類型經紀人的人脈。談約成功會加深交情、談崩則生嫌隙；交情好的經紀人，未來談約門檻更低、更好談成。談判桌上可花錢委託情蒐，一次看穿對方的性格與期望底線。</p>`)}
+      <p class="v60-state-line" aria-label="代理人事務所規則">談成→交情↑／談崩→交情↓ · 好感高→談約更易 · 情蒐→談判桌</p>
       <div class="card">
         <div class="eyebrow">${icon('handshake')} GM人脈網（與各型經紀人的交情）</div>
         ${AGENT_KEYS.map(k => {
@@ -2508,7 +2508,7 @@ function renderAgency() {
             <button class="btn-outline wine-btn" data-type="${k}" ${canWine ? "" : "disabled"}>${winedThisYear ? "本年已應酬" : `應酬（${formatMoney(agentWineCost(k))}）`}</button>
           </div>`;
         }).join("")}
-        <p class="draftnote muted">v33應酬：休賽季可對每類型經紀人請客一次（成功70%好感+1、大失敗10%好感-1）。交情練到「交好(≥4)」會透露旗下客戶動向、「莫逆之交(滿級10)」則會引薦好手給你獨家談。</p>
+        <p class="v60-state-line" aria-label="經紀人應酬與人脈規則">應酬：休賽季每類型1次 · 成功70%好感+1 · 大失敗10%好感-1 · 交好≥4情報 · 莫逆10引薦</p>
       </div>
       ${renderAgencyPerkCards()}
       <div class="card">
@@ -2517,7 +2517,7 @@ function renderAgency() {
           ensureAgent(p);
           const a = AGENT_TYPES[p.agent.type];
           return `<p class="sub dark">${p.name}｜經紀人 ${p.agent.name}（${a.name}）｜期望 ${p.negoDesired ? formatMoney(p.negoDesired.salary) + "／" + p.negoDesired.years + "年" : "談判時揭露"}</p>`;
-        }).join("") : `<p class="sub dark muted">本季尚未委託任何情蒐。在談判畫面點「委託情蒐」即可打聽對方經紀人的底細。</p>`}
+        }).join("") : `<p class="v60-state-line" aria-label="本季情蒐狀態">尚無情蒐 · 談判→委託（查性格／底線）</p>`}
       </div>
       <div class="btnrow"><button id="btn-agency-back" class="btn-outline">返回</button></div>
     </div>`;
