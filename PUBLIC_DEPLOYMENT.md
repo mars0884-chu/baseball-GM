@@ -10,6 +10,7 @@
 - Regression：`node test_regression.js` 為 1,820 通過／0 失敗；`node smoke_multiyear.js` 15 年＋全畫面 render PASS；`node smoke_puregm.js` 純 GM 15 年 PASS；`node --check 05-ui-dashboard.js`、`node --check test_regression.js`、`node --check sw.js` 與 `git diff --check` PASS。隔離瀏覽器渲染 30 個主要路由無 JavaScript 例外，教學九章於 320×844、390×844、1280×900 互動及響應式驗證 PASS。
 - 本輪修改：`05-ui-dashboard.js`、`style.css`、`index.html`、`sw.js`、`test_regression.js` 與本部署紀錄。Service Worker／靜態資源版本為 `v60-r037-visual-tutorial-guide`。工作區原有 `manifest.webmanifest` 修改保留且不納入提交；正式 `current/`、delivery／Art ZIP、正式 manifest／SHA、`CURRENT_PACKAGE.json` 及 lineage 均未修改。
 - 全遊戲文字量減少 50% 仍未被證明或完成；春訓、行銷、國際球員市場等畫面仍包含必要的人員、效果、估值及操作資料。本候選僅完成教學頁本批減量與導航，不將單頁比例冒稱全遊戲結果。
+- 2026-09-29，程式提交 `35a51bd7973c96602316578f7ab4794dcac1b2d0` 已推送 `main`；[GitHub Pages 建置](https://github.com/mars0884-chu/baseball-GM/actions/runs/36565742970) `success`。部署後以 no-cache GET 驗證公開首頁、`05-ui-dashboard.js`、`style.css`、`sw.js` 全部 HTTP 200，並逐一確認 r037 HTML／章節 renderer／樣式／Service Worker 標記。這確認公開靜態版已更新，不等於 Mars 真機或主觀視覺接受。
 
 ## r036：先發／教練分頁與可見規則短列
 
