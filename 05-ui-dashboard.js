@@ -763,8 +763,7 @@ function renderDashboard() {
 
       ${needSpringCamp ? `
       <div class="card seasonover">
-        <div class="eyebrow">春季訓練尚未完成</div>
-        ${foldNote(`<p class="sub dark">球季開幕前，先帶球隊完成春訓吧！可選擇留在母國（免費）或前往海外移地訓練（依國家等級收費，成效與體驗更好）。</p>`)}
+        <div class="eyebrow">春訓待完成</div>
         <button id="btn-go-spring" class="btn-primary">前往春訓安排</button>
       </div>` : ""}
 
@@ -1206,58 +1205,54 @@ const DRAFT_SORTS = {
 function tutorialSections() {
   return [
     { key: "basics", short: "規則", title: "聯盟與GM目標", html: `
-      <p class="v60-guide-lead">你管理陣容、育成與財務，完成高層目標，帶隊爭冠並延續 GM 生涯。</p>
+      <p class="v60-guide-lead">管理陣容、育成與財務，完成 KPI、爭冠並延續 GM 生涯。</p>
       <div class="v60-guide-stat-grid" aria-label="聯盟規模">
         <div><b>20 隊</b><span>4 分區 × 5 隊</span></div><div><b>126 場</b><span>例行賽</span></div><div><b>季後賽</b><span>分區龍頭＋佳績隊伍晉級</span></div>
       </div>
       <div class="v60-guide-rule-strip"><span>1軍 ≤28</span><span>2軍 ≤32</span><span>育成 ≤25</span><span>1軍外籍名額受限</span></div>
-      <p class="v60-guide-cause">打線 9 人＋先發輪值／牛棚備齊；人手不足 → 主控台暫停模擬並提示補人。</p>
-      <p class="v60-guide-alert"><b>信任 0–100</b><span>每季開幕前訂 KPI，季末依達成調整；信任歸零 → 解職。</span></p>` },
+      <p class="v60-guide-cause">打線9人・輪值／牛棚備齊；缺人暫停模擬並提示補人。</p>
+      <p class="v60-guide-alert"><b>信任 0–100</b><span>開幕訂 KPI、季末評分；信任歸零 → 解職。</span></p>` },
     { key: "cycle", short: "年度", title: "一年流程", html: `
       <ol class="v60-guide-year-grid" aria-label="年度循環">
         <li><b>春訓</b><span>開幕前必經</span></li><li><b>例行賽</b><span>每日推進／快轉</span></li><li><b>季後賽</b><span>層層對決爭冠</span></li><li><b>休賽季</b><span>財務、人事與選秀</span></li>
       </ol>
-      <p class="v60-guide-cause">第 5、9、13 年舉辦國際賽。母國春訓免費；海外依國家等級收費、效果較佳，預算緊留母國。</p>
-      <div class="v60-guide-pair"><article><b>例行賽操作</b><span>模擬下一天／快轉一週／至季末</span></article><article><b>自動暫停決策</b><span>先發傷兵・AI交易提案・KPI季中檢視・交易風聲</span></article></div>
+      <p class="v60-guide-cause">第5年起每4年國際賽；母國春訓免費，海外較貴但效果佳。</p>
+      <div class="v60-guide-pair"><article><b>例行賽</b><span>推進1天／快轉1週／至季末</span></article><article><b>自動暫停</b><span>先發傷兵・AI提案・KPI檢視・交易風聲</span></article></div>
       <h3 class="v60-guide-subtitle">休賽季固定順序</h3>
       <ol class="v60-guide-steps"><li>財務結算＋KPI</li><li>若赤字：強制裁員</li><li>球員續約</li><li>教練／球探續約</li><li>新人選秀</li><li>自主訓練＋傳承</li><li>下一季春訓</li></ol>
-      <p class="v60-guide-alert"><b>不可回頭</b><span>階段順序固定。代理人應酬在休賽季摘要、選秀前辦；每類經紀人每年一次。</span></p>` },
+      <p class="v60-guide-alert"><b>階段不可回頭</b><span>代理人應酬：選秀前休賽季辦理・每類每年1次。</span></p>` },
     { key: "roster", short: "陣容", title: "球員、傷病與養成", html: `
-      <div class="v60-guide-pair"><article><b>野手</b><span>接觸・長打・選球・速度・守備</span></article><article><b>投手</b><span>球速・控球・體力・抗壓・球路</span></article></div>
-      <p class="v60-guide-cause">現況＝目前實力；天花板＝潛力上限。年齡與顛峰期 → 成長或衰退。</p>
-      <div class="v60-guide-rule-strip"><span>狀況 5 級起伏</span><span>登板 → 疲勞累積</span><span>牛棚連投 → 能力下滑</span><span>安排輪替</span></div>
+      <div class="v60-guide-pair"><article><b>野手</b><span>打擊・跑壘・守備</span></article><article><b>投手</b><span>球速・控球・體力・球路</span></article></div>
+      <p class="v60-guide-cause">現況＝目前能力；天花板＝潛力。年齡影響成長／衰退。</p>
+      <div class="v60-guide-rule-strip"><span>狀況5級</span><span>登板累積疲勞</span><span>牛棚連投降能力</span><span>安排輪替</span></div>
       <div class="v60-guide-pair"><article><b>手術</b><span>付費・恢復較慢・後遺症較少</span></article><article><b>保守治療</b><span>免費・降評與復發風險較高</span></article></div>
-      <p class="v60-guide-cause">受傷需復健天數；傷病史越多 → 再受傷風險越高。</p>
-      <div class="v60-guide-rule-strip"><span>春訓：全隊</span><span>季中特訓：單點</span><span>季後：全員小幅成長／可能領悟特質</span><span>老將特質 → 年輕高潛力球員</span></div>
-      <p class="v60-guide-cause">先發守位／棒次、輪值與牛棚順序可自訂；也可採系統建議，關鍵戰力請自行確認。</p>` },
+      <p class="v60-guide-cause">傷後復健；傷病史提高再傷風險。</p>
+      <div class="v60-guide-rule-strip"><span>春訓：全隊</span><span>季中特訓：單點</span><span>季後：小幅成長／悟特質</span><span>老將傳承給年輕高潛</span></div>
+      <p class="v60-guide-cause">打線、守位、輪值與牛棚可自訂，或採教練建議。</p>` },
     { key: "staff", short: "幕僚", title: "教練與球探", html: `
-      <div class="v60-guide-pair"><article><b>教練</b><span>1軍、2軍各 8 職；專精加成對應能力，總教練小幅加成全隊。約 20% 帶特殊能力；可更換或跨軍互換。</span></article><article><b>球探三席</b><span>國內：選秀／獨家新秀；國際：市場估值／獨家人選；交易：評估他隊。準度越高越接近真實；球探辦公室再加成。</span></article></div>
+      <div class="v60-guide-pair"><article><b>教練</b><span>1、2軍各8席；專精加成，總教練小幅加成全隊；可更換／跨軍互換。</span></article><article><b>球探三席</b><span>國內選秀・國際市場・交易評估；準度與辦公室加成提高可信度。</span></article></div>
       <h3 class="v60-guide-subtitle">合約到期後果</h3>
-      <p class="v60-guide-cause">休賽季逐一談續約；出價 ≥ 期望 → 必成交。年限每少 1 年 → 薪資要求 +25%。</p>
-      <p class="v60-guide-alert"><b>談破／不續 → 職位空缺、加成歸零</b><span>球探改盲評；到教練團／球探室自由市場補人。</span></p>` },
+      <div class="v60-guide-rule-strip"><span>出價 ≥ 期望必成</span><span>年限每少1年・薪資要求 +25%</span></div>
+      <p class="v60-guide-alert"><b>談破／不續 → 職位空缺、加成歸零</b><span>球探改盲評；到幕僚市場補人。</span></p>` },
     { key: "finance", short: "財務", title: "財務決策", html: `
-      <div class="v60-guide-finance"><article><b>收入</b><span>主場門票（逐場）・客場贏球分潤・轉播／贊助合約・贊助任務獎金・球場設施收益</span></article><article><b>支出</b><span>球員／教練／球探薪資・球場維護・行銷・春訓／手術／情蒐；薪資過高另課奢侈稅</span></article></div>
-      <p class="v60-guide-alert"><b>季末預算為負 → 休賽季強制釋出高薪球員（無回收）</b><span>戰力受損，也可能影響退休球員轉任與 KPI 財務目標。</span></p>
+      <div class="v60-guide-visual-row"><img src="visual_assets/v60/finance_front_office_r038.jpg" alt="球場售票、財務帳務與設施維護場景" width="1254" height="1254" loading="lazy" decoding="async"><div class="v60-guide-visual-points"><span><b>收入</b> 票房・分潤・轉播／贊助・設施</span><span><b>支出</b> 薪資・維護・行銷・春訓／醫療</span><span><b>控管</b> 預算、上座率與奢侈稅</span></div></div>
+      <p class="v60-guide-alert"><b>季末赤字 → 休賽季強制釋出高薪球員（無回收）</b><span>戰力受損，影響退休轉任與財務 KPI。</span></p>
       <h3 class="v60-guide-subtitle">控管赤字 6 招</h3>
-      <ol class="v60-guide-six"><li>簽約前比薪資總額與聯盟平均</li><li>人氣低別硬拉票價；季均上座率 ≥90% 才能提高票價上限</li><li>設施分期；維護費隨屋齡升，留周轉金</li><li>長約給顛峰期前球員；老將短約</li><li>虧損季關閉可選行銷</li><li>預算緊：手術、海外春訓、應酬量力而為</li></ol>` },
+      <ol class="v60-guide-six"><li>簽約前看薪資總額／聯盟平均</li><li>人氣低慎漲票；上座 ≥90% 才升票價上限</li><li>設施分期；老舊維護費升，留周轉金</li><li>顛峰前長約・老將短約</li><li>虧損季停用選配行銷</li><li>手術／海外春訓／應酬量力</li></ol>` },
     { key: "market", short: "補強", title: "選秀、交易與自由市場", html: `
-      <div class="v60-guide-market-grid">
-        <article><b>選秀・每年 6 輪</b><span>數值是球探估值；準度越高越可信。新秀薪資有硬上限、簽約金看評級；談約失敗 5 次 → 放棄加盟；可放棄順位。</span></article>
-        <article><b>交易・選秀後至季末前 30 天</b><span>用交易球探估值並看雙方平衡。AI 互相交易會有風聲，可攔截／勸留／觀望；AI 也會提案，好感影響開價。</span></article>
-        <article><b>自由球員 FA</b><span>未續約本土球員入市；能力是真實公開值，生涯走勢是本土球探預測；簽約金約年薪 30%。</span></article>
-        <article><b>國際市場・休賽季刷新</b><span>海外球員數值是國際球探估值；獨家情報只有你能接觸；1軍外籍名額受限。</span></article>
-      </div>` },
+      <div class="v60-guide-visual-row"><img src="visual_assets/v60/scouting_contracts_r038.jpg" alt="球探室、談約桌與球場場景" width="1254" height="1254" loading="lazy" decoding="async"><div class="v60-guide-visual-points"><span><b>選秀・每年 6 輪</b> 球探估值</span><span><b>交易</b> 選秀後至季末前30天・好感影響開價</span><span><b>本土 FA</b> 能力公開・簽約金約年薪30%</span><span><b>國際市場</b> 球探估值・獨家限本隊</span></div></div>
+      <div class="v60-guide-rule-strip"><span>新秀談敗5次 → 放棄加盟</span><span>交易風聲可介入</span><span>1軍外籍名額受限</span></div>` },
     { key: "agency", short: "人脈", title: "代理人與情報", html: `
       <div class="v60-guide-stat-grid" aria-label="代理人關係門檻"><div><b>7 型</b><span>代理不同性格球員</span></div><div><b>好感 ≥4</b><span>取得客戶動向</span></div><div><b>好感 10</b><span>獨家引薦・談約門檻 -5%</span></div></div>
-      <p class="v60-guide-cause">談約時付費情蒐 → 了解經紀人底細與期望底線。</p>
-      <p class="v60-guide-rule-strip"><span>休賽季限定</span><span>每類型每年 1 次</span><span>應酬 300–800 萬</span><span>好感高 → 談約更順、提案更便宜</span></p>` },
+      <p class="v60-guide-cause">付費情蒐：查經紀人底細與薪資底線。</p>
+      <p class="v60-guide-rule-strip"><span>休賽季</span><span>每類每年1次</span><span>應酬300–800萬</span><span>好感高：談約／提案更有利</span></p>` },
     { key: "career", short: "生涯", title: "KPI、信任與委任", html: `
-      <div class="v60-guide-pair"><article><b>年度 KPI</b><span>開幕前公布成績＋經營目標；難度越高，未達扣信任越少。季中可加碼或降標；降標後達成獎勵減半。</span></article><article><b>連年結果</b><span>連 2 年全達成 → 高層提高目標；連 2 年全未達 → 留校察看、懲罰加重。奪冠信任 +8。</span></article></div>
-      <p class="v60-guide-cause">信任歸零 → 解職；接受新球團可東山再起，生涯戰績累計保留，邀約看業界聲望。東山再起僅 1 次，第二次解職 → 永久出局。</p>
-      <p class="v60-guide-rule-strip"><span>沉潛一年：生涯限 1 次</span><span>回歸聲望 +5</span><span>重抽邀約</span></p>
-      <p class="v60-guide-cause">新東家可能附 2 季委任（重建／爭冠／止血），期間 KPI 與財務規則會變，接受前先看條件。奪冠後可主動跳槽：不耗東山再起，累積話題聲望。</p>` },
+      <div class="v60-guide-pair"><article><b>年度 KPI</b><span>開幕公布成績／經營目標；難度越高，未達扣信任越少。季中可加碼／降標，降標獎勵減半。</span></article><article><b>連年結果</b><span>連2年全達→目標升；連2年全未達→留校察看。奪冠信任+8。</span></article></div>
+      <p class="v60-guide-cause">信任歸零→解職；東山再起僅1次，保留生涯戰績，邀約看聲望。第二次解職 → 永久出局。</p>
+      <p class="v60-guide-rule-strip"><span>沉潛1年：生涯限1次</span><span>回歸聲望+5</span><span>重抽邀約</span></p>
+      <p class="v60-guide-cause">新東家可能附2季委任（重建／爭冠／止血），影響 KPI 與財務；奪冠可主動跳槽，不耗東山再起。</p>` },
     { key: "saves", short: "存檔", title: "存檔與重置", html: `
-      <ol class="v60-guide-steps"><li>每次操作後自動存檔；重開回到目前階段（選秀／談約等）。</li><li>存檔管理有 3 個手動槽；選秀、重大交易前先存。</li><li>換裝置或清瀏覽器資料前匯出 JSON；進度存在瀏覽器 IndexedDB，清資料會一併刪除。</li><li>主控台「重新開始」會清除自動存檔且無法復原；先匯出備份。</li></ol>` }
+      <ol class="v60-guide-steps"><li>操作後自動存檔；重開續目前階段。</li><li>3個手動槽：選秀／重大交易前留檔。</li><li>換裝置或清資料前匯出 JSON；進度存於 IndexedDB，清資料會一併刪除。</li><li>「重新開始」清除存檔且無法復原；先備份。</li></ol>` }
   ];
 }
 function renderTutorial() {
@@ -1543,7 +1538,6 @@ function renderSaveManager() {
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">系統</div><h1>存檔管理</h1></div>
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      ${foldNote(`<p class="sub dark" style="margin-bottom:10px;">遊戲會在每次操作後自動存檔；這裡另外提供 3 個手動槽位，方便在重大決策前留存進度。建議定期「匯出JSON」備份——清除瀏覽器資料或更換裝置都會讓瀏覽器內的存檔消失，JSON檔可以隨時匯入還原。</p>`)}
       ${!slots ? `<p class="sub dark">存檔槽位讀取中……</p>` : MANUAL_SLOT_KEYS.map(k => `
       <div class="card">
         <div class="eyebrow">${icon('save')} ${SLOT_LABELS[k]}</div>
@@ -1934,7 +1928,7 @@ function renderSelfTraining() {
       <div class="topbar"><div class="eyebrow">${team.name}・第${S.seasonYear}年 休賽季</div><h1>季後自主訓練窗</h1></div>
       <div class="card issuecard">
         <div class="eyebrow">自主訓練成果</div>
-        <p class="sub dark">季後空窗期，球員各自依生涯型態自主鍛鍊。本季共有 <b>${r.selfTrained}</b> 位球員在自主訓練中小幅成長。</p>
+        <p class="sub dark">自主訓練成長 <b>${r.selfTrained}</b> 人</p>
       </div>
       ${r.newSkills.length > 0 ? `<div class="card"><div class="eyebrow">${icon('medal')} 領悟稱號/特殊技</div>
         <ul class="issuelist" style="color:var(--ink);">${r.newSkills.map(x => `<li><b>${x.name}</b> 領悟了「${icon('star-solid')}${x.skill}」</li>`).join("")}</ul></div>` : ""}
@@ -1942,7 +1936,7 @@ function renderSelfTraining() {
         <ul class="issuelist" style="color:var(--ink);">${r.newTraits.map(x => `<li><b>${x.name}</b> 練出了「${x.trait}」</li>`).join("")}</ul></div>` : ""}
       ${r.inheritance ? `<div class="card" style="border:1px solid var(--green-text);"><div class="eyebrow">${icon('grad')} 世代傳承</div>
         <p class="sub dark">老將 <b>${r.inheritance.seniorName}</b> 將畢生絕技「<b>${r.inheritance.item}</b>」傳授給新星 <b>${r.inheritance.juniorName}</b>！${r.inheritance.type === "skill" ? "後輩獲得該稱號並小幅提升對應能力。" : "後輩習得此後天特質。"}</p></div>`
-        : `<div class="card"><div class="eyebrow">${icon('grad')} 世代傳承</div>${foldNote(`<p class="sub dark">本季你的球隊沒有發生傳承（需資深老將持有可傳承的後天特質/稱號，且隊內有年輕高潛力後輩，緣分到了才會成功；每隊每年至多一次）。</p>`)}</div>`}
+        : `<div class="card"><div class="eyebrow">${icon('grad')} 世代傳承</div><p class="v60-state-line">本季未發生</p></div>`}
       ${r.aiInheritCount > 0 ? `<p class="draftnote muted">本季全聯盟另有 ${r.aiInheritCount} 支球隊發生了世代傳承。</p>` : ""}
       <div class="btnrow"><button id="btn-selftrain-done" class="btn-primary">前往春訓</button></div>
     </div>`;
@@ -1982,9 +1976,8 @@ function renderIntlSquadStage(t) {
       <div class="topbar"><div class="eyebrow">第${t.year}年（${GAME_EPOCH_YEAR + t.year}年）・4年一度</div><h1>世界棒球錦標賽</h1></div>
       <div class="card">
         <div class="eyebrow">${icon('flag-home')} ${HOME_NATION_NAME}代表隊・教練擇優名單</div>
-        <p class="sub dark">國家隊總教練 <b>${coach.name}</b>（借調自${coach.from}）已依全聯盟選手數據敲定 <b>${INTL_SQUAD_SIZE}</b> 人名單（投手 ${pitchers.length}／捕手保底 ${INTL_SQUAD_MIN_CATCHERS}）。</p>
-        ${mineList.length > 0 ? `<p class="sub dark">${icon('star')} 你的球員有 <b>${mineList.length}</b> 位入選：<b>${mineList.map(p => p.name).join("、")}</b>——國手歷練將帶來抗壓成長，也請留意他們的季後狀態。</p>` : `<p class="sub dark">本屆你的球員無人入選。</p>`}
-        ${foldNote(`<p class="sub dark">名單由教練依數據擇優自動入選（14投＋2捕＋野手保底9），玩家不需逐一挑人；母國成績連動全聯盟人氣與明年收入。若想親自操刀，可用下方「手動調整名單」。</p>`)}
+        ${mineList.length > 0 ? `<p class="sub dark">${icon('star')} 本隊入選 ${mineList.length} 人：<b>${mineList.map(p => p.name).join("、")}</b></p>` : `<p class="sub dark">本隊無人入選</p>`}
+        <div class="v60-rule-chip-row" aria-label="賽事影響"><span>國手成長抗壓・賽果影響聯盟人氣／明年收入</span></div>
         <div class="btnrow" style="flex-wrap:wrap;gap:6px;">
           <button id="btn-intl-go" class="btn-primary">確定名單，進入排陣</button>
           <button id="btn-intl-manual" class="btn-outline">進階：手動調整名單</button>
@@ -1999,11 +1992,12 @@ function renderIntlSquadStage(t) {
     const r = intlAutoSelectSquad();
     UI.flash = r.msg; UI.intlPreview = null; render();
   };
-  document.getElementById("btn-intl-manual").onclick = () => { UI.intlManual = true; UI.intlSquad = ids.slice(); render(); };
+  document.getElementById("btn-intl-manual").onclick = () => { UI.intlManual = true; UI.intlCandidatePage = 0; UI.intlSquad = ids.slice(); render(); };
 }
 function renderIntlSquadStageManual(t) {
   const picked = UI.intlSquad || [];
   const pool = intlCandidatePool().slice(0, 90); // v39①：候選 60→90（名單擴編為30人）
+  const intlPage = v60RosterPageSlice(pool, "intlCandidatePage", 12);
   const pit = picked.map(id => S.players[id]).filter(p => p && p.isPitcher).length;
   const cat = picked.map(id => S.players[id]).filter(p => p && !p.isPitcher && p.positions && p.positions.some(x => x.pos === "C")).length;
   app.innerHTML = `
@@ -2011,8 +2005,7 @@ function renderIntlSquadStageManual(t) {
       <div class="topbar"><div class="eyebrow">第${t.year}年（${GAME_EPOCH_YEAR + t.year}年）・4年一度</div><h1>世界棒球錦標賽</h1></div>
       <div class="card">
         <div class="eyebrow">${icon('flag-home')} ${HOME_NATION_NAME}代表隊・召集名單</div>
-        ${foldNote(`<p class="sub dark">你被推舉兼任母國代表隊的管理層：從全聯盟本土球員中挑出 <b>${INTL_SQUAD_SIZE}</b> 人出征世界賽。
-        （不限自家球員；受傷球員無法入選。國手在大賽淬鍊下會獲得抗壓性成長，母國成績也連動全聯盟人氣與明年收入。）</p>`)}
+        <div class="v60-rule-chip-row" aria-label="手動選人規則"><span>健康本土・不限球隊・排除傷兵</span></div>
         <p class="sub dark">目前：<b>${picked.length}／${INTL_SQUAD_SIZE}</b> 人・投手 <b>${pit}</b>／${INTL_SQUAD_MIN_PITCHERS}・捕手 <b>${cat}</b>／${INTL_SQUAD_MIN_CATCHERS}</p>
         <div class="btnrow" style="flex-wrap:wrap;gap:6px;">
           <button id="btn-intl-auto" class="btn-secondary">自動推薦${INTL_SQUAD_SIZE}人</button>
@@ -2020,8 +2013,9 @@ function renderIntlSquadStageManual(t) {
           <button id="btn-intl-squad-ok" class="btn-primary">確定名單，進入排陣</button>
         </div>
       </div>
-      <div class="divlabel">候選名單（聯盟本土能力前90名）</div>
-      ${pool.map(p => {
+      <div class="divlabel">候選名單・本土前90名</div>
+      ${v60RosterPagerHtml(intlPage, "intlCandidatePage", "國手候選", pool.length)}
+      ${intlPage.items.map(p => {
         const on = picked.includes(p.id);
         const tm = S.teams[p.team];
         const mine = p.team === S.userTeamId;
@@ -2041,7 +2035,7 @@ function renderIntlSquadStageManual(t) {
     if (r.ok) { UI.intlManual = false; UI.intlPreview = null; }
     UI.flash = r.msg; render();
   };
-  pool.forEach(p => {
+  intlPage.items.forEach(p => {
     const el = document.getElementById("intl-pick-" + p.id);
     if (!el) return;
     el.onclick = () => {
@@ -2052,6 +2046,7 @@ function renderIntlSquadStageManual(t) {
       render();
     };
   });
+  wireV60RosterPager();
 }
 function renderIntlLineupStage(t) {
   const squad = (t.squadIds || []).map(id => S.players[id]).filter(Boolean);
@@ -2309,7 +2304,7 @@ function renderKpiCard() {
     ${trust < 30 && !S.seasonKPI.settled ? `<p class="draftnote" style="color:var(--bad,#c0392b);">${icon('warn')} 高層的耐心所剩無幾——信任歸零就會遭到解職！</p>` : ""}
     ${(typeof canNegotiateKpi === "function" && canNegotiateKpi()) ? `
       <div class="kpinego-card" style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);">
-        ${foldNote(`<p class="sub dark" style="margin:2px 0;">${icon('handshake')} 開季前期可與高層<b>協商降低成績目標一階</b>（重建期實用）。交換條件：達成獎勵減半；且若連降階後的目標都達不到，會額外扣信任。<b>一季只能協商一次</b>。</p>`)}
+        <p class="v60-state-line">降 1 階・達標信任獎勵½・仍未達再扣信任</p>
         <div class="btnrow"><button id="btn-kpi-negotiate" class="btn-secondary">與高層協商降標</button></div>
       </div>` : (S.seasonKPI.negotiated && !S.seasonKPI.settled ? `<p class="draftnote muted">本季已與高層協商過目標。</p>` : "")}
   </div>`;
@@ -2334,10 +2329,9 @@ function renderRumorCards() {
     return `<div class="card kpicard">
       <div class="eyebrow">${icon('antenna')} 交易風聲（${when}）</div>
       ${detail}
-      ${foldNote(`<p class="draftnote muted">插隊搶人：你的報價須明顯優於現有買家（比率+${Math.round(AI_TRADE_INTERCEPT_PREMIUM * 100)}%），搶成賣方+好感、被搶買家記恨。慫恿破局：耗賣方好感1點，成功機率依交情20~50%（人情型加倍），每筆限一次。</p>`)}
       <div class="btnrow">
-        <button class="btn-primary rumor-intercept" data-rid="${r.id}" ${canAct && lv >= 1 ? "" : "disabled"}>插隊搶人</button>
-        <button class="btn-secondary rumor-persuade" data-rid="${r.id}" ${r.persuaded ? "disabled" : ""}>${r.persuaded ? "已慫恿過" : "慫恿破局"}</button>
+        <button class="btn-primary rumor-intercept" data-rid="${r.id}" ${canAct && lv >= 1 ? "" : "disabled"}>插隊＋${Math.round(AI_TRADE_INTERCEPT_PREMIUM * 100)}%</button>
+        <button class="btn-secondary rumor-persuade" data-rid="${r.id}" ${r.persuaded ? "disabled" : ""}>${r.persuaded ? "已慫恿過" : "慫恿・好感−1"}</button>
         <button class="btn-outline rumor-dismiss" data-rid="${r.id}">靜觀其變</button>
       </div>
     </div>`;
@@ -2402,7 +2396,7 @@ function renderAiProposalCard() {
   const inVal = inP.reduce((s, p) => s + tradeValue(p), 0);
   const outVal = outP.reduce((s, p) => s + tradeValue(p), 0);
   return `<div class="card kpicard">
-    <div class="eyebrow">${icon('phone')} ${ai.name}${ps ? `（${ps.name}）` : ""}主動提案 <span class="afftag ${af.cls}">${af.text}</span></div>
+    <div class="eyebrow">${icon('phone')} ${ai.name}${ps ? `（${ps.name}）` : ""}主動提案・${daysLeft}天內回覆 <span class="afftag ${af.cls}">${af.text}</span></div>
     <div class="divlabel">對方送出（${ai.name}・交易球探評估值，有效準確度 ${pr.scoutedCache.acc}）</div>
     <table class="stattable">
       <thead><tr><th>姓名</th><th>類型</th><th>守位</th><th>評估能力</th></tr></thead>
@@ -2417,7 +2411,6 @@ function renderAiProposalCard() {
       <div class="sb-row small"><div class="sb-label">對方送出總值</div><div class="sb-value small">${inVal.toFixed(1)}</div></div>
       <div class="sb-row small"><div class="sb-label">你送出總值</div><div class="sb-value small">${outVal.toFixed(1)}</div></div>
     </div>
-    ${foldNote(`<p class="draftnote muted">對方球員為交易球探評估值（準確度越高落差越小）；自家球員為真實值。好感度越高，AI開價越接近公平甚至讓利（人情型加倍）。婉拒不扣好感。剩 ${daysLeft} 天回覆，逾期自動失效。</p>`)}
     <div class="btnrow">
       <button id="btn-aiprop-accept" class="btn-primary">接受交易</button>
       <button id="btn-aiprop-decline" class="btn-secondary">婉拒</button>
@@ -2791,7 +2784,7 @@ function renderAiProposalCardV43() {
     const inVal = inP.reduce((s, p) => s + tradeValue(p), 0);
     const outVal = outP.reduce((s, p) => s + tradeValue(p), 0);
     return `<div class="card kpicard">
-      <div class="eyebrow">${icon('phone')} ${ai.name}${ps ? `（${ps.name}）` : ""}主動提案 <span class="afftag ${af.cls}">${af.text}</span></div>
+      <div class="eyebrow">${icon('phone')} ${ai.name}${ps ? `（${ps.name}）` : ""}主動提案・${daysLeft}天內回覆 <span class="afftag ${af.cls}">${af.text}</span></div>
       <div class="divlabel">對方送出（交易球探評估值・完整資料）</div>
       ${inP.map(p => v43PlayerFullCardHtml(p, { scoutView: scoutCache[p.id] || {} })).join("")}
       <div class="divlabel">你送出（自家球員・真實資料）</div>
@@ -2800,7 +2793,6 @@ function renderAiProposalCardV43() {
         <div class="sb-row small"><div class="sb-label">對方送出總值</div><div class="sb-value small">${inVal.toFixed(1)}</div></div>
         <div class="sb-row small"><div class="sb-label">你送出總值</div><div class="sb-value small">${outVal.toFixed(1)}</div></div>
       </div>
-      ${foldNote(`<p class="draftnote muted">對方球員為交易球探評估值（準確度越高落差越小）；自家球員為真實值。婉拒不扣好感。剩 ${daysLeft} 天回覆，逾期自動失效。</p>`)}
       <div class="btnrow">
         <button id="btn-aiprop-accept" class="btn-primary">接受交易</button>
         <button id="btn-aiprop-decline" class="btn-secondary">婉拒</button>

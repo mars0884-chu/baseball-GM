@@ -81,7 +81,7 @@ if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
   assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
 } else {
   assert((v59SingleFileSource.match(/<script defer src="0[0-6]-[^\"]+\.js\?v=/g) || []).length === 7, "v59 public shell loads the seven ordered modular scripts");
-  assert(v59SingleFileSource.includes("v60-r037-visual-tutorial-guide") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r037 public shell uses a fresh cache key without duplicating module source");
+  assert(v59SingleFileSource.includes("v60-r038-visible-rules") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r038 public shell uses a fresh cache key without duplicating module source");
 }
 
 /* ---------- v60-001 視覺恢復候選 ---------- */
@@ -120,9 +120,28 @@ assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceS
 const v60NewsRendererSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderNewsCard"), v60DashboardSource.indexOf("function renderSponsorMissionCard"));
 assert((v60NewsRendererSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60NewsRendererSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60NewsRendererSource.indexOf('v56ContentSummary("news"') < 0 && v60NewsRendererSource.indexOf("icon('news')") < 0, "v60 新聞 renderer 僅保留完整 PNG，不再輸出新聞 SVG");
 assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('v60CompatArtFallbackUrl') >= 0 && v60DashboardSource.indexOf('safeLoading') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准圖片路徑、PNG fallback 與 lazy loading 已接入");
-assert(v60SwSource.indexOf('baseballgm-v60-r037-visual-tutorial-guide') >= 0, "r037 Service Worker cache key 已更新");
+assert(v60SwSource.indexOf('baseballgm-v60-r038-visible-rules') >= 0, "r038 Service Worker cache key 已更新");
 assert(v60DashboardSource.includes('v60CompatArtImageAttrs(key, "eager", false)') && v60DashboardSource.includes('window.requestAnimationFrame(kick)') && v60DashboardSource.includes('img.loading = "lazy";\n        img.loading = "eager";') && v60DashboardSource.includes('v60KickRenderedSceneImages(); return r;'), "動態插入場景圖後下一幀觸發載入，確保瀏覽器啟動請求");
 assert(v60DashboardSource.includes('__v60CurrentScreen !== v60LastRenderedScreen') && v60DashboardSource.includes('window.scrollTo(0, 0)'), "切換新畫面先回到頁首，避免沿用舊長頁捲動位置");
+
+/* ---------- v60-r038 情境規則可見化與說明減量 ---------- */
+console.log("\n--- v60-r038 情境規則可見化與說明減量 ---");
+assert(!/\$\{foldNote\(/.test(v60DashboardSource) && !/\$\{foldNote\(/.test(v60FinanceSource), "r038 已移除相關操作頁的摺疊說明呼叫");
+assert(!v60DashboardSource.includes('aria-label="存檔方式"') && !v60DashboardSource.includes('清資料／換裝置前匯出 JSON') && v60DashboardSource.includes('btn-export-json') && v60DashboardSource.includes('清資料會一併刪除'), "r038 存檔頁不重複講按鈕與教學已交代的備份方式，JSON操作與教學警告保留");
+assert(v60DashboardSource.includes('自主訓練成長 <b>${r.selfTrained}</b> 人') && v60DashboardSource.includes('本季未發生') && !v60DashboardSource.includes('季後空窗期，球員各自依生涯型態'), "r038 自主訓練報告只保留本季結果與必要狀態");
+assert(v60DashboardSource.includes('v60RosterPageSlice(pool, "intlCandidatePage", 12)') && v60DashboardSource.includes('intlPage.items.map') && v60DashboardSource.includes('v60RosterPagerHtml(intlPage') && v60DashboardSource.includes('wireV60RosterPager();'), "r038 國際賽手動選人 90 人分頁、每頁 12 人且沿用原選取操作");
+assert(v60DashboardSource.includes('健康本土・不限球隊・排除傷兵') && v60DashboardSource.includes('目前：<b>${picked.length}／${INTL_SQUAD_SIZE}</b>') && v60DashboardSource.includes('國手成長抗壓・賽果影響聯盟人氣／明年收入'), "r038 國際賽保留候選資格、30人名單計數與成長／賽果出口");
+assert(v60DashboardSource.includes('降 1 階・達標信任獎勵½・仍未達再扣信任') && v60DashboardSource.includes('AI_TRADE_INTERCEPT_PREMIUM * 100') && v60DashboardSource.includes('慫恿・好感−1'), "r038 KPI及風聲操作以短結果／代價文字呈現");
+assert(v60DashboardSource.includes('主動提案・${daysLeft}天內回覆') && !v60DashboardSource.includes('aria-label="提案規則"') && v60DashboardSource.includes('對方球員為交易球探評估值'), "r038 提案期限併入標題，球員真實值／估值仍由表格標籤區分");
+assert(v60FinanceSource.includes('年限每少 1 年・薪資要求 +25%') && v60FinanceSource.includes('5 次未成・職缺／加成歸零') && !v60FinanceSource.includes('依球員目前能力與年齡估算市場身價'), "r038 幕僚續約條件常駐顯示並刪除重複後果與錯誤薪資敘述");
+assert(!v60FinanceSource.includes('v60-rule-card-grid') && !v60FinanceSource.includes('收入來源說明') && v60FinanceSource.includes('report.ticketRevenue') && v60FinanceSource.includes('report.luxuryTax'), "r038 財務移除重複長篇公式說明，收支表實際結算數據完整保留");
+assert(v60StyleSource.includes('.v60-rule-chip-row') && !v60StyleSource.includes('.v60-rule-card-grid') && v60StyleSource.includes('@media(max-width:520px)'), "r038 精簡規則短列有手機響應樣式，未留未使用卡片樣式");
+for (const art of ["finance_front_office_r038.jpg", "scouting_contracts_r038.jpg"]) {
+  const path = `visual_assets/v60/${art}`;
+  const bytes = fs.existsSync(path) ? fs.statSync(path).size : 0;
+  assert(v60DashboardSource.includes(path) && bytes > 20000 && bytes < 400000, `r038 ${art} 實際在教學畫面引用且壓縮檔已就位`);
+}
+assert(v60DashboardSource.includes('class="v60-guide-visual-row"') && v60DashboardSource.includes('loading="lazy" decoding="async"') && v60StyleSource.includes('object-fit:contain'), "r038 圖像取代長段落、依需載入且保持完整構圖");
 
 /* ---------- v60-002 資訊架構減量與靜態素材載入效能 ---------- */
 console.log("\n--- v60-002 資訊架構減量與靜態素材載入效能 ---");
@@ -1814,7 +1833,7 @@ g("finishIntlTournament();");
 assert(g("(function(){ var h=uiTabs('t40',[{key:'a',label:'A',html:'<b>panelA</b>'},{key:'b',label:'B',badge:3,html:'panelB'}]); return h.indexOf('uitab-btn')>=0 && h.indexOf('uitab-panel')>=0 && h.indexOf('uitab-badge')>=0 && h.indexOf('panelA')>=0 && h.indexOf('panelB')>=0; })()"), "v40 uiTabs 產出頁籤/面板/紅點且全面板同駐DOM");
 g("UI.tabs={}; UI.screen='dashboard'; UI.negotiation=null; render();");
 assert(g("app.innerHTML.indexOf('⚾ 賽況')>=0 && app.innerHTML.indexOf('📋 待辦')>=0 && app.innerHTML.indexOf('📰 新聞')>=0 && app.innerHTML.indexOf('📂 選單')>=0"), "v40 主控台四分頁渲染");
-assert(g("app.innerHTML.indexOf('btn-standings')>=0 && (app.innerHTML.indexOf('btn-day')>=0 || app.innerHTML.indexOf('例行賽結束')>=0 || app.innerHTML.indexOf('春季訓練')>=0)"), "v40 主控台分頁後導覽按鈕與賽況面板仍在DOM（掛線不落空；依季節顯示模擬鈕/季末面板/春訓卡）");
+assert(g("app.innerHTML.indexOf('btn-standings')>=0 && (app.innerHTML.indexOf('btn-day')>=0 || app.innerHTML.indexOf('例行賽結束')>=0 || app.innerHTML.indexOf('春訓待完成')>=0 || app.innerHTML.indexOf('春季訓練')>=0)"), "v40 主控台分頁後導覽按鈕與賽況面板仍在DOM（掛線不落空；依季節顯示模擬鈕/季末面板/春訓卡）");
 g("UI.screen='finance'; render();");
 assert(g("app.innerHTML.indexOf('📊 總覽')>=0 && app.innerHTML.indexOf('🎟️ 票價')>=0 && app.innerHTML.indexOf('📺 合約')>=0 && app.innerHTML.indexOf('📜 上季報告')>=0"), "v40 財務四分頁渲染");
 g("var __p40Nego=Object.values(S.players).find(p=>p&&!p.retired&&p.team===S.userTeamId&&p.agent); if(!__p40Nego) throw new Error('v40談判測試缺少有效在役球員'); UI.negotiation={kind:'renewal', playerId:__p40Nego.id, teamId:S.userTeamId, attemptsLeft:5, marketSalary:5000000, desiredSalary:6000000, desiredYears:3, offerSalary:5000000, offerYears:3, log:[]}; UI.screen='negotiation'; render();");

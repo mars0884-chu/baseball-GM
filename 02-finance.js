@@ -2400,7 +2400,7 @@ function renderStaffNegotiation(neg) {
         <div class="sb-row small"><div class="sb-label">市場行情</div><div class="sb-value small">${formatMoney(neg.marketSalary)}／年</div></div>
         <div class="sb-row small"><div class="sb-label">留任期望</div><div class="sb-value small">約 ${formatMoney(neg.desiredSalary)}／年・${neg.desiredYears}年</div></div>
       </div>
-      ${foldNote(`<p class="draftnote muted">出價 ≥ 期望必定成交；年限每少 1 年，所需薪資 +25%（短約溢價）；期望固定不重擲。談判 5 次都談不成，此職位將空缺、加成歸零，須到自由市場補人。</p>`)}
+      <div class="v60-rule-chip-row" aria-label="幕僚續約條件"><span>出價 ≥ 期望・必成</span><span>年限每少 1 年・薪資要求 +25%</span><span>5 次未成・職缺／加成歸零</span></div>
       <div class="card">
         <div class="eyebrow">${icon('chart')} 現任 vs 市場可簽人選（數據比較）</div>
         <table class="stattable">
@@ -2410,7 +2410,6 @@ function renderStaffNegotiation(neg) {
             ${compareRows}
           </tbody>
         </table>
-        <p class="sub dark">若不續約而改簽市場人選，可談成後到「教練團／球探」畫面挑選補上；空窗期間該職位加成歸零。</p>
       </div>
       <label class="field">
         <span>提出年薪（萬元）</span>
@@ -2450,7 +2449,6 @@ function renderStaffRenewal() {
       <div class="topbar"><div class="eyebrow">${team.name}・休賽季幕僚異動</div><h1>教練／球探續約</h1></div>
       <div class="card issuecard">
         <div class="eyebrow">尚待處理：${queue.length} 位到期幕僚</div>
-        ${foldNote(`<p class="sub dark">合約到期的教練與球探需要你親自決定續約或放手。<b>不再自動暫代</b>：若不續約或談判破局，該職位會<b>空缺、加成歸零</b>，直到你在「教練團／球探」畫面到自由市場補人為止。</p>`)}
       </div>
       ${staff ? `
       <div class="card">
@@ -2804,7 +2802,7 @@ function renderFinance() {
       <p class="draftnote muted">結算後預算：${formatMoney(report.budgetAfter)}；人氣變化後：${report.popularityAfter}；當季票價：${report.ticketPrice}元${report.capRaised ? `（因上座踴躍，票價上限已調高至${report.ticketPriceCapAfter}元！）` : ""}${report.homeRecord ? `；上季主場 ${report.homeRecord.w}勝${report.homeRecord.l}敗／客場 ${report.awayRecord.w}勝${report.awayRecord.l}敗` : ""}</p>
       ` : `<p class="sub dark">尚無歷史收支報告，完成第一個球季後會在這裡顯示。</p>`}
 
-      ${foldNote(`<p class="sub dark" style="margin-top:14px;">收入來源說明：門票收入採「逐場實結」——每個主場依當時進場率×票價入帳；客隊贏球可抽該場門票8%（輸球2%），主隊反向支付。周邊/販賣部收入＝主場總進場人次×人均消費，人均消費受球場格位設施（消費/體驗類）與行銷加成影響，舒適類設施則直接提升進場率。薪資支出依球員目前能力與年齡估算市場身價，教練/球探維持既有合約金額；若隊內薪資總額超過聯盟平均的1.3倍，球季結束將被課徵超出部分50%的奢侈稅。</p>`)}`;
+      `;
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${team.name} ・ ${cal.dateLabel}</div><h1>財務</h1></div>
