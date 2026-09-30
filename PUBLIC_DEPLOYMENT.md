@@ -10,6 +10,7 @@
 - 本機隔離瀏覽器檢查 37 路由、教學九章互動、320／390／1280px 響應式、國際賽選人狀態與 `S` 只讀性，頁面錯誤 0。兩張 JPEG 在實際教學 renderer 中 `complete && naturalWidth=1254`，財務／補強 320／390px 截圖已檢視：圖片完整、無水平溢位。這不等於 Mars 手機實測。
 - Regression：`node test_regression.js` 1,833 通過／0 失敗；`node smoke_multiyear.js` 15 年＋全畫面 renderer PASS；`node smoke_puregm.js` 純 GM 15 年 PASS。新圖路徑、壓縮大小、按需載入與完整構圖新增回歸斷言。程式不改遊戲規則、存檔欄位或模擬亂數。
 - 本批公開程式與素材：`02-finance.js`、`05-ui-dashboard.js`、`style.css`、`index.html`、`sw.js`、`test_regression.js`、`visual_assets/v60/` 兩張 JPEG、本紀錄。Service Worker／頁面 cache key 為 `v60-r038-visible-rules`。工作區原有 `manifest.webmanifest` 修改保留且不納入提交；正式 `current/`、delivery／Art ZIP、正式 manifest／SHA、`CURRENT_PACKAGE.json` 與 lineage 均未修改。公開推送與 Pages 實際生效狀態另以部署驗證為準，不以本地 PASS 冒稱線上更新。
+- 2026-09-30，程式提交 `e37982c93c6a370405eaa688af9efd0bece389cc` 已推送 `main`；[GitHub Pages 建置](https://github.com/mars0884-chu/baseball-GM/actions/runs/36703831092) `completed/success`。以唯一查詢參數及 `no-cache` 對公開 Pages 逐一 GET：`index.html`、`05-ui-dashboard.js`、`02-finance.js`、`style.css`、`sw.js`、兩張新 JPEG 均 HTTP 200；程式與快取標記相符，圖片大小分別 258,187／230,370 bytes。這證明線上靜態資源已生效，不代表既有 PWA 安裝立刻替換舊快取，也不代表 Mars 真機／視覺接受。
 
 ## r037：新手教學九章導覽與可見規則卡
 
