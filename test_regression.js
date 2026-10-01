@@ -81,7 +81,7 @@ if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
   assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
 } else {
   assert((v59SingleFileSource.match(/<script defer src="0[0-6]-[^\"]+\.js\?v=/g) || []).length === 7, "v59 public shell loads the seven ordered modular scripts");
-  assert(v59SingleFileSource.includes("v60-r038-visible-rules") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r038 public shell uses a fresh cache key without duplicating module source");
+  assert(v59SingleFileSource.includes("v60-r039-national-roster") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r039 public shell uses a fresh cache key without duplicating module source");
 }
 
 /* ---------- v60-001 視覺恢復候選 ---------- */
@@ -120,7 +120,7 @@ assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceS
 const v60NewsRendererSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderNewsCard"), v60DashboardSource.indexOf("function renderSponsorMissionCard"));
 assert((v60NewsRendererSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60NewsRendererSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60NewsRendererSource.indexOf('v56ContentSummary("news"') < 0 && v60NewsRendererSource.indexOf("icon('news')") < 0, "v60 新聞 renderer 僅保留完整 PNG，不再輸出新聞 SVG");
 assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('v60CompatArtFallbackUrl') >= 0 && v60DashboardSource.indexOf('safeLoading') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准圖片路徑、PNG fallback 與 lazy loading 已接入");
-assert(v60SwSource.indexOf('baseballgm-v60-r038-visible-rules') >= 0, "r038 Service Worker cache key 已更新");
+assert(v60SwSource.indexOf('baseballgm-v60-r039-national-roster') >= 0, "r039 Service Worker cache key 已更新");
 assert(v60DashboardSource.includes('v60CompatArtImageAttrs(key, "eager", false)') && v60DashboardSource.includes('window.requestAnimationFrame(kick)') && v60DashboardSource.includes('img.loading = "lazy";\n        img.loading = "eager";') && v60DashboardSource.includes('v60KickRenderedSceneImages(); return r;'), "動態插入場景圖後下一幀觸發載入，確保瀏覽器啟動請求");
 assert(v60DashboardSource.includes('__v60CurrentScreen !== v60LastRenderedScreen') && v60DashboardSource.includes('window.scrollTo(0, 0)'), "切換新畫面先回到頁首，避免沿用舊長頁捲動位置");
 
@@ -130,7 +130,7 @@ assert(!/\$\{foldNote\(/.test(v60DashboardSource) && !/\$\{foldNote\(/.test(v60F
 assert(!v60DashboardSource.includes('aria-label="存檔方式"') && !v60DashboardSource.includes('清資料／換裝置前匯出 JSON') && v60DashboardSource.includes('btn-export-json') && v60DashboardSource.includes('清資料會一併刪除'), "r038 存檔頁不重複講按鈕與教學已交代的備份方式，JSON操作與教學警告保留");
 assert(v60DashboardSource.includes('自主訓練成長 <b>${r.selfTrained}</b> 人') && v60DashboardSource.includes('本季未發生') && !v60DashboardSource.includes('季後空窗期，球員各自依生涯型態'), "r038 自主訓練報告只保留本季結果與必要狀態");
 assert(v60DashboardSource.includes('v60RosterPageSlice(pool, "intlCandidatePage", 12)') && v60DashboardSource.includes('intlPage.items.map') && v60DashboardSource.includes('v60RosterPagerHtml(intlPage') && v60DashboardSource.includes('wireV60RosterPager();'), "r038 國際賽手動選人 90 人分頁、每頁 12 人且沿用原選取操作");
-assert(v60DashboardSource.includes('健康本土・不限球隊・排除傷兵') && v60DashboardSource.includes('目前：<b>${picked.length}／${INTL_SQUAD_SIZE}</b>') && v60DashboardSource.includes('國手成長抗壓・賽果影響聯盟人氣／明年收入'), "r038 國際賽保留候選資格、30人名單計數與成長／賽果出口");
+assert(v60DashboardSource.includes('健康本土・不限球隊・排除傷兵') && v60DashboardSource.includes('目前：<b>${picked.length}／${INTL_SQUAD_SIZE}</b>') && v60DashboardSource.includes('國手成長抗壓') && v60DashboardSource.includes('賽果影響人氣／明年收入'), "r039 國際賽保留候選資格、30人名單計數與成長／賽果出口");
 assert(v60DashboardSource.includes('降 1 階・達標信任獎勵½・仍未達再扣信任') && v60DashboardSource.includes('AI_TRADE_INTERCEPT_PREMIUM * 100') && v60DashboardSource.includes('慫恿・好感−1'), "r038 KPI及風聲操作以短結果／代價文字呈現");
 assert(v60DashboardSource.includes('主動提案・${daysLeft}天內回覆') && !v60DashboardSource.includes('aria-label="提案規則"') && v60DashboardSource.includes('對方球員為交易球探評估值'), "r038 提案期限併入標題，球員真實值／估值仍由表格標籤區分");
 assert(v60FinanceSource.includes('年限每少 1 年・薪資要求 +25%') && v60FinanceSource.includes('5 次未成・職缺／加成歸零') && !v60FinanceSource.includes('依球員目前能力與年齡估算市場身價'), "r038 幕僚續約條件常駐顯示並刪除重複後果與錯誤薪資敘述");
@@ -1682,12 +1682,21 @@ g("S.intlTournament=null; S.seasonYear=13; runIntlTournament(); finishIntlTourna
 assert(g("S.intlTournament.done===true"), "v38③ 未打完直接離開→自動結算不卡關");
 /* 選人/排陣畫面渲染 */
 g("S.intlTournament=null; S.seasonYear=5; S.gameStarted=true; runIntlTournament(); UI.intlSquad=null; UI.screen='intlTournament'; render();");
-assert(g("app.innerHTML.indexOf('教練擇優名單')>=0"), "v38③ 選人畫面可渲染（v40起預設教練自動版）");
+assert(g("app.innerHTML.indexOf('教練推薦')>=0"), "v38③ 選人畫面可渲染（v40起預設教練自動版）");
+const v60IntlImagePath = "visual_assets/v60/national_team_roster_r039.jpg";
+assert(fs.existsSync(v60IntlImagePath) && fs.statSync(v60IntlImagePath).size > 20000 && fs.statSync(v60IntlImagePath).size < 400000 && g(`app.innerHTML.includes('${v60IntlImagePath}')`), "r039 代表隊場景圖已壓縮並實際進入選人 renderer");
+assert(g("(app.innerHTML.match(/class=\"v60-intl-preview-player\"/g)||[]).length<=6 && app.innerHTML.includes('投手 '+UI.intlPreview.ids.map(id=>S.players[id]).filter(p=>p&&p.isPitcher).length)"), "r039 教練推薦名單投手頁最多六人且分組人數正確");
+g("var __r039IntlSave=JSON.stringify(S); UI.intlPreviewGroup='batters'; UI.intlPreviewPage=0; render();");
+assert(g("app.innerHTML.includes('aria-label=\"野手名單\"') && (app.innerHTML.match(/class=\"v60-intl-preview-player\"/g)||[]).length===6"), "r039 野手分組每頁顯示六人，完整名單可翻頁");
+g("UI.intlPreviewPage=999; render();");
+assert(g("UI.intlPreviewPage===Math.ceil(UI.intlPreview.ids.map(id=>S.players[id]).filter(p=>p&&!p.isPitcher).length/6)-1 && JSON.stringify(S)===__r039IntlSave"), "r039 代表隊分頁夾住尾頁且切換不改存檔");
+g("UI.intlPreviewGroup='pitchers'; UI.intlPreviewPage=0; render();");
 g("UI.intlManual=true; render();");
 assert(g("app.innerHTML.indexOf('召集名單')>=0"), "v40⑤ 手動選人備援路徑仍可渲染");
 g("UI.intlManual=false;");
 g("intlSetSquad(intlSuggestSquad()); render();");
 assert(g("app.innerHTML.indexOf('先發打線')>=0"), "v38③ 排陣畫面可渲染");
+assert(g("app.innerHTML.includes('代表隊排陣') && app.innerHTML.includes('national_team_roster_r039.jpg') && !app.innerHTML.includes('代表隊30人：') && app.innerHTML.includes('btn-intl-lu-ok')"), "r039 排陣頁以場景與人數摘要取代重複30人姓名，操作維持");
 g("intlConfirmLineup(); render();");
 assert(g("app.innerHTML.indexOf('下一場')>=0"), "v38③ 逐場畫面可渲染");
 

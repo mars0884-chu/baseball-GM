@@ -1965,34 +1965,36 @@ function renderIntlSquadStage(t) {
   const mineList = squad.filter(p => p.team === S.userTeamId);
   const pitchers = squad.filter(p => p.isPitcher);
   const batters = squad.filter(p => !p.isPitcher);
+  const previewGroup = UI.intlPreviewGroup === "batters" ? "batters" : "pitchers";
+  const previewList = previewGroup === "pitchers" ? pitchers : batters;
+  const previewPage = v60RosterPageSlice(previewList, "intlPreviewPage", 6);
   const rowOf = p => {
     const tm = S.teams[p.team];
     const mine = p.team === S.userTeamId;
     const posTxt = p.isPitcher ? `投手・${p.role}` : (p.positions || []).map(x => intlPosLabel(x.pos)).join("/");
-    return `<p class="sub dark" style="margin:3px 0;">${mine ? ""+icon('star')+"" : "・"}<b>${p.name}</b>${mine ? `<span class="benchrole-tag">本隊</span>` : ""} <span class="muted">${tm ? tm.name : "-"}・${p.age}歲・${posTxt}・綜合${Math.round(trueOverall(p))}</span></p>`;
+    return `<div class="v60-intl-preview-player" data-player-id="${p.id}"><div><b>${p.name}</b>${mine ? `<span class="benchrole-tag">本隊</span>` : ""}<small>${tm ? tm.name : "-"}・${p.age}歲</small></div><span>${posTxt}</span><strong aria-label="綜合能力">${Math.round(trueOverall(p))}</strong></div>`;
   };
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">第${t.year}年（${GAME_EPOCH_YEAR + t.year}年）・4年一度</div><h1>世界棒球錦標賽</h1></div>
       <div class="card">
-        <div class="eyebrow">${icon('flag-home')} ${HOME_NATION_NAME}代表隊・教練擇優名單</div>
-        ${mineList.length > 0 ? `<p class="sub dark">${icon('star')} 本隊入選 ${mineList.length} 人：<b>${mineList.map(p => p.name).join("、")}</b></p>` : `<p class="sub dark">本隊無人入選</p>`}
-        <div class="v60-rule-chip-row" aria-label="賽事影響"><span>國手成長抗壓・賽果影響聯盟人氣／明年收入</span></div>
+        <div class="v60-intl-preview-hero"><img src="visual_assets/v60/national_team_roster_r039.jpg" alt="藍白代表隊休息室、排陣桌與球場" width="1254" height="1254" loading="lazy" decoding="async"><div><div class="eyebrow">${HOME_NATION_NAME}代表隊・教練推薦</div><div class="v60-rule-chip-row" aria-label="名單與賽事影響"><span>${pitchers.length} 投手／${batters.length} 野手</span><span>本隊入選 ${mineList.length} 人</span><span>國手成長抗壓・賽果影響人氣／明年收入</span></div></div></div>
         <div class="btnrow" style="flex-wrap:wrap;gap:6px;">
           <button id="btn-intl-go" class="btn-primary">確定名單，進入排陣</button>
           <button id="btn-intl-manual" class="btn-outline">進階：手動調整名單</button>
         </div>
       </div>
-      <div class="divlabel">投手（${pitchers.length}人）</div>
-      <div class="card" style="padding:10px 12px;">${pitchers.map(rowOf).join("")}</div>
-      <div class="divlabel">野手（${batters.length}人）</div>
-      <div class="card" style="padding:10px 12px;">${batters.map(rowOf).join("")}</div>
+      <div class="v60-intl-preview-tabs" role="tablist" aria-label="代表隊守位分組"><button type="button" class="${previewGroup === "pitchers" ? "btn-primary" : "btn-outline"}" data-intl-preview-group="pitchers" role="tab" aria-selected="${previewGroup === "pitchers"}">投手 ${pitchers.length}</button><button type="button" class="${previewGroup === "batters" ? "btn-primary" : "btn-outline"}" data-intl-preview-group="batters" role="tab" aria-selected="${previewGroup === "batters"}">野手 ${batters.length}</button></div>
+      ${v60RosterPagerHtml(previewPage, "intlPreviewPage", "代表隊" + (previewGroup === "pitchers" ? "投手" : "野手"), previewList.length)}
+      <div class="card v60-intl-preview-list" role="tabpanel" aria-label="${previewGroup === "pitchers" ? "投手" : "野手"}名單">${previewPage.items.map(rowOf).join("")}</div>
     </div>`;
   document.getElementById("btn-intl-go").onclick = () => {
     const r = intlAutoSelectSquad();
     UI.flash = r.msg; UI.intlPreview = null; render();
   };
   document.getElementById("btn-intl-manual").onclick = () => { UI.intlManual = true; UI.intlCandidatePage = 0; UI.intlSquad = ids.slice(); render(); };
+  app.querySelectorAll("[data-intl-preview-group]").forEach(btn => { btn.onclick = () => { UI.intlPreviewGroup = btn.dataset.intlPreviewGroup; UI.intlPreviewPage = 0; render(); }; });
+  wireV60RosterPager();
 }
 function renderIntlSquadStageManual(t) {
   const picked = UI.intlSquad || [];
@@ -2058,6 +2060,7 @@ function renderIntlLineupStage(t) {
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">第${t.year}年・${HOME_NATION_NAME}代表隊</div><h1>排出你的國家隊</h1></div>
+      <div class="card"><div class="v60-intl-preview-hero"><img src="visual_assets/v60/national_team_roster_r039.jpg" alt="代表隊休息室與排陣桌" width="1254" height="1254" loading="lazy" decoding="async"><div><div class="eyebrow">代表隊排陣</div><div class="v60-rule-chip-row" aria-label="排陣摘要"><span>${squad.length} 人・${pitchers.length} 投手／${batters.length} 野手</span><span>先發 9 棒・輪值最多 4 人</span></div></div></div></div>
       <div class="card">
         <div class="eyebrow">${icon('baseball')} 先發打線（9棒・守位不可重複、必須有捕手）</div>
         ${[0, 1, 2, 3, 4, 5, 6, 7, 8].map(i => {
@@ -2086,7 +2089,6 @@ function renderIntlLineupStage(t) {
         </div>`).join("")}
       </div>
       <div class="card">
-        <p class="sub dark">代表隊${INTL_SQUAD_SIZE}人：${squad.map(p => p.name).join("、")}</p>
         <div class="btnrow" style="flex-wrap:wrap;gap:6px;">
           <button id="btn-intl-autolu" class="btn-secondary">自動排陣</button>
           <button id="btn-intl-lu-ok" class="btn-primary">確定，出征世界賽</button>
