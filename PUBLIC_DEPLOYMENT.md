@@ -9,6 +9,7 @@
 - 固定情境、390px 手機的教練推薦首屏：871→261 可見字元（同屏少 70.0%），頁面高度 1,296→935px（少 27.9%）。這主要是名單分頁後的同屏閱讀負擔，不是刪掉 610 字球員資料。前一批同一 37 路由樣本總字元 12,339→11,729（少 4.9%）；樣本不是全遊戲 50% 結論。
 - 隔離瀏覽器逐頁操作推薦名單：投手 19 人分 4 頁、野手 11 人分 2 頁，共 30 人全部可達；切換前後 `S` 未變。320／390／1280px 圖片 `complete && naturalWidth > 0`、無水平溢位；排陣仍有 9 組打者與 4 組輪值下拉、確認按鈕，圖片實際載入。頁面錯誤 0。此為 Codex 技術驗證，不取代 Mars 真機與主觀美術確認。
 - `node test_regression.js` 1,838 通過／0 失敗；`node smoke_multiyear.js` 15 年＋全畫面渲染 PASS；`node smoke_puregm.js` 純 GM 15 年 PASS。隔離瀏覽器 37 路由與代表隊選人／排陣互動 PASS，320／390／1280px 圖片載入且無橫向溢位，程式頁面錯誤 0；Mars 真機未驗證。公開變更限 `05-ui-dashboard.js`、`style.css`、`index.html`、`sw.js`、`test_regression.js`、新 JPEG 與本紀錄；原有未提交 `manifest.webmanifest` 不納入。正式 `current/`、delivery／Art ZIP、正式 manifest／SHA、`CURRENT_PACKAGE.json` 及 lineage 都不修改。Service Worker／頁面 cache key 為 `v60-r039-national-roster`。
+- 2026-10-01，程式提交 `7fd4b95ec241fb472a5b0293b421bb64a6ccc09d` 已推送 `main`；[GitHub Pages 建置](https://github.com/mars0884-chu/baseball-GM/actions/runs/36847335373) `completed/success`。建置前首次請求仍取到 r038 首頁、新圖 404；建置後以唯一查詢參數與 `no-cache` 複查，首頁、`05-ui-dashboard.js`、`style.css`、`sw.js`、新 JPEG 均 HTTP 200 且 r039 標記／圖片大小吻合。公開靜態版已更新；既有安裝的 PWA 仍可能需重新開啟讓 Service Worker 接手，不把這項網路驗證冒充 Mars 真機或視覺接受。
 
 ## r038：同畫風場景取代教學長文、管理頁減量
 
