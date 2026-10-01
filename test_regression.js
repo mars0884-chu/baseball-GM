@@ -81,7 +81,7 @@ if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
   assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
 } else {
   assert((v59SingleFileSource.match(/<script defer src="0[0-6]-[^\"]+\.js\?v=/g) || []).length === 7, "v59 public shell loads the seven ordered modular scripts");
-  assert(v59SingleFileSource.includes("v60-r040-preseason-flow") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r040 public shell uses a fresh cache key without duplicating module source");
+  assert(v59SingleFileSource.includes("v60-r041-auto-preseason") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r041 public shell uses a fresh cache key without duplicating module source");
 }
 
 /* ---------- v60-001 視覺恢復候選 ---------- */
@@ -115,12 +115,13 @@ if (v60PublicThemeMode) {
 assert(v60ThemeSource.indexOf("恢復 v491 已核准的詳細 T0-T19 team identity PNG") >= 0, "v60 詳細隊徽 PNG 恢復來源標記就位");
 assert(v60FinanceSource.indexOf("draft-negotiation-screen") >= 0 && v60FinanceSource.indexOf("v60-negotiation-banner") >= 0, "v60 談薪畫面具備可辨識視覺流程區");
 assert(v60StyleSource.indexOf(".field input") >= 0 && v60StyleSource.indexOf("background:#FFFFFF !important") >= 0 && v60StyleSource.indexOf(".draft-negotiation-screen input[type=\"number\"]") >= 0, "v60 談薪輸入框亮底高對比修正");
-assert(v60DashboardSource.indexOf("const canRun = S.currentDay === 0") >= 0 && v60DashboardSource.indexOf("!S.gameStarted || S.currentDay !== 0") < 0, "v60 國際交流／海外行銷畫面不再於球季中整張消失");
+const v60IntlActivitySource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderCdActivitiesCard"), v60DashboardSource.indexOf("function wireCdActivitiesActions"));
+assert(v60DashboardSource.indexOf("const canRun = S.currentDay === 0") >= 0 && v60IntlActivitySource.indexOf("!S.gameStarted || S.currentDay !== 0") < 0, "v60 國際交流／海外行銷畫面不再於球季中整張消失");
 assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceSource.indexOf('v60VisualScene("marketing_command_center_v58"') >= 0 || v60FinanceSource.indexOf('v60CompatVisualScene("marketing_command_center_v58"') >= 0), "v60 行銷企劃頁實際整合海外活動畫面");
 const v60NewsRendererSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderNewsCard"), v60DashboardSource.indexOf("function renderSponsorMissionCard"));
 assert((v60NewsRendererSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60NewsRendererSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60NewsRendererSource.indexOf('v56ContentSummary("news"') < 0 && v60NewsRendererSource.indexOf("icon('news')") < 0, "v60 新聞 renderer 僅保留完整 PNG，不再輸出新聞 SVG");
 assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('v60CompatArtFallbackUrl') >= 0 && v60DashboardSource.indexOf('safeLoading') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准圖片路徑、PNG fallback 與 lazy loading 已接入");
-assert(v60SwSource.indexOf('baseballgm-v60-r040-preseason-flow') >= 0, "r040 Service Worker cache key 已更新");
+assert(v60SwSource.indexOf('baseballgm-v60-r041-auto-preseason') >= 0, "r041 Service Worker cache key 已更新");
 assert(v60DashboardSource.includes('v60CompatArtImageAttrs(key, "eager", false)') && v60DashboardSource.includes('window.requestAnimationFrame(kick)') && v60DashboardSource.includes('img.loading = "lazy";\n        img.loading = "eager";') && v60DashboardSource.includes('v60KickRenderedSceneImages(); return r;'), "動態插入場景圖後下一幀觸發載入，確保瀏覽器啟動請求");
 assert(v60DashboardSource.includes('__v60CurrentScreen !== v60LastRenderedScreen') && v60DashboardSource.includes('window.scrollTo(0, 0)'), "切換新畫面先回到頁首，避免沿用舊長頁捲動位置");
 
@@ -209,7 +210,7 @@ assert(g("draftSigningBonus(1,{scoutedCeiling:'D'})") <= 80*10000*1.2*1.0+1, "D�
 g("confirmSkipAllRemaining()");
 assert(g("!S.draft.active"), "選秀完成");
 g("beginFirstSeason()");
-assert(g("UI.screen==='springCamp' && S.springCamp && S.springCamp.year===1"), "選秀後進春訓");
+assert(g("UI.screen==='finance' && UI.tabs.finance==='deals' && S.springCamp && S.springCamp.year===1"), "選秀後先檢查開季準備，春訓已建立但尚未出發");
 
 /* ---------- 5. 春訓 ---------- */
 assert(g("Object.keys(S.springCamp.assignments).length>0"), "預設AI建議已帶入");
@@ -4361,7 +4362,7 @@ const v60PrepRoster = fs.readFileSync("06-ui-roster.js", "utf8");
 const v60ForecastFn = v60PrepDash.slice(v60PrepDash.indexOf("function v60PreseasonFinanceForecast"), v60PrepDash.indexOf("function v60PreseasonWindow"));
 assert(v60ForecastFn.includes("function v60PreseasonFinanceForecast") && !/Math\.random|ensureFinance\(|ensureFacility\(|ensureStadiumSlots\(|refreshPayroll\(|persist\(/.test(v60ForecastFn), "v60-010 頁首財務預估不呼叫寫入、補值或亂數入口");
 assert(v60PrepDash.includes('data-v60-prep="next"') && v60PrepDash.includes('data-v60-prep="contracts"') && v60PrepDash.includes('data-v60-prep="ticket"') && v60PrepDash.includes('data-v60-prep="marketing"') && v60PrepDash.includes('data-v60-prep="facilities"') && v60PrepDash.includes('data-v60-prep="spring"'), "v60-010 開季流程、談約、票價、行銷、硬體及春訓有直達入口");
-assert(v60PrepDash.includes("${stage.short}") && v60PrepDash.includes("title=\"下一步：${stage.label}\""), "v60-010 下一步入口直接標示目的階段");
+assert(v60PrepDash.includes("${stage.short}") && v60PrepDash.includes("title=\"目前項目：${stage.short}\""), "r041 頁首標示目前項目，不以手動下一步跳過準備");
 assert(v60PrepDash.includes("proceedFromOffseasonSummary()") && v60PrepDash.includes("proceedToDraft()") && v60PrepFlow.includes("function proceedFromStaffRenewals()") && v60PrepFlow.includes("function proceedFromDirectorRenewal()"), "v60-010 流程下一步保留既有裁員、續約、選秀關卡");
 assert(v60PrepStyle.includes(".v60-preseason-dock{position:sticky;top:0") && v60PrepStyle.includes("safe-area-inset"), "v60-010 頁首導覽固定且與既有安全區樣式相容");
 assert(v60PrepRoster.includes("v60-roster-table-wrap") && v60PrepStyle.includes(".v60-roster-table-wrap{max-width:100%;overflow-x:auto"), "v60-010 球員寬表限制在內部捲動框，不撐開手機頁面");
@@ -4381,21 +4382,30 @@ g(`var __r040SavedState=JSON.stringify(S), __r040SavedUi=JSON.stringify(UI);
 S.currentDay=0; S.gameStarted=true; S.seasonYear=5; S.draftDoneYear=4; S.draft=null;
 S.springCamp={year:5,executed:false}; S.springCampDoneYear=4;
 S.forcedCutRequired=false; S.pendingContractRenewals=[]; S.pendingStaffRenewals=[]; S.v55PendingDirectorRenewal=false;
-UI.screen='selfTraining'; UI.preseasonGuideVisitedYear=undefined;`);
+S.preseasonReview={year:4,steps:{deals:true,ticket:true,marketing:true,facilities:true,roster:true}};
+UI.screen='selfTraining';`);
 assert(g("v60PreseasonNextStage().screen==='financeDeals'"), "r040 換季後 draftDoneYear 屬上個休賽季，不得把開季準備誤判為重辦選秀");
-g("v60PreseasonGoNext();");
-assert(g("UI.screen==='finance' && UI.tabs.finance==='deals' && UI.preseasonGuideVisitedYear===S.seasonYear"), "r040 自主訓練下一步進入談約／收入檢查");
-g("v60PreseasonGoNext();");
-assert(g("UI.screen==='finance' && UI.tabs.finance==='ticket'"), "r040 談約之後逐步進入票價");
-g("v60PreseasonGoNext();");
-assert(g("UI.screen==='marketing' && v60PreseasonNextStage().screen==='facilities'"), "r040 票價之後依序進入行銷與硬體");
 g("v60PreseasonGoNext(); v60PreseasonGoNext();");
-assert(g("UI.screen==='roster' && v60PreseasonNextStage().screen==='springCamp'"), "r040 硬體之後檢查名單，再進春訓");
-g("v60PreseasonGoNext();");
-assert(g("UI.screen==='springCamp' && v60PreseasonNextStage().screen==='springCamp' && S.draft===null"), "r040 春訓未完成時停在春訓，不產生第二次選秀");
+assert(g("UI.screen==='finance' && UI.tabs.finance==='deals' && v60PreseasonMissingStep()==='deals'"), "r041 重複點目前項目不得跳過談約");
+g("v60PreseasonCompleteStep('deals');");
+assert(g("UI.screen==='finance' && UI.tabs.finance==='ticket' && S.preseasonReview.steps.deals===true"), "r041 完成談約後自動進票價並記錄進度");
+g("v60PreseasonCompleteStep('ticket');");
+assert(g("UI.screen==='marketing' && v60PreseasonMissingStep()==='marketing'"), "r041 確認票價後自動進行銷");
+g("v60PreseasonCompleteStep('marketing'); v60PreseasonCompleteStep('facilities');");
+assert(g("UI.screen==='roster' && v60PreseasonMissingStep()==='roster'"), "r041 完成行銷及硬體後自動進名單");
+g("v60PreseasonCompleteStep('roster');");
+assert(g("UI.screen==='springCamp' && v60PreseasonMissingStep()===null && S.draft===null"), "r041 五項完成後才進春訓，不產生第二次選秀");
 g("S.springCamp.executed=true; S.springCampDoneYear=S.seasonYear; UI.screen='springReport';");
 assert(g("v60PreseasonNextStage().screen==='dashboard'"), "r040 春訓成果後下一步返回開季主控台");
 g("S=JSON.parse(__r040SavedState); UI=JSON.parse(__r040SavedUi);");
+assert(v60PrepDash.includes('if (missing) { UI.flash = "開季準備尚未完成') && v60PrepDash.includes('if (missing) return v60PreseasonOpenStep(missing)'), "r041 春訓出發與主控台入口不能繞過漏項");
+g(`var __r041ReviewSaved=JSON.stringify(S.preseasonReview), __r041DaySaved=S.currentDay, __r041SpringDoneSaved=S.springCampDoneYear;
+S.preseasonReview=null; S.currentDay=0; S.springCampDoneYear=S.seasonYear-1; ensureV60();
+var __r041OldPending=JSON.stringify(S.preseasonReview); ensureV60(); var __r041Idempotent=JSON.stringify(S.preseasonReview)===__r041OldPending;
+S.preseasonReview=null; S.springCampDoneYear=S.seasonYear; ensureV60(); var __r041OldOpened=V60_PRESEASON_STEPS.every(k=>S.preseasonReview.steps[k]===true);
+S.preseasonReview=JSON.parse(__r041ReviewSaved); S.currentDay=__r041DaySaved; S.springCampDoneYear=__r041SpringDoneSaved;`);
+assert(g("__r041Idempotent && __r041OldOpened && JSON.parse(__r041OldPending).steps.deals===false"), "r041 舊存檔遷移冪等；未開季補待檢、已開季不倒退");
+assert(v60PrepDash.includes('review.teamId === S.userTeamId') && v60PrepDash.includes('review.year === S.seasonYear'), "r041 換季或換隊不沿用前一份開季檢查進度");
 assert(v60DashboardSource.includes('visual_assets/v60/offseason_planning_r040.jpg') && v60DashboardSource.includes('loading="lazy" decoding="async"'), "r040 休賽季場景圖按需載入並取代流程長文");
 
 /* v60-011：縮短重複說明，不隱藏玩法或改變資料出口。 */

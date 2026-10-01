@@ -328,6 +328,46 @@ function v60PreseasonWindow() {
 function v60PreseasonSpringReady() {
   return !!(S.springCamp && S.springCamp.year === S.seasonYear);
 }
+const V60_PRESEASON_STEPS = ["deals", "ticket", "marketing", "facilities", "roster"];
+function ensureV60() {
+  if (!S) return;
+  const review = S.preseasonReview;
+  if (review && Number.isInteger(review.year) && review.teamId === S.userTeamId && review.steps && typeof review.steps === "object") return;
+  const alreadyOpened = S.currentDay > 0 || S.springCampDoneYear === S.seasonYear;
+  S.preseasonReview = { year: S.seasonYear, teamId: S.userTeamId, steps: Object.fromEntries(V60_PRESEASON_STEPS.map(key => [key, alreadyOpened])) };
+}
+function v60PreseasonReview() {
+  const review = S.preseasonReview;
+  return review && review.year === S.seasonYear && review.teamId === S.userTeamId && review.steps ? review.steps : {};
+}
+function v60PreseasonMissingStep() {
+  if (!S.gameStarted || S.currentDay !== 0 || !v60PreseasonSpringReady() || S.springCampDoneYear === S.seasonYear) return null;
+  const steps = v60PreseasonReview();
+  return V60_PRESEASON_STEPS.find(key => steps[key] !== true) || null;
+}
+function v60PreseasonScreenForStep(key) {
+  return { deals: "financeDeals", ticket: "financeTicket", marketing: "marketing", facilities: "facilities", roster: "roster" }[key] || "springCamp";
+}
+function v60PreseasonOpenStep(key) {
+  const screen = v60PreseasonScreenForStep(key);
+  if (screen === "financeDeals" || screen === "financeTicket") {
+    UI.screen = "finance"; UI.tabs = UI.tabs || {}; UI.tabs.finance = screen === "financeDeals" ? "deals" : "ticket";
+    if (screen === "financeDeals" && !S.teams[S.userTeamId].finance?.broadcastDeal) UI.tabs.financeDeals = "broadcast";
+  } else UI.screen = screen;
+  render();
+}
+function v60PreseasonCompleteStep(key) {
+  if (!V60_PRESEASON_STEPS.includes(key) || !S.gameStarted || S.currentDay !== 0 || !v60PreseasonSpringReady()) return false;
+  const missing = v60PreseasonMissingStep();
+  if (missing !== key) { if (missing) v60PreseasonOpenStep(missing); return false; }
+  if (!S.preseasonReview || S.preseasonReview.year !== S.seasonYear || S.preseasonReview.teamId !== S.userTeamId) S.preseasonReview = { year: S.seasonYear, teamId: S.userTeamId, steps: {} };
+  S.preseasonReview.steps[key] = true;
+  persist();
+  const next = v60PreseasonMissingStep();
+  if (next) v60PreseasonOpenStep(next);
+  else { UI.screen = "springCamp"; render(); }
+  return true;
+}
 function v60PreseasonNextStage() {
   if (S.forcedCutRequired) return { label: "處理裁員", short: "裁員", screen: "financeCuts" };
   if ((S.pendingContractRenewals || []).length) return { label: "處理談約", short: "球員約", screen: "contractRenewals" };
@@ -339,15 +379,11 @@ function v60PreseasonNextStage() {
   if (!S.gameStarted && S.draftDoneYear === S.seasonYear) return { label: "開始新球季", short: "開季", screen: "beginFirstSeason" };
   if (S.springCampDoneYear === S.seasonYear) return { label: "回主控台", short: "開季", screen: "dashboard" };
   if (S.springCamp && S.springCamp.year === S.seasonYear && S.springCamp.executed) return { label: "春訓成果", short: "成果", screen: "springReport" };
-  if (UI.screen === "selfTraining" || (UI.screen === "springCamp" && UI.preseasonGuideVisitedYear !== S.seasonYear)) return { label: "檢查談約與收入", short: "談約", screen: "financeDeals" };
-  if (UI.screen === "finance" && UI.tabs && UI.tabs.finance === "deals") return { label: "設定票價", short: "票價", screen: "financeTicket" };
-  if (UI.screen === "finance" && UI.tabs && UI.tabs.finance === "ticket") return { label: "安排行銷", short: "行銷", screen: "marketing" };
-  if (UI.screen === "marketing") return { label: "檢查硬體", short: "硬體", screen: "facilities" };
-  if (UI.screen === "facilities") return { label: "檢查名單", short: "名單", screen: "roster" };
-  if (UI.screen === "roster") return { label: "安排春訓", short: "春訓", screen: "springCamp" };
+  const missing = v60PreseasonMissingStep();
+  if (missing) return { label: "完成目前項目", short: ({ deals: "談約", ticket: "票價", marketing: "行銷", facilities: "硬體", roster: "名單" })[missing], screen: v60PreseasonScreenForStep(missing) };
   if (UI.screen === "springCamp") return { label: "完成春訓", short: "春訓", screen: "springCamp" };
-  if (UI.screen === "finance") return { label: "檢查談約與收入", short: "談約", screen: "financeDeals" };
-  if (v60PreseasonSpringReady()) return { label: "檢查談約與收入", short: "談約", screen: "financeDeals" };
+  if (UI.screen === "finance") return { label: "春訓安排", short: "春訓", screen: "springCamp" };
+  if (v60PreseasonSpringReady()) return { label: "春訓安排", short: "春訓", screen: "springCamp" };
   return { label: "回主控台", short: "開季", screen: "dashboard" };
 }
 function v60PreseasonGoNext() {
@@ -358,12 +394,8 @@ function v60PreseasonGoNext() {
     return proceedToDraft();
   }
   if (stage.screen === "beginFirstSeason") return beginFirstSeason();
-  if (stage.screen === "financeDeals" || stage.screen === "financeTicket") {
-    UI.preseasonGuideVisitedYear = S.seasonYear;
-    UI.screen = "finance";
-    UI.tabs = UI.tabs || {};
-    UI.tabs.finance = stage.screen === "financeDeals" ? "deals" : "ticket";
-  } else if (stage.screen === "springCamp") {
+  if (stage.screen === "financeDeals" || stage.screen === "financeTicket") return v60PreseasonOpenStep(stage.screen === "financeDeals" ? "deals" : "ticket");
+  if (stage.screen === "springCamp") {
     if (!v60PreseasonSpringReady()) prepareSpringCamp();
     if (UI.screen === "springCamp") { UI.flash = "請完成春訓安排；也可使用上方入口直接檢查其他項目。"; }
     UI.screen = "springCamp";
@@ -378,6 +410,15 @@ function v60PreseasonOpenContracts() {
   else { UI.screen = "finance"; UI.tabs = UI.tabs || {}; UI.tabs.finance = "deals"; }
   render();
 }
+function v60PreseasonReviewAction() {
+  const key = v60PreseasonMissingStep();
+  const onStep = key === "deals" ? UI.screen === "finance" && UI.tabs && UI.tabs.finance === "deals"
+    : key === "ticket" ? UI.screen === "finance" && UI.tabs && UI.tabs.finance === "ticket"
+    : UI.screen === key;
+  if (!onStep) return null;
+  const label = { deals: "維持未簽約項目預設收入", ticket: "維持目前票價", marketing: "完成行銷配置（可不投入）", facilities: "完成硬體檢查（可不建造）", roster: "確認名單，前往春訓" }[key];
+  return { key, label };
+}
 function v60MountPreseasonDock() {
   if (!v60PreseasonWindow()) return;
   const root = document.getElementById("app");
@@ -386,6 +427,7 @@ function v60MountPreseasonDock() {
   const snapshot = v60PreseasonFinanceForecast(team);
   if (!snapshot) return;
   const stage = v60PreseasonNextStage();
+  const reviewAction = v60PreseasonReviewAction();
   const netClass = snapshot.projectedNet < 0 ? "is-negative" : "is-positive";
   const previous = Number.isFinite(snapshot.previousNet) ? `${snapshot.previousNet >= 0 ? "+" : ""}${formatMoney(snapshot.previousNet)}` : "尚無上季資料";
   root.insertAdjacentHTML("afterbegin", `<aside class="v60-preseason-dock" aria-label="開季準備快捷列">
@@ -396,20 +438,22 @@ function v60MountPreseasonDock() {
         <span class="v60-preseason-current"><small>本季預估</small><b>${snapshot.projectedNet >= 0 ? "+" : ""}${formatMoney(snapshot.projectedNet)}</b></span>
       </button>
       <nav class="v60-preseason-links" aria-label="開季準備入口">
-        <button type="button" data-v60-prep="next" aria-label="前往下一個開季流程：${stage.label}" title="下一步：${stage.label}"><span>下一步</span><small>${stage.short}</small></button>
+        <button type="button" data-v60-prep="next" aria-label="開啟目前開季項目：${stage.short}" title="目前項目：${stage.short}"><span>目前</span><small>${stage.short}</small></button>
         <button type="button" data-v60-prep="contracts">談約${(S.pendingContractRenewals || []).length ? `・${S.pendingContractRenewals.length}` : ""}</button>
         <button type="button" data-v60-prep="ticket">票價</button>
         <button type="button" data-v60-prep="marketing">行銷</button>
         <button type="button" data-v60-prep="facilities">硬體</button>
         <button type="button" data-v60-prep="roster">名單</button>
-        <button type="button" data-v60-prep="spring" ${!v60PreseasonSpringReady() ? "disabled" : ""}>春訓</button>
+        <button type="button" data-v60-prep="spring" ${!v60PreseasonSpringReady() || v60PreseasonMissingStep() ? "disabled" : ""}>春訓</button>
       </nav>
+      ${reviewAction ? `<button type="button" class="v60-preseason-review-action" data-v60-prep="complete" data-step="${reviewAction.key}">${reviewAction.label}</button>` : ""}
     </div>
   </aside>`);
   root.querySelectorAll("[data-v60-prep]").forEach(button => {
     button.onclick = () => {
       const route = button.dataset.v60Prep;
       if (route === "next") return v60PreseasonGoNext();
+      if (route === "complete") return v60PreseasonCompleteStep(button.dataset.step);
       if (route === "contracts") return v60PreseasonOpenContracts();
       if (route === "finance" || route === "ticket") {
         UI.screen = "finance"; UI.tabs = UI.tabs || {}; UI.tabs.finance = route === "ticket" ? "ticket" : "overview";
@@ -417,6 +461,8 @@ function v60MountPreseasonDock() {
       else if (route === "facilities") UI.screen = "facilities";
       else if (route === "roster") UI.screen = "roster";
       else if (route === "spring") {
+        const missing = v60PreseasonMissingStep();
+        if (missing) return v60PreseasonOpenStep(missing);
         if (S.springCamp && S.springCamp.year === S.seasonYear && S.springCamp.executed) UI.screen = "springReport";
         else { if (!S.springCamp || S.springCamp.year !== S.seasonYear) prepareSpringCamp(); UI.screen = "springCamp"; }
       }
@@ -783,8 +829,8 @@ function renderDashboard() {
 
       ${needSpringCamp ? `
       <div class="card seasonover">
-        <div class="eyebrow">春訓待完成</div>
-        <button id="btn-go-spring" class="btn-primary">前往春訓安排</button>
+        <div class="eyebrow">${v60PreseasonMissingStep() ? "開季準備待完成" : "春訓待完成"}</div>
+        <button id="btn-go-spring" class="btn-primary">${v60PreseasonMissingStep() ? "回到目前準備項目" : "前往春訓安排"}</button>
       </div>` : ""}
 
       ${blocked || needSpringCamp ? "" : (seasonOver ? renderSeasonOverPanel() : `
@@ -890,6 +936,8 @@ function renderDashboard() {
     </div>`;
   if (needSpringCamp) {
     document.getElementById("btn-go-spring").onclick = () => {
+      const missing = v60PreseasonMissingStep();
+      if (missing) return v60PreseasonOpenStep(missing);
       if (!S.springCamp || S.springCamp.year !== S.seasonYear) prepareSpringCamp();
       UI.flash = null; UI.screen = "springCamp"; render();
     };
@@ -1398,7 +1446,7 @@ function renderOffseasonSummary() {
       <div class="topbar"><div class="eyebrow">${S.leagueName} ・ 第${S.seasonYear}年休賽季</div><h1>休賽季異動摘要</h1></div>
       <section class="v60-visual-scene v60-compact-scene v60-offseason-scene" aria-label="從球團規劃、名單到春訓的開季準備場景">
         <div class="v60-visual-scene-art"><img src="visual_assets/v60/offseason_planning_r040.jpg" alt="球團辦公室、票務與行銷空間通往春訓球場" loading="lazy" decoding="async"></div>
-        <div class="v60-visual-scene-copy"><span class="v60-visual-kicker">開季準備</span><strong>從規劃走到球場</strong><span>依頁首「下一步」逐項檢查；完成春訓後開季。</span></div>
+        <div class="v60-visual-scene-copy"><span class="v60-visual-kicker">開季準備</span><strong>從規劃走到球場</strong><span>完成一項就前往下一站；完成春訓後開季。</span></div>
       </section>
       ${!S.gameStarted ? `
       <div class="card">
@@ -1860,7 +1908,11 @@ function renderSpringCamp() {
   document.getElementById('spring-prev').onclick = () => { UI.springPage--; render(); };
   document.getElementById('spring-next').onclick = () => { UI.springPage++; render(); };
   app.querySelectorAll(".spring-menu-select").forEach(sel => { sel.onchange = e => setSpringAssignment(sel.dataset.id, e.target.value); });
-  document.getElementById("btn-spring-go").onclick = () => { UI.flash = null; executeSpringCamp(); };
+  document.getElementById("btn-spring-go").onclick = () => {
+    const missing = v60PreseasonMissingStep();
+    if (missing) { UI.flash = "開季準備尚未完成，先處理目前項目。"; v60PreseasonOpenStep(missing); return; }
+    UI.flash = null; executeSpringCamp();
+  };
 }
 
 /* ---------- v25 春訓報告畫面 ---------- */

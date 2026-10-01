@@ -1,6 +1,16 @@
-# v60-r040 休賽季逐步導覽與圖像化
+# v60-r041 開季準備完成即自動前進
 
 本目錄是 GitHub Pages 公開部署殼層，不取代離線交付包，也不代表 Mars 正式接受。
+
+## r041：防止略過開季準備
+
+- 2026-10-01，Mars 指出 r040 仍需手動點「下一步」，即使漏按也能直接春訓開季；此為流程缺陷。本批以「完成目前項目」替代可連點的「下一步」，談約雙合約簽妥即自動到票價，票價設定後自動到行銷。未簽約可明確選擇維持預設收入、票價可維持現值；行銷、硬體與名單可逐項確認維持現況，不強迫花錢或更動球員，確認後自動進下一站。
+- 開季進度存於 `S.preseasonReview`，以球季與球隊識別；舊存檔經 `ensureV60()` 冪等補建，已開季者不倒退、尚未春訓者從未完成項開始。年度切換或換隊不沿用舊進度。主控台春訓入口、頁首春訓捷徑及「確認出發春訓」會導回第一個漏項；已有的裁員、續約、選秀優先順序保留。沒有改比賽、財務或行銷演算法。
+- Playwright 真實點選 390／320px：未完成時強行出發被擋、連點「目前項目」不跳關，簽完兩份合約自動到票價，選票價自動到行銷，確認行銷→硬體→名單後才可春訓，重新載入仍回未完成的名單，春訓完成後進成果及開季主控台；0 頁面錯誤、無水平溢位。證據於工作區 `_staging/v60-010-preseason-flow-candidate/browser-proof/v60-r041-auto-flow-audit.json`。這是技術驗證，不取代 Mars 真機確認。
+- `node test_regression.js` 1,849 通過／0 失敗；`node smoke_multiyear.js` 15 年＋全畫面渲染 PASS；`node smoke_puregm.js` 純 GM 15 年 PASS。新測試保留舊選秀、開季、財務與春訓斷言，補測舊存檔遷移冪等與不可連點跳關。
+- 公開版程式含 `01-data-engine.js`、`02-finance.js`、`04-state-core.js`、`05-ui-dashboard.js`、`06-ui-roster.js`、`style.css`、`index.html`、`sw.js`、`test_regression.js` 與本紀錄；原有未提交 `manifest.webmanifest` 不納入。正式 `current/`、Delivery／Art ZIP、正式 manifest／SHA、`CURRENT_PACKAGE.json` 與 lineage 均不動。快取版本改為 `v60-r041-auto-preseason`；推送與線上生效另以實際部署驗證為準。
+
+## r040：休賽季逐步導覽與圖像化
 
 ## r040：開季準備流程
 

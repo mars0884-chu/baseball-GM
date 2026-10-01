@@ -2433,6 +2433,7 @@ function hydrateLoadedState(saved) {
       if (typeof ensureV54 === "function") ensureV54();
       /* r010 V55-MIG-001：三條正式讀檔路徑共用此 hydrate，於 V54 後補齊 V55 狀態。 */
       if (typeof ensureV55 === "function") ensureV55();
+      if (typeof ensureV60 === "function") ensureV60(); // r041：舊存檔補建開季準備進度；已開季者不倒退
       // v39.1：開幕選秀殘骸遷移——舊版存檔若已開打、仍在第1年、掛著「已結束且無opening欄位」的
       // 選秀物件，即為被bug吞掉第二屆選秀的狀態（開幕選秀殘影）；清除之，讓第1季休賽季能正常
       // 舉辦自己的選秀。新版選秀物件一律帶opening欄位，正常辦完的休賽季選秀不會被誤清。
@@ -2450,7 +2451,11 @@ function hydrateLoadedState(saved) {
       else if (S.gameStarted && S.offseasonEnteredYear === S.seasonYear && S.offseasonSummary) UI.screen = "offseasonSummary"; // v35：休賽季進行中重載→回摘要（先前落到dashboard，可能經頒獎鈕二次結算）
       else if (!S.gameStarted) UI.screen = "offseasonSummary";
       else if (S.intlTournament && S.intlTournament.year === S.seasonYear && !S.intlTournament.done) UI.screen = "intlTournament";
-      else if (S.currentDay === 0 && S.springCampDoneYear !== S.seasonYear && S.springCamp && S.springCamp.year === S.seasonYear) UI.screen = S.springCamp.executed ? "springReport" : "springCamp";
+      else if (S.currentDay === 0 && S.springCampDoneYear !== S.seasonYear && S.springCamp && S.springCamp.year === S.seasonYear) {
+        const missing = typeof v60PreseasonMissingStep === "function" ? v60PreseasonMissingStep() : null;
+        if (missing === "deals" || missing === "ticket") { UI.screen = "finance"; UI.tabs = UI.tabs || {}; UI.tabs.finance = missing === "deals" ? "deals" : "ticket"; }
+        else UI.screen = missing || (S.springCamp.executed ? "springReport" : "springCamp");
+      }
       else UI.screen = "dashboard";
 }
 (async function init() {

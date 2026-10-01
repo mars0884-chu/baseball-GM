@@ -1529,6 +1529,7 @@ function setTicketPreset(presetKey) {
   const pct = estimateAttendancePct(team, applied);
   UI.flash = `票價已調整為「${preset.label}」（每張${applied}元，預估約${pct}%觀眾進場）。`;
   persist();
+  if (typeof v60PreseasonMissingStep === "function" && v60PreseasonMissingStep() === "ticket") { v60PreseasonCompleteStep("ticket"); return; }
   render();
 }
 function setCustomTicketPrice(amount) {
@@ -1550,6 +1551,7 @@ function setCustomTicketPrice(amount) {
   const capNote = n > team.finance.ticketPriceCap ? `（已超過目前票價上限${team.finance.ticketPriceCap}元，自動調整為上限）` : "";
   UI.flash = `票價已調整為 ${applied} 元${capNote}，AI預估約${pct}%觀眾會進場。`;
   persist();
+  if (typeof v60PreseasonMissingStep === "function" && v60PreseasonMissingStep() === "ticket") { v60PreseasonCompleteStep("ticket"); return; }
   render();
 }
 
@@ -1629,6 +1631,7 @@ function chooseDeal(kind, offerId) {
   else team.finance.sponsorDeal = offer;
   UI.flash = `已簽下${kind === "broadcast" ? "轉播" : "贊助"}${offer.label}：保證金 ${formatMoney(offer.base)}${offer.winBonusPer10 ? `＋戰績分潤` : ""}${offer.playoffBonus ? `＋季後賽加碼 ${formatMoney(offer.playoffBonus)}` : ""}。`;
   persist();
+  if (team.finance.broadcastDeal && team.finance.sponsorDeal && typeof v60PreseasonMissingStep === "function" && v60PreseasonMissingStep() === "deals") { v60PreseasonCompleteStep("deals"); return; }
   render();
 }
 

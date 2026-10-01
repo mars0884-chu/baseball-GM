@@ -2597,8 +2597,9 @@ function beginFirstSeason() {
 
   if (typeof generateSeasonKPI === "function") generateSeasonKPI(); // v27：高層公布年度目標
   prepareSpringCamp(); // v25：選秀結束後先進春訓（母國免費／海外付費），完成後才開幕
-  UI.screen = "springCamp";
-  UI.flash = `選秀會與談約已完成，接下來安排第 ${S.seasonYear} 年球季的春訓！`;
+  UI.screen = "finance";
+  UI.tabs = UI.tabs || {}; UI.tabs.finance = "deals";
+  UI.flash = `選秀完成。先確認第 ${S.seasonYear} 年球季的開季準備，完成後會進入春訓。`;
   persist();
   render();
 }

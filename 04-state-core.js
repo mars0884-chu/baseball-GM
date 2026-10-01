@@ -132,6 +132,7 @@ function* newGameSteps(gmNameInput) {
     gameStarted: false, pendingContractRenewals: [], forcedCutRequired: false,
     // v25新增狀態
     newsFeed: [], springCampDoneYear: 0, springCamp: null, sponsorMission: null,
+    preseasonReview: { year: 1, teamId: null, steps: {} }, // v60：開季準備逐站確認；不代替既有財務、行銷、名單資料
     intlTournament: null, intlBoost: null, nationFriendship: null, nationBonds: {}, eventChains: [], traitsSeeded: true, // v38④國家友好度容器／v38②連鎖事件佇列
     // v27新增狀態
     gmCareer: { trust: 50, startYear: 1, seasons: [], championships: 0, fired: false, firedYear: null, stints: [], teamName: null },
