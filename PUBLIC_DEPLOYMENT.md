@@ -10,6 +10,7 @@
 - 隔離瀏覽器實際逐鍵走完整流程：390／320px 無橫向溢位、未重開選秀，春訓按鈕實際執行後進入成果頁，再到開季主控台；新圖 `complete && naturalWidth > 0`，頁面錯誤 0。既有財務／行銷／設施／名單首次渲染會補建預設資料，於測試預先初始化後確認導覽本身不改存檔 `S`。圖面目視截圖及測試證據存於工作區 `_staging/v60-010-preseason-flow-candidate/browser-proof/`。
 - `node test_regression.js` 1,846 通過／0 失敗；`node smoke_multiyear.js` 15 年＋全畫面渲染 PASS；`node smoke_puregm.js` 純 GM 15 年 PASS。此為本地技術驗證，不是 Mars 真機確認。
 - 程式變更限 `05-ui-dashboard.js`、`index.html`、`sw.js`、`test_regression.js`、新 JPEG 與本紀錄；原有未提交 `manifest.webmanifest` 修改保留且不納入。正式 `current/`、Delivery／Art ZIP、正式 manifest／SHA、`CURRENT_PACKAGE.json` 與 lineage 不動。三項測試與線上 Pages 驗證以實際結果補記，不以本地候選冒稱線上已更新。
+- 2026-10-01，程式及圖片提交 `cfbebd178b358276aae9de81a2db872ff99168ec` 已推送 `main`；[GitHub Pages 建置](https://github.com/mars0884-chu/baseball-GM/actions/runs/36850537367) 為 `completed/success`。以唯一查詢參數與 `no-cache` 實際 GET 公開首頁、`05-ui-dashboard.js`、`sw.js`、新 JPEG 均 HTTP 200；首頁與 Service Worker 含 r040 版本標記，新 JPEG 為 375,058 bytes。這證明靜態資源公開可讀，不代表已安裝 PWA 立即替換舊快取，也不代表 Mars 真機／主觀美術已接受。
 
 ## r039：代表隊名單圖像化與長頁減量
 
