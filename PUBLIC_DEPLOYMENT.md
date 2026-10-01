@@ -1,6 +1,17 @@
-# v60-r039 代表隊名單圖像化與長頁減量
+# v60-r040 休賽季逐步導覽與圖像化
 
 本目錄是 GitHub Pages 公開部署殼層，不取代離線交付包，也不代表 Mars 正式接受。
+
+## r040：開季準備流程
+
+- 2026-10-01，Mars 明確通過 r039 的代表隊新圖。本批依同一藍白等角剖面場景畫風製作全新的「球團規劃室通往春訓場」圖片，母版位於工作區 `_staging/v60-r040-art-source/offseason_planning_r040_master.png`；公開 JPEG 位於 `visual_assets/v60/offseason_planning_r040.jpg`（375,058 bytes），於休賽季異動摘要才延遲載入，不列入啟動預載。r040 新圖是待 Mars 目視確認的候選，不冒稱已核准。
+- 根因：換季時 `seasonYear` 前進，`draftDoneYear` 保留上一個休賽季年份；原「下一步」先比較兩者，導致準備春訓時誤開第二次選秀。現以當年度 `springCamp` 存在為準判斷選秀是否已過，並將自主訓練後的導覽接成談約／收入 → 票價 → 行銷 → 硬體 → 名單 → 春訓 → 春訓成果 → 開季主控台。強制裁員、續約等必辦關卡仍優先；其餘檢查不阻止開季。只用暫存 `UI` 記錄導覽位置，不新增 Save 欄位或改動模擬規則。
+- 新場景圖取代休賽季摘要的長篇流程說明，並縮短教學提示、財務頁指引、退休名單提示與代理人事務所說明；必要金額、人員、規則與按鈕仍可見。這是本畫面的局部減量，不宣稱全遊戲文字減半或減量工作全部完成。
+- 隔離瀏覽器實際逐鍵走完整流程：390／320px 無橫向溢位、未重開選秀，春訓按鈕實際執行後進入成果頁，再到開季主控台；新圖 `complete && naturalWidth > 0`，頁面錯誤 0。既有財務／行銷／設施／名單首次渲染會補建預設資料，於測試預先初始化後確認導覽本身不改存檔 `S`。圖面目視截圖及測試證據存於工作區 `_staging/v60-010-preseason-flow-candidate/browser-proof/`。
+- `node test_regression.js` 1,846 通過／0 失敗；`node smoke_multiyear.js` 15 年＋全畫面渲染 PASS；`node smoke_puregm.js` 純 GM 15 年 PASS。此為本地技術驗證，不是 Mars 真機確認。
+- 程式變更限 `05-ui-dashboard.js`、`index.html`、`sw.js`、`test_regression.js`、新 JPEG 與本紀錄；原有未提交 `manifest.webmanifest` 修改保留且不納入。正式 `current/`、Delivery／Art ZIP、正式 manifest／SHA、`CURRENT_PACKAGE.json` 與 lineage 不動。三項測試與線上 Pages 驗證以實際結果補記，不以本地候選冒稱線上已更新。
+
+## r039：代表隊名單圖像化與長頁減量
 
 ## r039：代表隊名單與排陣
 

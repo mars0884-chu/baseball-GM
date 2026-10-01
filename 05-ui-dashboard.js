@@ -325,30 +325,50 @@ function v60PreseasonWindow() {
   return !!(S && S.userTeamId && S.teams && S.teams[S.userTeamId] && S.currentDay === 0
     && !["setup", "teamSelect", "gameModePick", "bootRecovery", "tutorial", "gameOver"].includes(UI.screen));
 }
+function v60PreseasonSpringReady() {
+  return !!(S.springCamp && S.springCamp.year === S.seasonYear);
+}
 function v60PreseasonNextStage() {
   if (S.forcedCutRequired) return { label: "處理裁員", short: "裁員", screen: "financeCuts" };
   if ((S.pendingContractRenewals || []).length) return { label: "處理談約", short: "球員約", screen: "contractRenewals" };
   if ((S.pendingStaffRenewals || []).length) return { label: "教練／球探續約", short: "教練約", screen: "staffRenewal" };
   if (S.v55PendingDirectorRenewal) return { label: "主管續約", short: "主管約", screen: "directorRenewal" };
   if (S.draft && S.draft.active) return { label: "繼續選秀", short: "選秀", screen: "draft" };
-  if (S.draftDoneYear !== S.seasonYear) return { label: "進入選秀", short: "選秀", screen: "draft" };
+  // 選秀的年度屬於休賽季；換季後 seasonYear 已前進，不能因此重開選秀。
+  if (!v60PreseasonSpringReady() && S.draftDoneYear !== S.seasonYear) return { label: "進入選秀", short: "選秀", screen: "draft" };
+  if (!S.gameStarted && S.draftDoneYear === S.seasonYear) return { label: "開始新球季", short: "開季", screen: "beginFirstSeason" };
+  if (S.springCampDoneYear === S.seasonYear) return { label: "回主控台", short: "開季", screen: "dashboard" };
   if (S.springCamp && S.springCamp.year === S.seasonYear && S.springCamp.executed) return { label: "春訓成果", short: "成果", screen: "springReport" };
-  if (S.springCampDoneYear !== S.seasonYear) return { label: "安排春訓", short: "春訓", screen: "springCamp" };
+  if (UI.screen === "selfTraining" || (UI.screen === "springCamp" && UI.preseasonGuideVisitedYear !== S.seasonYear)) return { label: "檢查談約與收入", short: "談約", screen: "financeDeals" };
+  if (UI.screen === "finance" && UI.tabs && UI.tabs.finance === "deals") return { label: "設定票價", short: "票價", screen: "financeTicket" };
+  if (UI.screen === "finance" && UI.tabs && UI.tabs.finance === "ticket") return { label: "安排行銷", short: "行銷", screen: "marketing" };
+  if (UI.screen === "marketing") return { label: "檢查硬體", short: "硬體", screen: "facilities" };
+  if (UI.screen === "facilities") return { label: "檢查名單", short: "名單", screen: "roster" };
+  if (UI.screen === "roster") return { label: "安排春訓", short: "春訓", screen: "springCamp" };
+  if (UI.screen === "springCamp") return { label: "完成春訓", short: "春訓", screen: "springCamp" };
+  if (UI.screen === "finance") return { label: "檢查談約與收入", short: "談約", screen: "financeDeals" };
+  if (v60PreseasonSpringReady()) return { label: "檢查談約與收入", short: "談約", screen: "financeDeals" };
   return { label: "回主控台", short: "開季", screen: "dashboard" };
 }
 function v60PreseasonGoNext() {
-  if (S.forcedCutRequired) return proceedFromOffseasonSummary();
-  if ((S.pendingContractRenewals || []).length) return proceedFromOffseasonSummary();
-  if ((S.pendingStaffRenewals || []).length) { UI.screen = "staffRenewal"; render(); return; }
-  if (S.v55PendingDirectorRenewal) { UI.screen = "directorRenewal"; render(); return; }
-  if (S.draft && S.draft.active) { UI.screen = "draft"; render(); return; }
-  if (S.draftDoneYear !== S.seasonYear) return proceedToDraft();
-  if (S.springCamp && S.springCamp.year === S.seasonYear && S.springCamp.executed) { UI.screen = "springReport"; render(); return; }
-  if (S.springCampDoneYear !== S.seasonYear) {
-    if (!S.springCamp || S.springCamp.year !== S.seasonYear) prepareSpringCamp();
-    UI.screen = "springCamp"; render(); return;
+  const stage = v60PreseasonNextStage();
+  if (stage.screen === "financeCuts" || stage.screen === "contractRenewals") return proceedFromOffseasonSummary();
+  if (stage.screen === "draft") {
+    if (S.draft && S.draft.active) { UI.screen = "draft"; render(); return; }
+    return proceedToDraft();
   }
-  UI.screen = "dashboard"; render();
+  if (stage.screen === "beginFirstSeason") return beginFirstSeason();
+  if (stage.screen === "financeDeals" || stage.screen === "financeTicket") {
+    UI.preseasonGuideVisitedYear = S.seasonYear;
+    UI.screen = "finance";
+    UI.tabs = UI.tabs || {};
+    UI.tabs.finance = stage.screen === "financeDeals" ? "deals" : "ticket";
+  } else if (stage.screen === "springCamp") {
+    if (!v60PreseasonSpringReady()) prepareSpringCamp();
+    if (UI.screen === "springCamp") { UI.flash = "請完成春訓安排；也可使用上方入口直接檢查其他項目。"; }
+    UI.screen = "springCamp";
+  } else UI.screen = stage.screen;
+  render();
 }
 function v60PreseasonOpenContracts() {
   if (S.forcedCutRequired) { UI.screen = "financeCuts"; }
@@ -382,7 +402,7 @@ function v60MountPreseasonDock() {
         <button type="button" data-v60-prep="marketing">行銷</button>
         <button type="button" data-v60-prep="facilities">硬體</button>
         <button type="button" data-v60-prep="roster">名單</button>
-        <button type="button" data-v60-prep="spring" ${S.draftDoneYear !== S.seasonYear && !(S.springCamp && S.springCamp.year === S.seasonYear) ? "disabled" : ""}>春訓</button>
+        <button type="button" data-v60-prep="spring" ${!v60PreseasonSpringReady() ? "disabled" : ""}>春訓</button>
       </nav>
     </div>
   </aside>`);
@@ -1376,10 +1396,14 @@ function renderOffseasonSummary() {
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${S.leagueName} ・ 第${S.seasonYear}年休賽季</div><h1>休賽季異動摘要</h1></div>
+      <section class="v60-visual-scene v60-compact-scene v60-offseason-scene" aria-label="從球團規劃、名單到春訓的開季準備場景">
+        <div class="v60-visual-scene-art"><img src="visual_assets/v60/offseason_planning_r040.jpg" alt="球團辦公室、票務與行銷空間通往春訓球場" loading="lazy" decoding="async"></div>
+        <div class="v60-visual-scene-copy"><span class="v60-visual-kicker">開季準備</span><strong>從規劃走到球場</strong><span>依頁首「下一步」逐項檢查；完成春訓後開季。</span></div>
+      </section>
       ${!S.gameStarted ? `
       <div class="card">
         <div class="eyebrow">${icon('book')} 第一次接手球團？</div>
-        <p class="sub dark">建議先花三分鐘看「新手教學」：各系統怎麼玩、年度流程、以及<b>怎麼避免財政赤字</b>都整理好了。之後也能隨時從主控台進入。</p>
+        <p class="sub dark">新手教學可隨時從主控台進入。</p>
         <div class="btnrow"><button id="btn-oss-tutorial" class="btn-outline">前往新手教學</button></div>
       </div>` : ""}
       ${sum.rehired ? `
@@ -1418,12 +1442,12 @@ function renderOffseasonSummary() {
         ${sum.myFinanceReport.luxuryTax > 0 ? `<p class="sub dark">本季薪資超過奢侈稅門檻，已被課徵 ${formatMoney(sum.myFinanceReport.luxuryTax)} 奢侈稅。</p>` : ""}
         ${sum.myFinanceReport.balanceTaxPaid > 0 ? `<p class="sub dark">${icon('stadium')} 聯盟均衡稅：球場完備度居前段（${sum.myFinanceReport.stadiumCompleteness}%）且營運預算充裕，本季繳納均衡稅 ${formatMoney(sum.myFinanceReport.balanceTaxPaid)}（挹注聯盟弱隊球場基金）。</p>` : ""}
         ${sum.myFinanceReport.balanceTaxReceived > 0 ? `<p class="sub dark">${icon('stadium')} 聯盟均衡稅補貼：球場完備度為聯盟後段（${sum.myFinanceReport.stadiumCompleteness}%），本季領取均衡補貼 ${formatMoney(sum.myFinanceReport.balanceTaxReceived)}（已計入營運預算）。</p>` : ""}
-        <p class="draftnote muted">詳細收支項目可到「財務」畫面查看，也可以趁現在（開幕前）調整下一季票價。</p>
+        <p class="draftnote muted">詳細收支與票價：財務頁。</p>
       </div>` : ""}
       <div class="card">
         <div class="eyebrow">${S.teams[S.userTeamId].name} 本季退休名單</div>
         ${myRetired.length === 0 ? `<p class="sub dark">本季你的球隊沒有球員退休。</p>` : `
-        <p class="sub dark">共 ${myRetired.length} 位退休（1軍 ${my1} 位／2軍 ${my2} 位）。看看完整資料，覺得還能打可以留任；也能直接指派他去擔任教練。</p>`}
+        <p class="sub dark">共 ${myRetired.length} 位退休（1軍 ${my1}／2軍 ${my2}）；可留任或轉任教練。</p>`}
       </div>
       ${myRetired.map(p => `
         <div class="card retirecard">
@@ -1465,7 +1489,7 @@ function renderOffseasonSummary() {
       ${(typeof isOffseasonNow === "function" && isOffseasonNow()) ? `
       <div class="card">
         <div class="eyebrow">${icon('scout')} 應酬季節</div>
-        <p class="sub dark">休賽季正是與各事務所經紀人博感情的時候（每個類型每年限一次，進入選秀流程前記得把飯局跑完）。</p>
+        <p class="sub dark">選秀前可拜訪事務所；每種類型每年一次。</p>
         <div class="btnrow"><button id="btn-oss-agency" class="btn-outline">前往代理人事務所</button></div>
       </div>` : ""}
       <div class="btnrow"><button id="btn-go-draft" class="btn-primary">${S.forcedCutRequired ? "前往財務強制裁員" : ((S.pendingContractRenewals || []).length > 0 ? "前往合約續約談判" : "進入選秀會")}</button></div>
@@ -1938,9 +1962,9 @@ function renderSelfTraining() {
         <p class="sub dark">老將 <b>${r.inheritance.seniorName}</b> 將畢生絕技「<b>${r.inheritance.item}</b>」傳授給新星 <b>${r.inheritance.juniorName}</b>！${r.inheritance.type === "skill" ? "後輩獲得該稱號並小幅提升對應能力。" : "後輩習得此後天特質。"}</p></div>`
         : `<div class="card"><div class="eyebrow">${icon('grad')} 世代傳承</div><p class="v60-state-line">本季未發生</p></div>`}
       ${r.aiInheritCount > 0 ? `<p class="draftnote muted">本季全聯盟另有 ${r.aiInheritCount} 支球隊發生了世代傳承。</p>` : ""}
-      <div class="btnrow"><button id="btn-selftrain-done" class="btn-primary">前往春訓</button></div>
+      <div class="btnrow"><button id="btn-selftrain-done" class="btn-primary">繼續開季準備</button></div>
     </div>`;
-  document.getElementById("btn-selftrain-done").onclick = () => proceedFromSelfTraining();
+  document.getElementById("btn-selftrain-done").onclick = () => v60PreseasonGoNext();
 }
 
 /* ---------- v25 國際賽事畫面（v38③改為多階段：選人 → 排陣 → 逐場 → 戰報） ---------- */
