@@ -4405,6 +4405,8 @@ var __r041OldPending=JSON.stringify(S.preseasonReview); ensureV60(); var __r041I
 S.preseasonReview=null; S.springCampDoneYear=S.seasonYear; ensureV60(); var __r041OldOpened=V60_PRESEASON_STEPS.every(k=>S.preseasonReview.steps[k]===true);
 S.preseasonReview=JSON.parse(__r041ReviewSaved); S.currentDay=__r041DaySaved; S.springCampDoneYear=__r041SpringDoneSaved;`);
 assert(g("__r041Idempotent && __r041OldOpened && JSON.parse(__r041OldPending).steps.deals===false"), "r041 舊存檔遷移冪等；未開季補待檢、已開季不倒退");
+assert(v60PrepFinance.includes('完成行銷配置，前往硬體') && v60PrepFinance.includes('return v60PreseasonCompleteStep("marketing")') && v60PrepFinance.includes('完成硬體檢查，前往名單') && v60PrepFinance.includes('finishFacilities.onclick = () => v60PreseasonCompleteStep("facilities")'), "r042 行銷與硬體完成即接續下一站，不須再按頁首下一步");
+assert(v60PrepDash.includes('key === "roster" && typeof rosterBlockingIssues') && v60PrepDash.includes('名單尚有出賽必要位置缺口'), "r042 名單缺必要守位時不得確認前往春訓");
 assert(v60PrepDash.includes('review.teamId === S.userTeamId') && v60PrepDash.includes('review.year === S.seasonYear'), "r041 換季或換隊不沿用前一份開季檢查進度");
 assert(v60DashboardSource.includes('visual_assets/v60/offseason_planning_r040.jpg') && v60DashboardSource.includes('loading="lazy" decoding="async"'), "r040 休賽季場景圖按需載入並取代流程長文");
 

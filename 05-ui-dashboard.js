@@ -360,6 +360,11 @@ function v60PreseasonCompleteStep(key) {
   if (!V60_PRESEASON_STEPS.includes(key) || !S.gameStarted || S.currentDay !== 0 || !v60PreseasonSpringReady()) return false;
   const missing = v60PreseasonMissingStep();
   if (missing !== key) { if (missing) v60PreseasonOpenStep(missing); return false; }
+  if (key === "roster" && typeof rosterBlockingIssues === "function" && rosterBlockingIssues(S.teams[S.userTeamId]).length) {
+    UI.flash = "名單尚有出賽必要位置缺口，請補足後再進入春訓。";
+    render();
+    return false;
+  }
   if (!S.preseasonReview || S.preseasonReview.year !== S.seasonYear || S.preseasonReview.teamId !== S.userTeamId) S.preseasonReview = { year: S.seasonYear, teamId: S.userTeamId, steps: {} };
   S.preseasonReview.steps[key] = true;
   persist();

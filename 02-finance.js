@@ -777,12 +777,15 @@ function renderFacilities() {
       ${v57Visual}
       <p class="v60-state-line">${canUpgrade ? "春訓可操作" : "球季鎖定"}・預算 ${formatMoney(team.finance.budget)}</p>
       ${body}
+      ${typeof v60PreseasonMissingStep === "function" && v60PreseasonMissingStep() === "facilities" ? '<div class="btnrow"><button id="btn-facilities-finish" class="btn-primary">完成硬體檢查，前往名單</button></div>' : ""}
       <div class="btnrow"><button id="btn-back" class="btn-secondary">返回主控台</button></div>
     </div>`;
   app.querySelectorAll(".fac-tab").forEach(btn => { btn.onclick = () => { UI.facilityTab = btn.dataset.factab; UI.flash = null; render(); }; });
   app.querySelectorAll(".v60-facility-training-tab").forEach(btn => { btn.onclick = () => { UI.facilityTrainingGroup = btn.dataset.trainingGroup; UI.flash = null; render(); window.scrollTo(0, 0); }; });
   app.querySelectorAll(".stadium-subtab").forEach(btn => { btn.onclick = () => { UI.facilityStadiumPanel = btn.dataset.stadiumPanel; UI.flash = null; render(); window.scrollTo(0, 0); }; });
   const btn = document.getElementById("btn-upgrade-facility");
+  const finishFacilities = document.getElementById("btn-facilities-finish");
+  if (finishFacilities) finishFacilities.onclick = () => v60PreseasonCompleteStep("facilities");
   if (btn) btn.onclick = () => upgradeFacility(next.level);
   app.querySelectorAll(".btn-build-stadium").forEach(b => { b.onclick = () => buildStadiumFacility(b.dataset.key); });     // v30
   app.querySelectorAll(".btn-demolish-stadium").forEach(b => { b.onclick = () => demolishStadiumFacility(Number(b.dataset.idx)); }); // v30
@@ -2631,7 +2634,7 @@ function renderMarketing() {
         </div>`;
       }).join("")}
       </div>
-      <button id="btn-marketing-facilities" class="btn-outline">球場容量與收入上限 →</button>
+      <button id="btn-marketing-facilities" class="btn-outline">${typeof v60PreseasonMissingStep === "function" && v60PreseasonMissingStep() === "marketing" ? "完成行銷配置，前往硬體" : "球場容量與收入上限 →"}</button>
       <div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>
     </div>`;
   app.querySelectorAll(".marketing-btn").forEach(btn => {
@@ -2639,7 +2642,10 @@ function renderMarketing() {
   });
   wireV60RosterPager();
   wireCdActivitiesActions();
-  document.getElementById('btn-marketing-facilities').onclick = () => { UI.screen = 'facilities'; render(); };
+  document.getElementById('btn-marketing-facilities').onclick = () => {
+    if (typeof v60PreseasonMissingStep === "function" && v60PreseasonMissingStep() === "marketing") return v60PreseasonCompleteStep("marketing");
+    UI.screen = 'facilities'; render();
+  };
   document.getElementById("btn-back").onclick = () => { UI.screen = "dashboard"; render(); };
   wireRosterNav();
 }
