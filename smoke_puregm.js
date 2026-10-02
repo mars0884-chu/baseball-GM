@@ -20,7 +20,7 @@ g("newGame('純GM')"); g("pickTeam('T0')"); // v491：只傳 GM 名，再選隊
 chk(g("UI.screen==='gameModePick'"), "開局進入身分模式選擇");
 g("pickGameMode('pure_gm')");
 chk(g("S.gameMode==='pure_gm' && UI.screen==='offseasonSummary'"), "選定純GM模式後回到休賽季摘要");
-g("proceedFromOffseasonSummary(); confirmSkipAllRemaining(); beginFirstSeason(); setSpringNation(HOME_NATION_NAME); executeSpringCamp(); UI.screen='dashboard';");
+g("proceedFromOffseasonSummary(); confirmSkipAllRemaining(); beginFirstSeason(); V60_PRESEASON_STEPS.forEach(k=>v60PreseasonCompleteStep(k)); setSpringNation(HOME_NATION_NAME); executeSpringCamp(); UI.screen='dashboard';");
 
 let takeoverDrilled = false;
 for (let y = 1; y <= 15; y++) {
@@ -65,6 +65,7 @@ for (let y = 1; y <= 15; y++) {
   g("if(UI.screen==='staffRenewal') autoRenewAllStaff();");
   g("confirmSkipAllRemaining(); finalizeNewSeason();"); // 年度翻頁在 finalizeNewSeason（沿用長跑劇本）
   g("if(UI.screen==='selfTraining') proceedFromSelfTraining();");
+  g("V60_PRESEASON_STEPS.forEach(k=>v60PreseasonCompleteStep(k))");
   g("if(S.springCampDoneYear!==S.seasonYear){ S.teams[S.userTeamId].finance.budget=Math.max(S.teams[S.userTeamId].finance.budget, 600000000); setSpringNation(HOME_NATION_NAME); executeSpringCamp(); } UI.screen='dashboard';");
 
   // 第3年演練接管完整生命週期：接管→（隔年到期）→續期→還權

@@ -212,6 +212,8 @@ g("confirmSkipAllRemaining()");
 assert(g("!S.draft.active"), "選秀完成");
 g("beginFirstSeason()");
 assert(g("UI.screen==='finance' && UI.tabs.finance==='deals' && S.springCamp && S.springCamp.year===1"), "選秀後先檢查開季準備，春訓已建立但尚未出發");
+g("v60PreseasonCompleteStep('deals'); v60PreseasonCompleteStep('ticket'); v60PreseasonCompleteStep('marketing'); v60PreseasonCompleteStep('facilities'); v60PreseasonCompleteStep('roster');");
+assert(g("v60PreseasonMissingStep()===null && UI.screen==='springCamp'"), "開局依序完成開季準備才可出發春訓");
 
 /* ---------- 5. 春訓 ---------- */
 assert(g("Object.keys(S.springCamp.assignments).length>0"), "預設AI建議已帶入");
@@ -278,6 +280,7 @@ function throughOffseasonToNextSeason() {
   if (g("UI.screen==='financeCuts'")) { g("S.teams[S.userTeamId].finance.budget=200000000; proceedFromFinanceCuts()"); }
   g("confirmSkipAllRemaining()");
   g("finalizeNewSeason()");
+  g("V60_PRESEASON_STEPS.forEach(k=>v60PreseasonCompleteStep(k))");
   g("setSpringNation(HOME_NATION_NAME); executeSpringCamp()");
   g("UI.screen='dashboard'");
 }
@@ -318,6 +321,7 @@ for (let y = 1; y <= 6; y++) {
   g("finalizeNewSeason()");
   if (g("UI.screen==='selfTraining'")) g("proceedFromSelfTraining()"); // v31-B：跳過自主訓練報告
   assert(g("UI.screen==='springCamp'"), `第${y+1}年春訓畫面`);
+  g("V60_PRESEASON_STEPS.forEach(k=>v60PreseasonCompleteStep(k))");
   // 偶數年去海外春訓測事件
   if ((y+1) % 2 === 0) { g("S.teams[S.userTeamId].finance.budget=500000000; setSpringNation('日本')"); }
   else { g("setSpringNation(HOME_NATION_NAME)"); }
@@ -1608,7 +1612,7 @@ assert(g("__awHtml.indexOf('uitab-btn')>=0 && __awHtml.indexOf('A聯盟')>=0 && 
 /* ==================== v38 測試 ==================== */
 console.log("\n--- v38 測試 ---");
 /* 乾淨局：前面章節已模擬多年，狀態早已漂移 */
-g("newGame('GM')"); g("pickTeam('T0')"); g("proceedFromOffseasonSummary(); confirmSkipAllRemaining(); beginFirstSeason(); setSpringNation(HOME_NATION_NAME); executeSpringCamp(); UI.screen='dashboard';"); // v491
+g("newGame('GM')"); g("pickTeam('T0')"); g("proceedFromOffseasonSummary(); confirmSkipAllRemaining(); beginFirstSeason(); V60_PRESEASON_STEPS.forEach(k=>v60PreseasonCompleteStep(k)); setSpringNation(HOME_NATION_NAME); executeSpringCamp(); UI.screen='dashboard';"); // v491
 
 /* ① 逐屬性潛力 */
 g("var __v38b = generateBatter('T0','1軍',60); ensurePlayerPots(__v38b);");
@@ -1771,7 +1775,7 @@ g("confirmSkipAllRemaining();");
 assert(g("S.draft && !S.draft.active && S.draftDoneYear===1"), "v39.1 開幕選秀結束（draftDoneYear=1）");
 g("beginFirstSeason();");
 assert(g("S.draft===null && S.draftDoneYear===0"), "v39.1 開季翻頁：開幕選秀殘骸已清除、draftDoneYear歸零");
-g("setSpringNation(HOME_NATION_NAME); executeSpringCamp(); UI.screen='dashboard';");
+g("V60_PRESEASON_STEPS.forEach(k=>v60PreseasonCompleteStep(k)); setSpringNation(HOME_NATION_NAME); executeSpringCamp(); UI.screen='dashboard';");
 g("var __g391=0; while(simulateDay(S) && __g391<400) __g391++;");
 assert(g("tradeWindowOpen()===false"), "v39.1 第1季休賽季選秀前交易窗口關閉（v32語意回復）");
 g("generatePlayoffs(); doSimulatePlayoffsToEnd(); if(S.gmCareer) S.gmCareer.trust=80; enterOffseason();");
@@ -2022,7 +2026,7 @@ g("UI.screen='dashboard'; UI.tabs={}; render();");
    ================================================================== */
 console.log("\n--- v42 測試（教練市場與標籤後果）---\n");
 // 乾淨開局供 v42 使用
-g("newGame('GM42')"); g("pickTeam('T0')"); g("proceedFromOffseasonSummary(); confirmSkipAllRemaining(); beginFirstSeason(); setSpringNation(HOME_NATION_NAME); executeSpringCamp(); UI.screen='dashboard';"); // v491
+g("newGame('GM42')"); g("pickTeam('T0')"); g("proceedFromOffseasonSummary(); confirmSkipAllRemaining(); beginFirstSeason(); V60_PRESEASON_STEPS.forEach(k=>v60PreseasonCompleteStep(k)); setSpringNation(HOME_NATION_NAME); executeSpringCamp(); UI.screen='dashboard';"); // v491
 g("var __t42=S.teams[S.userTeamId]; ensureTactics(__t42); ensureV42(); var __hc42=headCoachOf(__t42); ensureCoachPersona(__hc42);");
 
 /* ⑩ 青年育成進攻方針＋⑪新秀保護輪休＋投手輪值方針 */
@@ -2181,8 +2185,17 @@ g("UI.tabs={}; UI.screen='dashboard';");
 
 /* v43 交易畫面完整資料版 */
 g("UI.tradePartner=__ai43.id; UI.tradeGive=[]; UI.tradeGet=[]; UI.tradeResult=null; UI.tradeScoutedCache={}; UI.tradeCashGive=0; UI.tradeCashGet=0; UI.screen='tradeBuilder'; render();");
+g("UI.tradeStage='terms'; render();");
 assert(g("app.innerHTML.indexOf('現金條件')>=0"), "v43 交易畫面：含現金條件輸入");
+g("UI.tradeStage='give'; render();");
 assert(g("app.innerHTML.indexOf('年薪')>=0 && app.innerHTML.indexOf('合約')>=0"), "v43 交易畫面：表頭含年薪與合約欄");
+g(`var __r044TradeRandom=Math.random,__r044TradeCalls=0;
+Math.random=function(){__r044TradeCalls++;return 0.5;};
+try { UI.tradeStage='give'; render(); UI.tradeStage='get'; render(); UI.tradeStage='picks'; render(); UI.tradeStage='terms'; render(); }
+finally { Math.random=__r044TradeRandom; }
+var __r044TradeStageCount=(app.innerHTML.match(/class="tab v60-trade-stage/g)||[]).length;
+var __r044TradeTerms=app.innerHTML.includes('交易組合確認')&&app.innerHTML.includes('v43-cash-give');`);
+assert(g("__r044TradeCalls===0 && __r044TradeStageCount===4 && __r044TradeTerms"), "r044 交易四階段均可渲染，球探估值不消耗共享亂數且現金與核對仍可達");
 g("UI.screen='dashboard'; render();");
 
 /* ---------- v44 教練體諒溝通（需求單第四路徑） ---------- */
@@ -3065,7 +3078,7 @@ g("newGame('v51回正')"); g("pickTeam('T0')");
 console.log("\n--- v52 逐打席引擎＋A5 捕手專項＋A1 W1~W5 補完 ---\n");
 
 g("newGame('v52測試')"); g("pickTeam('T0')"); g("pickGameMode('gm_coach')");
-g("proceedFromOffseasonSummary(); confirmSkipAllRemaining(); beginFirstSeason(); setSpringNation(HOME_NATION_NAME); executeSpringCamp(); UI.screen='dashboard';");
+g("proceedFromOffseasonSummary(); confirmSkipAllRemaining(); beginFirstSeason(); V60_PRESEASON_STEPS.forEach(k=>v60PreseasonCompleteStep(k)); setSpringNation(HOME_NATION_NAME); executeSpringCamp(); UI.screen='dashboard';");
 
 /* ① 新統計欄位 */
 assert(g("['R','PB','CSC'].every(k=>typeof freshBatterStats()[k]==='number')"), "v52 打者新欄位 R／PB／CSC 齊備");
@@ -4391,6 +4404,8 @@ UI.screen='selfTraining';`);
 assert(g("v60PreseasonNextStage().screen==='financeDeals'"), "r040 換季後 draftDoneYear 屬上個休賽季，不得把開季準備誤判為重辦選秀");
 g("v60PreseasonGoNext(); v60PreseasonGoNext();");
 assert(g("UI.screen==='finance' && UI.tabs.finance==='deals' && v60PreseasonMissingStep()==='deals'"), "r041 重複點目前項目不得跳過談約");
+g(`var __r044BudgetBefore=S.teams[S.userTeamId].finance.budget; executeSpringCamp();`);
+assert(g("!S.springCamp.executed && S.springCampDoneYear!==S.seasonYear && S.teams[S.userTeamId].finance.budget===__r044BudgetBefore && v60PreseasonMissingStep()==='deals'"), "r044 直接呼叫春訓執行入口也不可略過開季準備或扣款");
 g("v60PreseasonCompleteStep('deals');");
 assert(g("UI.screen==='finance' && UI.tabs.finance==='ticket' && S.preseasonReview.steps.deals===true"), "r041 完成談約後自動進票價並記錄進度");
 g("v60PreseasonCompleteStep('ticket');");
@@ -4412,6 +4427,7 @@ assert(g("__r041Idempotent && __r041OldOpened && JSON.parse(__r041OldPending).st
 assert(v60PrepFinance.includes('完成行銷配置，前往硬體') && v60PrepFinance.includes('return v60PreseasonCompleteStep("marketing")') && v60PrepFinance.includes('完成硬體檢查，前往名單') && v60PrepFinance.includes('finishFacilities.onclick = () => v60PreseasonCompleteStep("facilities")'), "r042 行銷與硬體完成即接續下一站，不須再按頁首下一步");
 assert(v60PrepDash.includes('key === "roster" && typeof rosterBlockingIssues') && v60PrepDash.includes('名單尚有出賽必要位置缺口'), "r042 名單缺必要守位時不得確認前往春訓");
 assert(v60PrepDash.includes('review.teamId === S.userTeamId') && v60PrepDash.includes('review.year === S.seasonYear'), "r041 換季或換隊不沿用前一份開季檢查進度");
+assert(v60PrepFinance.includes('S.pendingContractRenewals.length === 0 && typeof proceedFromContractRenewals') && v60PrepFinance.includes('neg.kind === "renewal" && (S.pendingContractRenewals || []).length === 0'), "r044 最後一位球員談約或不續約完成後自動接下一關");
 assert(v60DashboardSource.includes('visual_assets/v60/offseason_planning_r040.jpg') && v60DashboardSource.includes('loading="lazy" decoding="async"'), "r040 休賽季場景圖按需載入並取代流程長文");
 
 /* v60-011：縮短重複說明，不隱藏玩法或改變資料出口。 */
@@ -4562,7 +4578,7 @@ assert(v60LineupSource.includes('<table class="stattable">') && v60LineupSource.
 assert(v60LineupSource.includes('data-lineup-panel="lineup"') && v60LineupSource.includes('data-lineup-panel="coach"') && v60LineupSource.includes('aria-controls="lineup-panel-batting"') && v60LineupSource.includes('aria-controls="lineup-panel-coach"') && v60LineupSource.includes('UI.lineupPanel = btn.dataset.lineupPanel') && v60StyleSource.includes(".v60-lineup-view-tabs"), "v60-r036 打線與教練調度採可見、可觸控且具無障礙標籤的分頁工作頁");
 g(`var __v60LineupInitialS=JSON.stringify(S),__v60LineupInitialUI=JSON.stringify(UI),__v60LineupInitialHtml=app.innerHTML;
 var __v60LineupTeam=S.teams[S.userTeamId];S.gameMode='gm_coach';__v60LineupTeam.lineupMode='manual';
-if(__v60LineupTeam.lineup.length<7) __v60LineupTeam.lineup=autoLineup(__v60LineupTeam,S.players);
+if(__v60LineupTeam.lineup.length<7||__v60LineupTeam.lineup.some(slot=>!S.players[slot.playerId])) __v60LineupTeam.lineup=autoLineup(__v60LineupTeam,S.players);
 ensureLineup(__v60LineupTeam);ensureTactics(__v60LineupTeam);if(typeof ensureV41==='function')ensureV41();
 var __v60LineupSlot=__v60LineupTeam.lineup[0],__v60LineupPlayer=S.players[__v60LineupSlot.playerId],__v60LineupAlt=LINEUP_FIELD_POSITIONS.find(pos=>pos!==__v60LineupSlot.position);
 if(__v60LineupAlt)__v60LineupPlayer.positions=[{...__v60LineupPlayer.positions[0],pos:__v60LineupAlt}];
@@ -4582,7 +4598,7 @@ var __v60CoachHtml=app.innerHTML,__v60CoachPanelVisible=__v60CoachHtml.includes(
 var __v60CoachPanelFocused=!__v60CoachHtml.includes('id="lineup-panel-batting"')&&!__v60CoachHtml.includes('v60-lineup-mobile-player')&&!__v60CoachHtml.includes('自動排列');
 var __v60LineupWorkTabsStatePreserved=JSON.stringify(S)===__v60CoachBeforeRender;__v60LineupTeam.lineupMode=__v60LineupSavedMode;
 S=JSON.parse(__v60LineupInitialS);UI=JSON.parse(__v60LineupInitialUI);app.innerHTML=__v60LineupInitialHtml;`);
-assert(g("__v60LineupTeam.lineup.length>=7 && __v60LineupCardCount===3 && __v60LineupMetrics===18 && __v60LineupTableRows===__v60LineupTeam.lineup.length && __v60LineupHasA11yAndManual && __v60LineupMovedMarked && __v60LineupPagerAndState && __v60LineupSecondWorks"), "v60-020 實際renderer保留6項數值與全表資料、每頁3人，翻頁更換球員且不修改遊戲存檔");
+assert(g("__v60LineupTeam.lineup.length>=7 && __v60LineupCardCount===3 && __v60LineupMetrics===18 && __v60LineupTableRows===__v60LineupTeam.lineup.length && __v60LineupHasA11yAndManual && __v60LineupMovedMarked && __v60LineupPagerAndState && __v60LineupSecondWorks"), "v60-020 實際renderer保留6項數值與全表資料、每頁3人，翻頁更換球員且不修改遊戲存檔 " + g("JSON.stringify({n:__v60LineupTeam.lineup.length,c:__v60LineupCardCount,m:__v60LineupMetrics,t:__v60LineupTableRows,a:__v60LineupHasA11yAndManual,moved:__v60LineupMovedMarked,pager:__v60LineupPagerAndState,second:__v60LineupSecondWorks})"));
 assert(g("__v60CoachPanelVisible && __v60CoachPanelFocused && __v60LineupWorkTabsStatePreserved"), "v60-r036 教練權責、方針、隊長與板凳入口獨立可見，分頁 render 不更動存檔");
 
 /* v60-015：續約決策常駐可見，長名單時主要流程按鈕固定可操作。 */

@@ -3173,10 +3173,10 @@ function v43BuildScoutCache(playerIds) {
     (playerIds || []).forEach(id => {
       const p = S.players[id];
       if (!p) return;
-      const est = (v) => (typeof scoutedEstimate === "function") ? scoutedEstimate(v, acc) : v;
+      const est = (v, key) => (typeof v46Fog === "function") ? v46Fog(v, acc, (p.id || "?") + ":trade:" + key) : v;
       cache[id] = p.isPitcher
-        ? { velocity: est(p.velocity), control: est(p.control), potential: est(p.potential) }
-        : { contact: est(p.contact), power: est(p.power), eye: est(p.eye), speed: est(p.speed), fielding: est(p.fielding), potential: est(p.potential) };
+        ? { velocity: est(p.velocity, "velocity"), control: est(p.control, "control"), potential: est(p.potential, "potential") }
+        : { contact: est(p.contact, "contact"), power: est(p.power, "power"), eye: est(p.eye, "eye"), speed: est(p.speed, "speed"), fielding: est(p.fielding, "fielding"), potential: est(p.potential, "potential") };
     });
   } catch (_) {}
   return cache;

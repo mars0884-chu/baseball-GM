@@ -37,6 +37,8 @@ function wirePosFilterButtons() {
       if (btn.dataset.filterkey === "rosterPosFilter") { UI.rosterPitcherPage = 0; UI.rosterBatterPage = 0; }
       if (btn.dataset.filterkey === "listingPosFilter") UI.listingPage = 0;
       if (btn.dataset.filterkey === "financeCutsPosFilter") UI.financeCutsPage = 0;
+      if (btn.dataset.filterkey === "tradeGivePosFilter") UI.tradeGivePage = 0;
+      if (btn.dataset.filterkey === "tradeGetPosFilter") UI.tradeGetPage = 0;
       render();
     };
   });
@@ -658,6 +660,8 @@ function renderRotation() {
 /* ---------- 交易畫面 ---------- */
 function openTradeBuilder(partnerId) {
   UI.tradePartner = partnerId;
+  UI.tradeStage = "give";
+  UI.tradeGivePage = 0; UI.tradeGetPage = 0; UI.tradeGivePickPage = 0; UI.tradeGetPickPage = 0;
   UI.tradeGive = [];
   UI.tradeGet = [];
   UI.tradeGivePicks = []; // v45-U1：我方送出的選秀權 token
@@ -670,11 +674,12 @@ function openTradeBuilder(partnerId) {
   partnerTeam.roster1.concat(partnerTeam.roster2).forEach(id => {
     const p = S.players[id];
     if (!p) return;
+    const est = (v, key) => (typeof v46Fog === "function") ? v46Fog(v, tradeAcc, (p.id || "?") + ":trade:" + key) : v;
     cache[id] = p.isPitcher
-      ? { velocity: scoutedEstimate(p.velocity, tradeAcc), control: scoutedEstimate(p.control, tradeAcc) }
+      ? { velocity: est(p.velocity, "velocity"), control: est(p.control, "control") }
       : {
-          contact: scoutedEstimate(p.contact, tradeAcc), power: scoutedEstimate(p.power, tradeAcc), eye: scoutedEstimate(p.eye, tradeAcc),
-          speed: scoutedEstimate(p.speed, tradeAcc), fielding: scoutedEstimate(p.fielding, tradeAcc)
+          contact: est(p.contact, "contact"), power: est(p.power, "power"), eye: est(p.eye, "eye"),
+          speed: est(p.speed, "speed"), fielding: est(p.fielding, "fielding")
         };
   });
   UI.tradeScoutedCache = cache;
@@ -2722,6 +2727,12 @@ function renderTradeBuilderV43() {
     const teamA = S.teams[S.userTeamId], teamB = S.teams[UI.tradePartner];
     const myPlayers = teamA.roster1.concat(teamA.roster2).map(id => S.players[id]).filter(Boolean);
     const theirPlayers = teamB.roster1.concat(teamB.roster2).map(id => S.players[id]).filter(Boolean);
+    const tradeStage = ["give", "get", "picks", "terms"].includes(UI.tradeStage) ? UI.tradeStage : "give";
+    UI.tradeStage = tradeStage;
+    const myFiltered = applyPosFilter(myPlayers, "tradeGivePosFilter");
+    const theirFiltered = applyPosFilter(theirPlayers, "tradeGetPosFilter");
+    const myPage = v60RosterPageSlice(myFiltered, "tradeGivePage", 6);
+    const theirPage = v60RosterPageSlice(theirFiltered, "tradeGetPage", 6);
     const val = p => (typeof personaTradeValue === "function") ? personaTradeValue(teamB, p) : tradeValue(p);
     const giveValue = UI.tradeGive.reduce((s, id) => s + tradeValue(S.players[id]), 0);
     const getValue = UI.tradeGet.reduce((s, id) => s + tradeValue(S.players[id]), 0);
@@ -2732,9 +2743,11 @@ function renderTradeBuilderV43() {
     const pkChecked = (tk, arr) => (arr || []).some(t => pickTokenKey(t) === pickTokenKey(tk));
     const givePicksVal = (typeof picksTotalValue === "function") ? picksTotalValue(givePicks) : 0;
     const getPicksVal = (typeof picksTotalValue === "function") ? picksTotalValue(getPicks) : 0;
-    const pickTableHtml = (picks, side) => picks.length === 0
+    const myPickPage = v60RosterPageSlice(myPicks, "tradeGivePickPage", 6);
+    const theirPickPage = v60RosterPageSlice(theirPicks, "tradeGetPickPage", 6);
+    const pickTableHtml = (picks, side, page) => picks.length === 0
       ? `<p class="draftnote muted">目前沒有可交易的選秀權（可交易範圍：本屆與未來兩年、各六輪；原隊戰績越差、順位越前越值錢）。</p>`
-      : `<table class="stattable"><thead><tr><th></th><th>選秀權</th><th>估值</th></tr></thead><tbody>${picks.map(tk => `<tr>
+      : `<table class="stattable"><thead><tr><th></th><th>選秀權</th><th>估值</th></tr></thead><tbody>${page.items.map(tk => `<tr>
           <td><input type="checkbox" class="${side}-pick-check" data-pk="${pickTokenKey(tk)}" ${pkChecked(tk, side === "give" ? givePicks : getPicks) ? "checked" : ""}></td>
           <td>${pickLabel(tk)}</td><td>${((typeof pickTradeValue === "function") ? pickTradeValue(tk) : 0).toFixed(1)}</td>
         </tr>`).join("")}</tbody></table>`;
@@ -2744,7 +2757,8 @@ function renderTradeBuilderV43() {
     if (typeof ensureFinance === "function") ensureFinance(teamA);
     const myBudget = (teamA.finance && teamA.finance.budget) || 0;
     // 對方球員的球探評估完整卡快取
-    const scoutCache = (typeof v43BuildScoutCache === "function") ? v43BuildScoutCache(theirPlayers.map(p => p.id)) : {};
+    const scoutIds = [...new Set(theirPage.items.map(p => p.id).concat(UI.tradeGet))];
+    const scoutCache = (typeof v43BuildScoutCache === "function") ? v43BuildScoutCache(scoutIds) : {};
     // 一覽勾選列（保留精簡表，展開看完整卡）：野手/投手分兩張表；每列一個勾選框＋姓名＋守位＋年齡＋薪資
     const rowMine = p => `<tr>
       <td><input type="checkbox" class="give-check" data-id="${p.id}" ${UI.tradeGive.includes(p.id) ? "checked" : ""}></td>
@@ -2762,7 +2776,7 @@ function renderTradeBuilderV43() {
     </tr>`;
     // 已勾選者展開完整卡（讓玩家看清楚要換的人；比照選秀/外籍完整度）
     const selectedMineCards = UI.tradeGive.map(id => S.players[id]).filter(Boolean).map(p => v43PlayerFullCardHtml(p, null)).join("");
-    const selectedTheirCards = UI.tradeGet.map(id => S.players[id]).filter(Boolean).map(p => v43PlayerFullCardHtml(p, { scoutView: scoutCache[id] || {} })).join("");
+    const selectedTheirCards = UI.tradeGet.map(id => S.players[id]).filter(Boolean).map(p => v43PlayerFullCardHtml(p, { scoutView: scoutCache[p.id] || {} })).join("");
     app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${S.leagueName}</div><h1>交易：${teamB.name}</h1></div>
@@ -2778,26 +2792,32 @@ function renderTradeBuilderV43() {
           ${events.length > 0 ? `<p class="draftnote muted">${icon('notebook')} 他們記得：${events.map(e => `第${e.year}年${e.text}（${e.delta > 0 ? "+" : ""}${e.delta}）`).join("；")}</p>` : ""}
         </div>`;
       })()}
+      <nav class="v60-trade-stages" aria-label="交易組合步驟">${[
+        ["give", `我方球員・${UI.tradeGive.length}`], ["get", `對方球員・${UI.tradeGet.length}`],
+        ["picks", `選秀權・${givePicks.length + getPicks.length}`], ["terms", "現金／確認"]
+      ].map(([key, label]) => `<button type="button" class="tab v60-trade-stage ${tradeStage === key ? "active" : ""}" data-trade-stage="${key}" aria-current="${tradeStage === key ? "step" : "false"}">${label}</button>`).join("")}</nav>
 
-      <div class="divlabel">你提供（${teamA.name}・真實完整資料）</div>
+      ${tradeStage === "give" ? `<div class="divlabel">你提供（${teamA.name}・真實完整資料）</div>
       <p class="draftnote muted">勾選要送出的球員；勾選後下方會展開完整資料卡（年齡、薪資、合約、能力、潛力、特質）。</p>
       ${posFilterBarHtml(myPlayers, "tradeGivePosFilter")}
+      ${v60RosterPagerHtml(myPage, "tradeGivePage", "我方球員", myFiltered.length, "人")}
       <table class="stattable v43tradetable">
         <thead><tr><th></th><th>姓名</th><th>層級</th><th>型</th><th>守位</th><th>年齡</th><th>年薪</th><th>合約</th></tr></thead>
-        <tbody>${applyPosFilter(myPlayers, "tradeGivePosFilter").map(rowMine).join("")}</tbody>
+        <tbody>${myPage.items.map(rowMine).join("")}</tbody>
       </table>
-      ${selectedMineCards ? `<div class="divlabel small">已選送出（完整資料）</div>${selectedMineCards}` : ""}
+      ${selectedMineCards ? `<div class="divlabel small">已選送出（完整資料）</div>${selectedMineCards}` : ""}` : ""}
 
-      <div class="divlabel">你想要（${teamB.name}・交易球探評估完整資料）</div>
+      ${tradeStage === "get" ? `<div class="divlabel">你想要（${teamB.name}・交易球探評估完整資料）</div>
       <p class="draftnote muted">守位是公開資訊、真實不變；能力/潛力為交易球探評估值，準確度越高落差越小。勾選後展開評估完整卡。</p>
       ${posFilterBarHtml(theirPlayers, "tradeGetPosFilter")}
+      ${v60RosterPagerHtml(theirPage, "tradeGetPage", "對方球員", theirFiltered.length, "人")}
       <table class="stattable v43tradetable">
         <thead><tr><th></th><th>姓名</th><th>層級</th><th>型</th><th>守位</th><th>年齡</th><th>年薪</th><th>合約</th></tr></thead>
-        <tbody>${applyPosFilter(theirPlayers, "tradeGetPosFilter").map(rowTheir).join("")}</tbody>
+        <tbody>${theirPage.items.map(rowTheir).join("")}</tbody>
       </table>
-      ${selectedTheirCards ? `<div class="divlabel small">已選取得（球探評估完整資料）</div>${selectedTheirCards}` : ""}
+      ${selectedTheirCards ? `<div class="divlabel small">已選取得（球探評估完整資料）</div>${selectedTheirCards}` : ""}` : ""}
 
-      <div class="card v43cashcard">
+      ${tradeStage === "terms" ? `<div class="card v43cashcard">
         <div class="eyebrow">${icon('money')} 現金條件（可自由填，也可留 0）</div>
         <div class="v43cashinputrow">
           <label>你附帶送出現金：</label>
@@ -2810,25 +2830,37 @@ function renderTradeBuilderV43() {
           <span class="muted">（對方付不出來會直接回絕）</span>
         </div>
         <p class="draftnote muted">現金會換算成交易價值一併計入評估。多換一、一換多、選手加錢、純現金都能在這個畫面自由組合。</p>
-      </div>
+      </div>` : ""}
 
-      <div class="divlabel">${icon('ticket')} 選秀權（U1・原隊決定順位，擁有者實際選人）</div>
+      ${tradeStage === "picks" ? `<div class="divlabel">${icon('ticket')} 選秀權（U1・原隊決定順位，擁有者實際選人）</div>
       <div class="divlabel small">你提供的選秀權（${teamA.name}）</div>
-      ${pickTableHtml(myPicks, "give")}
+      ${v60RosterPagerHtml(myPickPage, "tradeGivePickPage", "我方選秀權", myPicks.length, "筆")}
+      ${pickTableHtml(myPicks, "give", myPickPage)}
       <div class="divlabel small">你想要的選秀權（${teamB.name}）</div>
-      ${pickTableHtml(theirPicks, "get")}
+      ${v60RosterPagerHtml(theirPickPage, "tradeGetPickPage", "對方選秀權", theirPicks.length, "筆")}
+      ${pickTableHtml(theirPicks, "get", theirPickPage)}` : ""}
 
-      <div class="scoreboard">
+      ${tradeStage === "terms" ? `<div class="card v60-trade-review" aria-label="交易組合確認">
+        <div class="eyebrow">送出前核對</div>
+        <div>我方球員：${UI.tradeGive.map(id => S.players[id]?.name).filter(Boolean).join("、") || "無"}</div>
+        <div>對方球員：${UI.tradeGet.map(id => S.players[id]?.name).filter(Boolean).join("、") || "無"}</div>
+        <div>我方選秀權：${givePicks.map(pickLabel).join("、") || "無"}</div>
+        <div>對方選秀權：${getPicks.map(pickLabel).join("、") || "無"}</div>
+      </div><div class="scoreboard">
         <div class="sb-row small"><div class="sb-label">你提供總值（含現金・選秀權）</div><div class="sb-value small">${(giveValue + cashGiveVal + givePicksVal).toFixed(1)}</div></div>
         <div class="sb-row small"><div class="sb-label">你想要總值（含現金・選秀權）</div><div class="sb-value small">${(getValue + cashGetVal + getPicksVal).toFixed(1)}</div></div>
       </div>
       <div class="btnrow">
         <button id="btn-submit-trade" class="btn-primary" ${(UI.tradeGive.length === 0 && UI.tradeGet.length === 0 && UI.tradeCashGive === 0 && UI.tradeCashGet === 0 && givePicks.length === 0 && getPicks.length === 0) ? "disabled" : ""}>提出交易</button>
-      </div>
+      </div>` : ""}
       <div class="btnrow"><button id="btn-back" class="btn-outline">返回選對象</button></div>
     </div>`;
     // 勾選綁定
     wirePosFilterButtons();
+    wireV60RosterPager();
+    app.querySelectorAll(".v60-trade-stage").forEach(button => {
+      button.onclick = () => { UI.tradeStage = button.dataset.tradeStage; render(); window.scrollTo(0, 0); };
+    });
     app.querySelectorAll(".give-check").forEach(cb => {
       cb.onchange = () => { const id = cb.dataset.id; if (cb.checked) UI.tradeGive.push(id); else UI.tradeGive = UI.tradeGive.filter(x => x !== id); render(); };
     });
@@ -2849,10 +2881,12 @@ function renderTradeBuilderV43() {
     if (cg) cg.onchange = () => { UI.tradeCashGive = Math.max(0, Math.round((Number(cg.value) || 0) / 100000) * 100000); render(); };
     const cget = document.getElementById("v43-cash-get");
     if (cget) cget.onchange = () => { UI.tradeCashGet = Math.max(0, Math.round((Number(cget.value) || 0) / 100000) * 100000); render(); };
-    document.getElementById("btn-submit-trade").onclick = () => submitTradeV43();
+    const submitButton = document.getElementById("btn-submit-trade");
+    if (submitButton) submitButton.onclick = () => submitTradeV43();
     document.getElementById("btn-back").onclick = () => { UI.screen = "tradeTeamSelect"; UI.tradeResult = null; UI.tradeCashGive = 0; UI.tradeCashGet = 0; render(); };
   } catch (e) {
     // 任何異常退回舊交易畫面
+    console.error("交易組合新版畫面渲染失敗，改用基本畫面：", e);
     if (typeof renderTradeBuilder === "function") return renderTradeBuilder();
   }
 }

@@ -20,7 +20,7 @@ g("(function(){ var __orig=aiSignInternationalPlayers; globalThis.__aiSignTotal=
 
 g("newGame('GM')"); g("pickTeam('T0')"); // v491：只傳 GM 名，再選隊
 g("pickGameMode('gm_coach')") // v41①：長跑沿用 GM兼教練模式（維持 v40 行為基準）;
-g("proceedFromOffseasonSummary(); confirmSkipAllRemaining(); beginFirstSeason(); setSpringNation(HOME_NATION_NAME); executeSpringCamp(); UI.screen='dashboard';");
+g("proceedFromOffseasonSummary(); confirmSkipAllRemaining(); beginFirstSeason(); V60_PRESEASON_STEPS.forEach(k=>v60PreseasonCompleteStep(k)); setSpringNation(HOME_NATION_NAME); executeSpringCamp(); UI.screen='dashboard';");
 const intlYears = [];
 let firedTimes = 0;
 let rehiredTimes = 0;
@@ -79,6 +79,7 @@ for (let y = 1; y <= 15; y++) {
   chk(g("UI.screen==='draft' && S.draft && S.draft.active===true && S.draft.order[S.draft.pickIndex]===S.userTeamId"), "v39.1 第"+y+"年休賽季選秀正常開打（未被開幕選秀殘骸吞掉）");
   g("confirmSkipAllRemaining(); finalizeNewSeason();");
   if (g("UI.screen==='selfTraining'")) g("proceedFromSelfTraining()"); // v31-B：自主訓練報告→春訓
+  g("V60_PRESEASON_STEPS.forEach(k=>v60PreseasonCompleteStep(k))");
   const dest = (y % 3 === 0) ? "'多明尼加'" : (y % 3 === 1 ? "HOME_NATION_NAME" : "'菲律賓'");
   g(`S.teams[S.userTeamId].finance.budget=Math.max(S.teams[S.userTeamId].finance.budget, 600000000); setSpringNation(${dest}); executeSpringCamp(); UI.screen='dashboard';`);
   // v26：春訓期間逐步升級三種新設施

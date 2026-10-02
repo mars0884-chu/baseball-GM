@@ -1116,6 +1116,7 @@ function declineContractRenewal(playerId) {
   S.pendingContractRenewals = (S.pendingContractRenewals || []).filter(id => id !== playerId);
   UI.flash = `${p.name} 未獲續約，已進入自由球員市場。`;
   persist();
+  if (S.pendingContractRenewals.length === 0 && typeof proceedFromContractRenewals === "function") { proceedFromContractRenewals(); return; }
   render();
 }
 // 快速鍵：全部依市場行情自動續約（提供給不想逐一談的玩家）
@@ -1130,6 +1131,7 @@ function autoRenewAllPending() {
   S.pendingContractRenewals = [];
   UI.flash = `已依市場行情自動續約 ${list.length} 位球員。`;
   persist();
+  if (list.length > 0 && typeof proceedFromContractRenewals === "function") { proceedFromContractRenewals(); return; }
   render();
 }
 
@@ -1962,6 +1964,7 @@ function finalizeNegotiation(neg, salary, years) {
     UI.screen = "contractRenewals";
   }
   persist();
+  if (neg.kind === "renewal" && (S.pendingContractRenewals || []).length === 0 && typeof proceedFromContractRenewals === "function") { proceedFromContractRenewals(); return; }
   render();
 }
 
@@ -3211,6 +3214,14 @@ function runAiSpringCamps() {
 function executeSpringCamp() {
   const camp = S.springCamp;
   if (!camp || camp.executed) return;
+  if (typeof v60PreseasonMissingStep === "function") {
+    const missing = v60PreseasonMissingStep();
+    if (missing) {
+      UI.flash = "開季準備尚未完成，先處理目前項目。";
+      v60PreseasonOpenStep(missing);
+      return;
+    }
+  }
   const team = S.teams[S.userTeamId];
   ensureFinance(team);
   const nation = nationByName(camp.nation) || nationByName(HOME_NATION_NAME);

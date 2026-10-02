@@ -1542,3 +1542,7 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
   .v60-player-detail-tabs>.uitabs>.uitab-bar{gap:4px;}
   .v60-player-detail-tabs .uitab-btn{padding:7px 3px;font-size:12px;}
 }
+/* 交易組合依決策階段分區；選取狀態跨分頁保留。 */
+.v60-trade-stages{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0}
+.v60-trade-stages .tab{min-height:44px;white-space:normal;line-height:1.25}
+@media(max-width:700px){.v60-trade-stages{grid-template-columns:repeat(2,minmax(0,1fr))}}
