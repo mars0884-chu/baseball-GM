@@ -7,6 +7,7 @@
 - 表格資料格提高至 14px，列觸控高度至少 47px、翻頁鈕 44px；窄螢幕表格在具名區域內左右滑動，球員姓名不再逐字斷行，頁面沒有水平溢位。表頭排序與球員詳情列可用鍵盤 Enter／空白鍵操作且有焦點框。320px 首頁高度 4,342→1,030px、可見字元 2,644→704；這主要是每頁只顯示 8 人，不能冒稱把其餘球員資料刪掉，更不是全遊戲文字減半。對應隔離瀏覽器腳本、JSON 與 320／390／1280px 截圖位於 `_staging/v60-010-preseason-flow-candidate/audit_v60_r045_data_center.js` 及 `browser-proof/`。
 - 三種寬度的真實 renderer 均確認打者 40／40、投手 40／40、運氣校正打者 25／25、投手 10／10 可達；下一頁實際更換球員，切換本隊會回第一頁，渲染共享亂數呼叫 0、`S` 不變、瀏覽器例外 0。這是隔離瀏覽器技術驗證，不代替 Mars 真機或主觀驗收。本批未製作或更換核准美術，也沒有改數據計算、球員能力或正式 `current/`／Delivery ZIP／Art ZIP／manifest／SHA／`CURRENT_PACKAGE.json`；原有未提交 `manifest.webmanifest` 不納入。全遊戲範圍與總減量成效稽核尚未結案。
 - `node test_regression.js`：1,860 通過／0 失敗；`node smoke_multiyear.js`：15 年＋全畫面渲染通過；`node smoke_puregm.js`：純 GM 15 年通過；JS 語法與 `git diff --check` 通過。GitHub Pages 推送與公開部署另以實際結果記錄；公開快取鍵 `v60-r045-data-center`。
+- 2026-10-02，程式提交 `eb1080da8a43a7724a9379e8995e0101b8df2bf3` 已推送 `main`；[GitHub Pages 建置](https://github.com/mars0884-chu/baseball-GM/actions/runs/37029792560) 為 `completed/success`。以唯一查詢參數與 `no-cache` 實際 GET 公開 `index.html`、`06-ui-roster.js`、`style.css`、`sw.js`，四者均 HTTP 200 且含 r045 對應標記。這證明公開靜態檔更新，不等同已安裝 PWA 立即替換或 Mars 真機驗收。
 
 ## r044：完成即接續、春訓入口防跳關、交易組合分區
 
