@@ -2590,27 +2590,34 @@ function renderAgency() {
   // 本季已情蒐的球員
   const scoutedIds = Object.keys(S.agency.scouted).filter(id => S.agency.scouted[id] && S.agency.scouted[id].year === S.seasonYear);
   const scoutedPlayers = scoutedIds.map(id => S.players[id] || (S.freeAgents || {})[id] || (S.internationalFreeAgents || {})[id]).filter(Boolean);
+  const agencyPage = v60RosterPageSlice(AGENT_KEYS, "agencyPage", 4);
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${team.name}</div><h1>${icon('scout')} 代理人事務所</h1></div>
       <p class="v60-state-line" aria-label="代理人事務所規則">談成→交情↑／談崩→交情↓ · 好感高→談約更易 · 情蒐→談判桌</p>
       <div class="card">
-        <div class="eyebrow">${icon('handshake')} GM人脈網（與各型經紀人的交情）</div>
-        ${AGENT_KEYS.map(k => {
+        <div class="eyebrow">${icon('handshake')} GM人脈網</div>
+        ${v60RosterPagerHtml(agencyPage, "agencyPage", "代理人", AGENT_KEYS.length, "類")}
+        <div class="agencyrel-heading" aria-hidden="true"><span>門檻 %</span><span>談成 ×</span></div>
+        <div class="agencyrel-grid">
+        ${agencyPage.items.map(k => {
           const a = AGENT_TYPES[k];
           const rel = agentRel(k);
           const relL = agentRelLabel(rel);
           const perks = agentRelPerks(k);
-          const perkText = rel > 0 ? `門檻-${Math.round((1 - perks.reqMult) * 100)}%、機率×${perks.slopeMult.toFixed(2)}` : (rel < 0 ? `門檻+${Math.round((perks.reqMult - 1) * 100)}%、機率×${perks.slopeMult.toFixed(2)}` : "無加成");
+          const threshold = rel > 0 ? `-${Math.round((1 - perks.reqMult) * 100)}%` : (rel < 0 ? `+${Math.round((perks.reqMult - 1) * 100)}%` : "±0%");
+          const chance = `×${perks.slopeMult.toFixed(2)}`;
           const canWine = (typeof canWineAgent === "function") && canWineAgent(k);
           const winedThisYear = S.agency.wined && S.agency.wined[k] === S.seasonYear;
-          return `<div class="agencyrel-row">
-            <div class="agencyrel-name">${a.name} <span class="afftag ${relL.cls}">${relL.text}（${rel > 0 ? "+" : ""}${rel}）</span></div>
-            <div class="agencyrel-perk">${perkText}</div>
-            <button class="btn-outline wine-btn" data-type="${k}" ${canWine ? "" : "disabled"}>${winedThisYear ? "本年已應酬" : `應酬（${formatMoney(agentWineCost(k))}）`}</button>
+          return `<div class="agencyrel-row" aria-label="${a.name}：交情${rel > 0 ? "+" : ""}${rel}；談約門檻${threshold}；談成倍率${chance}">
+            <div class="agencyrel-name"><strong>${a.name}</strong><span class="afftag ${relL.cls}">${relL.text}（${rel > 0 ? "+" : ""}${rel}）</span></div>
+            <div class="agencyrel-metrics"><div class="agencyrel-metric" aria-label="談約門檻${threshold}">${threshold}</div>
+            <div class="agencyrel-metric" aria-label="談成倍率${chance}">${chance}</div></div>
+            <button class="btn-outline wine-btn" data-type="${k}" ${canWine ? "" : "disabled"}>${winedThisYear ? "本年已應酬" : `應酬・${Math.round(agentWineCost(k) / 10000)}萬`}</button>
           </div>`;
         }).join("")}
-        <p class="v60-state-line" aria-label="經紀人應酬與人脈規則">應酬：休賽季每類型1次 · 成功70%好感+1 · 大失敗10%好感-1 · 交好≥4情報 · 莫逆10引薦</p>
+        </div>
+        <p class="v60-state-line" aria-label="經紀人應酬與人脈規則">應酬每類型每季1次 · 成功70%好感+1 · 大失敗10%好感-1 · 交好≥4情報 · 莫逆10引薦</p>
       </div>
       ${renderAgencyPerkCards()}
       <div class="card">
@@ -2627,6 +2634,7 @@ function renderAgency() {
   app.querySelectorAll(".wine-btn").forEach(b => {
     b.onclick = () => wineAndDineAgent(b.dataset.type);
   });
+  wireV60RosterPager();
 }
 
 

@@ -81,7 +81,7 @@ if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
   assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
 } else {
   assert((v59SingleFileSource.match(/<script defer src="0[0-6]-[^\"]+\.js\?v=/g) || []).length === 7, "v59 public shell loads the seven ordered modular scripts");
-  assert(v59SingleFileSource.includes("v60-r041-auto-preseason") && !v59SingleFileSource.includes("BULLPEN_TABS"), "r041 public shell uses a fresh cache key without duplicating module source");
+  assert(/style\.css\?v=v60-r0\d+-[a-z-]+/.test(v59SingleFileSource) && !v59SingleFileSource.includes("BULLPEN_TABS"), "公開殼層使用修訂版快取鍵且不重複內嵌模組來源");
 }
 
 /* ---------- v60-001 視覺恢復候選 ---------- */
@@ -121,7 +121,8 @@ assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceS
 const v60NewsRendererSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderNewsCard"), v60DashboardSource.indexOf("function renderSponsorMissionCard"));
 assert((v60NewsRendererSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60NewsRendererSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60NewsRendererSource.indexOf('v56ContentSummary("news"') < 0 && v60NewsRendererSource.indexOf("icon('news')") < 0, "v60 新聞 renderer 僅保留完整 PNG，不再輸出新聞 SVG");
 assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('v60CompatArtFallbackUrl') >= 0 && v60DashboardSource.indexOf('safeLoading') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准圖片路徑、PNG fallback 與 lazy loading 已接入");
-assert(v60SwSource.indexOf('baseballgm-v60-r041-auto-preseason') >= 0, "r041 Service Worker cache key 已更新");
+const v60PublicCacheKey = (v59SingleFileSource.match(/style\.css\?v=(v60-r0\d+-[a-z-]+)/) || [])[1];
+assert(!!v60PublicCacheKey && v60SwSource.includes('baseballgm-' + v60PublicCacheKey) && v60SwSource.includes('?v=' + v60PublicCacheKey) && (v59SingleFileSource.match(new RegExp('\\?v=' + v60PublicCacheKey, 'g')) || []).length >= 10, "公開殼層與 Service Worker 使用同一修訂版快取鍵");
 assert(v60DashboardSource.includes('v60CompatArtImageAttrs(key, "eager", false)') && v60DashboardSource.includes('window.requestAnimationFrame(kick)') && v60DashboardSource.includes('img.loading = "lazy";\n        img.loading = "eager";') && v60DashboardSource.includes('v60KickRenderedSceneImages(); return r;'), "動態插入場景圖後下一幀觸發載入，確保瀏覽器啟動請求");
 assert(v60DashboardSource.includes('__v60CurrentScreen !== v60LastRenderedScreen') && v60DashboardSource.includes('window.scrollTo(0, 0)'), "切換新畫面先回到頁首，避免沿用舊長頁捲動位置");
 
@@ -1757,6 +1758,9 @@ assert(g("__v39mk.indexOf('v60-visual-metric-rail')>=0 && __v39mk.indexOf('春�
 g("UI.screen='agency'; render(); var __v39ag=app.innerHTML; UI.screen='dashboard'; render();");
 if (!g("__v39ag.indexOf('<details class=\"fold\"')<0 && __v39ag.includes('代理人事務所規則') && __v39ag.includes('談成→交情↑／談崩→交情↓')")) console.log("[v60-r036 agency diagnostic]", g("__v39ag.slice(0,700)"));
 assert(g("__v39ag.indexOf('<details class=\"fold\"')<0 && __v39ag.includes('代理人事務所規則') && __v39ag.includes('談成→交情↑／談崩→交情↓')"), "v39⑥ 經紀人事務所規則常駐可見，不再以摺疊隱藏");
+g("var __r043OldRel=JSON.stringify(S.agency.rel); S.agency.rel={hardline:10,friendly:-10}; UI.agencyPage=0; UI.screen='agency'; render(); var __r043Agency1=app.innerHTML; UI.agencyPage=1; render(); var __r043Agency2=app.innerHTML; S.agency.rel=JSON.parse(__r043OldRel); UI.agencyPage=0; UI.screen='dashboard'; render();");
+assert(g("(__r043Agency1.match(/class=\"agencyrel-row\"/g)||[]).length===4 && (__r043Agency2.match(/class=\"agencyrel-row\"/g)||[]).length===3 && (__r043Agency1.match(/class=\"btn-outline wine-btn\"/g)||[]).length+(__r043Agency2.match(/class=\"btn-outline wine-btn\"/g)||[]).length===AGENT_KEYS.length"), "r043 七類經紀人分兩頁且七個應酬入口完整保留");
+assert(g("__r043Agency1.includes('門檻 %</span><span>談成 ×') && __r043Agency1.includes('談約門檻-12%；談成倍率×1.40') && __r043Agency1.includes('談約門檻+8%；談成倍率×0.70') && __r043Agency1.includes('交好≥4情報') && __r043Agency2.includes('第 2/2 頁')"), "r043 共用欄名、正負交情效果、人脈規則與分頁皆可讀");
 
 console.log("\n--- v39.1 測試 ---");
 /* 真機回報修正：第1季休賽季選秀被「開幕選秀殘骸」吞掉（畫面秀出開幕選秀舊成果後直接結束） */
@@ -4462,7 +4466,7 @@ assert(v60CopyIntlMarket.includes("40國分級影響素質") && v60CopyIntlMarke
 assert(v60CopyScouts.includes("國內選秀／育成 · 國際海外估值／獨家人選 · 交易估對手") && v60CopyScouts.includes("缺員盲評") && v60CopyScouts.includes("全員準度"), "v60-012 球探頁以掃讀狀態列保留三職評估出口、獨家人選與空缺後果");
 assert(v60CopyScouts.includes("發掘15–20歲 · 休賽季1次 · 準度↑→品質↑") && v60CopyScouts.includes("${devCount}/25"), "v60-012 育成候選短列保留年齡、頻率、品質關係與名額");
 assert(v60CopyFreeAgents.includes("本土未續→入市") && v60CopyFreeAgents.includes("能力公開") && v60CopyFreeAgents.includes("生涯＝球探預測") && v60CopyFreeAgents.includes("簽約金≈年薪30%"), "v60-012 自由球員狀態列保留入市條件、公開數據、預測與成本");
-assert(v60CopyAgency.includes("代理人事務所規則") && v60CopyAgency.includes("談成→交情↑／談崩→交情↓") && v60CopyAgency.includes("休賽季每類型1次") && v60CopyAgency.includes("成功70%好感+1") && v60CopyAgency.includes("大失敗10%好感-1") && v60CopyAgency.includes("交好≥4情報") && v60CopyAgency.includes("莫逆10引薦") && !v60CopyAgency.includes("foldNote("), "v60-r036 代理人規則改常駐短狀態列，不再靠收合隱藏");
+assert(v60CopyAgency.includes("代理人事務所規則") && v60CopyAgency.includes("談成→交情↑／談崩→交情↓") && v60CopyAgency.includes("應酬每類型每季1次") && v60CopyAgency.includes("成功70%好感+1") && v60CopyAgency.includes("大失敗10%好感-1") && v60CopyAgency.includes("交好≥4情報") && v60CopyAgency.includes("莫逆10引薦") && !v60CopyAgency.includes("foldNote("), "v60-r036 代理人規則常駐可見且保留各項門檻");
 assert(v60CopyAgency.includes("尚無情蒐 · 談判→委託（查性格／底線）"), "v60-r036 情蒐空狀態保留明確入口與查詢內容");
 assert(v60CopyIntlMarket.includes("休賽更新・未簽留存") && v60CopyIntlMarket.includes("獨家限本隊") && v60CopyIntlMarket.includes("準度見上") && v60CopyIntlMarket.includes("1軍 ${team.roster1.length}/28"), "v60-r036 國際市場短狀態列保留刷新、估值可信度、獨家及名單限制");
 assert(v60CopyFreeAgents.includes("v60-state-line") && v60CopyFreeAgents.includes("簽約金≈年薪30%") && v60CopyScouts.includes("v60-state-line") && v60CopyRotation.includes("v60-state-line") && v60CopyCoaches.includes("v60-state-line"), "v60-r036 市場、球探、牛棚及教練長說明以可見短狀態列呈現");
