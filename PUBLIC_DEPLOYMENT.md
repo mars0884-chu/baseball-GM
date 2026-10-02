@@ -5,6 +5,7 @@
 - 2026-10-02，盤點尚未處理的長頁，年度頒獎在 A／B 每個聯盟各直接排 31 張卡，320px 頁高 4,494px。本批把既有聯盟分頁內的獎項再分「年度大獎／打擊／投手／最佳九人／金手套」五個直接可見類別；卡片改為獎名、球員、球隊、成績的短列。31 張卡與所有獎項、守位及原始數值仍在，不改頒獎計算或存檔，只將頁籤位置存在暫存 `UI`。不以收合長文或裝飾圖示假稱減量。
 - 隔離瀏覽器以同一固定新局獎項資料，比較 Git `HEAD` 與候選版於 320／390／1280px 的實際 renderer；A、B 各 31 張獎項卡均可透過五類切換到，流程操作仍可見、共享亂數呼叫 0、`S` 不變、頁面無水平溢位與例外。320px 初頁顯示卡片 31→2、可見字元 791→154、頁高 4,494→844px；這是同屏閱讀負擔，不是資料被刪，也不代表全遊戲達成 50%。腳本、JSON、截圖在 `_staging/v60-010-preseason-flow-candidate/audit_v60_r046_awards.js` 與 `browser-proof/`。Mars 真機與主觀驗收仍待確認。
 - 本批沒有更換核准美術、遊戲數值或正式 `current/`／Delivery ZIP／Art ZIP／manifest／SHA／`CURRENT_PACKAGE.json`；原有未提交 `manifest.webmanifest` 不納入。全遊戲逐頁稽核與總減量成效仍未結案。`node test_regression.js`：1,862 通過／0 失敗；`node smoke_multiyear.js`：15 年＋全畫面渲染通過；`node smoke_puregm.js`：純 GM 15 年通過。公開部署結果待推送後實際查核；公開快取鍵 `v60-r046-awards`。
+- 2026-10-03，程式提交 `aaf89c3c475ea4da6977e1130a580c5fdd884cef` 已推送 `main`；[GitHub Pages 建置](https://github.com/mars0884-chu/baseball-GM/actions/runs/37031073893) 為 `completed/success`。以唯一查詢參數及 `no-cache` 實際 GET 公開 `index.html`、`05-ui-dashboard.js`、`style.css`、`sw.js`，四者均 HTTP 200 且含 r046 對應標記。此為公開靜態檔更新證據，不等於既有安裝 PWA 立即替換或 Mars 真機驗收。
 
 ## r045：數據中心排行榜分頁
 
