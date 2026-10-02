@@ -6,7 +6,8 @@
 - 春訓的實際 `executeSpringCamp()` 現在也檢查未完成的準備項目；即使不是經畫面出發鈕呼叫，也會回到第一個漏項，不扣春訓費、不套訓練、不開季。隔離瀏覽器於 320／390／1280px 由開幕選秀結束開始，直接呼叫春訓被擋；逐項完成後自動依談約→票價→行銷→硬體→名單→春訓切換，春訓完成進報告，無頁面例外及水平溢位。驗證腳本與 JSON：`_staging/v60-010-preseason-flow-candidate/audit_v60_r044_preseason.js`／`browser-proof/v60-r044-preseason-audit.json`。這不是 Mars 真機驗收。
 - 逐頁稽核發現交易組合頁原一次展開雙方各 60 人與各 18 筆選秀權，且查看畫面消耗共享亂數 276 次。本批改為「我方球員／對方球員／選秀權／現金確認」四個明確決策頁，球員每頁 6 人、選秀權每頁 6 筆；全部 60＋60 人與 18＋18 筆仍可翻頁取得，選取跨頁保留，現金、交易價值與送出前核對保留。球探估值改為穩定的 `v46Fog`，純渲染共享亂數降為 0 次，不更動真實能力與交易演算法。這是減少同屏閱讀與過長捲動，不把分頁後 4,875→392 字誤稱全內容刪除 92%。
 - 320px 交易頁基準高度 8,655px，新版第一頁 929px；390／1280px 亦無水平溢位、頁面錯誤 0。三種寬度均驗證四階段、全部人選／選秀權可達、已選兩名球員可在確認頁核對，證據：`_staging/v60-010-preseason-flow-candidate/audit_v60_r044_trade.js` 與 `browser-proof/v60-r044-trade-audit.json`。未新增美術素材，既有核准圖未變；沒有用裝飾圖示取代文字。全遊戲逐頁減量與減量成效總稽核仍在進行，不能由此批單頁數據宣稱達成 50%。
-- 本批驗證：`node test_regression.js` 1,857 通過／0 失敗，`node smoke_multiyear.js` 15 年＋全畫面渲染通過，`node smoke_puregm.js` 純 GM 15 年通過。舊測試原先直接跳過開季準備呼叫春訓，本批改走實際五步完成函式；先發手機測試 fixture 也修正為先排除已不存在的球員，避免用殘留名單誤判呈現人數。正式 `current/`、Delivery／Art ZIP、正式 manifest／SHA、`CURRENT_PACKAGE.json` 與 lineage 均不動；原有未提交 `manifest.webmanifest` 不納入。公開快取鍵 `v60-r044-trade-flow`；推送及公開部署待實證。
+- 本批驗證：`node test_regression.js` 1,857 通過／0 失敗，`node smoke_multiyear.js` 15 年＋全畫面渲染通過，`node smoke_puregm.js` 純 GM 15 年通過。舊測試原先直接跳過開季準備呼叫春訓，本批改走實際五步完成函式；先發手機測試 fixture 也修正為先排除已不存在的球員，避免用殘留名單誤判呈現人數。正式 `current/`、Delivery／Art ZIP、正式 manifest／SHA、`CURRENT_PACKAGE.json` 與 lineage 均不動；原有未提交 `manifest.webmanifest` 不納入。公開快取鍵 `v60-r044-trade-flow`。
+- 2026-10-02，程式提交 `e0cfbf888499afabeb97cd6180a00ae79db1387c` 已推送 `main`；[GitHub Pages 建置](https://github.com/mars0884-chu/baseball-GM/actions/runs/37027096560) 為 `completed/success`。以唯一查詢參數與 `no-cache` 實際 GET 公開 `index.html`、`02-finance.js`、`06-ui-roster.js`、`style.css`、`sw.js`，五者均 HTTP 200 且含本輪標記。這證明公開靜態檔更新，不等同已安裝 PWA 立即替換或 Mars 真機驗收。
 
 ## r043：代理人關係雙欄比較與分頁
 
