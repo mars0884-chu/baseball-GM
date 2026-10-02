@@ -6,6 +6,7 @@
 - 名單若缺少出賽必要位置，確認時留在名單並提示補足，不能直接進春訓。春訓畫面出發鈕及主控台入口原有漏項守衛保留；此批不改模擬或經濟規則。
 - `node test_regression.js`：1,851 通過／0 失敗；`node smoke_multiyear.js`：15 年＋全畫面渲染通過；`node smoke_puregm.js`：純 GM 15 年通過。390×844 隔離瀏覽器實際點選行銷完成→硬體完成→名單，春訓仍由未完成名單鎖定，頁面例外 0、無水平溢位。證據：`_staging/v60-010-preseason-flow-candidate/browser-proof/v60-r042-preseason-mobile.png`。這不是 Mars 真機驗收。
 - 公開版變更限 `02-finance.js`、`05-ui-dashboard.js`、`test_regression.js`、`index.html`、`sw.js` 與本紀錄。原有未提交 `manifest.webmanifest` 不納入；正式 `current/`、Delivery／Art ZIP、正式 manifest／SHA、`CURRENT_PACKAGE.json` 與 lineage 不動。快取版本 `v60-r042-flow-continuity`；是否已上線以後續部署實證為準。
+- 2026-10-02，程式提交 `e40fc0f9d0054f401335ce16d7d1f234bba0f0f7` 已推送 `main`；[GitHub Pages 建置](https://github.com/mars0884-chu/baseball-GM/actions/runs/36994879435) 為 `completed/success`。以唯一查詢參數及 `no-cache` 實際 GET 公開 `index.html`、`02-finance.js`、`05-ui-dashboard.js`、`sw.js`，四者皆 HTTP 200 且包含 r042 對應標記。這確認公開靜態版已更新，不等同既有 PWA 立即切換或 Mars 真機驗收。
 
 本目錄是 GitHub Pages 公開部署殼層，不取代離線交付包，也不代表 Mars 正式接受。
 
