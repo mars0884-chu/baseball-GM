@@ -1186,8 +1186,7 @@ function renderAwards() {
   function leagueAwardsHtml(region) {
     const la = a[region];
     if (!la) return `<p>無資料</p>`;
-    return `
-      ${AWARD_LABELS.map(([key, label]) => {
+    const awardCards = keys => AWARD_LABELS.filter(([key]) => keys.includes(key)).map(([key, label]) => {
         const pid = la[key];
         const p = pid ? S.players[pid] : null;
         const team = p ? S.teams[p.team] : null;
@@ -1198,32 +1197,26 @@ function renderAwards() {
             <div class="awardteam">${p ? (team.name + (isMe ? "（你的球隊！）" : "")) : ""}</div>
             <div class="awardstat">${awardStatLine(key, p)}</div>
           </div>`;
-      }).join("")}
-
-      <div class="divlabel">金棒獎（最佳打者）</div>
-      ${(function() {
+      }).join("");
+    const goldenBat = (function() {
         const p = la.goldenBat ? S.players[la.goldenBat] : null;
         const tm = p ? S.teams[p.team] : null; const mine = p && p.team === S.userTeamId;
         return '<div class="card awardcard ' + (mine ? "me" : "") + '">' +
-          '<div class="eyebrow">' + region + '聯盟</div>' +
+          '<div class="eyebrow">金棒獎・最佳打者</div>' +
           '<div class="awardname">' + (p ? p.name : "從缺") + '</div>' +
           '<div class="awardteam">' + (p && tm ? tm.name + (mine ? "（你的球隊！）" : "") : "") + '</div>' +
           '<div class="awardstat">' + (p ? awardStatLine("battingTitle", p) + "、" + p.seasonStats.HR + "轟" : "") + '</div></div>';
-      })()}
-
-      <div class="divlabel">金臂獎（最佳投手）</div>
-      ${(function() {
+      })();
+    const goldenArm = (function() {
         const p = la.goldenArm ? S.players[la.goldenArm] : null;
         const tm = p ? S.teams[p.team] : null; const mine = p && p.team === S.userTeamId;
         return '<div class="card awardcard ' + (mine ? "me" : "") + '">' +
-          '<div class="eyebrow">' + region + '聯盟</div>' +
+          '<div class="eyebrow">金臂獎・最佳投手</div>' +
           '<div class="awardname">' + (p ? p.name : "從缺") + '</div>' +
           '<div class="awardteam">' + (p && tm ? tm.name + (mine ? "（你的球隊！）" : "") : "") + '</div>' +
           '<div class="awardstat">' + (p ? awardStatLine("winsTitle", p) + "、防禦率" + era(p.seasonStats).toFixed(2) : "") + '</div></div>';
-      })()}
-
-      <div class="divlabel">最佳9人（攻守綜合最頂尖，含指定打擊共9席）</div>
-      ${BESTNINE_GROUPS.map(g => {
+      })();
+    const bestNineCards = BESTNINE_GROUPS.map(g => {
         const p = la.bestNine[g] ? S.players[la.bestNine[g]] : null;
         const tm = p ? S.teams[p.team] : null; const mine = p && p.team === S.userTeamId;
         return '<div class="card awardcard ' + (mine ? "me" : "") + '">' +
@@ -1231,10 +1224,8 @@ function renderAwards() {
           '<div class="awardname">' + (p ? p.name : "從缺") + '</div>' +
           '<div class="awardteam">' + (p && tm ? tm.name + (mine ? "（你的球隊！）" : "") : "") + '</div>' +
           '<div class="awardstat">' + (p ? awardStatLine("battingTitle", p) + (g === "指定打擊" ? "" : "、守備成功率" + p.fielding + "%") : "") + '</div></div>';
-      }).join("")}
-
-      <div class="divlabel">金手套獎（各守位最佳防守）</div>
-      ${GOLDGLOVE_GROUPS.map(g => {
+      }).join("");
+    const goldenGloveCards = GOLDGLOVE_GROUPS.map(g => {
         const p = la.goldenGlove[g] ? S.players[la.goldenGlove[g]] : null;
         const tm = p ? S.teams[p.team] : null; const mine = p && p.team === S.userTeamId;
         return '<div class="card awardcard ' + (mine ? "me" : "") + '">' +
@@ -1242,8 +1233,14 @@ function renderAwards() {
           '<div class="awardname">' + (p ? p.name : "從缺") + '</div>' +
           '<div class="awardteam">' + (p && tm ? tm.name + (mine ? "（你的球隊！）" : "") : "") + '</div>' +
           '<div class="awardstat">' + (p ? "守備成功率 " + p.fielding + "%" : "") + '</div></div>';
-      }).join("")}
-    `;
+      }).join("");
+    return `<div class="v60-awards-categories">${uiTabs(`awards-${region}`, [
+      { key: "headline", label: "年度大獎", html: awardCards(["mvp", "rookieOfYear"]) },
+      { key: "batting", label: "打擊", html: awardCards(["battingTitle", "homeRunTitle", "hitsTitle", "rbiTitle", "stolenBaseTitle"]) + goldenBat },
+      { key: "pitching", label: "投手", html: awardCards(["eraTitle", "winsTitle", "strikeoutTitle", "saveTitle", "holdTitle"]) + goldenArm },
+      { key: "bestNine", label: "最佳九人", html: `<p class="sub dark">含指定打擊，共 9 席</p>${bestNineCards}` },
+      { key: "goldenGlove", label: "金手套", html: goldenGloveCards }
+    ])}</div>`;
   }
   app.innerHTML = `
     <div class="wrap">

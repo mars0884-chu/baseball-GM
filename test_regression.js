@@ -1608,6 +1608,8 @@ assert(g("S.lastAwards.A && S.lastAwards.B && S.lastAwards.A.mvp !== undefined")
 g("(function(){ UI.screen='awards'; renderAwards(); globalThis.__awHtml=app.innerHTML; })();");
 assert(g("(__awHtml.match(/awardteam/g)||[]).length >= 4"), "v37⑨ 頒獎畫面含多個球隊名欄位(含金棒/金臂/最佳9人/金手套)");
 assert(g("__awHtml.indexOf('uitab-btn')>=0 && __awHtml.indexOf('A聯盟')>=0 && __awHtml.indexOf('B聯盟')>=0"), "v56 頒獎典禮具備A/B聯盟分頁");
+assert(g("['headline','batting','pitching','bestNine','goldenGlove'].every(k=>__awHtml.includes('data-tabgroup=\"awards-A\" data-tab=\"'+k+'\"'))"), "r046 頒獎每個聯盟都有五類直接可見的獎項頁籤");
+assert(g("AWARD_LABELS.every(([key,label])=>__awHtml.includes(label)) && BESTNINE_GROUPS.every(label=>__awHtml.includes(label)) && GOLDGLOVE_GROUPS.every(label=>__awHtml.includes(label))"), "r046 頒獎分組未遺漏年度獎、最佳九人與金手套守位");
 
 /* ==================== v38 測試 ==================== */
 console.log("\n--- v38 測試 ---");
