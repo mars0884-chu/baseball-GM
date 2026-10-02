@@ -836,10 +836,15 @@ body[data-screen="mail"]      #app{ background-image: var(--pack-screen-mail,non
 .v55luck-insight { margin-top: 6px; font-size: 13px; line-height: 1.5; }
 
 /* 數據中心表格 */
-.v55dc-table-wrap { overflow-x: auto; margin: 8px 0; }
-.v55dc-table { font-size: 13px; }
-.v55dc-table th { white-space: nowrap; }
-.v55dc-table td { font-variant-numeric: tabular-nums; }
+.v55dc-table-wrap { max-width: 100%; overflow-x: auto; margin: 8px 0; }
+.v55dc-table { min-width: 760px; }
+.v55dc-table th, .v55dc-table td { font-size: 14px; white-space: nowrap; }
+.v55dc-table td { padding-top: 12px; padding-bottom: 12px; font-variant-numeric: tabular-nums; }
+.v55dc-team { margin-left: 4px; font-size: 14px; }
+.v55conf-tag { display: inline-block; min-width: 20px; margin-right: 4px; padding: 1px 2px; border-radius: 3px; font-size: 14px; text-align: center; font-weight: 700; }
+.v55dc-swipe-hint { display: none; }
+@media (max-width: 700px) { .v55dc-swipe-hint { display: block; margin: 6px 0; } }
+.v55dc-row:focus-visible, .v55dc-sortable:focus-visible, .v55dc-table-wrap:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
 .v55dc-sortable { cursor: pointer; user-select: none; }
 .v55dc-sortable:hover { text-decoration: underline; }
 .v55dc-row { cursor: pointer; }

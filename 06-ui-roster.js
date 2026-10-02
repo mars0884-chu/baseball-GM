@@ -3283,6 +3283,7 @@ function renderDataCenter() {
         <button class="btn-outline v55dc-scope ${scope === "league" ? "active" : ""}" data-scope="league">全聯盟</button>
         <button class="btn-outline v55dc-scope ${scope === "team" ? "active" : ""}" data-scope="team">本隊</button>
       </div>
+      ${tab !== "luck" ? '<p class="v60-state-line">高／中／低＝資料可信度</p>' : ""}
       ${tableHtml}
       <div class="btnrow"><button id="v55dc-back" class="btn-outline">返回主控台</button></div>
     </div>`;
@@ -3303,6 +3304,7 @@ function v55DCBattersTable(batters, tier, sortKey, sortDir) {
     return sortDir === "desc" ? vb - va : va - vb;
   });
   sorted = sorted.slice(0, 40);
+  const page = v60RosterPageSlice(sorted, "dcBatPage", 8);
   var f3 = function(v) { return v != null ? (typeof v === "number" ? v.toFixed(3) : String(v)) : "—"; };
   var f1 = function(v) { return v != null ? (typeof v === "number" ? v.toFixed(1) : String(v)) : "—"; };
   /* 依 tier 決定顯示欄位 */
@@ -3325,15 +3327,15 @@ function v55DCBattersTable(batters, tier, sortKey, sortDir) {
   var confBadge = function(r) {
     var c = r.advanced.confidence || "insufficient";
     var cls = c === "reliable" ? "v55conf-ok" : (c === "moderate" ? "v55conf-mid" : "v55conf-low");
-    return `<span class="v55conf-dot ${cls}"></span>`;
+    return `<span class="v55conf-tag ${cls}" aria-label="資料可信度：${c === "reliable" ? "高" : c === "moderate" ? "中" : "低"}">${c === "reliable" ? "高" : c === "moderate" ? "中" : "低"}</span>`;
   };
-  var thead = `<tr><th>#</th><th>球員</th>${cols.map(function(c){ return `<th class="v55dc-sortable" data-sortkey="${c[0]}">${c[1]}</th>`; }).join("")}</tr>`;
-  var tbody = sorted.map(function(r, i) {
+  var thead = `<tr><th>#</th><th>球員</th>${cols.map(function(c){ return `<th class="v55dc-sortable" data-sortkey="${c[0]}" tabindex="0" aria-sort="${sortKey === c[0] ? (sortDir === "asc" ? "ascending" : "descending") : "none"}">${c[1]}</th>`; }).join("")}</tr>`;
+  var tbody = page.items.map(function(r, i) {
     var teamName = (S.teams && S.teams[r.team]) ? S.teams[r.team].abbr || S.teams[r.team].name.slice(0, 4) : "";
     var cells = cols.map(function(c) { return `<td>${c[2](r)}</td>`; }).join("");
-    return `<tr class="v55dc-row" data-pid="${r.id}"><td>${i + 1}</td><td>${confBadge(r)}${r.name}<span class="sub" style="margin-left:4px;font-size:11px;">${teamName}</span></td>${cells}</tr>`;
+    return `<tr class="v55dc-row" data-pid="${r.id}" tabindex="0"><td>${page.page * page.pageSize + i + 1}</td><td>${confBadge(r)}${r.name}<span class="sub v55dc-team">${teamName}</span></td>${cells}</tr>`;
   }).join("");
-  return `<div class="v55dc-table-wrap"><table class="stattable v55dc-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table></div>`;
+  return `${v60RosterPagerHtml(page, "dcBatPage", "打者數據", sorted.length)}<p class="v60-state-line v55dc-swipe-hint">左右滑動查看全部指標</p><div class="v55dc-table-wrap" role="region" tabindex="0" aria-label="打者數據排行榜，可左右滑動"><table class="stattable v55dc-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table></div>`;
 }
 
 /* --- 投手排行表 --- */
@@ -3351,6 +3353,7 @@ function v55DCPitchersTable(pitchers, tier, sortKey, sortDir) {
     return effDir === "desc" ? vb - va : va - vb;
   });
   sorted = sorted.slice(0, 40);
+  const page = v60RosterPageSlice(sorted, "dcPitPage", 8);
   var f2 = function(v) { return v != null ? (typeof v === "number" ? v.toFixed(2) : String(v)) : "—"; };
   var f1 = function(v) { return v != null ? (typeof v === "number" ? v.toFixed(1) : String(v)) : "—"; };
   var f3 = function(v) { return v != null ? (typeof v === "number" ? v.toFixed(3) : String(v)) : "—"; };
@@ -3373,15 +3376,15 @@ function v55DCPitchersTable(pitchers, tier, sortKey, sortDir) {
   var confBadge = function(r) {
     var c = r.advanced.confidence || "insufficient";
     var cls = c === "reliable" ? "v55conf-ok" : (c === "moderate" ? "v55conf-mid" : "v55conf-low");
-    return `<span class="v55conf-dot ${cls}"></span>`;
+    return `<span class="v55conf-tag ${cls}" aria-label="資料可信度：${c === "reliable" ? "高" : c === "moderate" ? "中" : "低"}">${c === "reliable" ? "高" : c === "moderate" ? "中" : "低"}</span>`;
   };
-  var thead = `<tr><th>#</th><th>球員</th>${cols.map(function(c){ return `<th class="v55dc-sortable" data-sortkey="${c[0]}">${c[1]}</th>`; }).join("")}</tr>`;
-  var tbody = sorted.map(function(r, i) {
+  var thead = `<tr><th>#</th><th>球員</th>${cols.map(function(c){ return `<th class="v55dc-sortable" data-sortkey="${c[0]}" tabindex="0" aria-sort="${sortKey === c[0] ? (effDir === "asc" ? "ascending" : "descending") : "none"}">${c[1]}</th>`; }).join("")}</tr>`;
+  var tbody = page.items.map(function(r, i) {
     var teamName = (S.teams && S.teams[r.team]) ? S.teams[r.team].abbr || S.teams[r.team].name.slice(0, 4) : "";
     var cells = cols.map(function(c) { return `<td>${c[2](r)}</td>`; }).join("");
-    return `<tr class="v55dc-row" data-pid="${r.id}"><td>${i + 1}</td><td>${confBadge(r)}${r.name}<span class="sub" style="margin-left:4px;font-size:11px;">${teamName}</span></td>${cells}</tr>`;
+    return `<tr class="v55dc-row" data-pid="${r.id}" tabindex="0"><td>${page.page * page.pageSize + i + 1}</td><td>${confBadge(r)}${r.name}<span class="sub v55dc-team">${teamName}</span></td>${cells}</tr>`;
   }).join("");
-  return `<div class="v55dc-table-wrap"><table class="stattable v55dc-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table></div>`;
+  return `${v60RosterPagerHtml(page, "dcPitPage", "投手數據", sorted.length)}<p class="v60-state-line v55dc-swipe-hint">左右滑動查看全部指標</p><div class="v55dc-table-wrap" role="region" tabindex="0" aria-label="投手數據排行榜，可左右滑動"><table class="stattable v55dc-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table></div>`;
 }
 
 /* --- 運氣校正分頁（Tier 3 專屬） --- */
@@ -3400,48 +3403,54 @@ function v55DCLuckTable(data, tier) {
   var luckyBatters = (data.batters || []).filter(function(r) { return r.luck && r.luck.reliable; });
   luckyBatters.sort(function(a, b) { return Math.abs(b.luck.babipLuck) - Math.abs(a.luck.babipLuck); });
   luckyBatters = luckyBatters.slice(0, 25);
+  const luckKind = UI.dcLuckKind === "pitchers" ? "pitchers" : "batters";
   var batHtml = "";
-  if (luckyBatters.length > 0) {
-    var bRows = luckyBatters.map(function(r) {
+  if (luckKind === "batters" && luckyBatters.length > 0) {
+    const page = v60RosterPageSlice(luckyBatters, "dcLuckPage", 8);
+    var bRows = page.items.map(function(r) {
       var teamName = (S.teams && S.teams[r.team]) ? S.teams[r.team].abbr || S.teams[r.team].name.slice(0, 4) : "";
-      return `<tr class="v55dc-row" data-pid="${r.id}"><td>${r.name}<span class="sub" style="margin-left:4px;font-size:11px;">${teamName}</span></td>` +
+      return `<tr class="v55dc-row" data-pid="${r.id}" tabindex="0"><td>${r.name}<span class="sub v55dc-team">${teamName}</span></td>` +
         `<td>${f3(r.luck.AVG)}</td><td>${f3(r.luck.xAVG)}</td><td>${sign3(r.luck.avgLuck)}</td>` +
         `<td>${f3(r.luck.BABIP)}</td><td>${f3(r.luck.xBABIP)}</td>` +
         `<td>${luckTag(r.luck.luckDirection)}</td></tr>`;
     }).join("");
-    batHtml = `<div class="divlabel">打者運氣校正（BABIP 偏離排行）</div>` +
-      `<div class="v55dc-table-wrap"><table class="stattable v55dc-table"><thead><tr><th>球員</th><th>AVG</th><th>xAVG</th><th>差距</th><th>BABIP</th><th>xBABIP</th><th>判定</th></tr></thead><tbody>${bRows}</tbody></table></div>`;
+    batHtml = `<div class="divlabel">打者・BABIP 偏離</div>${v60RosterPagerHtml(page, "dcLuckPage", "打者運氣", luckyBatters.length)}` +
+      `<p class="v60-state-line v55dc-swipe-hint">左右滑動查看全部指標</p><div class="v55dc-table-wrap" role="region" tabindex="0" aria-label="打者運氣校正，可左右滑動"><table class="stattable v55dc-table"><thead><tr><th>球員</th><th>AVG</th><th>xAVG</th><th>差距</th><th>BABIP</th><th>xBABIP</th><th>判定</th></tr></thead><tbody>${bRows}</tbody></table></div>`;
   }
   /* 投手運氣排行：按 ERA-FIP 絕對值排序 */
   var luckyPitchers = (data.pitchers || []).filter(function(r) { return r.luck && r.luck.reliable; });
   luckyPitchers.sort(function(a, b) { return Math.abs(b.luck.eraFipGap) - Math.abs(a.luck.eraFipGap); });
   luckyPitchers = luckyPitchers.slice(0, 25);
   var pitHtml = "";
-  if (luckyPitchers.length > 0) {
-    var pRows = luckyPitchers.map(function(r) {
+  if (luckKind === "pitchers" && luckyPitchers.length > 0) {
+    const page = v60RosterPageSlice(luckyPitchers, "dcLuckPage", 8);
+    var pRows = page.items.map(function(r) {
       var teamName = (S.teams && S.teams[r.team]) ? S.teams[r.team].abbr || S.teams[r.team].name.slice(0, 4) : "";
-      return `<tr class="v55dc-row" data-pid="${r.id}"><td>${r.name}<span class="sub" style="margin-left:4px;font-size:11px;">${teamName}</span></td>` +
+      return `<tr class="v55dc-row" data-pid="${r.id}" tabindex="0"><td>${r.name}<span class="sub v55dc-team">${teamName}</span></td>` +
         `<td>${f2(r.luck.ERA)}</td><td>${f2(r.luck.FIP)}</td><td>${sign2(r.luck.eraFipGap)}</td>` +
         `<td>${f3(r.luck.BABIP)}</td>` +
         `<td>${luckTag(r.luck.luckDirection)}</td></tr>`;
     }).join("");
-    pitHtml = `<div class="divlabel">投手運氣校正（ERA-FIP 偏離排行）</div>` +
-      `<div class="v55dc-table-wrap"><table class="stattable v55dc-table"><thead><tr><th>球員</th><th>ERA</th><th>FIP</th><th>差距</th><th>BABIP</th><th>判定</th></tr></thead><tbody>${pRows}</tbody></table></div>`;
+    pitHtml = `<div class="divlabel">投手・ERA-FIP 偏離</div>${v60RosterPagerHtml(page, "dcLuckPage", "投手運氣", luckyPitchers.length)}` +
+      `<p class="v60-state-line v55dc-swipe-hint">左右滑動查看全部指標</p><div class="v55dc-table-wrap" role="region" tabindex="0" aria-label="投手運氣校正，可左右滑動"><table class="stattable v55dc-table"><thead><tr><th>球員</th><th>ERA</th><th>FIP</th><th>差距</th><th>BABIP</th><th>判定</th></tr></thead><tbody>${pRows}</tbody></table></div>`;
   }
-  var desc = `<div class="card" style="margin:8px 0;">` +
-    `<p class="sub dark" style="margin:0;">${icon('chart')} <b>運氣校正</b>：比較實際數據與擊球品質預期值。差距大＝運氣成分高，明年很可能回歸常態。` +
-    `「好運偏高」的球員目前數據優於真實能力（趁高賣出）；「壞運偏多」的則被低估（低買良機）。</p></div>`;
-  if (!batHtml && !pitHtml) return desc + `<p class="sub dark">本季尚無足夠數據進行運氣校正（需累積約 200 打席 / 300 面對打者）。</p>`;
-  return desc + batHtml + pitHtml;
+  var desc = `<p class="v60-state-line" aria-label="運氣校正判讀">實績對預期・差距大可能回歸。好運偏高可高賣，壞運偏多可低買。</p>`;
+  const tabs = `<div class="tabrow v60-dc-luck-tabs" role="tablist" aria-label="運氣校正分類">
+    <button type="button" class="tab ${luckKind === "batters" ? "active" : ""}" data-dc-luck-kind="batters" role="tab" aria-selected="${luckKind === "batters"}">打者・${luckyBatters.length}</button>
+    <button type="button" class="tab ${luckKind === "pitchers" ? "active" : ""}" data-dc-luck-kind="pitchers" role="tab" aria-selected="${luckKind === "pitchers"}">投手・${luckyPitchers.length}</button></div>`;
+  const selected = luckKind === "batters" ? batHtml : pitHtml;
+  return desc + tabs + (selected || `<p class="v60-state-line">本季${luckKind === "batters" ? "打者樣本不足；需約 200 打席" : "投手樣本不足；需約 300 面對打者"}。</p>`);
 }
 
 /* --- 數據中心事件綁定 --- */
 function wireDataCenter() {
   try {
+    wireV60RosterPager();
     document.getElementById("v55dc-back").onclick = function() { UI.screen = "dashboard"; render(); };
     document.querySelectorAll("[data-dctab]").forEach(function(btn) {
       btn.onclick = function() {
         UI.dcTab = btn.dataset.dctab;
+        UI.dcBatPage = 0; UI.dcPitPage = 0; UI.dcLuckPage = 0;
         if (UI.dcTab === "batters") UI.dcSort = "OPS+";
         else if (UI.dcTab === "pitchers") UI.dcSort = "ERA+";
         else UI.dcSort = null;
@@ -3449,10 +3458,13 @@ function wireDataCenter() {
       };
     });
     document.querySelectorAll(".v55dc-scope").forEach(function(btn) {
-      btn.onclick = function() { UI.dcScope = btn.dataset.scope; render(); };
+      btn.onclick = function() { UI.dcScope = btn.dataset.scope; UI.dcBatPage = 0; UI.dcPitPage = 0; UI.dcLuckPage = 0; render(); };
+    });
+    document.querySelectorAll("[data-dc-luck-kind]").forEach(function(btn) {
+      btn.onclick = function() { UI.dcLuckKind = btn.dataset.dcLuckKind; UI.dcLuckPage = 0; render(); };
     });
     document.querySelectorAll(".v55dc-sortable").forEach(function(th) {
-      th.onclick = function() {
+      const sort = function() {
         var key = th.dataset.sortkey;
         if (UI.dcSort === key) {
           UI.dcSortDir = (UI.dcSortDir === "desc") ? "asc" : "desc";
@@ -3460,14 +3472,19 @@ function wireDataCenter() {
           UI.dcSort = key;
           UI.dcSortDir = "desc";
         }
+        UI.dcBatPage = 0; UI.dcPitPage = 0;
         render();
       };
+      th.onclick = sort;
+      th.onkeydown = function(event) { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); sort(); } };
     });
     document.querySelectorAll(".v55dc-row").forEach(function(row) {
-      row.onclick = function() {
+      const openPlayer = function() {
         var pid = row.dataset.pid;
         if (pid) { UI.selectedPlayerId = pid; UI.playerDetailReturn = "dataCenter"; UI.screen = "playerDetail"; render(); }
       };
+      row.onclick = openPlayer;
+      row.onkeydown = function(event) { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openPlayer(); } };
     });
     /* v55 Phase 3：聘任/解聘分析主管 */
     var hireBtn = document.getElementById("v55-hire-director");

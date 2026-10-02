@@ -4729,5 +4729,23 @@ var __v60FinanceAllSections=__v60FinanceRendered.includes("薪資分層明細")&
 S=JSON.parse(__v60FinanceSavedS);UI=JSON.parse(__v60FinanceSavedUI);app.innerHTML=__v60FinanceSavedHtml;`);
 assert(g("__v60FinanceTabbed && __v60FinanceAllSections"), "v60-023 renderer 保留三類完整內容與頁籤導航，不刪財務資料");
 
+/* r045：數據中心長榜單分頁，保留全部順位、指標及運氣分類。 */
+console.log("\n--- r045 數據中心分頁與可讀性 ---");
+g(`var __r045SavedS=JSON.stringify(S),__r045SavedUI=JSON.stringify(UI);
+var __r045Bat=Array.from({length:40},(_,i)=>({id:'B'+i,name:'打者'+i,team:S.userTeamId,pa:200+i,advanced:{'OPS+':140-i,confidence:'reliable'}}));
+var __r045Pit=Array.from({length:40},(_,i)=>({id:'P'+i,name:'投手'+i,team:S.userTeamId,ip:60+i,advanced:{'ERA+':140-i,confidence:'moderate'}}));
+UI.dcBatPage=0;var __r045BatFirst=v55DCBattersTable(__r045Bat,3,'OPS+','desc');
+UI.dcBatPage=4;var __r045BatLast=v55DCBattersTable(__r045Bat,3,'OPS+','desc');
+UI.dcPitPage=0;var __r045PitFirst=v55DCPitchersTable(__r045Pit,3,'ERA+','desc');
+UI.dcPitPage=4;var __r045PitLast=v55DCPitchersTable(__r045Pit,3,'ERA+','desc');
+var __r045Luck={batters:Array.from({length:25},(_,i)=>({id:'LB'+i,name:'運氣打者'+i,team:S.userTeamId,luck:{reliable:true,babipLuck:i/100,AVG:.3,xAVG:.28,avgLuck:.02,BABIP:.32,xBABIP:.3,luckDirection:'lucky'}})),pitchers:Array.from({length:10},(_,i)=>({id:'LP'+i,name:'運氣投手'+i,team:S.userTeamId,luck:{reliable:true,eraFipGap:i/10,ERA:3,FIP:3.5,BABIP:.29,luckDirection:'unlucky'}}))};
+UI.dcLuckKind='batters';UI.dcLuckPage=3;var __r045LuckBat=v55DCLuckTable(__r045Luck,3);
+UI.dcLuckKind='pitchers';UI.dcLuckPage=1;var __r045LuckPit=v55DCLuckTable(__r045Luck,3);
+var __r045Pure=JSON.stringify(S)===__r045SavedS;
+UI=JSON.parse(__r045SavedUI);`);
+assert(g("(__r045BatFirst.match(/class=\"v55dc-row\"/g)||[]).length===8 && (__r045BatLast.match(/class=\"v55dc-row\"/g)||[]).length===8 && __r045BatLast.includes('<td>33</td>') && __r045BatLast.includes('<td>40</td>') && __r045BatLast.includes('第 5/5 頁') && __r045BatLast.includes('資料可信度：高')"), "r045 打者榜前40名分5頁，原順位、可信度與數值欄保留");
+assert(g("(__r045PitFirst.match(/class=\"v55dc-row\"/g)||[]).length===8 && (__r045PitLast.match(/class=\"v55dc-row\"/g)||[]).length===8 && __r045PitLast.includes('<td>33</td>') && __r045PitLast.includes('<td>40</td>') && __r045PitLast.includes('資料可信度：中')"), "r045 投手榜前40名分5頁且原順位完整");
+assert(g("(__r045LuckBat.match(/class=\"v55dc-row\"/g)||[]).length===1 && __r045LuckBat.includes('打者・25') && (__r045LuckPit.match(/class=\"v55dc-row\"/g)||[]).length===2 && __r045LuckPit.includes('投手・10') && __r045Pure"), "r045 運氣校正25名打者及10名投手分類分頁，純呈現不修改存檔");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);
