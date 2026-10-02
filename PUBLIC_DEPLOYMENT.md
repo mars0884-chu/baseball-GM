@@ -5,6 +5,7 @@
 - 2026-10-02，繼續全遊戲逐頁文字減量。本批鎖定代理人事務所：原七列逐一重複「門檻／機率」並在手機擠成多行；改為共用欄名、交情標籤與雙數值比較卡，每頁四類／次頁三類。七類資料、談約門檻、談成倍率、應酬費用與操作、每年限制、成功／失敗機率及情報／引薦門檻都保留，不用折疊或裝飾 SVG 代替資訊。頁碼只在暫存 `UI`，不寫 Save、不影響共享亂數或談判規則。
 - 同一固定新局、代理人交情 fixture，隔離瀏覽器實際渲染：390px 首頁可見字元 473→368（-22.2%）、頁高 1,028→965px；320px 頁高 1,227→1,044px。第二頁三類全部可達，七個應酬入口完整，390px 實際應酬後交情 -10→-9、年度限制生效；320／390／1280px 無水平溢位、頁面錯誤 0、按鈕至少 44px。腳本、截圖與 `v60-r043-agency-audit.json` 存於工作區 `_staging/v60-010-preseason-flow-candidate/`。這是單頁樣本與同屏閱讀負擔，不代表全遊戲文字減少 50%。
 - `node test_regression.js`：1,853 通過／0 失敗；`node smoke_multiyear.js`：15 年＋全畫面渲染通過；`node smoke_puregm.js`：純 GM 15 年通過。r042 原測試將快取鍵寫死，r043 改為驗證頁面與 Service Worker 使用同一修訂鍵；沒有放寬功能斷言。正式 `current/`、Delivery／Art ZIP、正式 manifest／SHA、`CURRENT_PACKAGE.json` 與 lineage 均不動；原有未提交 `manifest.webmanifest` 也不納入。本批快取鍵 `v60-r043-agency-compare`。
+- 2026-10-02，程式提交 `9ce9fc7526bdc015ed1736e494ff2db701f61021` 已推送 `main`；[GitHub Pages 建置](https://github.com/mars0884-chu/baseball-GM/actions/runs/36997252118) 為 `completed/success`。以唯一查詢參數及 `no-cache` 實際 GET 公開 `index.html`、`05-ui-dashboard.js`、`style.css`、`sw.js`，四者皆 HTTP 200 且含 r043 對應標記。這確認公開靜態檔已更新，不等同既有安裝版立即切換或 Mars 真機／主觀驗收。
 
 ## r042：行銷／硬體完成直接接下一站
 
