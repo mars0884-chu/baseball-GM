@@ -4771,5 +4771,14 @@ var __r048Unchanged=JSON.stringify(S)===__r048Before;`);
 assert(g("__r048Html.includes('btn-mode-pure') && __r048Html.includes('btn-mode-gmcoach') && __r048Html.includes('教練排打線、板凳與輪值') && __r048Html.includes('補強、財務與談判') && __r048Html.includes('主動提需求') && __r048Html.includes('教練排線／親自手排可切')"), "r048 兩種模式保留原權責與選擇操作，以同欄位比較取代長段落");
 assert(g("__r048Html.includes('信任 +10') && __r048Html.includes('信任 -30') && __r048Html.includes('愛管現場的名聲') && __r048Calls===0 && __r048Unchanged"), "r048 放權與接管代價仍明示，純渲染不改存檔或共用亂數");
 
+console.log("\n--- r049 選隊分區與核准隊徽 ---");
+g(`var __r049SavedS=JSON.stringify(S),__r049SavedUI=JSON.stringify(UI),__r049OldHtml=app.innerHTML;
+var __r049Pages={};
+['A1','A2','B1','B2'].forEach(function(div){UI.teamSelectDivision=div;renderTeamSelect();__r049Pages[div]=app.innerHTML;});
+var __r049Unchanged=JSON.stringify(S)===__r049SavedS;
+UI=JSON.parse(__r049SavedUI);app.innerHTML=__r049OldHtml;`);
+assert(g("Object.values(__r049Pages).every(function(html){return (html.match(/class=\"v50-teamcard v55-teamcard-ext v60-approved-teamcard\"/g)||[]).length===5 && (html.match(/data-identity-source=\"approved-theme-pack\"/g)||[]).length===5 && (html.match(/data-team-division=\"/g)||[]).length===4;})"), "r049 四分區各五隊，保留核准隊徽來源及全部選隊按鈕");
+assert(g("Object.entries(__r049Pages).every(function(entry){var div=entry[0],html=entry[1];return Object.values(S.teams).filter(function(t){return t.division===div;}).every(function(t){return html.includes('data-id=\"'+t.id+'\"');});}) && __r049Unchanged"), "r049 二十隊皆能在所屬分區找到；切換僅更新 UI，不改遊戲狀態");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

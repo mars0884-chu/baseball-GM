@@ -660,6 +660,8 @@ function renderBootRecovery() {
 
 function renderTeamSelect() {
   const divs = ["A1", "A2", "B1", "B2"];
+  const activeDiv = divs.includes(UI.teamSelectDivision) ? UI.teamSelectDivision : divs[0];
+  UI.teamSelectDivision = activeDiv;
   const lbrand = (typeof LEAGUE_BRAND !== "undefined") ? LEAGUE_BRAND : null;
   app.innerHTML = `
     <div class="wrap">
@@ -668,28 +670,30 @@ function renderTeamSelect() {
         <h1>選擇你的球隊</h1>
         <p class="sub">GM ${S.gmName}，從 ${lbrand ? lbrand.shortName : "聯盟"} 20 隊中挑一支開始你的 GM 生涯。</p>
       </div>
-      ${divs.map(d => `
-        <div class="divblock">
-          <div class="divlabel">${DIV_LABEL[d]}</div>
-          <div class="teamgrid v50-teamgrid">
-            ${Object.values(S.teams).filter(t => t.division === d).map(t => {
+      <nav class="v60-team-division-tabs" role="tablist" aria-label="選擇球隊分區">
+        ${divs.map(d => `<button type="button" role="tab" data-team-division="${d}" aria-selected="${d === activeDiv}" aria-controls="v60-team-division-panel">${DIV_LABEL[d]}<small>${Object.values(S.teams).filter(t => t.division === d).length} 隊</small></button>`).join("")}
+      </nav>
+      <div class="divblock" id="v60-team-division-panel" role="tabpanel" aria-label="${DIV_LABEL[activeDiv]}球隊">
+        <div class="divlabel">${DIV_LABEL[activeDiv]}</div>
+        <div class="teamgrid v50-teamgrid">
+            ${Object.values(S.teams).filter(t => t.division === activeDiv).map(t => {
               const pc = t.primaryColor || "#333";
               const sc = t.secondaryColor || "#999";
               const logo = (typeof themeTeamLogo === "function") ? themeTeamLogo(t.id, 40) : "";
               const tierLabel = (typeof v55CityTierLabel === "function") ? v55CityTierLabel(t.id) : "";
               const personaLabel = (typeof personaOf === "function" && personaOf(t)) ? personaOf(t).name : "";
-              const flavor = (typeof v55CityFlavorOf === "function") ? v55CityFlavorOf(t.id) : "";
               return `<button class="v50-teamcard v55-teamcard-ext v60-approved-teamcard" data-id="${t.id}" data-identity-source="approved-theme-pack" style="--tc-primary:${pc};--tc-secondary:${sc}">
                 <span class="v50-team-dot" style="background:${pc};box-shadow:0 0 0 3px ${sc}"></span>
                 <span class="v60-team-logo-frame">${logo}</span><span class="v50-team-name">${t.name}</span>
                 <span class="v55-team-tags"><span class="v55-city-tier">${tierLabel}</span><span class="v55-persona-tag">${personaLabel}</span></span>
-                ${flavor ? `<span class="v55-city-flavor">${flavor}</span>` : ""}
               </button>`;
             }).join("")}
-          </div>
         </div>
-      `).join("")}
+      </div>
     </div>`;
+  app.querySelectorAll("[data-team-division]").forEach(btn => {
+    btn.onclick = () => { UI.teamSelectDivision = btn.dataset.teamDivision; render(); };
+  });
   app.querySelectorAll(".v50-teamcard").forEach(btn => {
     btn.onclick = () => pickTeam(btn.dataset.id);
   });
