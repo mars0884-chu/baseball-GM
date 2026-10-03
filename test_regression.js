@@ -4380,8 +4380,8 @@ const v60PrepFlow = fs.readFileSync("01-data-engine.js", "utf8");
 const v60PrepRoster = fs.readFileSync("06-ui-roster.js", "utf8");
 const v60ForecastFn = v60PrepDash.slice(v60PrepDash.indexOf("function v60PreseasonFinanceForecast"), v60PrepDash.indexOf("function v60PreseasonWindow"));
 assert(v60ForecastFn.includes("function v60PreseasonFinanceForecast") && !/Math\.random|ensureFinance\(|ensureFacility\(|ensureStadiumSlots\(|refreshPayroll\(|persist\(/.test(v60ForecastFn), "v60-010 頁首財務預估不呼叫寫入、補值或亂數入口");
-assert(v60PrepDash.includes('data-v60-prep="next"') && v60PrepDash.includes('data-v60-prep="contracts"') && v60PrepDash.includes('data-v60-prep="ticket"') && v60PrepDash.includes('data-v60-prep="marketing"') && v60PrepDash.includes('data-v60-prep="facilities"') && v60PrepDash.includes('data-v60-prep="spring"'), "v60-010 開季流程、談約、票價、行銷、硬體及春訓有直達入口");
-assert(v60PrepDash.includes("${stage.short}") && v60PrepDash.includes("title=\"目前項目：${stage.short}\""), "r041 頁首標示目前項目，不以手動下一步跳過準備");
+assert(v60PrepDash.includes('data-v60-prep="current"') && v60PrepDash.includes('data-v60-prep="contracts"') && v60PrepDash.includes('data-v60-prep="ticket"') && v60PrepDash.includes('data-v60-prep="marketing"') && v60PrepDash.includes('data-v60-prep="facilities"') && v60PrepDash.includes('data-v60-prep="spring"'), "v60-010 開季流程、談約、票價、行銷、硬體及春訓有直達入口");
+assert(v60PrepDash.includes("${stage.short}") && v60PrepDash.includes("title=\"返回目前待完成項目：${stage.short}\""), "r041 頁首標示目前待辦，不以手動下一步跳過準備");
 assert(v60PrepDash.includes("proceedFromOffseasonSummary()") && v60PrepDash.includes("proceedToDraft()") && v60PrepFlow.includes("function proceedFromStaffRenewals()") && v60PrepFlow.includes("function proceedFromDirectorRenewal()"), "v60-010 流程下一步保留既有裁員、續約、選秀關卡");
 assert(v60PrepStyle.includes(".v60-preseason-dock{position:sticky;top:0") && v60PrepStyle.includes("safe-area-inset"), "v60-010 頁首導覽固定且與既有安全區樣式相容");
 assert(v60PrepRoster.includes("v60-roster-table-wrap") && v60PrepStyle.includes(".v60-roster-table-wrap{max-width:100%;overflow-x:auto"), "v60-010 球員寬表限制在內部捲動框，不撐開手機頁面");
@@ -4430,6 +4430,8 @@ assert(v60PrepFinance.includes('完成行銷配置，前往硬體') && v60PrepFi
 assert(v60PrepDash.includes('key === "roster" && typeof rosterBlockingIssues') && v60PrepDash.includes('名單尚有出賽必要位置缺口'), "r042 名單缺必要守位時不得確認前往春訓");
 assert(v60PrepDash.includes('review.teamId === S.userTeamId') && v60PrepDash.includes('review.year === S.seasonYear'), "r041 換季或換隊不沿用前一份開季檢查進度");
 assert(v60PrepFinance.includes('S.pendingContractRenewals.length === 0 && typeof proceedFromContractRenewals') && v60PrepFinance.includes('neg.kind === "renewal" && (S.pendingContractRenewals || []).length === 0'), "r044 最後一位球員談約或不續約完成後自動接下一關");
+assert(v60PrepDash.includes('data-v60-prep="current"') && !v60PrepDash.includes('data-v60-prep="next"') && v60PrepDash.includes('return v60PreseasonCompleteStep(button.dataset.step)'), "r047 頁首只提供返回目前待辦，完成項目後直接進下一站，不要求另按下一步");
+assert(v60RosterSource.includes('完成選秀，進入開季準備') && !v60RosterSource.includes('<button id="btn-start-season" class="btn-primary">開始新球季</button>'), "r047 選秀完成按鈕不得誤稱準備尚未完成的球季已開季");
 assert(v60DashboardSource.includes('visual_assets/v60/offseason_planning_r040.jpg') && v60DashboardSource.includes('loading="lazy" decoding="async"'), "r040 休賽季場景圖按需載入並取代流程長文");
 
 /* v60-011：縮短重複說明，不隱藏玩法或改變資料出口。 */
@@ -4478,15 +4480,15 @@ const v60CopyFreeAgents = v60PrepRoster.slice(v60PrepRoster.indexOf("function re
 const v60FacilityStart = v60FinanceSource.indexOf("function renderFacilities()");
 const v60FacilityEnd = v60FinanceSource.indexOf("v26季中訓練指派：球季進行中", v60FacilityStart);
 const v60FacilityUi = v60FinanceSource.slice(v60FacilityStart, v60FacilityEnd);
-assert(v60CopyIntlMarket.includes("已評估：現況→天花板") && !v60CopyIntlMarket.includes("逐項能力：現在(評估)") && !v60CopyIntlMarket.includes("球速(評估)"), "v60-012 國際市場改用全頁單一圖例、移除候選卡重複估值說明");
+assert(v60CopyIntlMarket.includes("v60IntlComparisonHtml(visibleInternational)") && v60CopyIntlMarket.includes("data-intl-compare-tab") && !v60CopyIntlMarket.includes("已評估：現況→天花板") && !v60CopyIntlMarket.includes("逐項能力：現在(評估)"), "r047 國際市場以共享能力比較與可見分類取代重複估值說明");
 assert(v60CopyIntlMarket.includes("const pageSize = 2") && v60CopyIntlMarket.includes("data-intl-page") && v60CopyIntlMarket.includes("國際球員分頁") && v60CopyIntlMarket.includes("sign-intl-btn"), "v60-012 海外人選兩人一頁、保留分頁與簽約操作");
-assert(v60CopyIntlMarket.includes("40國分級影響素質") && v60CopyIntlMarket.includes("準度見上") && v60CopyIntlMarket.includes("獨家限本隊") && v60CopyIntlMarket.includes("1軍 ${team.roster1.length}/28"), "v60-012 國際市場短狀態列保留國家等級、估值可信度、獨家與名單限制");
+assert(v60CopyIntlMarket.includes("40國分級") && v60CopyIntlMarket.includes("評估準度") && v60CopyIntlMarket.includes("effAcc") && v60CopyIntlMarket.includes("獨家限本隊") && v60CopyIntlMarket.includes("1軍 ${team.roster1.length}/28"), "r047 國際市場短狀態列與視覺指標保留國家等級、估值精準度、獨家與名單限制");
 assert(v60CopyScouts.includes("國內選秀／育成 · 國際海外估值／獨家人選 · 交易估對手") && v60CopyScouts.includes("缺員盲評") && v60CopyScouts.includes("全員準度"), "v60-012 球探頁以掃讀狀態列保留三職評估出口、獨家人選與空缺後果");
 assert(v60CopyScouts.includes("發掘15–20歲 · 休賽季1次 · 準度↑→品質↑") && v60CopyScouts.includes("${devCount}/25"), "v60-012 育成候選短列保留年齡、頻率、品質關係與名額");
 assert(v60CopyFreeAgents.includes("本土未續→入市") && v60CopyFreeAgents.includes("能力公開") && v60CopyFreeAgents.includes("生涯＝球探預測") && v60CopyFreeAgents.includes("簽約金≈年薪30%"), "v60-012 自由球員狀態列保留入市條件、公開數據、預測與成本");
 assert(v60CopyAgency.includes("代理人事務所規則") && v60CopyAgency.includes("談成→交情↑／談崩→交情↓") && v60CopyAgency.includes("應酬每類型每季1次") && v60CopyAgency.includes("成功70%好感+1") && v60CopyAgency.includes("大失敗10%好感-1") && v60CopyAgency.includes("交好≥4情報") && v60CopyAgency.includes("莫逆10引薦") && !v60CopyAgency.includes("foldNote("), "v60-r036 代理人規則常駐可見且保留各項門檻");
 assert(v60CopyAgency.includes("尚無情蒐 · 談判→委託（查性格／底線）"), "v60-r036 情蒐空狀態保留明確入口與查詢內容");
-assert(v60CopyIntlMarket.includes("休賽更新・未簽留存") && v60CopyIntlMarket.includes("獨家限本隊") && v60CopyIntlMarket.includes("準度見上") && v60CopyIntlMarket.includes("1軍 ${team.roster1.length}/28"), "v60-r036 國際市場短狀態列保留刷新、估值可信度、獨家及名單限制");
+assert(v60CopyIntlMarket.includes("休賽更新・未簽留存") && v60CopyIntlMarket.includes("獨家限本隊") && v60CopyIntlMarket.includes("評估準度") && v60CopyIntlMarket.includes("1軍 ${team.roster1.length}/28"), "r047 國際市場短狀態列保留刷新、估值可信度、獨家及名單限制");
 assert(v60CopyFreeAgents.includes("v60-state-line") && v60CopyFreeAgents.includes("簽約金≈年薪30%") && v60CopyScouts.includes("v60-state-line") && v60CopyRotation.includes("v60-state-line") && v60CopyCoaches.includes("v60-state-line"), "v60-r036 市場、球探、牛棚及教練長說明以可見短狀態列呈現");
 assert(v60RosterSource.includes("尚無入選者 · 生涯里程碑達標→自動提名") && v60RosterSource.includes("聘任解鎖：可見數據層級 · 運氣校正 · 套利警訊"), "v60-r036 名人堂與數據主管空狀態保留觸發條件與完整效益");
 assert(v60FacilityUi.includes('data-stadium-panel="build"') && v60FacilityUi.includes('data-stadium-panel="levels"') && v60FacilityUi.includes('UI.facilityStadiumPanel = btn.dataset.stadiumPanel'), "v60-012 球場建造與等級升級分成可見分頁、保留原操作入口");
@@ -4748,6 +4750,18 @@ UI=JSON.parse(__r045SavedUI);`);
 assert(g("(__r045BatFirst.match(/class=\"v55dc-row\"/g)||[]).length===8 && (__r045BatLast.match(/class=\"v55dc-row\"/g)||[]).length===8 && __r045BatLast.includes('<td>33</td>') && __r045BatLast.includes('<td>40</td>') && __r045BatLast.includes('第 5/5 頁') && __r045BatLast.includes('資料可信度：高')"), "r045 打者榜前40名分5頁，原順位、可信度與數值欄保留");
 assert(g("(__r045PitFirst.match(/class=\"v55dc-row\"/g)||[]).length===8 && (__r045PitLast.match(/class=\"v55dc-row\"/g)||[]).length===8 && __r045PitLast.includes('<td>33</td>') && __r045PitLast.includes('<td>40</td>') && __r045PitLast.includes('資料可信度：中')"), "r045 投手榜前40名分5頁且原順位完整");
 assert(g("(__r045LuckBat.match(/class=\"v55dc-row\"/g)||[]).length===1 && __r045LuckBat.includes('打者・25') && (__r045LuckPit.match(/class=\"v55dc-row\"/g)||[]).length===2 && __r045LuckPit.includes('投手・10') && __r045Pure"), "r045 運氣校正25名打者及10名投手分類分頁，純呈現不修改存檔");
+
+console.log("\n--- r047 國際市場共享能力比較 ---");
+g(`var __r047SavedUI=JSON.stringify(UI);
+var __r047A={id:'R047A',name:'比較甲',isPitcher:false,scouted:{contact:60,power:55,eye:50,speed:58,fielding:62,arm:63,stamina:55,durability:60},scoutedOverall:58,scoutedCeilingVal:78,positions:[]};
+var __r047B={id:'R047B',name:'比較乙',isPitcher:false,scouted:{contact:52,power:65,eye:54,speed:62,fielding:58,arm:60,stamina:57,durability:61},scoutedOverall:59,scoutedCeilingVal:75,positions:[]};
+var __r047PairsA=scoutedAttrPairs(__r047A),__r047PairsB=scoutedAttrPairs(__r047B);
+UI.intlCompareTab='core';var __r047Html=v60IntlComparisonHtml([__r047A,__r047B]);
+var __r047AllValues=__r047PairsA.concat(__r047PairsB).every(function(pair){return __r047Html.includes(pair[1]);});
+var __r047RowsA=(scoutedAttrRows(__r047A).match(/class="attr attr2"/g)||[]).length;
+UI=JSON.parse(__r047SavedUI);`);
+assert(g("__r047PairsA.length===__r047RowsA && __r047PairsB.length>=6 && __r047AllValues && __r047Html.includes('比較甲') && __r047Html.includes('比較乙')"), "r047 共享比較保留原球探報告全部能力數值與兩人欄位");
+assert(g("__r047Html.includes('data-intl-compare-tab=\"core\"') && __r047Html.includes('data-intl-compare-tab=\"running\"') && __r047Html.includes('data-intl-compare-tab=\"fielding\"') && __r047Html.includes('data-intl-compare-tab=\"body\"') && __r047Html.includes('data-intl-compare-panel=\"body\"')"), "r047 國際市場四類比較可直接切換且保留全部分組");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

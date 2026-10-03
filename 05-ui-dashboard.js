@@ -443,7 +443,7 @@ function v60MountPreseasonDock() {
         <span class="v60-preseason-current"><small>本季預估</small><b>${snapshot.projectedNet >= 0 ? "+" : ""}${formatMoney(snapshot.projectedNet)}</b></span>
       </button>
       <nav class="v60-preseason-links" aria-label="開季準備入口">
-        <button type="button" data-v60-prep="next" aria-label="開啟目前開季項目：${stage.short}" title="目前項目：${stage.short}"><span>目前</span><small>${stage.short}</small></button>
+        <button type="button" data-v60-prep="current" aria-label="返回目前待完成項目：${stage.short}" title="返回目前待完成項目：${stage.short}"><span>待辦</span><small>${stage.short}</small></button>
         <button type="button" data-v60-prep="contracts">談約${(S.pendingContractRenewals || []).length ? `・${S.pendingContractRenewals.length}` : ""}</button>
         <button type="button" data-v60-prep="ticket">票價</button>
         <button type="button" data-v60-prep="marketing">行銷</button>
@@ -457,7 +457,7 @@ function v60MountPreseasonDock() {
   root.querySelectorAll("[data-v60-prep]").forEach(button => {
     button.onclick = () => {
       const route = button.dataset.v60Prep;
-      if (route === "next") return v60PreseasonGoNext();
+      if (route === "current") return v60PreseasonGoNext();
       if (route === "complete") return v60PreseasonCompleteStep(button.dataset.step);
       if (route === "contracts") return v60PreseasonOpenContracts();
       if (route === "finance" || route === "ticket") {

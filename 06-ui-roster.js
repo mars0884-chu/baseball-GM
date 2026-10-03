@@ -1000,6 +1000,34 @@ function renderFreeAgents() {
 }
 
 
+/* 國際市場每頁共用一組能力欄名，兩名球員並排比較；資料仍取自原球探視圖。 */
+function v60IntlComparisonHtml(players) {
+  const columns = players.map(p => {
+    const occurrences = {};
+    return scoutedAttrPairs(p).map(([label, value]) => {
+      occurrences[label] = (occurrences[label] || 0) + 1;
+      return { key: `${label}:${occurrences[label]}`, label, value };
+    });
+  });
+  const labels = [];
+  columns.forEach(col => col.forEach(row => { if (!labels.some(item => item.key === row.key)) labels.push({ key: row.key, label: row.label }); }));
+  if (!labels.length) return `<p class="v60-state-line">尚無球探詳細能力資料。</p>`;
+  const groups = [
+    { key: "core", name: "核心", values: ["接觸", "長打", "選球", "球速", "控球"] },
+    { key: "running", name: "對位／跑壘", values: ["對左投", "對右投", "速度", "盜壘", "觸擊"] },
+    { key: "fielding", name: "守備／捕手", values: ["守備", "臂力", "配球", "接捕", "阻殺", "阻擋", "傳球", "調教"] },
+    { key: "body", name: "體能／球路", values: [] }
+  ];
+  const shown = groups.map(group => ({ ...group, rows: labels.filter(item => group.key === "body" ? !groups.slice(0, 3).some(other => other.values.includes(item.label)) : group.values.includes(item.label)) })).filter(group => group.rows.length);
+  const active = shown.some(group => group.key === UI.intlCompareTab) ? UI.intlCompareTab : shown[0].key;
+  UI.intlCompareTab = active;
+  const rowHtml = item => `<div class="v60-intl-compare-row" role="row"><span role="rowheader">${v60UiEscape(item.label)}</span>${columns.map(col => `<span role="cell">${(col.find(row => row.key === item.key) || {}).value || "—"}</span>`).join("")}</div>`;
+  return `<div class="v60-intl-compare-tabs" role="tablist" aria-label="球員能力類別">${shown.map(group => `<button type="button" role="tab" data-intl-compare-tab="${group.key}" aria-selected="${group.key === active}">${group.name}・${group.rows.length}</button>`).join("")}</div>
+    ${shown.map(group => `<div class="v60-intl-compare ${players.length === 1 ? "is-single" : ""}" role="table" data-intl-compare-panel="${group.key}" aria-label="${group.name}能力比較" ${group.key === active ? "" : "hidden"}>
+      <div class="v60-intl-compare-row v60-intl-compare-head" role="row"><span role="columnheader">能力</span>${players.map(p => `<span role="columnheader">${v60UiEscape(p.name)}</span>`).join("")}</div>
+      ${group.rows.map(rowHtml).join("")}
+    </div>`).join("")}`;
+}
 function renderInternationalMarket() {
   const team = S.teams[S.userTeamId];
   ensureFacilities(team);
@@ -1029,18 +1057,20 @@ function renderInternationalMarket() {
   const page = Math.max(0, Math.min(pageCount - 1, Number(UI.intlMarketPage) || 0));
   UI.intlMarketPage = page;
   const visibleInternational = intlFiltered.slice(page * pageSize, page * pageSize + pageSize);
+  const sharedMaturity = visibleInternational.length > 1 && visibleInternational.every(p => p.maturity === visibleInternational[0].maturity) ? visibleInternational[0].maturity : null;
+  const sharedConfidence = visibleInternational.length > 1 && visibleInternational.every(p => p.scoutConfidence === visibleInternational[0].scoutConfidence) ? visibleInternational[0].scoutConfidence : null;
   const pager = `<nav class="v60-draft-pager" aria-label="國際球員分頁"><button data-intl-page="${page - 1}" ${page === 0 ? "disabled" : ""}>上一頁</button><span>${page + 1}／${pageCount} 頁・${intlFiltered.length} 人</span><button data-intl-page="${page + 1}" ${page === pageCount - 1 ? "disabled" : ""}>下一頁</button></nav>`;
   app.innerHTML = `
-    <div class="wrap">
-      <div class="topbar"><div class="eyebrow">${team.name}</div><h1>國際球員市場</h1></div>
+    <div class="wrap v60-intl-market">
+      <div class="topbar"><div><div class="eyebrow">${team.name}</div><h1>國際球員市場</h1></div><button id="btn-back" class="btn-outline">返回</button></div>
       ${renderRosterNav("internationalMarket")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      <div class="scoreboard">
-        <div class="sb-row small"><div class="sb-label">負責球探</div><div class="sb-value small">${scout ? scout.name : "（職位空缺・盲評）"}</div></div>
-        <div class="sb-row small"><div class="sb-label">有效評估精準度</div><div class="sb-value small">${effAcc}${bonus > 0 && scout ? `（${scout.accuracy}＋辦公室${bonus}）` : ""}</div></div>
-        <div class="sb-row small"><div class="sb-label">獨家人脈人選</div><div class="sb-value small">${exclusiveCount} 位</div></div>
-        <div class="sb-row small"><div class="sb-label">1軍外籍名額</div><div class="sb-value small">${fCount}/${FOREIGN_ROSTER_CAP}</div></div>
-      </div>
+      ${v60VisualMetricRail([
+        ["球探", scout ? scout.name : "空缺・盲評"],
+        ["評估準度", `${effAcc}${bonus > 0 && scout ? `（${scout.accuracy}＋辦公室${bonus}）` : ""}`],
+        ["獨家", `${exclusiveCount} 位`],
+        ["一軍外籍", `${fCount}/${FOREIGN_ROSTER_CAP}`]
+      ], "國際市場球探與名額摘要")}
       ${posFilterBarHtml(intlAllAgents, "intlPosFilter")}
       <div class="btnrow" style="align-items:center;">
         <select id="sort-intl" class="sortselect" style="flex:1;">
@@ -1054,8 +1084,7 @@ function renderInternationalMarket() {
         </select>
         ${sortDirButtonHtml("intlSortDir")}
       </div>
-      <p class="v60-state-line" aria-label="國際市場規則">休賽更新・未簽留存 · 40國分級影響素質 · 球探估值（準度見上） · 獨家限本隊 · 名單 1軍 ${team.roster1.length}/28・2軍 ${team.roster2.length}/32</p>
-      <p class="draftnote muted" aria-label="球探數據圖例">已評估：現況→天花板</p>
+      <p class="v60-state-line" aria-label="國際市場規則">休賽更新・未簽留存 · 40國分級 · 獨家限本隊 · 名單 1軍 ${team.roster1.length}/28・2軍 ${team.roster2.length}/32</p>
       ${intlFiltered.length === 0 ? `<p class="sub dark">目前沒有可簽人選。</p>` : `${pager}${visibleInternational.map(p => `
       <div class="card draftcard">
         <div class="draftcard-head">
@@ -1070,33 +1099,17 @@ function renderInternationalMarket() {
           <span class="gradebadge grade-${p.scoutedGrade}">現況 ${p.scoutedGrade}${p.scoutedOverall != null ? `（${p.scoutedOverall}）` : ""}</span>
           <span class="gradebadge grade-${p.scoutedCeiling}">天花板 ${p.scoutedCeiling}${p.scoutedCeilingVal != null ? `（約${p.scoutedCeilingVal}）` : ""}</span>
         </div>
-        <div class="attrgrid">
-          ${p.scouted ? `
-          ${scoutedAttrRows(p)}` : `
-          ${p.isPitcher ? `
-            <div class="attr"><span>球速</span><b>${velocityKmh(p.scouted.velocity)} km/h</b></div>
-            <div class="attr"><span>控球</span><b>${p.scouted.control}</b></div>
-            <div class="attr"><span>體力</span><b>${p.scouted.stamina}</b></div>
-            <div class="attr"><span>抗壓</span><b>${p.scouted.composure}</b></div>
-            <div class="attr"><span>球路數</span><b>${p.pitches.length} 種</b></div>
-          ` : `
-            <div class="attr"><span>接觸</span><b>${p.scouted.contact}</b></div>
-            <div class="attr"><span>長打</span><b>${p.scouted.power}</b></div>
-            <div class="attr"><span>選球</span><b>${p.scouted.eye}</b></div>
-            <div class="attr"><span>速度</span><b>${p.scouted.speed}</b></div>
-            <div class="attr"><span>盜壘</span><b>${p.scouted.steal}</b></div>
-            <div class="attr"><span>守備</span><b>${p.scouted.fielding}%</b></div>
-            <div class="attr"><span>臂力</span><b>${p.scouted.arm}</b></div>
-            <div class="attr"><span>抗壓</span><b>${p.scouted.composure}</b></div>
-          `}`}
-        </div>
-        <div class="draftnote">${p.archetype} ・ ${p.maturity}</div>
-        <div class="draftnote muted">${p.scoutConfidence}${p.exclusive ? " ・ 球探獨家人脈，僅本隊可接觸簽約" : ""}</div>
-      </div>`).join("")}`}
-      <div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>
+        <div class="draftnote">${p.archetype}${sharedMaturity ? "" : ` ・ ${p.maturity}`}</div>
+        ${sharedConfidence ? "" : `<div class="draftnote muted">${p.scoutConfidence}</div>`}
+      </div>`).join("")}${sharedMaturity || sharedConfidence ? `<p class="v60-state-line" aria-label="本頁球員共通評估">兩人共通・${[sharedMaturity, sharedConfidence].filter(Boolean).join("・")}</p>` : ""}${v60IntlComparisonHtml(visibleInternational)}`}
     </div>`;
   document.getElementById("sort-intl").onchange = e => { UI.intlSort = e.target.value; render(); };
   app.querySelectorAll("[data-intl-page]").forEach(btn => { btn.onclick = () => { UI.intlMarketPage = Number(btn.dataset.intlPage); render(); window.scrollTo(0, 0); }; });
+  app.querySelectorAll("[data-intl-compare-tab]").forEach(btn => { btn.onclick = () => {
+    UI.intlCompareTab = btn.dataset.intlCompareTab;
+    app.querySelectorAll("[data-intl-compare-tab]").forEach(tab => tab.setAttribute("aria-selected", String(tab.dataset.intlCompareTab === UI.intlCompareTab)));
+    app.querySelectorAll("[data-intl-compare-panel]").forEach(panel => { panel.hidden = panel.dataset.intlComparePanel !== UI.intlCompareTab; });
+  }; });
   wirePosFilterButtons();
   wireSortDirButtons();
   app.querySelectorAll(".sign-intl-btn").forEach(btn => {
@@ -1343,7 +1356,7 @@ function renderDraft() {
             }).join("")}
           </tbody>
         </table>
-        <div class="btnrow"><button id="btn-start-season" class="btn-primary">開始新球季</button></div>
+        <div class="btnrow"><button id="btn-start-season" class="btn-primary">完成選秀，進入開季準備</button></div>
       </div>`;
     document.getElementById("btn-start-season").onclick = () => { S.gameStarted ? finalizeNewSeason() : beginFirstSeason(); };
     return;

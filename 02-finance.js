@@ -2220,8 +2220,8 @@ function negoStatLine(p, s) {
 }
 /* v37②：新秀逐屬性「現在(評估) → 預估~天花板」列（球探報告與選秀卡共用）。
    預估值由 scoutedAttrProjection 依總成長空間推估；資料不足時只顯示現在值。 */
-function scoutedAttrRows(p) {
-  if (!p || !p.scouted) return "";
+function scoutedAttrPairs(p) {
+  if (!p || !p.scouted) return [];
   /* v38①：優先採用逐屬性天花板評估（p.scoutedPots，每屬性各自霧化，真差異化）；
      舊存檔的球員若尚無 scoutedPots，退回 v37 的等位移推估，畫面不會開天窗。 */
   const proj = (cur, key) => {
@@ -2229,36 +2229,39 @@ function scoutedAttrRows(p) {
     return scoutedAttrProjection(cur, p.scoutedOverall, p.scoutedCeilingVal);
   };
   const row = (label, cur, isVel, key) => {
-    if (cur == null) return "";
+    if (cur == null) return null;
     const pv = proj(cur, key);
     const curTxt = isVel ? (velocityKmh(cur) + "km/h") : cur;
     const projTxt = (pv == null) ? "" : (isVel ? ("~" + velocityKmh(pv) + "km/h") : ("~" + pv));
-    return `<div class="attr attr2"><span>${label}</span><b>${curTxt}${projTxt ? `<span class="proj"> → ${projTxt}</span>` : ""}</b></div>`;
+    return [label, `${curTxt}${projTxt ? `<span class="proj"> → ${projTxt}</span>` : ""}`];
   };
   const s = p.scouted;
   // v46：補齊 p.scouted 未涵蓋的欄位（對左右投/盜壘/觸擊/體力/耐久/捕手三項/變化球），走全欄位球探視圖（每季快取、不跳動）。
   const sv = (typeof v46ScoutViewFor === "function") ? v46ScoutViewFor(p) : {};
   const xrow = (label, key, isVel) => {
     const v = (s && s[key] != null) ? s[key] : (sv ? sv[key] : null);
-    if (v == null) return "";
+    if (v == null) return null;
     const txt = isVel ? (velocityKmh(v) + "km/h") : v;
-    return `<div class="attr attr2"><span>${label}</span><b>${txt}</b></div>`;
+    return [label, String(txt)];
   };
   if (p.isPitcher) {
-    const core = row("球速", s.velocity, true, "velocity") + row("控球", s.control, false, "control") + row("體力", s.stamina, false, "stamina") + row("抗壓", s.composure, false, "composure") + xrow("耐久", "durability", false);
+    const core = [row("球速", s.velocity, true, "velocity"), row("控球", s.control, false, "control"), row("體力", s.stamina, false, "stamina"), row("抗壓", s.composure, false, "composure"), xrow("耐久", "durability", false)];
     const pitches = (sv && sv.pitches ? sv.pitches : (p.pitches || []));
     // 變化球：每顆一個網格格子（球種名／球威・控球），融入既有 2 欄網格不破版
-    const pitchHtml = pitches.map(pt => `<div class="attr attr2"><span>${pt.type}</span><b>威${pt.stuff != null ? pt.stuff : "—"}／控${pt.control != null ? pt.control : "—"}</b></div>`).join("");
-    return core + pitchHtml;
+    const pitchPairs = pitches.map(pt => [pt.type, `威${pt.stuff != null ? pt.stuff : "—"}／控${pt.control != null ? pt.control : "—"}`]);
+    return core.filter(Boolean).concat(pitchPairs);
   }
-  const batCore = row("接觸", s.contact, false, "contact") + row("長打", s.power, false, "power") + row("選球", s.eye, false, "eye")
-    + xrow("對左投", "vsL") + xrow("對右投", "vsR")
-    + row("速度", s.speed, false, "speed") + xrow("盜壘", "steal") + xrow("觸擊", "bunting")
-    + row("守備", s.fielding, false, "fielding") + row("臂力", s.arm, false, "arm") + xrow("體力", "stamina") + xrow("耐久", "durability");
+  const batCore = [row("接觸", s.contact, false, "contact"), row("長打", s.power, false, "power"), row("選球", s.eye, false, "eye"),
+    xrow("對左投", "vsL"), xrow("對右投", "vsR"),
+    row("速度", s.speed, false, "speed"), xrow("盜壘", "steal"), xrow("觸擊", "bunting"),
+    row("守備", s.fielding, false, "fielding"), row("臂力", s.arm, false, "arm"), xrow("體力", "stamina"), xrow("耐久", "durability")];
   const catHtml = (p.gameCalling != null)
-    ? xrow("配球", "gameCalling") + xrow("接捕", "framing") + xrow("阻殺", "caughtStealing") + xrow("阻擋", "blocking") + xrow("傳球", "popTime") + xrow("調教", "pitcherHandling")
-    : "";
-  return batCore + catHtml;
+    ? [xrow("配球", "gameCalling"), xrow("接捕", "framing"), xrow("阻殺", "caughtStealing"), xrow("阻擋", "blocking"), xrow("傳球", "popTime"), xrow("調教", "pitcherHandling")]
+    : [];
+  return batCore.concat(catHtml).filter(Boolean);
+}
+function scoutedAttrRows(p) {
+  return scoutedAttrPairs(p).map(([label, value]) => `<div class="attr attr2"><span>${label}</span><b>${value}</b></div>`).join("");
 }
 function negotiationScoutBlock(p, neg) {
   const team = S.teams[neg.teamId || S.userTeamId];
