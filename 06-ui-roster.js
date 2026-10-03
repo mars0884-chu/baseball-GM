@@ -1333,8 +1333,24 @@ function renderCoaches() {
   wireRosterNav();
 }
 
+// 選秀最後一個操作完成後自動銜接；選秀核心仍先完成名單、薪資與選秀結果收尾。
+function v60AdvanceAfterDraftAction() {
+  if (!S.draft || S.draft.active || UI.negotiation || UI.screen !== "draft") return false;
+  UI.completedDraft = { active: false, picks: S.draft.picks.slice(), skippedByUser: S.draft.skippedByUser || 0 };
+  if (S.gameStarted) {
+    finalizeNewSeason();
+    // 自主訓練已在換季時計算並保存；報告可由開季列查看，不再是要額外按「繼續」的關卡。
+    UI.screen = "finance";
+    UI.tabs = UI.tabs || {};
+    UI.tabs.finance = "deals";
+    render();
+  } else beginFirstSeason();
+  return true;
+}
 function renderDraft() {
-  const d = S.draft;
+  const recap = UI.screen === "draftRecap";
+  const d = recap ? UI.completedDraft : S.draft;
+  if (!d) { UI.screen = "dashboard"; render(); return; }
   if (!d.active) {
     const myPicks = d.picks.filter(pk => pk.team === S.userTeamId && S.players[pk.playerId]);
     const myFailed = d.picks.filter(pk => pk.team === S.userTeamId && pk.failed);
@@ -1356,9 +1372,9 @@ function renderDraft() {
             }).join("")}
           </tbody>
         </table>
-        <div class="btnrow"><button id="btn-start-season" class="btn-primary">完成選秀，進入開季準備</button></div>
+        <div class="btnrow"><button id="btn-start-season" class="btn-primary">${recap ? "返回開季準備" : "完成選秀，進入開季準備"}</button></div>
       </div>`;
-    document.getElementById("btn-start-season").onclick = () => { S.gameStarted ? finalizeNewSeason() : beginFirstSeason(); };
+    document.getElementById("btn-start-season").onclick = () => { if (recap) v60PreseasonGoNext(); else if (S.gameStarted) finalizeNewSeason(); else beginFirstSeason(); };
     return;
   }
 
@@ -1443,8 +1459,8 @@ function renderDraft() {
   document.getElementById("sort-draft").onchange = (e) => { UI.draftSort = e.target.value; render(); };
   wirePosFilterButtons();
   if (UI.draftSkipConfirm) {
-    document.getElementById("btn-skip-once").onclick = () => confirmSkipOnce();
-    document.getElementById("btn-skip-all").onclick = () => confirmSkipAllRemaining();
+    document.getElementById("btn-skip-once").onclick = () => { confirmSkipOnce(); v60AdvanceAfterDraftAction(); };
+    document.getElementById("btn-skip-all").onclick = () => { confirmSkipAllRemaining(); v60AdvanceAfterDraftAction(); };
     document.getElementById("btn-skip-cancel").onclick = () => cancelSkip();
   } else {
     document.getElementById("btn-skip-pick").onclick = () => userSkipPick();

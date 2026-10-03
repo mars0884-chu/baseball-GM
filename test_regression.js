@@ -4780,5 +4780,19 @@ UI=JSON.parse(__r049SavedUI);app.innerHTML=__r049OldHtml;`);
 assert(g("Object.values(__r049Pages).every(function(html){return (html.match(/class=\"v50-teamcard v55-teamcard-ext v60-approved-teamcard\"/g)||[]).length===5 && (html.match(/data-identity-source=\"approved-theme-pack\"/g)||[]).length===5 && (html.match(/data-team-division=\"/g)||[]).length===4;})"), "r049 四分區各五隊，保留核准隊徽來源及全部選隊按鈕");
 assert(g("Object.entries(__r049Pages).every(function(entry){var div=entry[0],html=entry[1];return Object.values(S.teams).filter(function(t){return t.division===div;}).every(function(t){return html.includes('data-id=\"'+t.id+'\"');});}) && __r049Unchanged"), "r049 二十隊皆能在所屬分區找到；切換僅更新 UI，不改遊戲狀態");
 
+console.log("\n--- r050 選秀完成自動銜接開季準備 ---");
+g(`var __r050SavedS=JSON.stringify(S),__r050SavedUI=JSON.stringify(UI);
+newGame('自動銜接測試');pickTeam('T0');pickGameMode('gm_coach');proceedFromOffseasonSummary();confirmSkipAllRemaining();
+var __r050Finished=!!S.draft&&!S.draft.active, __r050NoPrematureMove=UI.screen==='draft';
+var __r050Advanced=v60AdvanceAfterDraftAction(),__r050Prep=UI.screen==='finance'&&UI.tabs.finance==='deals'&&v60PreseasonMissingStep()==='deals';
+var __r050Again=v60AdvanceAfterDraftAction(),__r050NoDouble=!__r050Again&&v60PreseasonMissingStep()==='deals';
+V60_PRESEASON_STEPS.forEach(k=>v60PreseasonCompleteStep(k));executeSpringCamp();S.currentDay=S.schedule.length;
+startDraft();UI.screen='draft';confirmSkipAllRemaining();var __r050AnnualFinished=!!S.draft&&!S.draft.active;
+var __r050AnnualAdvanced=v60AdvanceAfterDraftAction(),__r050AnnualPrep=UI.screen==='finance'&&UI.tabs.finance==='deals'&&S.seasonYear===2&&!!S.selfTrainingReport&&v60PreseasonMissingStep()==='deals';
+S=JSON.parse(__r050SavedS);UI=JSON.parse(__r050SavedUI);`);
+assert(g("__r050Finished && __r050NoPrematureMove && __r050Advanced && __r050Prep && __r050NoDouble"), "r050 選秀操作完成後自動進入談約檢查，尚未完成準備不可直接春訓，重入不重複換季");
+assert(g("__r050AnnualFinished && __r050AnnualAdvanced && __r050AnnualPrep"), "r050 後續球季選秀完成也自動換季進開季準備，自主訓練成果保留供回看");
+assert(v60PrepRoster.includes('confirmSkipOnce(); v60AdvanceAfterDraftAction()') && v60PrepFinance.includes('neg.kind === "rookie"') && v60PrepFinance.includes('v60AdvanceAfterDraftAction()'), "r050 放棄順位與新秀談薪結束皆接到自動銜接入口");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

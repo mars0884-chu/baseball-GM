@@ -2599,7 +2599,7 @@ function beginFirstSeason() {
   prepareSpringCamp(); // v25：選秀結束後先進春訓（母國免費／海外付費），完成後才開幕
   UI.screen = "finance";
   UI.tabs = UI.tabs || {}; UI.tabs.finance = "deals";
-  UI.flash = `選秀完成。先確認第 ${S.seasonYear} 年球季的開季準備，完成後會進入春訓。`;
+  UI.flash = "選秀完成，請確認開季準備。";
   persist();
   render();
 }
@@ -2767,7 +2767,7 @@ function finalizeNewSeason() {
   prepareSpringCamp(); // v25：新球季開幕前先進春訓
   UI.screen = "selfTraining"; // v31-B：先看自主訓練/傳承報告，再前往春訓
   const rc = S.offseasonSummary ? S.offseasonSummary.retiredCount : 0;
-  UI.flash = `第 ${S.seasonYear} 年球季即將開幕！本休賽季共有 ${rc} 位球員退休，選秀會已完成補強。`;
+  UI.flash = `第 ${S.seasonYear} 年開季準備；本休賽季退休 ${rc} 人。`;
   persist();
   render();
 }

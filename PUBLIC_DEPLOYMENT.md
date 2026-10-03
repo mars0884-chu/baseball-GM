@@ -1,3 +1,13 @@
+# v60-r050 選秀完成自動銜接與逐頁稽核
+
+## r050：完成選秀後自動進入開季準備
+
+- 玩家完成最後一個選秀動作（跳過順位、全部放棄或新秀談薪結束）後，介面自動銜接談約檢查；不再依賴選秀摘要頁的額外「下一步」。核心 `finishDraft()` 仍先完成選秀結算，不在其中過早清除選秀結果。既有舊存檔的摘要按鈕保留；本次會話可從開季列回看選秀成果。年度換季的自主訓練照舊自動計算並保存，報告可由頁首開啟，不再阻擋開季準備。春訓仍需逐項確認談約、票價、行銷、硬體與名單；直接呼叫春訓執行入口不可略過或扣款。
+- 已移除開季交接訊息的重複長說明；必要的退休人數與行動入口保留。`UI.completedDraft` 是本次會話的可回看摘要，不寫入 Save；舊版正式包與 `current/`、Delivery／Art ZIP、manifest、SHA、`CURRENT_PACKAGE.json` 未修改，原有未提交的 `manifest.webmanifest` 未納入。
+- 真實瀏覽器以 320／390／1280px 驗證新局與後續球季的選秀完成、成果回看、下一年度自主訓練報告回看、五項開季準備、春訓守門與開賽按鈕；三種寬度均無水平溢位或頁面例外。證據：`_staging/v60-010-preseason-flow-candidate/audit_v60_r050_draft_autoadvance.js`、`browser-proof/v60-r050-draft-auto.json` 與截圖。
+- 另以實際狀態重跑先前失真的四條合成路由：季後賽、交易組合、分析主管續約、春訓成果皆成功進入目標頁。`directorRenewal` 重複渲染會消耗共享亂數並改變報價（`browser-proof/v60-r050-context-routes.json`），屬尚未修正的獨立高風險缺陷，不能當作文字減量已結案。交易組合與春訓成果亦仍待後續逐頁減量；全遊戲文字量沒有完成 50% 證據。
+- 本批 `node test_regression.js`：1,873 通過／0 失敗；`node smoke_multiyear.js`：15 年＋全畫面渲染通過；`node smoke_puregm.js`：純 GM 15 年通過。公開 Pages 部署及 Mars 真機驗收尚待確認；公開快取鍵為 `v60-r050-auto-preseason`。
+
 # v60-r049 選隊分區與核准隊徽可讀性
 
 ## r049：選隊以既有四分區切換，每區五隊

@@ -442,13 +442,15 @@ function v60MountPreseasonDock() {
         <span><small>上季實績</small><b>${previous}</b></span>
         <span class="v60-preseason-current"><small>本季預估</small><b>${snapshot.projectedNet >= 0 ? "+" : ""}${formatMoney(snapshot.projectedNet)}</b></span>
       </button>
-      <nav class="v60-preseason-links" aria-label="開季準備入口">
+      <nav class="v60-preseason-links ${S.selfTrainingReport && S.springCampDoneYear !== S.seasonYear ? "has-report" : ""} ${UI.completedDraft ? "has-recap" : ""}" aria-label="開季準備入口">
         <button type="button" data-v60-prep="current" aria-label="返回目前待完成項目：${stage.short}" title="返回目前待完成項目：${stage.short}"><span>待辦</span><small>${stage.short}</small></button>
         <button type="button" data-v60-prep="contracts">談約${(S.pendingContractRenewals || []).length ? `・${S.pendingContractRenewals.length}` : ""}</button>
         <button type="button" data-v60-prep="ticket">票價</button>
         <button type="button" data-v60-prep="marketing">行銷</button>
         <button type="button" data-v60-prep="facilities">硬體</button>
         <button type="button" data-v60-prep="roster">名單</button>
+        ${UI.completedDraft ? '<button type="button" data-v60-prep="draftRecap">選秀成果</button>' : ""}
+        ${S.selfTrainingReport && S.springCampDoneYear !== S.seasonYear ? '<button type="button" data-v60-prep="selfTraining">自主訓練成果</button>' : ""}
         <button type="button" data-v60-prep="spring" ${!v60PreseasonSpringReady() || v60PreseasonMissingStep() ? "disabled" : ""}>春訓</button>
       </nav>
       ${reviewAction ? `<button type="button" class="v60-preseason-review-action" data-v60-prep="complete" data-step="${reviewAction.key}">${reviewAction.label}</button>` : ""}
@@ -465,6 +467,8 @@ function v60MountPreseasonDock() {
       } else if (route === "marketing") UI.screen = "marketing";
       else if (route === "facilities") UI.screen = "facilities";
       else if (route === "roster") UI.screen = "roster";
+      else if (route === "draftRecap") UI.screen = "draftRecap";
+      else if (route === "selfTraining") UI.screen = "selfTraining";
       else if (route === "spring") {
         const missing = v60PreseasonMissingStep();
         if (missing) return v60PreseasonOpenStep(missing);
@@ -515,6 +519,7 @@ function renderScreen() {
   if (UI.screen === "playerDetail") return renderPlayerDetail();
   if (UI.screen === "playoffs") return renderPlayoffs();
   if (UI.screen === "draft") return renderDraft();
+  if (UI.screen === "draftRecap") return renderDraft();
   if (UI.screen === "awards") return renderAwards();
   if (UI.screen === "offseasonSummary") return renderOffseasonSummary();
   if (UI.screen === "coaches") return renderCoaches();

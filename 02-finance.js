@@ -2385,6 +2385,7 @@ function renderNegotiation() {
   };
   document.getElementById("btn-neg-submit").onclick = () => {
     submitNegotiationOffer((Number(salaryInput.value) || 0) * 10000, document.getElementById("in-neg-years").value);
+    if (neg.kind === "rookie" && typeof v60AdvanceAfterDraftAction === "function") v60AdvanceAfterDraftAction();
   };
   document.getElementById("btn-neg-cancel").onclick = () => cancelNegotiation();
   const scoutBtn = document.getElementById("btn-scout-agent");

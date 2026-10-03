@@ -1306,6 +1306,11 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-preseason-review-action{display:block;width:100%;min-height:42px;margin-top:6px;padding:8px 12px;border:1px solid #143CFF;border-radius:9px;background:#143CFF;color:#FFFFFF;font-size:13px;font-weight:800;cursor:pointer;}
 .v60-preseason-review-action:focus-visible{outline:3px solid #21C9D6;outline-offset:2px;}
 .v60-preseason-links button:focus-visible,.v60-preseason-finance:focus-visible{outline:3px solid #21C9D6;outline-offset:2px;}
+.v60-preseason-links.has-report{grid-template-columns:repeat(4,minmax(0,1fr));}
+.v60-preseason-links.has-recap{grid-template-columns:repeat(4,minmax(0,1fr));}
+.v60-preseason-links.has-report button[data-v60-prep="selfTraining"]{white-space:normal;line-height:1.15;}
+@media(min-width:700px){.v60-preseason-links.has-report{grid-template-columns:repeat(8,minmax(44px,1fr));}}
+@media(min-width:700px){.v60-preseason-links.has-recap{grid-template-columns:repeat(9,minmax(44px,1fr));}}
 .v60-roster-side-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0;}
 .v60-roster-side-tab{display:flex;align-items:center;justify-content:center;gap:7px;min-width:0;min-height:48px;padding:8px 10px;border:1px solid #AFCBF0;border-radius:10px;background:#FFFFFF;color:#1459B8;font-weight:800;cursor:pointer;}
 .v60-roster-side-tab span{font-size:12px;font-weight:700;opacity:.78;}
