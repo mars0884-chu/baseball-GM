@@ -5,6 +5,7 @@
 - 2026-10-03，續查 40 路由抽樣，選隊在 390px 一次縱向排 20 隊，頁高 1,972px。原程式已有 A1／A2／B1／B2 四個分區，但同時展開；本批改為四個直接可見頁籤，每次顯示五隊，選隊仍由原按鈕呼叫 `pickTeam()`。20 個球隊 ID、隊名、城市級別、性格標籤與核准 Theme Pack 隊徽均保留。原卡片另有 20 段 10px 城市敘事小字（共 343 字元），不承載規則或數據，已從選隊畫面移除；城市級別與性格標籤提高至 14px，避免單靠縮小文字塞入卡片。
 - 隔離瀏覽器以同一固定新局，比較 Git `HEAD` 與候選在 320／390／1280px 的實際 renderer。390px 首區可見字元 719→183、頁高 1,972→844px；320px 2,308→844px。這是首屏負擔，不能把隱於其他分區的 15 隊誤算成實際刪文；實際移除的是前述 343 字元裝飾文案。四分區 20 隊逐一核對隊名／級別／性格與圖源，20 張隊徽在切頁後皆成功解碼，最後一區可正常選隊進入開局身分頁；無水平溢位、頁面例外、共用亂數或 `S` 寫入，互動按鈕至少 44px。證據在 `_staging/v60-010-preseason-flow-candidate/audit_v60_r049_team_select.js`、`browser-proof/v60-r049-team-audit.json` 與截圖。
 - 稽核界線：先前 40 路由合成抽樣中的 `playoffs`／`tradeBuilder` 落入安全模式，`directorRenewal` 意外落到選秀且消耗亂數，`springReport` 落到主控台；這些不是有效的該頁視覺證據，後續須建立符合實際流程的情境再驗。選隊與開局身分、國際市場等已有獨立瀏覽器證據，但仍不能據此宣稱全遊戲 50% 減量。本批 `node test_regression.js`：1,870 通過／0 失敗；`node smoke_multiyear.js`：15 年＋全畫面渲染通過；`node smoke_puregm.js`：純 GM 15 年通過。正式 `current/`、Delivery／Art ZIP、manifest、SHA、`CURRENT_PACKAGE.json` 不動；原有未提交的 `manifest.webmanifest` 不納入。公開快取鍵 `v60-r049-team-division`，Mars 真機與主觀驗收待確認。
+- 2026-10-03，程式提交 `b709234d36e8ed036476ca0d823d5bff77953f39` 已推送 `main`；[GitHub Pages 建置](https://github.com/mars0884-chu/baseball-GM/actions/runs/37085664346) 為 `completed/success`。以唯一查詢參數與 `no-cache` 實際 GET 公開 `index.html`、`05-ui-dashboard.js`、`style.css`、`sw.js`，四者均 HTTP 200 且含 r049 對應標記。這證明公開靜態檔已更新，不等同已安裝 PWA 立即切換或 Mars 真機驗收。
 
 # v60-r048 開局身分權責比較
 
