@@ -5,6 +5,7 @@
 - 2026-10-03，國際球員市場原每頁兩人仍在各球員卡重複能力欄名及獨家說明。本批改為共享欄名的雙人比較表，依核心、對位／跑壘、守備／捕手、體能／球路四類切換；原始球探能力數值、兩人肖像、天花板、簽約操作及 19 名人選保留，不改球探或簽約規則。390px 初頁可見字元 777→553、頁高 2,039→1,311px；320px 2,327→1,443px。這是單頁同屏閱讀改善，未宣稱全遊戲文字減少 50%。
 - 休賽季逐站流程重驗：320／390／1280px 均從選秀後依談約→票價→行銷→硬體→名單→春訓切換；未完成時直接執行春訓會回到第一個漏項，不扣費、不推進日期。r047 將頁首易誤認為「下一步」的入口改為「待辦／返回目前待完成項目」，選秀結束按鈕改稱「完成選秀，進入開季準備」；完成每站仍自動前進。行銷可多選、硬體可連續建設，是否結束該站仍須玩家按「完成」，不會代玩家消費或設定。
 - 國際市場使用隔離瀏覽器比較 Git 基準與候選，檢查 320／390／1280px 排版、肖像載入、能力值與操作可達、共享亂數及錯誤；證據在 `_staging/v60-010-preseason-flow-candidate/audit_v60_r047_international.js`、`audit_v60_r044_preseason.js` 與 `browser-proof/`。40 路由情境抽樣只供找長頁優先序，其中數個合成情境落入安全模式，不能算完成全遊戲 UI 驗收。本批 `node test_regression.js`：1,866 通過／0 失敗；`node smoke_multiyear.js`：15 年＋全畫面渲染通過；`node smoke_puregm.js`：純 GM 15 年通過。正式 `current/`、Delivery／Art ZIP、manifest、SHA、`CURRENT_PACKAGE.json` 不動；原有未提交的 `manifest.webmanifest` 不納入。Mars 真機與主觀驗收待確認。公開快取鍵 `v60-r047-international-flow`。
+- 2026-10-03，程式提交 `3cf4a25c89cc8fff2913adacfe6aea0365557a6b` 已推送 `main`；[GitHub Pages 建置](https://github.com/mars0884-chu/baseball-GM/actions/runs/37084247005) 為 `completed/success`。以唯一查詢參數與 `no-cache` 實際 GET 公開 `index.html`、`05-ui-dashboard.js`、`06-ui-roster.js`、`02-finance.js`、`style.css`、`sw.js`，六者均 HTTP 200 且含對應 r047 程式或快取標記。這證明公開靜態檔已更新，不等同已安裝 PWA 立即切換或 Mars 真機驗收。
 
 # v60-r046 年度頒獎分組與手機長頁減量
 
