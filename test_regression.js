@@ -4794,5 +4794,19 @@ assert(g("__r050Finished && __r050NoPrematureMove && __r050Advanced && __r050Pre
 assert(g("__r050AnnualFinished && __r050AnnualAdvanced && __r050AnnualPrep"), "r050 後續球季選秀完成也自動換季進開季準備，自主訓練成果保留供回看");
 assert(v60PrepRoster.includes('confirmSkipOnce(); v60AdvanceAfterDraftAction()') && v60PrepFinance.includes('neg.kind === "rookie"') && v60PrepFinance.includes('v60AdvanceAfterDraftAction()'), "r050 放棄順位與新秀談薪結束皆接到自動銜接入口");
 
+console.log("\n--- r051 已完成選秀的舊存檔自動恢復 ---");
+g(`var __r051SavedS=JSON.stringify(S),__r051SavedUI=JSON.stringify(UI);
+newGame('舊檔銜接測試');pickTeam('T0');pickGameMode('gm_coach');proceedFromOffseasonSummary();confirmSkipAllRemaining();
+var __r051BlockedState=JSON.stringify(S),__r051DraftComplete=!!S.draft&&!S.draft.active;
+S.pendingContractRenewals=['TEST'];var __r051RenewBlocked=!v60ResumeCompletedDraft()&&!S.gameStarted;
+S.pendingContractRenewals=[];S.springCamp={year:S.seasonYear,executed:false};var __r051CampBlocked=!v60ResumeCompletedDraft()&&!S.gameStarted;
+S=JSON.parse(__r051BlockedState);S.gameStarted=true;S.offseasonEnteredYear=0;var __r051MidseasonBlocked=!v60ResumeCompletedDraft()&&S.gameStarted;
+S=JSON.parse(__r051BlockedState);UI.screen='offseasonSummary';
+var __r051Resumed=v60ResumeCompletedDraft(),__r051Ready=S.gameStarted&&UI.screen==='finance'&&v60PreseasonMissingStep()==='deals';
+var __r051Idempotent=!v60ResumeCompletedDraft()&&S.currentDay===0;
+S=JSON.parse(__r051SavedS);UI=JSON.parse(__r051SavedUI);`);
+assert(g("__r051DraftComplete && __r051RenewBlocked && __r051CampBlocked && __r051MidseasonBlocked && __r051Resumed && __r051Ready && __r051Idempotent"), "r051 只有已完成選秀且無待續約、未建立春訓的舊檔會自動銜接一次");
+assert(v60PrepRoster.includes("advancedDraft = v60ResumeCompletedDraft()") && v60PrepRoster.includes("if (!advancedDraft) render()"), "r051 正式載入路徑銜接完成選秀，不重複執行安全渲染");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

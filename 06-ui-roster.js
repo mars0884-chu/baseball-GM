@@ -1347,6 +1347,16 @@ function v60AdvanceAfterDraftAction() {
   } else beginFirstSeason();
   return true;
 }
+function v60ResumeCompletedDraft() {
+  if (!S || !S.draft || S.draft.active || S.draftDoneYear !== S.seasonYear
+    || (S.gameStarted && S.offseasonEnteredYear !== S.seasonYear)
+    || (S.gmCareer && S.gmCareer.fired && !S.sabbatical)
+    || (S.springCamp && S.springCamp.year === S.seasonYear) || S.forcedCutRequired
+    || (S.pendingContractRenewals || []).length || (S.pendingStaffRenewals || []).length
+    || S.v55PendingDirectorRenewal || !S.userTeamId) return false;
+  UI.screen = "draft";
+  return v60AdvanceAfterDraftAction();
+}
 function renderDraft() {
   const recap = UI.screen === "draftRecap";
   const d = recap ? UI.completedDraft : S.draft;
@@ -2500,15 +2510,17 @@ function hydrateLoadedState(saved) {
   try { saved = await loadState(); }
   catch (e) { saved = null; }          // 讀檔失敗（IndexedDB異常等）→ 當作無存檔
   UI.__rawSave = saved || null;         // 暫存原始存檔，供安全模式匯出（即使還原失敗也能匯出給開發者）
+  let advancedDraft = false;
   try {
     if (saved) hydrateLoadedState(saved);
+    if (saved) advancedDraft = v60ResumeCompletedDraft();
     else UI.screen = "setup";
   } catch (e) {
     // v35.1：還原存檔拋錯——不再靜默吃掉存檔，改進安全模式（保留存檔可匯出）
     UI.__bootError = "還原存檔時發生錯誤：" + ((e && e.message) || e);
     UI.screen = "bootRecovery";
   }
-  render(); // render 內已自帶 try/catch，渲染拋錯會自動落到安全模式
+  if (!advancedDraft) render(); // 已完成的舊選秀由交接函式渲染；其餘仍走原本安全渲染
 })();
 
 /* ====================================================================

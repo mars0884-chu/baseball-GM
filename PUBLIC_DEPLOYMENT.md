@@ -1,3 +1,12 @@
+# v60-r051 已完成選秀存檔恢復
+
+## r051：讀檔後不需再按舊版「下一步」
+
+- 正式 hydrate 路徑完成既有 Migration 後，僅在「本季選秀已完成、尚未建立本季春訓、無待裁員／球員或幕僚續約」時，自動銜接開季準備。未完成選秀、有待辦決策或已有春訓的存檔不受影響；成功銜接時只渲染一次，不重複換季。沒有新增 Save 欄位或改動模擬種子。
+- 以實際 IndexedDB 保存「已完成選秀但尚未按舊版按鈕」的存檔後重載，在 320／390／1280px 都自動進談約檢查，`gameStarted` 正確、春訓未執行、無水平溢位與頁面例外。證據：`_staging/v60-010-preseason-flow-candidate/audit_v60_r050_draft_autoadvance.js`、`browser-proof/v60-r050-draft-auto.json`。公開快取鍵 `v60-r051-recover-draft`。正式包及使用者原有未提交 `manifest.webmanifest` 仍不動。
+- `node test_regression.js`：1,875 通過／0 失敗；`node smoke_multiyear.js`：15 年＋全畫面渲染通過；`node smoke_puregm.js`：純 GM 15 年通過。讀檔恢復守門另驗證未完成續約、已有春訓、非休賽季狀態不可誤觸發。
+- 全遊戲逐頁文字減量尚未結案；r050 的四條情境路由稽核與分析主管續約的共享亂數缺陷仍是後續待處理項目。Mars 真機驗收待確認。
+
 # v60-r050 選秀完成自動銜接與逐頁稽核
 
 ## r050：完成選秀後自動進入開季準備
