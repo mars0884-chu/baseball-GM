@@ -4763,5 +4763,13 @@ UI=JSON.parse(__r047SavedUI);`);
 assert(g("__r047PairsA.length===__r047RowsA && __r047PairsB.length>=6 && __r047AllValues && __r047Html.includes('比較甲') && __r047Html.includes('比較乙')"), "r047 共享比較保留原球探報告全部能力數值與兩人欄位");
 assert(g("__r047Html.includes('data-intl-compare-tab=\"core\"') && __r047Html.includes('data-intl-compare-tab=\"running\"') && __r047Html.includes('data-intl-compare-tab=\"fielding\"') && __r047Html.includes('data-intl-compare-tab=\"body\"') && __r047Html.includes('data-intl-compare-panel=\"body\"')"), "r047 國際市場四類比較可直接切換且保留全部分組");
 
+console.log("\n--- r048 開局身分權責比較 ---");
+g(`var __r048Before=JSON.stringify(S),__r048OldHtml=app.innerHTML,__r048Random=Math.random,__r048Calls=0;
+Math.random=function(){__r048Calls++;return .5;};
+try{renderGameModePick();var __r048Html=app.innerHTML;}finally{Math.random=__r048Random;app.innerHTML=__r048OldHtml;}
+var __r048Unchanged=JSON.stringify(S)===__r048Before;`);
+assert(g("__r048Html.includes('btn-mode-pure') && __r048Html.includes('btn-mode-gmcoach') && __r048Html.includes('教練排打線、板凳與輪值') && __r048Html.includes('補強、財務與談判') && __r048Html.includes('主動提需求') && __r048Html.includes('教練排線／親自手排可切')"), "r048 兩種模式保留原權責與選擇操作，以同欄位比較取代長段落");
+assert(g("__r048Html.includes('信任 +10') && __r048Html.includes('信任 -30') && __r048Html.includes('愛管現場的名聲') && __r048Calls===0 && __r048Unchanged"), "r048 放權與接管代價仍明示，純渲染不改存檔或共用亂數");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

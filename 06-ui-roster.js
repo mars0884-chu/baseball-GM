@@ -2500,22 +2500,33 @@ function hydrateLoadedState(saved) {
    ==================================================================== */
 function renderGameModePick() {
   app.innerHTML = `
-    <div class="wrap">
-      <div class="hero">
-        <div class="eyebrow">CHOOSE YOUR SEAT</div>
+    <div class="wrap v60-mode-pick">
+      <div class="hero v60-mode-pick-heading">
+        <div class="eyebrow">開局身分</div>
         <h1>這一局，你是誰？</h1>
-        <p class="sub">開局身分決定你與總教練的權力邊界。之後隨時可「全面放權」轉為純GM（免費的正面事件），但反向只能透過有代價的「接管」——權力收回來，帳單跟著來。</p>
+        <p class="sub">選擇球場指揮權；球團經營始終由你決定。</p>
       </div>
-      <div class="card">
-        <div class="eyebrow">${(typeof assetSlot === "function" ? assetSlot("coach.portrait") : ""+icon('suit')+"")} 純 GM 模式（北極星推薦）</div>
-        <p class="sub dark">每日打線、板凳與輪休全權交給總教練——他會依自己的<b>棒球哲學</b>執行你的方針、主動遞出<b>補強需求單</b>。你專注在補強、財務與談判。看不下去時可以「接管」，但教練信任會重挫、聯盟會記住你是個愛管現場的GM。</p>
-        <button id="btn-mode-pure" class="btn-primary">以純 GM 開局</button>
+      <div class="v60-mode-pick-grid">
+        <section class="card v60-mode-pick-card" aria-labelledby="v60-mode-pure-title">
+          <div class="v60-mode-pick-title">${typeof assetSlot === "function" ? assetSlot("coach.portrait") : ""}<div><span class="eyebrow">推薦</span><h2 id="v60-mode-pure-title">純 GM</h2></div></div>
+          <dl class="v60-mode-pick-facts">
+            <div><dt>現場</dt><dd>教練排打線、板凳與輪值</dd></div>
+            <div><dt>你管</dt><dd>補強、財務與談判</dd></div>
+            <div><dt>教練</dt><dd>依哲學執行，主動提需求</dd></div>
+          </dl>
+          <button id="btn-mode-pure" class="btn-primary">以純 GM 開局</button>
+        </section>
+        <section class="card v60-mode-pick-card" aria-labelledby="v60-mode-gmcoach-title">
+          <div class="v60-mode-pick-title"><div><span class="eyebrow">可親自排兵</span><h2 id="v60-mode-gmcoach-title">GM 兼教練</h2></div></div>
+          <dl class="v60-mode-pick-facts">
+            <div><dt>現場</dt><dd>教練排線／親自手排可切</dd></div>
+            <div><dt>你管</dt><dd>球團經營、固定打線與板凳</dd></div>
+            <div><dt>往後</dt><dd>可免費放權成純 GM</dd></div>
+          </dl>
+          <button id="btn-mode-gmcoach" class="btn-secondary">以 GM 兼教練開局</button>
+        </section>
       </div>
-      <div class="card">
-        <div class="eyebrow">${icon('cap')} GM 兼教練模式</div>
-        <p class="sub dark">維持 v40 玩法：可隨時在「教練排線／GM手排」之間切換，親手固定打線與板凳專員。日後可一鍵放權轉為純GM。</p>
-        <button id="btn-mode-gmcoach" class="btn-secondary">以 GM 兼教練開局</button>
-      </div>
+      <p class="v60-mode-pick-cost">放權：教練信任 +10；純 GM 接管：信任 -30，留下愛管現場的名聲。</p>
     </div>`;
   document.getElementById("btn-mode-pure").onclick = () => pickGameMode("pure_gm");
   document.getElementById("btn-mode-gmcoach").onclick = () => pickGameMode("gm_coach");
