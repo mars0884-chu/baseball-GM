@@ -4819,5 +4819,25 @@ S=JSON.parse(__r052SavedS);UI=JSON.parse(__r052SavedUI);`);
 assert(g("(__r052GiveHtml.match(/class=\"give-pick-check\"/g)||[]).length===6 && !__r052GiveHtml.includes('class=\"get-pick-check\"') && (__r052GetHtml.match(/class=\"get-pick-check\"/g)||[]).length===6 && !__r052GetHtml.includes('class=\"give-pick-check\"')"), "r052 選秀權分頁每次僅呈現一側六筆，兩側皆可到達");
 assert(g("__r052GiveHtml.includes('本屆＋後2年・各6輪') && __r052GiveHtml.includes('原隊戰績差→順位前、估值高') && __r052GetHtml.includes('持有者選人') && __r052ScoutHtml.includes('守位') && __r052ScoutHtml.includes('球探估值') && __r052TermsHtml.includes('現金計入估值') && __r052TermsHtml.includes('v43-cash-give') && __r052TermsHtml.includes('btn-submit-trade')"), "r052 精簡後仍保留選秀權、球探估值、現金與交易提交規則及操作");
 
+console.log("\n--- r053 開季逐站守門與首頁更新 ---");
+g(`var __r053SavedS=JSON.stringify(S),__r053SavedUI=JSON.stringify(UI);
+newGame('逐站守門測試');pickTeam('T0');pickGameMode('gm_coach');
+S.gameStarted=true;S.currentDay=0;prepareSpringCamp();
+S.preseasonReview={year:S.seasonYear,teamId:S.userTeamId,steps:{}};
+var __r053Blocked=[];var __r053Transitions=[];
+V60_PRESEASON_STEPS.forEach(function(key){
+  var before=S.springCampDoneYear,budget=S.teams[S.userTeamId].finance.budget;
+  __r053Blocked.push(v60PreseasonMissingStep()===key);
+  executeSpringCamp();
+  __r053Blocked.push(!S.springCamp.executed&&S.springCampDoneYear===before&&S.teams[S.userTeamId].finance.budget===budget);
+  v60PreseasonCompleteStep(key);
+  __r053Transitions.push(v60PreseasonMissingStep()===V60_PRESEASON_STEPS[V60_PRESEASON_STEPS.indexOf(key)+1]||key==='roster'&&v60PreseasonMissingStep()===null);
+});
+var __r053Arrived=UI.screen==='springCamp'&&!S.springCamp.executed;
+S=JSON.parse(__r053SavedS);UI=JSON.parse(__r053SavedUI);`);
+assert(g("__r053Blocked.every(Boolean)&&__r053Transitions.every(Boolean)&&__r053Arrived"), "r053 每項完成後直接進下一站；漏掉任一項不能執行春訓或扣款");
+const r053Sw = fs.readFileSync("sw.js", "utf8");
+assert(r053Sw.includes('if (e.request.mode === "navigate")') && r053Sw.indexOf('if (e.request.mode === "navigate")') < r053Sw.indexOf('const cached = await c.match(e.request)') && r053Sw.includes('await c.match("./index.html")'), "r053 線上導覽優先取新版，離線仍能回到已快取首頁");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);
