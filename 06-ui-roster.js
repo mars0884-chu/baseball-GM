@@ -2480,8 +2480,12 @@ function hydrateLoadedState(saved) {
       /* r010 V55-MIG-001：三條正式讀檔路徑共用此 hydrate，於 V54 後補齊 V55 狀態。 */
       if (typeof ensureV55 === "function") ensureV55();
       if (typeof ensureV60 === "function") ensureV60(); // r041：舊存檔補建開季準備進度；已開季者不倒退
+      // r058：舊存檔可能已在主管續約關卡但尚無固定報價；只補缺值，不重抽有效報價。
+      if (S.v55PendingDirectorRenewal && typeof v60EnsureDirectorRenewalOffer === "function") {
+        generatedMissingOffers = v60EnsureDirectorRenewalOffer(S.teams[S.userTeamId], false) || generatedMissingOffers;
+      }
       // 舊版解職存檔可能尚未寫入邀約；在 hydrate 一次補足並存檔，避免渲染時重抽。
-      if (typeof ensureFiredJobOffers === "function") generatedMissingOffers = ensureFiredJobOffers();
+      if (typeof ensureFiredJobOffers === "function") generatedMissingOffers = ensureFiredJobOffers() || generatedMissingOffers;
       // v39.1：開幕選秀殘骸遷移——舊版存檔若已開打、仍在第1年、掛著「已結束且無opening欄位」的
       // 選秀物件，即為被bug吞掉第二屆選秀的狀態（開幕選秀殘影）；清除之，讓第1季休賽季能正常
       // 舉辦自己的選秀。新版選秀物件一律帶opening欄位，正常辦完的休賽季選秀不會被誤清。
@@ -2496,6 +2500,7 @@ function hydrateLoadedState(saved) {
       else if (S.forcedCutRequired) UI.screen = "financeCuts";
       else if ((S.pendingContractRenewals || []).length > 0) UI.screen = "contractRenewals";
       else if ((S.pendingStaffRenewals || []).length > 0) UI.screen = "staffRenewal"; // v31
+      else if (S.v55PendingDirectorRenewal && S.teams[S.userTeamId] && S.teams[S.userTeamId].analysisDirector) UI.screen = "directorRenewal";
       else if (S.gameStarted && S.offseasonEnteredYear === S.seasonYear && S.offseasonSummary) UI.screen = "offseasonSummary"; // v35：休賽季進行中重載→回摘要（先前落到dashboard，可能經頒獎鈕二次結算）
       else if (!S.gameStarted) UI.screen = "offseasonSummary";
       else if (S.intlTournament && S.intlTournament.year === S.seasonYear && !S.intlTournament.done) UI.screen = "intlTournament";

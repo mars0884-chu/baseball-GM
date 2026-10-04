@@ -1405,6 +1405,24 @@ function v55EnsureAnalysisDirector(team) {
   else if (team.persona === "rebuild") chance = 0.25;
   team.analysisDirector = (Math.random() < chance) ? v55GenerateAnalysisDirector(team.id) : null;
 }
+/* r058：續約報價只在合約到期時計算一次；舊檔缺報價時用身分與年度雜湊補入，不消耗模擬亂數。 */
+function v60EnsureDirectorRenewalOffer(team, useSharedRandom) {
+  if (!team || !team.analysisDirector || !S.v55PendingDirectorRenewal) return false;
+  const dir = team.analysisDirector;
+  const offer = dir.renewalOffer;
+  if (offer && offer.year === S.seasonYear && Number.isInteger(offer.salary) && offer.salary >= 500000 && offer.salary <= 3000000
+    && Number.isInteger(offer.years) && offer.years >= 1 && offer.years <= 3) return false;
+  const hash = suffix => {
+    const value = `${dir.id || dir.name || team.id}|${S.seasonYear}|${suffix}`;
+    let n = 2166136261;
+    for (let i = 0; i < value.length; i++) n = Math.imul(n ^ value.charCodeAt(i), 16777619);
+    return n >>> 0;
+  };
+  const delta = useSharedRandom ? randInt(-200000, 300000) : (hash("salary") % 500001) - 200000;
+  const years = useSharedRandom ? randInt(1, 3) : 1 + hash("years") % 3;
+  dir.renewalOffer = { year: S.seasonYear, salary: clamp((Number.isFinite(dir.salary) ? dir.salary : 500000) + delta, 500000, 3000000), years };
+  return true;
+}
 /* 分析主管合約到期處理（休賽季呼叫） */
 function v55ProcessAnalysisDirectorContract(team) {
   if (!team || !team.analysisDirector) return;
@@ -1414,6 +1432,7 @@ function v55ProcessAnalysisDirectorContract(team) {
     if (team.id === S.userTeamId) {
       /* 玩家球隊：推入續約佇列（與教練/球探續約同框） */
       if (!S.v55PendingDirectorRenewal) S.v55PendingDirectorRenewal = true;
+      v60EnsureDirectorRenewalOffer(team, true);
     } else {
       /* AI 球隊：自動續約或解聘 */
       if (Math.random() < 0.7) { d.contractYears = randInt(1, 3); d.salary = clamp(d.salary + randInt(-200000, 300000), 500000, 3000000); }

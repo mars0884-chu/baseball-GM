@@ -4893,5 +4893,33 @@ const r056Offseason = fs.readFileSync("05-ui-dashboard.js", "utf8").split("funct
 assert(r056Offseason.includes('v60RosterPageSlice(myRetired, "offseasonRetiredPage", 2)') && r056Offseason.includes('v60RosterPagerHtml(retiredPage, "offseasonRetiredPage"') && r056Offseason.includes('retiredPage.items.map(p =>') && r056Offseason.includes('wireV60RosterPager()'), "r056 退休候選每頁兩位且仍可往返全部名單");
 assert(r056Offseason.includes('UI.offseasonRetiredYear !== S.seasonYear') && r056Offseason.includes('reinstatePlayer(btn.dataset.id)') && r056Offseason.includes('assignRetiredPlayerAsCoach(btn.dataset.id') && !r056Offseason.includes('詳細收支與票價：財務頁。') && !r056Offseason.includes('完成一項就前往下一站；完成春訓後開季。'), "r056 新球季分頁歸零、留任與轉任保留，刪除重複導引而非刪操作");
 
+console.log("\n--- r058 分析主管報價定案與現約新約比較 ---");
+g(`var __r058SavedS=JSON.stringify(S),__r058SavedUI=JSON.stringify(UI),__r058OldRandom=Math.random;
+newGame('主管續約測試');pickTeam('T0');pickGameMode('gm_coach');S.gameStarted=true;
+var __r058Team=S.teams[S.userTeamId];__r058Team.analysisDirector=v55GenerateAnalysisDirector(__r058Team.id);
+__r058Team.analysisDirector.contractYears=1;v55ProcessAnalysisDirectorContract(__r058Team);
+var __r058Offer=JSON.stringify(__r058Team.analysisDirector.renewalOffer),__r058OfferValid=S.v55PendingDirectorRenewal&&
+  __r058Team.analysisDirector.renewalOffer.year===S.seasonYear&&__r058Team.analysisDirector.renewalOffer.years>=1&&
+  __r058Team.analysisDirector.renewalOffer.years<=3&&__r058Team.analysisDirector.renewalOffer.salary>=500000&&
+  __r058Team.analysisDirector.renewalOffer.salary<=3000000;
+var __r058NoOverwrite=!v60EnsureDirectorRenewalOffer(__r058Team,true)&&__r058Offer===JSON.stringify(__r058Team.analysisDirector.renewalOffer);
+UI.screen='directorRenewal';renderDirectorRenewal();var __r058Text=app.innerHTML,__r058Before=JSON.stringify(S),__r058Error=null;
+Math.random=function(){throw new Error('主管續約渲染不得抽共享亂數')};
+try{renderDirectorRenewal();renderDirectorRenewal();}catch(e){__r058Error=String(e);}finally{Math.random=__r058OldRandom;}
+var __r058Stable=!__r058Error&&__r058Text===app.innerHTML&&__r058Before===JSON.stringify(S);
+var __r058Legacy=JSON.parse(__r058Before);delete __r058Legacy.teams[__r058Legacy.userTeamId].analysisDirector.renewalOffer;
+hydrateLoadedState(__r058Legacy);var __r058LegacyOffer=JSON.stringify(S.teams[S.userTeamId].analysisDirector.renewalOffer);
+var __r058LegacyRestored=UI.screen==='directorRenewal'&&!!S.teams[S.userTeamId].analysisDirector.renewalOffer;
+var __r058LegacyRepeat=!v60EnsureDirectorRenewalOffer(S.teams[S.userTeamId],false)&&__r058LegacyOffer===JSON.stringify(S.teams[S.userTeamId].analysisDirector.renewalOffer);
+var __r058AcceptedSalary=S.teams[S.userTeamId].analysisDirector.renewalOffer.salary,__r058AcceptedYears=S.teams[S.userTeamId].analysisDirector.renewalOffer.years;
+renderDirectorRenewal();document.getElementById('btn-renew-director').onclick();
+var __r058Accepted=S.teams[S.userTeamId].analysisDirector.salary===__r058AcceptedSalary&&S.teams[S.userTeamId].analysisDirector.contractYears===__r058AcceptedYears&&
+  !S.teams[S.userTeamId].analysisDirector.renewalOffer&&!S.v55PendingDirectorRenewal;
+S=JSON.parse(__r058SavedS);UI=JSON.parse(__r058SavedUI);`);
+assert(g("__r058OfferValid&&__r058NoOverwrite&&__r058Stable"), "r058 新合約到期只產生一次固定報價，重畫不抽亂數、不改狀態或文字");
+assert(g("__r058LegacyRestored&&__r058LegacyRepeat&&__r058Accepted"), "r058 舊存檔經正式 hydrate 補報價並回續約頁，接受條件後清除待辦與報價");
+const r058Director = fs.readFileSync("02-finance.js", "utf8").split("function renderDirectorRenewal()")[1].split("/* ---------- 財務赤字強制裁員")[0];
+assert(r058Director.includes('v60-director-terms') && r058Director.includes('現約年薪') && r058Director.includes('新約年薪') && r058Director.includes('情報 ${Number.isFinite(dir.insight)') && !r058Director.includes('randInt(') && r058Director.includes('不續約・職位空缺'), "r058 現約與新約並列，實際能力取代未知等級，離隊後果明示且 render 不重抽報價");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

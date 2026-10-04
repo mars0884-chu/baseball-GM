@@ -2483,23 +2483,32 @@ function renderDirectorRenewal() {
   var team = S.teams[S.userTeamId];
   var dir = team ? team.analysisDirector : null;
   if (!dir) { proceedFromDirectorRenewal(); return; }
-  var newSalary = clamp(dir.salary + randInt(-200000, 300000), 500000, 3000000);
-  var newYears = randInt(1, 3);
+  var offer = dir.renewalOffer;
+  if (!offer || offer.year !== S.seasonYear) {
+    console.error("分析主管續約報價缺失：", { teamId: team.id, year: S.seasonYear, directorId: dir.id });
+    app.innerHTML = `<div class="wrap"><div class="topbar"><h1>分析主管續約</h1></div><div class="card issuecard"><p class="sub dark">續約條件尚未建立，原合約與主管仍保留。</p><button id="btn-director-offer-recover" class="btn-primary">重新建立續約條件</button></div></div>`;
+    document.getElementById("btn-director-offer-recover").onclick = () => { v60EnsureDirectorRenewalOffer(team, false); persist(); render(); };
+    return;
+  }
+  var newSalary = offer.salary;
+  var newYears = offer.years;
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${team.name}・休賽季幕僚異動</div><h1>分析主管續約</h1></div>
-      <div class="card issuecard">
-        <div class="eyebrow">${icon('bell')} ${dir.name}・合約到期</div>
-        <p class="sub dark">你的分析主管 <b>${dir.name}</b>（等級：${dir.tier || "?"}）合約已到期。續約或讓他離開？</p>
-        <p class="sub dark">目前年薪：${formatMoney(dir.salary || 0)}</p>
-        <p class="sub dark">續約條件：年薪 ${formatMoney(newSalary)}・${newYears} 年</p>
+      <div class="card issuecard v60-director-renewal">
+        <div class="v60-director-head"><strong>${dir.name}</strong><span>分析主管・合約到期</span><div class="v60-director-ability">情報 ${Number.isFinite(dir.insight) ? dir.insight : "—"}・校正 ${Number.isFinite(dir.correction) ? dir.correction : "—"}・警訊 ${Number.isFinite(dir.alertness) ? dir.alertness : "—"}</div></div>
+        <div class="v60-director-terms" aria-label="分析主管現約與新約比較">
+          <div><span>現約年薪</span><strong>${formatMoney(dir.salary || 0)}</strong></div>
+          <div><span>新約年薪</span><strong>${formatMoney(newSalary)}</strong><small>${newYears} 年</small></div>
+        </div>
       </div>
-      <div class="btnrow"><button id="btn-renew-director" class="btn-primary">續約（${formatMoney(newSalary)} / ${newYears}年）</button></div>
-      <div class="btnrow"><button id="btn-decline-director" class="btn-outline warn">不續約（主管離隊）</button></div>
+      <div class="btnrow"><button id="btn-renew-director" class="btn-primary">接受新約</button></div>
+      <div class="btnrow"><button id="btn-decline-director" class="btn-outline warn">不續約・職位空缺</button></div>
     </div>`;
   document.getElementById("btn-renew-director").onclick = function() {
     dir.salary = newSalary;
     dir.contractYears = newYears;
+    delete dir.renewalOffer;
     UI.flash = dir.name + " 已完成續約！年薪 " + formatMoney(newSalary) + "・" + newYears + " 年。";
     proceedFromDirectorRenewal();
   };
