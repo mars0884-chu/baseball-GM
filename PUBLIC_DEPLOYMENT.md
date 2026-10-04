@@ -1,3 +1,9 @@
+# v60-r056 休賽季資訊減量與逐站銜接候選
+
+- 休賽季退休球員改每頁兩人；四人情境在 390px 的目前頁可見字元 1,930→1,076、頁高 3,000→2,243px。其餘球員仍可翻頁查看、留任或指派教練；這是降低單次閱讀量，不是宣稱刪掉 854 字或全遊戲文字減半。代理人事務所未更動。隔離瀏覽器在 320／390／1280px 檢查翻頁、第二頁留任、無水平溢位與頁面例外；證據位於 `_staging/v60-010-preseason-flow-candidate/browser-proof/v60-r056-*`。
+- 流程稽核確認選秀最後一項原已能自動進開季準備，談約／票價／行銷／硬體／名單各有逐站狀態；補齊財務裁員達標後自動前進，以及舊選秀成果頁按鈕走同一守門入口。未達標裁員仍停在原站；行銷不投入、硬體不建造、名單確認及春訓地點屬玩家決策，仍須明確確認，不能為了省按鍵而擅自略過。直接執行春訓仍會因未完成準備被擋下；舊版「下一步」畫面可能是離線快取，需待新版實際部署及手機重新開啟驗證。
+- 本候選回歸測試 1,890 通過／0 失敗，15 年一般及純 GM 煙霧測試均通過；Mars 真機與主觀驗收未完成。正式 `current/`、Delivery／Art ZIP、manifest、SHA、`CURRENT_PACKAGE.json` 未動，原有未提交的 `manifest.webmanifest` 不納入。GitHub 推送及公開 Pages 驗證尚未完成，不得視為已更新玩家版本。快取鍵 `v60-r056-offseason-retired-pages`。
+
 # v60-r055 解職／東山再起決策頁減量
 
 ## r055：聘僱卡可讀、關鍵後果可掃讀、邀約不在畫面渲染時重抽
@@ -7,6 +13,7 @@
 - 原 `renderGameOver()` 在 `jobOffers=null` 時抽共享亂數產生邀約且未立即持久化。新解職改於休賽季結算後定案並隨狀態存檔；已解職而未存邀約的舊存檔在共用 hydrate 成功後補一次並存檔，既有邀約、已用過再起機會的空邀約不覆寫。渲染只讀、不抽亂數。瀏覽器在三種寬度驗證重繪無狀態／亂數變化、IndexedDB 重載邀約一致、接受邀約仍能接手新隊；390px 另驗證舊存檔缺邀約可補入並存檔。證據：`_staging/v60-010-preseason-flow-candidate/audit_v60_r055_gameover.js`、`browser-proof/v60-r055-gameover-baseline.json`、`v60-r055-gameover-candidate.json` 及前後截圖。
 - Mars 真機與主觀驗收仍待確認；全遊戲逐頁減量與總體成效仍未結案。正式 `current/`、Delivery／Art ZIP、manifest、SHA、`CURRENT_PACKAGE.json` 不動；原有未提交的 `manifest.webmanifest` 不納入。本批公開快取鍵 `v60-r055-gameover-decisions`。
 - 本批 `node test_regression.js`：1,885 通過／0 失敗；`node smoke_multiyear.js`：15 年及全畫面渲染通過；`node smoke_puregm.js`：純 GM 15 年通過。舊存檔補邀約走正式 hydrate 入口；瀏覽器以實際 IndexedDB 複製「已解職但尚無邀約」狀態並重新載入，驗證補入後可持久化、可接受聘僱，重繪不改邀約或抽共享亂數。
+- 程式提交 `3ebd0a08bfa133b68e86ff7bf4ee3400f78e421b` 已推送 `main`；[GitHub Pages 建置](https://github.com/mars0884-chu/baseball-GM/actions/runs/37168024048) 為 `completed/success`。以唯一查詢參數與 `no-cache` 實際 GET 公開 `index.html`、`01-data-engine.js`、`04-state-core.js`、`05-ui-dashboard.js`、`06-ui-roster.js`、`style.css`、`sw.js`，七者皆 HTTP 200，並逐項核對 r055 版本鍵、邀約事件／hydrate 入口、新決策文案及邀約卡格線。這不等同已安裝 PWA 即時切換或 Mars 真機驗收。
 
 # v60-r054 春訓安排頁資訊減量
 

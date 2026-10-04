@@ -4807,6 +4807,21 @@ var __r051Idempotent=!v60ResumeCompletedDraft()&&S.currentDay===0;
 S=JSON.parse(__r051SavedS);UI=JSON.parse(__r051SavedUI);`);
 assert(g("__r051DraftComplete && __r051RenewBlocked && __r051CampBlocked && __r051MidseasonBlocked && __r051Resumed && __r051Ready && __r051Idempotent"), "r051 只有已完成選秀且無待續約、未建立春訓的舊檔會自動銜接一次");
 assert(v60PrepRoster.includes("advancedDraft = v60ResumeCompletedDraft()") && v60PrepRoster.includes("if (!advancedDraft) render()"), "r051 正式載入路徑銜接完成選秀，不重複執行安全渲染");
+console.log("\n--- r057 休賽季完成即自動進站 ---");
+g(`var __r057SavedS=JSON.stringify(S),__r057SavedUI=JSON.stringify(UI);
+newGame('裁員銜接測試');pickTeam('T0');pickGameMode('gm_coach');var __r057Team=S.teams[S.userTeamId];
+S.forcedCutRequired=true;S.pendingContractRenewals=[];UI.screen='financeCuts';
+var __r057First=__r057Team.roster1[0];cutPlayerForFinance(__r057First);
+var __r057HealthyAdvanced=!S.forcedCutRequired&&UI.screen==='draft'&&!!S.draft.active;
+newGame('裁員未達標測試');pickTeam('T0');pickGameMode('gm_coach');__r057Team=S.teams[S.userTeamId];
+S.forcedCutRequired=true;S.pendingContractRenewals=[];UI.screen='financeCuts';
+__r057Team.roster1.concat(__r057Team.roster2).forEach(function(id){S.players[id].salary=100000000;});refreshPayroll(__r057Team,S.players);
+cutPlayerForFinance(__r057Team.roster1[0]);
+var __r057StillBlocked=S.forcedCutRequired&&UI.screen==='financeCuts'&&!S.draft;
+S=JSON.parse(__r057SavedS);UI=JSON.parse(__r057SavedUI);`);
+assert(g("__r057HealthyAdvanced"), "r057 裁員後薪資達標即自動進選秀，無需再按下一步");
+assert(g("__r057StillBlocked"), "r057 薪資未達標時仍留在裁員關卡，不可自動跳到選秀或春訓");
+assert(v60PrepRoster.includes('else v60AdvanceAfterDraftAction();') && !v60PrepRoster.includes('else if (S.gameStarted) finalizeNewSeason(); else beginFirstSeason();'), "r057 舊選秀成果入口不得直接跳換季，必須使用自動銜接守門");
 
 console.log("\n--- r052 交易規則集中與選秀權雙側分頁 ---");
 g(`var __r052SavedS=JSON.stringify(S),__r052SavedUI=JSON.stringify(UI);
@@ -4869,6 +4884,11 @@ const r055Flow = fs.readFileSync("01-data-engine.js", "utf8");
 const r055Hydrate = fs.readFileSync("06-ui-roster.js", "utf8");
 assert(r055Flow.includes('if (typeof ensureFiredJobOffers === "function") ensureFiredJobOffers()') && r055Hydrate.includes('generatedMissingOffers = ensureFiredJobOffers()') && r055Hydrate.includes('if (generatedMissingOffers) persist()') && !r055GameOver.includes('generateJobOffers()'), "r055 新解職在休賽季事件定案並存檔，舊檔 hydrate 成功後補一次，渲染不抽籤");
 assert(r055GameOver.includes('東山再起・${offers.length} 份邀約（僅一次）') && r055GameOver.includes('再遭解職即永久出局') && r055GameOver.includes('歸來聲望 +5、邀約重抽，可接觸更多球隊') && r055GameOver.includes('生涯戰績') && r055GameOver.includes('offer-btn'), "r055 精簡後仍保留再起限制、沉潛代價、生涯數據及接受邀約操作");
+
+console.log("\n--- r056 休賽季退休名單分頁與重複說明減量 ---");
+const r056Offseason = fs.readFileSync("05-ui-dashboard.js", "utf8").split("function renderOffseasonSummary()")[1].split("function renderChampJumpCard(")[0];
+assert(r056Offseason.includes('v60RosterPageSlice(myRetired, "offseasonRetiredPage", 2)') && r056Offseason.includes('v60RosterPagerHtml(retiredPage, "offseasonRetiredPage"') && r056Offseason.includes('retiredPage.items.map(p =>') && r056Offseason.includes('wireV60RosterPager()'), "r056 退休候選每頁兩位且仍可往返全部名單");
+assert(r056Offseason.includes('UI.offseasonRetiredYear !== S.seasonYear') && r056Offseason.includes('reinstatePlayer(btn.dataset.id)') && r056Offseason.includes('assignRetiredPlayerAsCoach(btn.dataset.id') && !r056Offseason.includes('詳細收支與票價：財務頁。') && !r056Offseason.includes('完成一項就前往下一站；完成春訓後開季。'), "r056 新球季分頁歸零、留任與轉任保留，刪除重複導引而非刪操作");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

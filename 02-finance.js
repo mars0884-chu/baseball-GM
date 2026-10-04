@@ -2520,6 +2520,10 @@ function cutPlayerForFinance(playerId) {
   refreshPayroll(team, S.players);
   UI.flash = `已釋出 ${p.name}（年薪${formatMoney(p.salary || 0)}），進入自由球員市場。`;
   persist();
+  // 裁員目標達成即銜接續約／選秀；保留「承擔風險」作為玩家主動選擇。
+  const leaguePayrolls = Object.values(S.teams).map(t => { ensureFinance(t); return t.finance.payroll || 0; });
+  const avgPayroll = leaguePayrolls.reduce((sum, amount) => sum + amount, 0) / leaguePayrolls.length;
+  if (team.finance.payroll <= avgPayroll * 1.15) { proceedFromFinanceCuts(); return; }
   render();
 }
 function renderFinanceCuts() {

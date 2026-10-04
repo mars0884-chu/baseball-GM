@@ -1384,7 +1384,8 @@ function renderDraft() {
         </table>
         <div class="btnrow"><button id="btn-start-season" class="btn-primary">${recap ? "返回開季準備" : "完成選秀，進入開季準備"}</button></div>
       </div>`;
-    document.getElementById("btn-start-season").onclick = () => { if (recap) v60PreseasonGoNext(); else if (S.gameStarted) finalizeNewSeason(); else beginFirstSeason(); };
+    // 舊存檔若仍停在選秀成果頁，也必須走同一個自動銜接入口，不可直接跳換季。
+    document.getElementById("btn-start-season").onclick = () => { if (recap) v60PreseasonGoNext(); else v60AdvanceAfterDraftAction(); };
     return;
   }
 

@@ -1454,12 +1454,14 @@ function renderOffseasonSummary() {
   const myRetired = sum.myRetiredIds.map(id => S.retiredPlayers[id]).filter(Boolean);
   const my1 = myRetired.filter(p => p.level === "1軍").length;
   const my2 = myRetired.filter(p => p.level === "2軍").length;
+  if (UI.offseasonRetiredYear !== S.seasonYear) { UI.offseasonRetiredYear = S.seasonYear; UI.offseasonRetiredPage = 0; }
+  const retiredPage = v60RosterPageSlice(myRetired, "offseasonRetiredPage", 2);
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${S.leagueName} ・ 第${S.seasonYear}年休賽季</div><h1>休賽季異動摘要</h1></div>
       <section class="v60-visual-scene v60-compact-scene v60-offseason-scene" aria-label="從球團規劃、名單到春訓的開季準備場景">
         <div class="v60-visual-scene-art"><img src="visual_assets/v60/offseason_planning_r040.jpg" alt="球團辦公室、票務與行銷空間通往春訓球場" loading="lazy" decoding="async"></div>
-        <div class="v60-visual-scene-copy"><span class="v60-visual-kicker">開季準備</span><strong>從規劃走到球場</strong><span>完成一項就前往下一站；完成春訓後開季。</span></div>
+        <div class="v60-visual-scene-copy"><span class="v60-visual-kicker">開季準備</span><strong>從規劃走到球場</strong></div>
       </section>
       ${!S.gameStarted ? `
       <div class="card">
@@ -1503,14 +1505,14 @@ function renderOffseasonSummary() {
         ${sum.myFinanceReport.luxuryTax > 0 ? `<p class="sub dark">本季薪資超過奢侈稅門檻，已被課徵 ${formatMoney(sum.myFinanceReport.luxuryTax)} 奢侈稅。</p>` : ""}
         ${sum.myFinanceReport.balanceTaxPaid > 0 ? `<p class="sub dark">${icon('stadium')} 聯盟均衡稅：球場完備度居前段（${sum.myFinanceReport.stadiumCompleteness}%）且營運預算充裕，本季繳納均衡稅 ${formatMoney(sum.myFinanceReport.balanceTaxPaid)}（挹注聯盟弱隊球場基金）。</p>` : ""}
         ${sum.myFinanceReport.balanceTaxReceived > 0 ? `<p class="sub dark">${icon('stadium')} 聯盟均衡稅補貼：球場完備度為聯盟後段（${sum.myFinanceReport.stadiumCompleteness}%），本季領取均衡補貼 ${formatMoney(sum.myFinanceReport.balanceTaxReceived)}（已計入營運預算）。</p>` : ""}
-        <p class="draftnote muted">詳細收支與票價：財務頁。</p>
       </div>` : ""}
       <div class="card">
-        <div class="eyebrow">${S.teams[S.userTeamId].name} 本季退休名單</div>
+        <div class="eyebrow">${S.teams[S.userTeamId].name} 本季退休・${myRetired.length}人</div>
         ${myRetired.length === 0 ? `<p class="sub dark">本季你的球隊沒有球員退休。</p>` : `
-        <p class="sub dark">共 ${myRetired.length} 位退休（1軍 ${my1}／2軍 ${my2}）；可留任或轉任教練。</p>`}
+        <p class="sub dark">1軍 ${my1}・2軍 ${my2}</p>`}
       </div>
-      ${myRetired.map(p => `
+      ${v60RosterPagerHtml(retiredPage, "offseasonRetiredPage", "退休球員", myRetired.length)}
+      ${retiredPage.items.map(p => `
         <div class="card retirecard">
           <div class="draftcard-head">
             <div>
@@ -1572,6 +1574,7 @@ function renderOffseasonSummary() {
   // v34：休賽季摘要可直接前往事務所應酬（記錄返回來源，事務所返回鍵會回到本畫面）
   const ossAgency = document.getElementById("btn-oss-agency");
   if (ossAgency) ossAgency.onclick = () => { UI.agencyReturn = "offseasonSummary"; UI.screen = "agency"; render(); };
+  wireV60RosterPager();
   wireCoachRefusalCard();
   wireChampJumpCard();
   wireAgencyPerkCards();
