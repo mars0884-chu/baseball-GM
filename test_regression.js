@@ -4845,5 +4845,30 @@ const r054Css = fs.readFileSync("style.css", "utf8");
 assert(!r054Spring.includes('${nation.flavor}') && !r054Spring.includes('spring-list-context') && r054Spring.includes('球員・現況／上限') && r054Spring.includes('AI建議・${UI.springTab}全員'), "r054 移除地點敘事與已由頁籤承載的重複人數，不刪能力量尺意義或 AI 範圍");
 assert(r054Spring.includes('v60CompatVisualScene("spring_training_base_v58"') && r054Spring.includes('春訓地點摘要') && r054Spring.includes('springMenuFor(p)') && r054Spring.includes('確認出發春訓') && r054Css.includes('.spring-position-tabs .pos-count{display:block;margin-top:3px;color:#4A6386;font-size:14px'), "r054 核准春訓圖、地點費用／預算／等級／專長、逐人訓練與出發操作保留，守位人數可讀");
 
+console.log("\n--- r055 解職邀約定案與決策頁可讀性 ---");
+g(`var __r055SavedS=JSON.stringify(S),__r055SavedUI=JSON.stringify(UI);
+S.gmCareer.fired=true;S.gmCareer.rehires=0;S.sabbatical=false;S.jobOffers=null;
+var __r055First=ensureFiredJobOffers(),__r055Ids=JSON.stringify(S.jobOffers.map(o=>o.teamId));
+var __r055Second=ensureFiredJobOffers(),__r055Stable=__r055Ids===JSON.stringify(S.jobOffers.map(o=>o.teamId));
+var __r055BeforeRender=JSON.stringify(S),__r055OldRandom=Math.random,__r055RenderError=null;
+Math.random=function(){throw new Error('純渲染不得抽共享亂數')};
+try{UI.screen='gameOver';render();render();}catch(e){__r055RenderError=String(e);}finally{Math.random=__r055OldRandom;}
+var __r055RenderStable=__r055BeforeRender===JSON.stringify(S);
+S.jobOffers=null;S.gmCareer.rehires=1;var __r055NoSecond=ensureFiredJobOffers()&&Array.isArray(S.jobOffers)&&S.jobOffers.length===0&&!ensureFiredJobOffers();
+S=JSON.parse(__r055SavedS);UI=JSON.parse(__r055SavedUI);`);
+assert(g("__r055First && !__r055Second && __r055Stable && __r055NoSecond && !__r055RenderError && __r055RenderStable"), "r055 解職邀約只定案一次、再起僅一次，解職頁重繪不改狀態或共享亂數");
+g(`var __r055OldSave=JSON.parse(__r055SavedS);__r055OldSave.gmCareer.fired=true;__r055OldSave.gmCareer.rehires=0;__r055OldSave.jobOffers=null;
+hydrateLoadedState(__r055OldSave);
+var __r055Hydrated=UI.screen==='gameOver'&&Array.isArray(S.jobOffers)&&S.jobOffers.length>=1;
+var __r055HydratedIds=JSON.stringify(S.jobOffers.map(o=>o.teamId));
+var __r055HydrateAgain=!ensureFiredJobOffers()&&__r055HydratedIds===JSON.stringify(S.jobOffers.map(o=>o.teamId));
+S=JSON.parse(__r055SavedS);UI=JSON.parse(__r055SavedUI);`);
+assert(g("__r055Hydrated && __r055HydrateAgain"), "r055 舊版已解職但未存邀約的存檔走正式 hydrate 入口後只補一次");
+const r055GameOver = fs.readFileSync("05-ui-dashboard.js", "utf8").split("function renderGameOver()")[1].split("function renderAgency()")[0];
+const r055Flow = fs.readFileSync("01-data-engine.js", "utf8");
+const r055Hydrate = fs.readFileSync("06-ui-roster.js", "utf8");
+assert(r055Flow.includes('if (typeof ensureFiredJobOffers === "function") ensureFiredJobOffers()') && r055Hydrate.includes('generatedMissingOffers = ensureFiredJobOffers()') && r055Hydrate.includes('if (generatedMissingOffers) persist()') && !r055GameOver.includes('generateJobOffers()'), "r055 新解職在休賽季事件定案並存檔，舊檔 hydrate 成功後補一次，渲染不抽籤");
+assert(r055GameOver.includes('東山再起・${offers.length} 份邀約（僅一次）') && r055GameOver.includes('再遭解職即永久出局') && r055GameOver.includes('歸來聲望 +5、邀約重抽，可接觸更多球隊') && r055GameOver.includes('生涯戰績') && r055GameOver.includes('offer-btn'), "r055 精簡後仍保留再起限制、沉潛代價、生涯數據及接受邀約操作");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

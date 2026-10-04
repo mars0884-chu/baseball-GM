@@ -2391,6 +2391,7 @@ function renderPlayerDetail() {
    供開頁初始化、手動槽位讀取、JSON匯入三處共用。 */
 function hydrateLoadedState(saved) {
       S = saved;
+      let generatedMissingOffers = false;
       // v35：槽位讀檔／JSON匯入不會重整頁面，先清掉上一份進度殘留的暫時性UI狀態，
       // 避免舊談判視窗/教練候選清單/確認框帶進新讀入的存檔。
       UI.negotiation = null; UI.coachPicker = null; UI.coachCandidates = null;
@@ -2478,6 +2479,8 @@ function hydrateLoadedState(saved) {
       /* r010 V55-MIG-001：三條正式讀檔路徑共用此 hydrate，於 V54 後補齊 V55 狀態。 */
       if (typeof ensureV55 === "function") ensureV55();
       if (typeof ensureV60 === "function") ensureV60(); // r041：舊存檔補建開季準備進度；已開季者不倒退
+      // 舊版解職存檔可能尚未寫入邀約；在 hydrate 一次補足並存檔，避免渲染時重抽。
+      if (typeof ensureFiredJobOffers === "function") generatedMissingOffers = ensureFiredJobOffers();
       // v39.1：開幕選秀殘骸遷移——舊版存檔若已開打、仍在第1年、掛著「已結束且無opening欄位」的
       // 選秀物件，即為被bug吞掉第二屆選秀的狀態（開幕選秀殘影）；清除之，讓第1季休賽季能正常
       // 舉辦自己的選秀。新版選秀物件一律帶opening欄位，正常辦完的休賽季選秀不會被誤清。
@@ -2501,6 +2504,7 @@ function hydrateLoadedState(saved) {
         else UI.screen = missing || (S.springCamp.executed ? "springReport" : "springCamp");
       }
       else UI.screen = "dashboard";
+      if (generatedMissingOffers) persist();
 }
 (async function init() {
   // v35.1：開機防護——讀檔／還原／渲染任一環節出錯，都導向安全模式救援畫面，杜絕白屏「完全無法開啟」

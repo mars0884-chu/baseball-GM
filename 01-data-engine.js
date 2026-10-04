@@ -2529,6 +2529,8 @@ function enterOffseason() {
   if (typeof v42OnSeasonEnd === "function") try { v42OnSeasonEnd(); } catch (e) {} // v42：代理教練卸任/青年成長/教練市場運轉（AI搶人＋補池）
   ensureFinance(userTeam);
   S.forcedCutRequired = userTeam.finance.budget < 0;
+  // 本季事件結算後定案邀約並寫入存檔；不能等玩家開啟解職頁時才抽籤。
+  if (typeof ensureFiredJobOffers === "function") ensureFiredJobOffers();
   // v27：信任歸零＝遭高層解職，改進Game Over畫面（生涯總結）
   UI.screen = (kpiResult && kpiResult.fired) ? "gameOver" : "offseasonSummary";
   persist();

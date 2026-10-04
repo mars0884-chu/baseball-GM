@@ -235,6 +235,8 @@ function wireUiTabs() {
    只標記每個畫面最外層最後一個操作列；不改按鈕事件、不新增 state，
    讓「確認／繼續／返回」不必滑到數千像素後才找得到。 */
 function v60MarkStickyScreenAction() {
+  // 解職頁同時有聘僱、沉潛與重開存檔；不可讓「結束遊戲」浮在其他決策上方。
+  if (UI.screen === "gameOver") return;
   const appRoot = document.getElementById("app");
   if (!appRoot || !appRoot.querySelector) return;
   const wrap = appRoot.querySelector(".wrap");
@@ -2529,16 +2531,15 @@ function renderGameOver() {
   const years = allSeasons.length;
   const team = S.teams[S.userTeamId];
   const rep = (typeof careerReputation === "function") ? careerReputation() : 50;
-  // 產生（或沿用）聘僱邀約
-  if (!S.jobOffers && typeof generateJobOffers === "function") generateJobOffers();
-  const offers = S.jobOffers || [];
+  // 邀約已在休賽季結算或舊存檔還原時定案；畫面只讀取。
+  const offers = Array.isArray(S.jobOffers) ? S.jobOffers : [];
   const repLabel = rep >= 70 ? "業界名帥" : (rep >= 55 ? "受敬重的資深GM" : (rep >= 40 ? "評價中庸" : "亟需證明自己"));
   app.innerHTML = `
     <div class="wrap">
       <div class="hero gameoverhero">
         <div class="eyebrow">GAME OVER</div>
         <h1>你被解職了</h1>
-        <p class="sub">高層對球隊的表現徹底失去耐心。${GAME_EPOCH_YEAR + (c.firedYear || S.seasonYear)}年冬天，${c.teamName || (team ? team.name : "球團")}召開記者會，宣布與GM ${S.gmName} 分道揚鑣。</p>
+        <p class="sub">${GAME_EPOCH_YEAR + (c.firedYear || S.seasonYear)}年冬，${c.teamName || (team ? team.name : "球團")}解除 GM ${S.gmName} 職務。</p>
       </div>
       <div class="card">
         <div class="eyebrow">${icon('scroll')} GM生涯總結（跨球團累計）</div>
@@ -2557,11 +2558,11 @@ function renderGameOver() {
       ${(c.rehires || 0) >= 1 ? `
       <div class="card issuecard">
         <div class="eyebrow">${icon('door')} 業界的大門已經關上</div>
-        <p class="sub dark">你已經用過一次東山再起的機會，這一次沒有球團願意再賭。你的GM生涯正式劃下句點——但這段旅程的每一勝，都會留在紀錄裡。</p>
+        <p class="sub dark">再次遭解職；東山再起僅有一次機會，GM 生涯結束。</p>
       </div>` : (offers.length > 0 ? `
       <div class="card">
-        <div class="eyebrow">${icon('mail-in')} 東山再起：其他球團的聘僱邀約（生涯僅此一次）</div>
-        <p class="sub dark">你的業界聲望為你帶來了 ${offers.length} 份邀約。接受任一份即可接手該球團現有陣容，生涯戰績持續累積。<b>注意：東山再起僅有一次機會，若再度遭解職即為永久出局。</b></p>
+        <div class="eyebrow">${icon('mail-in')} 東山再起・${offers.length} 份邀約（僅一次）</div>
+        <p class="sub dark">接手現有陣容，生涯戰績延續；再遭解職即永久出局。</p>
         ${offers.map(o => { const mm = (typeof MANDATE_META !== "undefined" && MANDATE_META[o.mandate]) || null; return `<div class="joboffer">
           <div class="joboffer-info"><b>${o.teamName}</b>${mm ? ` <span class="personatag" title="${mm.desc}">${mm.name}</span>` : ""}<span class="joboffer-sub">起始信任度 ${o.startTrust}／聯盟戰力第 ${o.strengthRank} 弱${mm ? `／${mm.short}` : ""}</span></div>
           <button class="btn-secondary offer-btn" data-tid="${o.teamId}">接受</button>
@@ -2569,11 +2570,10 @@ function renderGameOver() {
       </div>` : `<p class="sub dark">這一次，沒有任何球團向你伸出橄欖枝。</p>`)}
       ${((c.rehires || 0) < 1 && (c.sabbaticals || 0) < 1) ? `
       <div class="card">
-        <div class="eyebrow">${icon('tea')} 或者……沉潛一年？</div>
-        <p class="sub dark">拒絕${offers.length > 0 ? "所有邀約" : "急著回鍋"}，離開鎂光燈充電一年。聯盟照常運轉；歸來時業界聲望+5、邀約重抽且可及的球隊範圍更廣。（生涯限用一次）</p>
+        <div class="eyebrow">${icon('tea')} 沉潛一年（僅一次）</div>
+        <p class="sub dark">${offers.length > 0 ? "拒絕所有邀約；" : ""}聯盟照常運轉。歸來聲望 +5、邀約重抽，可接觸更多球隊。</p>
         <div class="btnrow"><button id="btn-sabbatical" class="btn-outline">沉潛一年</button></div>
       </div>` : ""}
-      <p class="sub dark">每一次失敗，都是下一段傳奇的序章。</p>
       <div class="btnrow"><button id="btn-gameover-restart" class="btn-outline">結束遊戲（開新存檔）</button></div>
     </div>`;
   const btn = document.getElementById("btn-gameover-restart");

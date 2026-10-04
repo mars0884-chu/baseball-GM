@@ -513,11 +513,11 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 
 /* ================= v28新增樣式 ================= */
 /* 東山再起：聘僱邀約卡 */
-.joboffer { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; margin:6px 0;
+.joboffer { display:grid; grid-template-columns:minmax(0,1fr) minmax(78px,auto); align-items:center; gap:10px; padding:10px 12px; margin:6px 0;
   border:1px solid #d9c9b0; border-radius:10px; background:#fbf6ec; }
-.joboffer-info { display:flex; flex-direction:column; }
-.joboffer-sub { font-size:12px; color:#8a7f74; margin-top:2px; }
-.offer-btn { flex-shrink:0; }
+.joboffer-info { display:flex; flex-direction:column; min-width:0; overflow-wrap:anywhere; }
+.joboffer-sub { font-size:14px; color:#51493f; margin-top:2px; }
+.offer-btn { width:auto; min-width:78px; min-height:48px; padding:10px 8px; }
 /* 東山再起：新東家歡迎卡 */
 .rehirecard { border-left:4px solid #2f9e5f; background:#eef8f0; }
 /* 代理人事務所：情蒐卡與人脈列 */

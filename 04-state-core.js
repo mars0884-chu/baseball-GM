@@ -326,6 +326,12 @@ function generateJobOffers() {
   S.jobOffers = offers;
   return offers;
 }
+// 解職事件／舊檔還原時只補一次邀約；純畫面渲染不得抽共享亂數或改存檔。
+function ensureFiredJobOffers() {
+  if (!S || !S.userTeamId || !S.gmCareer || !S.gmCareer.fired || S.sabbatical || Array.isArray(S.jobOffers)) return false;
+  generateJobOffers();
+  return true;
+}
 // v33：委任是否生效中（回傳型別或null；委任為期2季）
 function mandateActive() {
   const c = S.gmCareer;
