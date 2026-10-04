@@ -6,6 +6,7 @@
 - 320／390／1280px 固定新局的春訓首頁：**關閉選單時的可見字元** 287→261（-26，約 9.1%）；量測明確扣除選單尚未展開的其他選項，並非全遊戲指標。390px 頁高 1,524→1,465px；320px 1,561→1,502px；1280px 1,690→1,628px。守位頁籤與人數字體提高至 14px；已核准場景圖在三種寬度皆成功解碼，無水平溢位或頁面例外。切換投手、一二軍及手動訓練後返回，訓練選擇仍保存。證據：`_staging/v60-010-preseason-flow-candidate/audit_v60_r054_spring.js`、`browser-proof/v60-r054-spring-baseline.json`、`v60-r054-spring-candidate.json` 與三種寬度前後截圖。
 - 瀏覽器檢查不等同 Mars 真機驗收；全遊戲逐頁減量與總體成效仍未完成。正式 `current/`、Delivery／Art ZIP、manifest、SHA、`CURRENT_PACKAGE.json` 不動；原有未提交的 `manifest.webmanifest` 不納入。本批公開快取鍵 `v60-r054-spring-copy`。
 - 本批 `node test_regression.js`：1,881 通過／0 失敗；`node smoke_multiyear.js`：15 年及全畫面渲染通過；`node smoke_puregm.js`：純 GM 15 年通過。新增回歸斷言確認核准場景、地點數據、選擇入口與出發鍵仍在，瀏覽器驗證逐人訓練選擇在分頁往返後仍保留。
+- 程式提交 `26a844a787302e9d037639362af74c53e1498889` 已推送 `main`；[GitHub Pages 建置](https://github.com/mars0884-chu/baseball-GM/actions/runs/37167204472) 為 `completed/success`。用唯一查詢參數與 `no-cache` 實際 GET 公開 `index.html`、`05-ui-dashboard.js`、`style.css`、`sw.js`，四者皆 HTTP 200；首頁及 Service Worker 含 r054 版本鍵，春訓程式含新 AI 標籤且不含被移除的敘事欄位，CSS 含 14px 守位人數字。已安裝 PWA 是否切換及 Mars 真機仍待確認。
 
 # v60-r053 開季流程畫面與離線快取核對
 
