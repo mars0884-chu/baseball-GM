@@ -1936,7 +1936,7 @@ function renderSpringReport() {
   UI.springReportTab = UI.springReportTab || "1軍";
   const allLines = Array.isArray(r.lines) ? r.lines : [];
   const lines = allLines.filter(l => l.level === UI.springReportTab);
-  const page = v60RosterPageSlice(lines, "springReportPage", 6);
+  const page = v60RosterPageSlice(lines, "springReportPage", 4);
   const changesOf = line => Array.isArray(line.changes) ? line.changes : [];
   const gainKinds = [
     { key: "main", label: "主練", test: c => !c.linked && !c.traitSpill },
@@ -1968,15 +1968,15 @@ function renderSpringReport() {
     ${renderGains(line)}
   </article>`).join("");
   const pager = v60RosterPagerHtml(page, "springReportPage", "春訓成果", lines.length);
+  const springArtSrc = v60CompatArtDataUrl("spring_training_base_v58");
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${S.leagueName} ・ 第${S.seasonYear}年</div><h1>春訓成果報告</h1></div>
-      ${v60CompatVisualScene("spring_training_base_v58", "春訓成果場景", "SPRING REPORT VISUAL", "春訓成果", "成果與特殊事件", "v60-spring-report-scene")}
-      <div class="scoreboard">
-        <div class="sb-row small"><div class="sb-label">春訓地點</div><div class="sb-value small">${r.nation}（${r.grade}級）</div></div>
-        <div class="sb-row small"><div class="sb-label">花費</div><div class="sb-value small">${r.cost === 0 ? "免費（母國）" : formatMoney(r.cost)}</div></div>
-      </div>
-      ${v60VisualMetricRail([["1軍", `${allLines.filter(l => l.level === "1軍").length} 人`], ["2軍", `${allLines.filter(l => l.level === "2軍").length} 人`], ["事件", `${(r.events || []).length} 件`]], "春訓成果摘要")}
+      <section class="v60-visual-scene v60-spring-report-scene" aria-label="春訓地點與花費">
+        ${springArtSrc ? `<div class="v60-visual-scene-art"><img src="${springArtSrc}" alt="春訓基地場景" ${v60CompatArtImageAttrs("spring_training_base_v58", "eager", false)}></div>` : ""}
+        <div class="v60-spring-report-facts"><span>春訓地點</span><strong>${r.nation}（${r.grade}級）</strong><span>花費</span><strong>${r.cost === 0 ? "免費（母國）" : formatMoney(r.cost)}</strong></div>
+      </section>
+      <div class="v60-spring-report-metrics">${v60VisualMetricRail([["1軍", `${allLines.filter(l => l.level === "1軍").length} 人`], ["2軍", `${allLines.filter(l => l.level === "2軍").length} 人`], ["事件", `${(r.events || []).length} 件`]], "春訓成果摘要")}</div>
       ${r.events && r.events.length > 0 ? `
       <div class="card">
         <div class="eyebrow">春訓特殊事件</div>
@@ -1995,7 +1995,7 @@ function renderSpringReport() {
         ${mobileCards || `<div class="spring-empty-state">目前沒有成果</div>`}
       </div>
       ${pager}
-      ${v60VisualMetricRail([["主練", "主要提升"], ["連動", "相關能力"], ["特性", "額外提升"]], "春訓成果判定")}
+      <div class="v60-spring-report-metrics">${v60VisualMetricRail([["主練", "主要提升"], ["連動", "相關能力"], ["特性", "額外提升"]], "春訓成果判定")}</div>
       <div class="btnrow"><button id="btn-spring-done" class="btn-primary">春訓結束，迎接開幕戰！</button></div>
     </div>`;
   app.querySelectorAll(".tab").forEach(btn => { btn.onclick = () => { UI.springReportPage = 0; UI.springReportTab = btn.dataset.tab; render(); }; });

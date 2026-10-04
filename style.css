@@ -1461,23 +1461,30 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 
 /* v60-r028 春訓成果：手機以逐人變化卡與增幅條替代表格窄欄；桌面保留表格。 */
 .v60-spring-report-cards{display:none;}
+.v60-spring-report-scene.v60-visual-scene{grid-template-columns:160px minmax(0,1fr);align-items:center;gap:12px;padding:8px;}
+.v60-spring-report-scene .v60-visual-scene-art{min-height:0;height:154px;}
+.v60-spring-report-scene .v60-visual-scene-art img{height:150px;max-height:150px;object-fit:contain;padding:3px;}
+.v60-spring-report-facts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);align-items:center;gap:6px 8px;min-width:0;color:#36577F;font-size:14px;}
+.v60-spring-report-facts strong{min-width:0;color:#143CFF;font-size:15px;overflow-wrap:anywhere;}
+.v60-spring-report-metrics .v60-visual-metric b{font-size:14px;}
+@media(max-width:520px){.v60-spring-report-scene.v60-visual-scene{grid-template-columns:118px minmax(0,1fr);gap:8px;}.v60-spring-report-scene .v60-visual-scene-art{height:118px;}.v60-spring-report-scene .v60-visual-scene-art img{height:114px;max-height:114px;}.v60-spring-report-facts{grid-template-columns:1fr;gap:2px;font-size:14px;}.v60-spring-report-facts strong{margin-bottom:5px;font-size:14px;}}
 .v60-spring-report-player{min-width:0;margin:0 0 8px;padding:10px;border:1px solid #B7D3F5;border-radius:12px;background:#F8FBFF;box-shadow:0 2px 6px rgba(20,60,120,.06);}
 .v60-spring-report-player-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 10px;margin-bottom:7px;padding-bottom:7px;border-bottom:1px solid #D7E6F7;}
 .v60-spring-report-player-head strong{overflow-wrap:anywhere;color:#17233B;font-size:16px;line-height:1.3;}
-.v60-spring-report-player-head span{color:#36577F;font-size:13px;font-weight:700;}
+.v60-spring-report-player-head span{color:#36577F;font-size:14px;font-weight:700;}
 .v60-spring-report-groups{display:grid;gap:6px;}
 .v60-spring-report-group{display:grid;grid-template-columns:42px minmax(0,1fr);align-items:start;gap:6px;}
-.v60-spring-report-group> b{padding-top:2px;color:#143CFF;font-size:12px;}
+.v60-spring-report-group> b{padding-top:2px;color:#143CFF;font-size:14px;}
 .v60-spring-report-group.is-linked>b{color:#087B91;}
 .v60-spring-report-group.is-trait>b{color:#8A6100;}
 .v60-spring-report-group>div{display:grid;gap:4px;min-width:0;}
-.v60-spring-report-gain{display:grid;grid-template-columns:minmax(64px,1fr) 42px 28px;align-items:center;gap:6px;min-width:0;color:#294967;font-size:12px;line-height:1.25;}
+.v60-spring-report-gain{display:grid;grid-template-columns:minmax(64px,1fr) 42px 28px;align-items:center;gap:6px;min-width:0;color:#294967;font-size:14px;line-height:1.25;}
 .v60-spring-report-gain>span{overflow-wrap:anywhere;}
 .v60-spring-report-gain>i{display:block;height:6px;overflow:hidden;border-radius:5px;background:#DCE5F0;}
 .v60-spring-report-gain>i>b{display:block;height:100%;border-radius:inherit;background:#2455D8;}
 .is-linked .v60-spring-report-gain>i>b{background:#16A5B5;}
 .is-trait .v60-spring-report-gain>i>b{background:#D4A000;}
-.v60-spring-report-gain>strong{color:#1459B8;font-size:12px;text-align:right;white-space:nowrap;}
+.v60-spring-report-gain>strong{color:#1459B8;font-size:14px;text-align:right;white-space:nowrap;}
 .v60-spring-report-stays{padding:7px 9px;border-radius:8px;background:#EEF3F8;color:#4A6386;font-size:14px;font-weight:700;}
 @media(max-width:520px){
   .v60-spring-report-table{display:none;}
