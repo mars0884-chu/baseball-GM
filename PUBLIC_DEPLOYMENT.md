@@ -7,6 +7,7 @@
 - 真實瀏覽器於 320／390／1280px 使用同一選秀完成入口：無「下一步」按鈕、有「待辦」入口；五項未完成時逐一嘗試春訓皆被阻擋，完成後依序轉談約→票價→行銷→硬體→名單→春訓，三種寬度皆無水平溢位、無頁面例外。稽核腳本：`_staging/v60-010-preseason-flow-candidate/audit_v60_r053_preseason.js`。此為桌面瀏覽器寬度驗證，不是 Mars 真機驗收。
 - 舊畫面可能來自已安裝 PWA 的離線首頁：舊 Service Worker 先回快取導覽頁。本批將新版 Service Worker 導覽請求改為線上優先、離線退回首頁快取，並更新所有首頁腳本／樣式版本鍵為 `v60-r053-preseason-navigation-refresh`。此修正降低**重新開啟後**使用舊首頁的機會；已經開著的遊戲仍不會突然中斷重載，首次收到新版 Service Worker 的舊安裝版可能需再開啟一次。未取得 Mars 真機測試，不能宣稱手機已即時更新。
 - 正式 `current/`、Delivery／Art ZIP、manifest、SHA、`CURRENT_PACKAGE.json` 均未改動；原有未提交的 `manifest.webmanifest` 不納入。全遊戲文字減量仍在進行，不能以本次流程檢查宣稱結案。
+- 程式提交 `36735ae70286893a3e7deb7a46466b88a907db03` 已推送 `main`；[GitHub Pages 建置](https://github.com/mars0884-chu/baseball-GM/actions/runs/37166728785) 為 `completed/success`。以唯一查詢參數與 `no-cache` 實際 GET 公開 `index.html`、`sw.js`、`test_regression.js`，三者均 HTTP 200 且具有 r053 對應標記。這證明公開靜態檔已更新，不等於已安裝 PWA 已切換或 Mars 真機驗收。
 
 # v60-r052 交易組合文字減量與選秀權雙側分頁
 
