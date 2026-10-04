@@ -4,6 +4,7 @@
 - 春訓成果改每頁四人；核准春訓基地圖與「地點／花費」排成同一張摘要卡，圖片 `object-fit:contain`、未裁主體；刪掉與頁標重複的「春訓成果」圖卡標題。主要增幅、連動與特性數值照常顯示，手機增幅字體提高至 14px，事件、軍別、完整球員名單與開季操作不變。瀏覽器在 320／390／1280px 均實際逐頁走完一軍 28 人、二軍 32 人，切軍別不改存檔，圖片成功解碼、無水平溢位或例外，最後「迎接開幕戰」仍可進主控台。
 - 同一固定情境，390px 第一頁 293→236 個可見字元、頁高 1,942→1,337px；320px 1,909→1,374px。可見字元下降主要含四人分頁及移除重複標題，不代表全名單資料被刪，更不代表全遊戲 50% 已完成。證據：`_staging/v60-010-preseason-flow-candidate/audit_v60_r057_spring_report.js`、`browser-proof/v60-r057-spring-report-{baseline,candidate}.json` 與三種寬度截圖。
 - `node test_regression.js`：1,891 通過／0 失敗；一般 15 年＋全畫面、純 GM 15 年煙霧測試均通過。`directorRenewal` 舊版已證實重畫會重新抽報價，屬另一項高風險狀態缺陷，未在本批藉文字減量修改；應先建立定案與舊存檔方案再修。Mars 真機／主觀驗收、全遊戲逐頁減量仍待完成。正式 `current/`、Delivery／Art ZIP、manifest、SHA、`CURRENT_PACKAGE.json` 不動，原有未提交 `manifest.webmanifest` 不納入。本批公開快取鍵 `v60-r057-spring-report`；推送及公開 Pages 驗證另記。
+- 2026-10-04 程式提交 `1711b650adf8d6cdbf933777c13b060892d5c0e9` 已推送 `main`；[GitHub Pages 建置](https://github.com/mars0884-chu/baseball-GM/actions/runs/37190017185) 為 `completed/success`。公開 `index.html`、`05-ui-dashboard.js`、`style.css`、`sw.js` 使用唯一查詢參數與 `no-cache` 實際 GET 均為 HTTP 200，核對新快取鍵、四人分頁、圖與資料同卡及 14px 樣式標記。已安裝手機 PWA 是否切到新版本仍待 Mars 真機確認。
 
 # v60-r056 休賽季資訊減量與逐站銜接候選
 
