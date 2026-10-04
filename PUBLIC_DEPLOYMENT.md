@@ -6,6 +6,7 @@
 - 選秀權由原本我方與對方兩張清單上下堆疊，改為同層級雙側頁籤；兩側各 18 筆仍可用原分頁瀏覽，兩側各六筆的當頁勾選可同時保留。真實瀏覽器比較 Git `HEAD` 與候選在 320／390／1280px 四步驟：390px 選秀權首側頁高 1,265→994px、當頁可見字元 436→283；這包含將另一側移至可直接切換的頁籤，不是刪除另一側資料。其餘三步驟 390px 可見字元：我方球員 379→336、對方球員 392→373、現金確認 276→251；四步驟總可見字元 1,483→1,243，但不能用這個數字推論全遊戲減量或實際刪文比例。
 - 兩側球員／選秀權數量、現金欄位、提交鍵均保留；切頁及雙側選取不改 `S`、不消耗共享亂數，無水平溢位或頁面例外；四步驟按鈕與雙側頁籤至少 44px。證據在 `_staging/v60-010-preseason-flow-candidate/audit_v60_r052_trade_copy.js`、`browser-proof/v60-r052-trade-copy.json` 與截圖。正式包及原有未提交的 `manifest.webmanifest` 不動。公開快取鍵 `v60-r052-trade-pick-tabs`；Mars 真機驗收待確認。
 - 本批 `node test_regression.js`：1,877 通過／0 失敗；`node smoke_multiyear.js`：15 年＋全畫面渲染通過；`node smoke_puregm.js`：純 GM 15 年通過。選秀權勾選框另補可讀的操作標籤，手機頁籤與四步驟鍵盤焦點可見。
+- 2026-10-04，程式提交 `2924d585521033bb26700f23326455d92a2c9d10` 已推送 `main`；[GitHub Pages 建置](https://github.com/mars0884-chu/baseball-GM/actions/runs/37166049713) 為 `completed/success`。以唯一查詢參數與 `no-cache` 實際 GET 公開 `index.html`、`06-ui-roster.js`、`style.css`、`sw.js`，四者均 HTTP 200 且含 r052 對應標記。已安裝 PWA 是否即時切換、Mars 真機與主觀驗收仍待確認。
 - 全遊戲逐頁文字減量尚未結案；春訓成果與分析主管續約等後續畫面仍待處理。測試與 Pages 驗證見本批後續紀錄。
 
 # v60-r051 已完成選秀存檔恢復
