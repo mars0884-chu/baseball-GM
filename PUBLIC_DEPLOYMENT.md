@@ -2,7 +2,8 @@
 
 - 休賽季退休球員改每頁兩人；四人情境在 390px 的目前頁可見字元 1,930→1,076、頁高 3,000→2,243px。其餘球員仍可翻頁查看、留任或指派教練；這是降低單次閱讀量，不是宣稱刪掉 854 字或全遊戲文字減半。代理人事務所未更動。隔離瀏覽器在 320／390／1280px 檢查翻頁、第二頁留任、無水平溢位與頁面例外；證據位於 `_staging/v60-010-preseason-flow-candidate/browser-proof/v60-r056-*`。
 - 流程稽核確認選秀最後一項原已能自動進開季準備，談約／票價／行銷／硬體／名單各有逐站狀態；補齊財務裁員達標後自動前進，以及舊選秀成果頁按鈕走同一守門入口。未達標裁員仍停在原站；行銷不投入、硬體不建造、名單確認及春訓地點屬玩家決策，仍須明確確認，不能為了省按鍵而擅自略過。直接執行春訓仍會因未完成準備被擋下；舊版「下一步」畫面可能是離線快取，需待新版實際部署及手機重新開啟驗證。
-- 本候選回歸測試 1,890 通過／0 失敗，15 年一般及純 GM 煙霧測試均通過；Mars 真機與主觀驗收未完成。正式 `current/`、Delivery／Art ZIP、manifest、SHA、`CURRENT_PACKAGE.json` 未動，原有未提交的 `manifest.webmanifest` 不納入。GitHub 推送及公開 Pages 驗證尚未完成，不得視為已更新玩家版本。快取鍵 `v60-r056-offseason-retired-pages`。
+- 本候選回歸測試 1,890 通過／0 失敗，15 年一般及純 GM 煙霧測試均通過；Mars 真機與主觀驗收未完成。正式 `current/`、Delivery／Art ZIP、manifest、SHA、`CURRENT_PACKAGE.json` 未動，原有未提交的 `manifest.webmanifest` 不納入。公開快取鍵 `v60-r056-offseason-retired-pages`。
+- 2026-10-04 程式提交 `e693542befd04ccb8ed58b296687d42948224cd6` 已推送 `main`；[GitHub Pages 建置](https://github.com/mars0884-chu/baseball-GM/actions/runs/37189049694) 為 `completed/success`。公開 `index.html`、`02-finance.js`、`05-ui-dashboard.js`、`06-ui-roster.js`、`sw.js` 使用唯一查詢參數及 `no-cache` 實際 GET 均為 HTTP 200，並分別核對新版快取鍵、裁員自動銜接、退休名單分頁與舊選秀頁守門標記。已安裝 PWA 仍須重新開啟並確認取得新版；Mars 真機驗收未完成。
 
 # v60-r055 解職／東山再起決策頁減量
 
