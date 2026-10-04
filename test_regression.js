@@ -4839,5 +4839,11 @@ assert(g("__r053Blocked.every(Boolean)&&__r053Transitions.every(Boolean)&&__r053
 const r053Sw = fs.readFileSync("sw.js", "utf8");
 assert(r053Sw.includes('if (e.request.mode === "navigate")') && r053Sw.indexOf('if (e.request.mode === "navigate")') < r053Sw.indexOf('const cached = await c.match(e.request)') && r053Sw.includes('await c.match("./index.html")'), "r053 線上導覽優先取新版，離線仍能回到已快取首頁");
 
+console.log("\n--- r054 春訓地點與名單重複資訊減量 ---");
+const r054Spring = fs.readFileSync("05-ui-dashboard.js", "utf8").split("function renderSpringCamp()")[1].split("function renderSpringReport()")[0];
+const r054Css = fs.readFileSync("style.css", "utf8");
+assert(!r054Spring.includes('${nation.flavor}') && !r054Spring.includes('spring-list-context') && r054Spring.includes('球員・現況／上限') && r054Spring.includes('AI建議・${UI.springTab}全員'), "r054 移除地點敘事與已由頁籤承載的重複人數，不刪能力量尺意義或 AI 範圍");
+assert(r054Spring.includes('v60CompatVisualScene("spring_training_base_v58"') && r054Spring.includes('春訓地點摘要') && r054Spring.includes('springMenuFor(p)') && r054Spring.includes('確認出發春訓') && r054Css.includes('.spring-position-tabs .pos-count{display:block;margin-top:3px;color:#4A6386;font-size:14px'), "r054 核准春訓圖、地點費用／預算／等級／專長、逐人訓練與出發操作保留，守位人數可讀");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

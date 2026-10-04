@@ -1853,7 +1853,6 @@ function renderSpringCamp() {
   const springPositionKey = V60_SPRING_POSITION_TABS.some(t => t.key === UI.springPositionTab) ? UI.springPositionTab : "all";
   UI.springPositionTab = springPositionKey;
   const visiblePlayers = springPositionKey === "all" ? players : players.filter(p => v60SpringPositionGroup(p) === springPositionKey);
-  const springPositionLabel = V60_SPRING_POSITION_TABS.find(t => t.key === springPositionKey).label;
   const springPageKey = `${S.seasonYear}:${UI.springTab}:${springPositionKey}`;
   if (UI.springPageKey !== springPageKey) { UI.springPageKey = springPageKey; UI.springPage = 0; }
   const springPages = Math.max(1, Math.ceil(visiblePlayers.length / 6));
@@ -1886,18 +1885,16 @@ function renderSpringCamp() {
           ["等級", `${nation.grade}級`],
           ["專長", specLabels]
         ], "春訓地點摘要")}
-        <p class="v60-state-line">${nation.flavor}</p>
       </div>
       <div class="tabrow">
         <button class="tab ${UI.springTab === "1軍" ? "active" : ""}" data-tab="1軍">1軍（${team.roster1.length}人）</button>
         <button class="tab ${UI.springTab === "2軍" ? "active" : ""}" data-tab="2軍">2軍（${team.roster2.length}人）</button>
       </div>
       ${v60SpringPositionTabs(players, springPositionKey)}
-      <div class="spring-list-context"><b>${UI.springTab}・${springPositionLabel}</b><span>現況／上限・${visiblePlayers.length}人</span></div>
-      <div class="btnrow"><button id="btn-spring-auto" class="btn-secondary">AI一鍵建議（${UI.springTab}全員）</button></div>
+      <div class="btnrow"><button id="btn-spring-auto" class="btn-secondary">AI建議・${UI.springTab}全員</button></div>
       <nav class="v60-choice-pager" aria-label="春訓名單分頁"><button id="spring-prev" ${UI.springPage === 0 ? 'disabled' : ''}>上一頁</button><span>${UI.springPage + 1}/${springPages}</span><button id="spring-next" ${UI.springPage === springPages - 1 ? 'disabled' : ''}>下一頁</button></nav>
       <table class="stattable">
-        <thead><tr><th>球員</th><th>訓練</th></tr></thead>
+        <thead><tr><th>球員・現況／上限</th><th>訓練</th></tr></thead>
         <tbody>
           ${visiblePlayers.length === 0 ? `<tr><td colspan="2" class="spring-empty-state">此分類目前沒有球員</td></tr>` : pagePlayers.map(p => {
             const ovr = Math.round(trueOverall(p));
