@@ -1581,6 +1581,12 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 /* 交易組合依決策階段分區；選取狀態跨分頁保留。 */
 .v60-trade-stages{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0}
 .v60-trade-stages .tab{min-height:44px;white-space:normal;line-height:1.25}
+.v60-trade-guidance{margin:8px 0;color:#254A78;font-size:14px;line-height:1.45}
+.v60-trade-pick-rules{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline}
+.v60-trade-pick-rules span{color:#254A78;font-size:14px;font-weight:600;line-height:1.4}
+.v60-trade-pick-sides{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:8px 0}
+.v60-trade-pick-sides .tab{min-height:44px}
+.v60-trade-pick-sides .tab:focus-visible{outline:3px solid #21C9D6;outline-offset:2px}
 @media(max-width:700px){.v60-trade-stages{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* 開局身分用相同欄位比較權責，不以長段落或收合文字解釋。 */
 .v60-mode-pick-heading{padding-bottom:10px}

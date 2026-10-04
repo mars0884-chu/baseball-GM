@@ -4808,5 +4808,16 @@ S=JSON.parse(__r051SavedS);UI=JSON.parse(__r051SavedUI);`);
 assert(g("__r051DraftComplete && __r051RenewBlocked && __r051CampBlocked && __r051MidseasonBlocked && __r051Resumed && __r051Ready && __r051Idempotent"), "r051 只有已完成選秀且無待續約、未建立春訓的舊檔會自動銜接一次");
 assert(v60PrepRoster.includes("advancedDraft = v60ResumeCompletedDraft()") && v60PrepRoster.includes("if (!advancedDraft) render()"), "r051 正式載入路徑銜接完成選秀，不重複執行安全渲染");
 
+console.log("\n--- r052 交易規則集中與選秀權雙側分頁 ---");
+g(`var __r052SavedS=JSON.stringify(S),__r052SavedUI=JSON.stringify(UI);
+newGame('交易閱讀測試');pickTeam('T0');pickGameMode('gm_coach');S.gameStarted=true;openTradeBuilder('T1');
+UI.tradeStage='picks';UI.tradePicksSide='give';render();var __r052GiveHtml=app.innerHTML;
+UI.tradePicksSide='get';render();var __r052GetHtml=app.innerHTML;
+UI.tradeStage='get';render();var __r052ScoutHtml=app.innerHTML;
+UI.tradeStage='terms';render();var __r052TermsHtml=app.innerHTML;
+S=JSON.parse(__r052SavedS);UI=JSON.parse(__r052SavedUI);`);
+assert(g("(__r052GiveHtml.match(/class=\"give-pick-check\"/g)||[]).length===6 && !__r052GiveHtml.includes('class=\"get-pick-check\"') && (__r052GetHtml.match(/class=\"get-pick-check\"/g)||[]).length===6 && !__r052GetHtml.includes('class=\"give-pick-check\"')"), "r052 選秀權分頁每次僅呈現一側六筆，兩側皆可到達");
+assert(g("__r052GiveHtml.includes('本屆＋後2年・各6輪') && __r052GiveHtml.includes('原隊戰績差→順位前、估值高') && __r052GetHtml.includes('持有者選人') && __r052ScoutHtml.includes('守位') && __r052ScoutHtml.includes('球探估值') && __r052TermsHtml.includes('現金計入估值') && __r052TermsHtml.includes('v43-cash-give') && __r052TermsHtml.includes('btn-submit-trade')"), "r052 精簡後仍保留選秀權、球探估值、現金與交易提交規則及操作");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);
