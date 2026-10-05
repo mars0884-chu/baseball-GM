@@ -1407,11 +1407,11 @@ function renderDraft() {
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${S.leagueName} ・ 第${S.seasonYear}年休賽季</div><h1>新人選秀會</h1></div>
-      <div class="scoreboard">
-        <div class="sb-row small"><div class="sb-label">目前輪次</div><div class="sb-value small">第 ${round} 輪・第 ${pickNo} 順位</div></div>
-        <div class="sb-row small"><div class="sb-label">輪到你選秀</div><div class="sb-value small">${S.teams[S.userTeamId].name}</div></div>
-        <div class="sb-row small"><div class="sb-label">負責球探</div><div class="sb-value small">${scout ? scout.name : "（職位空缺・盲評）"}（有效準確度 ${draftEffAcc}）</div></div>
-      </div>
+      <div class="v60-draft-pick-summary">${v60VisualMetricRail([
+        ["目前順位", `第 ${round} 輪・第 ${pickNo} 順位`],
+        ["選秀球隊", S.teams[S.userTeamId].name],
+        ["球探／準度", `${scout ? scout.name : "職位空缺・盲評"}・${draftEffAcc}`]
+      ], "選秀目前順位與球探")}</div>
       ${UI.draftSkipConfirm ? `
       <div class="card issuecard">
         <div class="eyebrow">放棄選秀權</div>
@@ -1422,7 +1422,7 @@ function renderDraft() {
         </div>
         <div class="btnrow"><button id="btn-skip-cancel" class="btn-outline">取消</button></div>
       </div>` : `<div class="btnrow"><button id="btn-skip-pick" class="btn-outline">放棄本輪選秀權</button></div>`}
-      <p class="sub" style="margin-bottom:10px;">能力皆為球探估值，準確度越高誤差越小。獨家新秀僅你可選，不佔公開池配額。</p>
+      <p class="v60-state-line">能力與天花板為球探估值；獨家新秀僅你可選。</p>
       ${posFilterBarHtml(d.pool, "draftPosFilter")}
       <select id="sort-draft" class="sortselect">
         <option value="default" ${sortKey === "default" ? "selected" : ""}>依現在能力評等排序</option>
@@ -1449,7 +1449,7 @@ function renderDraft() {
             <div class="v60-draft-evaluation"><span>目前數據</span><strong><span class="gradebadge grade-${p.scoutedGrade}">${p.scoutedGrade}</span> ${p.scoutedOverall != null ? p.scoutedOverall : "—"}</strong></div>
             <div class="v60-draft-evaluation ceiling"><span>未來天花板</span><strong><span class="gradebadge grade-${p.scoutedCeiling}">${p.scoutedCeiling}</span> ${p.scoutedCeilingVal != null ? `約 ${p.scoutedCeilingVal}` : "—"}</strong></div>
           </div>
-          <div class="draftnote muted" style="margin:2px 0;">現在 → 預估天花板${p.isPitcher ? `・${p.pitches ? p.pitches.length : "?"} 種球路` : ""}</div>
+          ${p.isPitcher ? `<div class="draftnote muted">${p.pitches ? p.pitches.length : "?"} 種球路</div>` : ""}
           <div class="attrgrid">
             ${scoutedAttrRows(p)}
           </div>

@@ -4953,5 +4953,12 @@ const r060Hof = fs.readFileSync("06-ui-roster.js", "utf8").split("function rende
 const r060Css = fs.readFileSync("style.css", "utf8");
 assert(r060Hof.includes('v60RosterPageSlice(hof, "hofMemberPage", 2)') && r060Hof.includes('wireV60RosterPager()') && r060Hof.includes('v60RosterPagerHtml(memberPage') && r060Css.includes('.v48hof-member .v48radar text{fill:#173B70') && r060Css.includes('overflow:visible'), "r060 殿堂頁使用共用分頁並提高現有雷達標籤可讀性，不更動能力值");
 
+console.log("\n--- r061 選秀頁重複文字減量與數值保留 ---");
+const r061Draft = fs.readFileSync("06-ui-roster.js", "utf8").split("function renderDraft()")[1].split("function renderMatchupCard")[0];
+const r061Radar = fs.readFileSync("01-data-engine.js", "utf8").split("function v60DraftRadarCardHtml")[1].split("function v46Cell")[0];
+assert(r061Draft.includes('class="v60-draft-pick-summary"') && r061Draft.includes('v60VisualMetricRail([') && !r061Draft.includes('<div class="scoreboard">'), "r061 選秀頁首輪次、球隊、球探改為並排摘要，原資訊保留");
+assert(r061Draft.includes('v60DraftRadarCardHtml(p, draftEffAcc)') && r061Draft.includes('scoutedAttrRows(p)') && r061Draft.includes('v60-draft-evaluations') && r061Draft.includes('${pager}'), "r061 雷達、逐項球探估值、現況／天花板與雙人分頁均保留");
+assert(r061Radar.includes('v60-radar-values') && r061Radar.includes('data.current[i] + \' → \' + data.ceiling[i]') && !r061Radar.includes('藍色現況 → 珊瑚紅預估天花板'), "r061 雷達各軸精確數值保留，只移除重複色彩說明");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

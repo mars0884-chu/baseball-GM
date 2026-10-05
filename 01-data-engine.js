@@ -3786,7 +3786,7 @@ function v60DraftRadarCardHtml(p, acc) {
     const data = v60DraftRadarData(p, acc);
     if (!data) return "";
     const rows = data.axes.map(function(a, i) { return '<span><b>' + a.label + '</b><em>' + data.current[i] + ' → ' + data.ceiling[i] + '</em></span>'; }).join("");
-    return '<div class="v60-draft-radar-wrap"><div>' + v60DraftRadarSVG(p, { acc: acc }) + '</div><div class="v60-draft-radar-side"><div class="v60-radar-legend"><span class="v60-radar-key current">現況</span><span class="v60-radar-key ceiling">天花板</span></div><div class="draftnote muted">藍色現況 → 珊瑚紅預估天花板</div><div class="v60-radar-values" aria-label="雷達圖數值">' + rows + '</div></div></div>';
+    return '<div class="v60-draft-radar-wrap"><div>' + v60DraftRadarSVG(p, { acc: acc }) + '</div><div class="v60-draft-radar-side"><div class="v60-radar-legend"><span class="v60-radar-key current">現況</span><span class="v60-radar-key ceiling">天花板</span></div><div class="v60-radar-values" aria-label="雷達圖數值">' + rows + '</div></div></div>';
   } catch (_) { return ""; }
 }
 
