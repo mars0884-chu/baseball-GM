@@ -897,7 +897,36 @@ function consumeSimInterrupts() {
   if (S) S.simInterrupts = [];
   return list;
 }
+/* r059：所有玩家賽程推進入口共用開季守門；漏項時回到待辦，不讓模擬先改動世界。 */
+function v60RequirePreseasonBeforeSimulation() {
+  if (!S || !S.gameStarted || S.currentDay !== 0 || !S.userTeamId) return false;
+  const mandatory = S.forcedCutRequired ? "financeCuts"
+    : (S.pendingContractRenewals || []).length ? "contractRenewals"
+    : (S.pendingStaffRenewals || []).length ? "staffRenewal"
+    : S.v55PendingDirectorRenewal ? "directorRenewal"
+    : S.draft && S.draft.active ? "draft" : null;
+  const review = typeof v60PreseasonReview === "function" ? v60PreseasonReview() : {};
+  const missing = typeof V60_PRESEASON_STEPS !== "undefined" ? V60_PRESEASON_STEPS.find(key => review[key] !== true) : null;
+  const camp = S.springCamp;
+  // 舊存檔可能只有已完成年份、沒有春訓物件；既有完成記錄不可被新守門倒退。
+  if (!mandatory && !missing && S.springCampDoneYear === S.seasonYear && (!camp || camp.year !== S.seasonYear || camp.executed)) return false;
+  UI.flash = "開季準備尚未完成，請先處理目前項目與春訓。";
+  if (mandatory || (!camp && S.offseasonSummary && S.offseasonEnteredYear === S.seasonYear)) {
+    UI.screen = mandatory || "offseasonSummary";
+    render();
+    return true;
+  }
+  if (!camp || camp.year !== S.seasonYear) prepareSpringCamp();
+  if (missing && typeof v60PreseasonOpenStep === "function") {
+    v60PreseasonOpenStep(missing);
+  } else {
+    UI.screen = "springCamp";
+    render();
+  }
+  return true;
+}
 function doSimulateDay() {
+  if (v60RequirePreseasonBeforeSimulation()) return;
   if (S) S.simInterrupts = [];
   const results = simulateDay(S);
   if (!results) { UI.flash = "本季賽事已全部結束！"; }
@@ -907,6 +936,7 @@ function doSimulateDay() {
   render();
 }
 function doSimulateWeek() {
+  if (v60RequirePreseasonBeforeSimulation()) return;
   if (S) S.simInterrupts = [];
   for (let i = 0; i < 7; i++) {
     if (!simulateDay(S)) break;
@@ -918,6 +948,7 @@ function doSimulateWeek() {
   render();
 }
 function doSimulateToEnd() {
+  if (v60RequirePreseasonBeforeSimulation()) return;
   if (S) S.simInterrupts = [];
   let guard = 0;
   while (simulateDay(S) && guard < 400) {

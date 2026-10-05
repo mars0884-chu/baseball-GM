@@ -4921,5 +4921,20 @@ assert(g("__r058LegacyRestored&&__r058LegacyRepeat&&__r058Accepted"), "r058 舊�
 const r058Director = fs.readFileSync("02-finance.js", "utf8").split("function renderDirectorRenewal()")[1].split("/* ---------- 財務赤字強制裁員")[0];
 assert(r058Director.includes('v60-director-terms') && r058Director.includes('現約年薪') && r058Director.includes('新約年薪') && r058Director.includes('情報 ${Number.isFinite(dir.insight)') && !r058Director.includes('randInt(') && r058Director.includes('不續約・職位空缺'), "r058 現約與新約並列，實際能力取代未知等級，離隊後果明示且 render 不重抽報價");
 
+console.log("\n--- r059 未完成開季準備不可從賽程入口跳至開季 ---");
+g(`var __r059SavedS=JSON.stringify(S),__r059SavedUI=JSON.stringify(UI);
+newGame('開季入口守門測試');pickTeam('T0');pickGameMode('gm_coach');S.gameStarted=true;S.currentDay=0;prepareSpringCamp();
+S.preseasonReview={year:S.seasonYear,teamId:S.userTeamId,steps:{}};
+var __r059Budget=S.teams[S.userTeamId].finance.budget,__r059Results=S.resultsLog.length;
+doSimulateDay();var __r059DayBlocked=S.currentDay===0&&S.resultsLog.length===__r059Results&&S.teams[S.userTeamId].finance.budget===__r059Budget&&UI.screen==='finance'&&UI.tabs.finance==='deals';
+doSimulateWeek();doSimulateToEnd();var __r059AllBlocked=S.currentDay===0&&S.resultsLog.length===__r059Results&&v60PreseasonMissingStep()==='deals';
+V60_PRESEASON_STEPS.forEach(key=>S.preseasonReview.steps[key]=true);
+doSimulateWeek();var __r059SpringBlocked=S.currentDay===0&&!S.springCamp.executed&&UI.screen==='springCamp';
+S.springCamp.executed=true;S.springCampDoneYear=S.seasonYear;
+var __r059CanStart=!v60RequirePreseasonBeforeSimulation();
+S.springCamp=null;var __r059LegacyCanStart=!v60RequirePreseasonBeforeSimulation();
+S=JSON.parse(__r059SavedS);UI=JSON.parse(__r059SavedUI);`);
+assert(g("__r059DayBlocked&&__r059AllBlocked&&__r059SpringBlocked&&__r059CanStart&&__r059LegacyCanStart"), "r059 三種賽程入口均不跳過未完成準備或春訓，舊版已完成存檔不倒退");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);
