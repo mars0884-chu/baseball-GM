@@ -968,6 +968,9 @@ body{background-image:radial-gradient(circle at 8% 0,rgba(255,255,255,.95) 0 12%
 .v48milestone-card,.v48hof-card{border-left-color:#26D9E8;}
 .v48milestone-card .eyebrow,.v48hof-card .eyebrow{color:#143CFF;}
 .v48hof-statline{background:#EAF5FF;color:#17233B;}
+.v48hof-member .v48radar{width:min(100%,192px);height:192px;overflow:visible;}
+.v48hof-member .v48radar text{fill:#173B70;font-weight:700;}
+.v48hof-member .v48radar line,.v48hof-member .v48radar polygon[fill="none"]{stroke:rgba(23,59,112,.4);}
 .v48retired-num-badge{background:#143CFF;border-color:#26D9E8;}
 .v48retired-num-badge .num{color:#FFE552;}
 

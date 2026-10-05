@@ -3173,13 +3173,14 @@ function renderHallOfFame() {
     const hof = S.v48.hallOfFame || [];
     const retNums = S.v48.retiredNumbers || [];
     const pending = S.v48.hofPending || [];
+    const memberPage = v60RosterPageSlice(hof, "hofMemberPage", 2);
 
     // 殿堂成員卡
     let membersHtml = "";
     if (hof.length === 0) {
       membersHtml = `<div class="card"><p class="v60-state-line" aria-label="名人堂狀態">尚無入選者 · 生涯里程碑達標→自動提名</p></div>`;
     } else {
-      membersHtml = hof.map(h => {
+      membersHtml = memberPage.items.map(h => {
         const cs = h.careerStats || {};
         const statLine = h.isPitcher
           ? `${cs.W || 0}勝 ${cs.L || 0}敗・${cs.SV || 0}救援・${cs.HD || 0}中繼・${cs.SO || 0}K`
@@ -3230,17 +3231,19 @@ function renderHallOfFame() {
           <div class="eyebrow">${icon('museum')} ${team.name}</div>
           <div class="teamname">${icon('hof')} 球隊榮譽殿堂</div>
         </div>
-        <div class="gmtag">${hof.length} 位殿堂・${retNums.length} 個退休背號</div>
       </div>
       ${typeof v60CompatVisualScene === "function" ? v60CompatVisualScene("hall_of_fame_gallery_v58", "名人堂展示館場景", "HALL OF FAME VISUAL", "球隊榮譽殿堂", "入選紀錄與退休背號", "v60-hof-scene") : ""}
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["殿堂", `${hof.length} 位`], ["退休背號", `${retNums.length} 個`], ["待審核", `${pending.length} 位`]], "名人堂摘要") : ""}
       ${pendingNote}
       ${retNumsHtml}
-      <div class="divlabel">殿堂成員（${hof.length}）</div>
+      <div class="divlabel">殿堂成員</div>
+      ${v60RosterPagerHtml(memberPage, "hofMemberPage", "殿堂成員", hof.length)}
       ${membersHtml}
-      <p class="v60-state-line">${icon('hof')} 達到生涯門檻會自動提名，由 GM 最終核准入殿。</p>
+      ${v60RosterPagerHtml(memberPage, "hofMemberPage", "殿堂成員", hof.length)}
+      ${hof.length ? `<p class="v60-state-line">${icon('hof')} 達門檻自動提名・GM 核准入殿</p>` : ""}
     </div>`;
     wireHallOfFame();
+    wireV60RosterPager();
     wireRosterNav(); // v49修復：缺此行導致榮譽殿堂畫面無法跳出
   } catch (e) {
     app.innerHTML = `<div class="wrap"><div class="card"><p>載入榮譽殿堂時發生錯誤。</p></div></div>`;

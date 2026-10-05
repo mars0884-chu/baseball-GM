@@ -4936,5 +4936,22 @@ S.springCamp=null;var __r059LegacyCanStart=!v60RequirePreseasonBeforeSimulation(
 S=JSON.parse(__r059SavedS);UI=JSON.parse(__r059SavedUI);`);
 assert(g("__r059DayBlocked&&__r059AllBlocked&&__r059SpringBlocked&&__r059CanStart&&__r059LegacyCanStart"), "r059 三種賽程入口均不跳過未完成準備或春訓，舊版已完成存檔不倒退");
 
+console.log("\n--- r060 名人堂成員分頁與雷達可讀性 ---");
+g(`var __r060SavedS=JSON.stringify(S),__r060SavedUI=JSON.stringify(UI);
+newGame('名人堂分頁測試');pickTeam('T0');pickGameMode('gm_coach');ensureV48();
+var __r060Ids=S.teams[S.userTeamId].roster1.slice(0,5);
+S.v48.hallOfFame=__r060Ids.map(function(id,i){var p=S.players[id];return {id:id,name:p.name,isPitcher:!!p.isPitcher,
+ role:p.role||'',nationality:p.nationality,inductedYear:i+1,yearsOnTeam:8,retiredNumber:null,careerStats:{W:80,H:900},abilities:p};});
+UI.screen='hallOfFame';renderHallOfFame();
+var __r060First=(app.innerHTML.match(/class="card v48hof-member"/g)||[]).length===2&&app.innerHTML.includes('第 1/3 頁')&&
+ (app.innerHTML.match(/class="btn-outline v48retire-num-btn"/g)||[]).length===2;
+UI.hofMemberPage=1;renderHallOfFame();var __r060Second=(app.innerHTML.match(/class="card v48hof-member"/g)||[]).length===2&&app.innerHTML.includes('第 2/3 頁');
+UI.hofMemberPage=2;renderHallOfFame();var __r060Third=(app.innerHTML.match(/class="card v48hof-member"/g)||[]).length===1&&app.innerHTML.includes('第 3/3 頁');
+S=JSON.parse(__r060SavedS);UI=JSON.parse(__r060SavedUI);`);
+assert(g("__r060First&&__r060Second&&__r060Third"), "r060 五位殿堂成員每頁兩位，三頁皆可到達並保留退休背號操作");
+const r060Hof = fs.readFileSync("06-ui-roster.js", "utf8").split("function renderHallOfFame()")[1].split("function wireHallOfFame()")[0];
+const r060Css = fs.readFileSync("style.css", "utf8");
+assert(r060Hof.includes('v60RosterPageSlice(hof, "hofMemberPage", 2)') && r060Hof.includes('wireV60RosterPager()') && r060Hof.includes('v60RosterPagerHtml(memberPage') && r060Css.includes('.v48hof-member .v48radar text{fill:#173B70') && r060Css.includes('overflow:visible'), "r060 殿堂頁使用共用分頁並提高現有雷達標籤可讀性，不更動能力值");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);
