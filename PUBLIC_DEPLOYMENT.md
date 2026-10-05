@@ -1,8 +1,9 @@
 # v60-r061 選秀進行中畫面減量與逐頁稽核修正
 
 - 2026-10-05，以可重現的固定選秀池比較 `HEAD` 與候選：390px「選秀進行中」由 944 字／2516px 降至 868 字／2415px。頁首三列改為輪次、球隊、球探準度摘要；移除與雷達圖例、現況／天花板圖框重複的句子。保留兩人分頁、全部球探能力估值、雷達六軸精確數值、人物肖像、選人及放棄操作。這僅是該路由的局部減量，**不代表全遊戲已達 50%**。
-- 現行 41 個合成路由／情境的盤點中，`directorRenewal` 未建立待續約狀態而轉到選秀，不可算該頁驗證通過；`draftActive` 補上真實進行中狀態，舊版僅稽核已結束空狀態。`draft` 在渲染／翻頁時有既存的 `S.draft` 球探估值快取寫入，基準與候選相同；本批未新增該行為。盤點只用於決定下一批優先順序，不作全遊戲結案證據。證據：`_staging/v60-010-preseason-flow-candidate/audit_v60_r047_route_inventory.js` 與 `browser-proof/v60-r061-*-route-inventory.json`。
+- 現行 41 個合成路由／情境的盤點中，`directorRenewal` 未建立待續約狀態而轉到選秀，`springReport` 未建立成果狀態而轉到主控台；兩者都不可算該頁驗證通過。`draftActive` 補上真實進行中狀態，舊版僅稽核已結束空狀態。`draft` 在渲染／翻頁時有既存的 `S.draft` 球探估值快取寫入，基準與候選相同；本批未新增該行為。盤點只用於決定下一批優先順序，不作全遊戲結案證據。證據：`_staging/v60-010-preseason-flow-candidate/audit_v60_r047_route_inventory.js` 與 `browser-proof/v60-r061-*-route-inventory.json`。
 - `node test_regression.js`：1,900 通過／0 失敗；一般及純 GM 15 年煙霧均通過。320／390／1280px 瀏覽器選秀頁均無例外或水平溢位，第二頁可達且人選改變；翻頁時觀察到的 `S.draft` 球探估值快取寫入與基準一致，不是本批新增。正式套件與既有 `manifest.webmanifest` 未動；Mars 真機待驗收。
+- 公開推送：`fb2129d` 已上傳 `main`；[Pages build 37299297173](https://github.com/mars0884-chu/baseball-GM/actions/runs/37299297173) 對應該 commit 且成功完成。公開 `index.html`、`01-data-engine.js`、`06-ui-roster.js`、`style.css`、`sw.js` 皆 HTTP 200，並含本批預期標記。這是部署及公開檔案證據，不等於 Mars 真機接受。
 
 # v60-r060 名人堂非空長頁分區
 
