@@ -2,6 +2,7 @@
 
 - 2026-10-04，Mars 指出不能靠記得按「下一步」才維持休賽季順序，也不能漏項後直接春訓開季。既有逐站 UI 會導向漏項，但三個 `doSimulate*` 賽程入口原本直接呼叫 `simulateDay`，未做開季前置檢查。現於玩家賽程入口共用守門：第 0 比賽日若裁員、續約、選秀、準備五站或春訓未完成，先回待辦／第一個漏項；不推進日期、賽果或預算。春訓完成並有同年度完成記錄後才可進入賽程。行銷及硬體仍是可連續操作的配置站，玩家明確選擇完成／維持現況後即自動轉下一站，不會因第一次投資而偷跳。
 - 本批新增回歸入口測試；`node test_regression.js` 1,895 通過／0 失敗，`node smoke_multiyear.js` 15 年＋全畫面渲染通過，`node smoke_puregm.js` 純 GM 15 年通過。320／390／1280px 瀏覽器實際呼叫三種賽程入口、走五站並執行春訓，皆證明未完成時無賽程或財務改動、完成後才抵達春訓成果；頁面例外 0、無水平溢位。舊存檔若已記錄本季春訓完成但未保存春訓物件，不被迫倒退。證據：`_staging/v60-010-preseason-flow-candidate/audit_v60_r059_season_gate.js`。公開快取鍵 `v60-r059-season-gate`；Mars 真機仍待確認；正式包及原有 `manifest.webmanifest` 不動。
+- 公開推送：`b1b73ab`（r058）與 `45b0249`（r059）已上傳 `main`；[Pages build 37294362292](https://github.com/mars0884-chu/baseball-GM/actions/runs/37294362292) 以 `45b0249` 成功完成。公開 `index.html`、`04-state-core.js`、`01-data-engine.js`、`02-finance.js`、`06-ui-roster.js`、`sw.js` 均 HTTP 200，且各自含本批預期標記。這是部署與程式證據，不等於 Mars 真機接受。
 
 # v60-r058 分析主管續約報價定案與比較
 
