@@ -4,6 +4,7 @@
 - 手機原固定前進鈕會蓋住財務結算卡；此頁取消重複固定操作列，保留頁首「待辦」及頁末原有入口。320／390／1280px 瀏覽器均實際切兩頁籤、翻退休名單下一頁、留任球員；切頁不改正式 `S`，留任操作仍真正更新名單，無水平溢位或 JS 例外。樣本結算情境及截圖：`_staging/v60-010-preseason-flow-candidate/browser-proof/v60-r063-*-route-inventory.json` 與對應 PNG。分析主管續約、春訓成果的先前錯誤跳頁稽核情境亦已補正並重測，但不計入本批文字減量。
 - 休賽季摘要含退休留任／轉教練等玩家可選決定，故本批沒有擅自把結算畫面跳過或自動開始選秀；完成決定後仍由原入口進入下一階段。已完成的開季準備站與賽程守門維持原行為。Mars 真機、全遊戲逐頁覆蓋及全局減量成效仍未結案。
 - `node test_regression.js`：1,906 通過／0 失敗；`node smoke_multiyear.js`：一般 15 年及全畫面渲染通過；`node smoke_puregm.js`：純 GM 15 年通過。正式 `current/`、Delivery／Art ZIP、manifest、SHA、`CURRENT_PACKAGE.json` 及既有未提交 `manifest.webmanifest` 均未修改。公開推送與 Pages 驗證另記。
+- 公開推送：`121582e6de3dc4c49b3745c002011f72e8c9ec90` 已上傳 `main`；[Pages build 37449593022](https://github.com/mars0884-chu/baseball-GM/actions/runs/37449593022) 對應同一 commit 且 `completed/success`。公開 `index.html`、`05-ui-dashboard.js`、`style.css`、`sw.js` 以獨立查詢參數與 `no-cache` 實際 GET，四者皆 HTTP 200 且含 r063 預期標記。公開部署不等於 Mars 手機驗收。
 
 # v60-r062 行銷決策分區與國際活動操作修正
 
