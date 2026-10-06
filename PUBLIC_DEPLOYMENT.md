@@ -4,6 +4,7 @@
 - 行銷保留核准的企劃中心、國際交流與海外行銷三張場景，將年度企劃和國際交流／海外行銷分為兩個明確決策頁籤。三案分頁、企劃費用／成效、國家友好度、活動費用／機率及操作均留在原位，不用摺疊或刪除必要資訊。固定 390px 情境：年度企劃的當前可見文字估計由 368→232 字、頁高 1542→1024px；國際活動頁 233 字／1162px。這是路由當前畫面的閱讀負擔，不等於全遊戲刪字比例。
 - 瀏覽器另重現原國際活動卡內 `sticky` 執行鈕與國家選單重疊；兩個鈕改回卡內正常排版，返回移至頁首，避免內容被固定按鈕遮蓋。320px 國際頁兩案改單欄、國家選單至少 44px 高且 14px 字；390／1280px 保持雙欄。三種寬度的年度／國際頁均無 JS 例外與水平溢位；分頁切換、企劃翻頁、國際兩張 1254px 圖載入、兩個國家選單及執行鈕接線、上下無重疊均驗證。瀏覽與翻頁不新增正式 `S` 異動；初次渲染既有的 `teams`／`cdActivities` 初始化仍存在。證據：`_staging/v60-010-preseason-flow-candidate/audit_v60_r047_route_inventory.js` 與 `browser-proof/v60-r062-*-route-inventory.json`。
 - `node test_regression.js`：1,904 通過／0 失敗；`node smoke_multiyear.js`：一般 15 年及全畫面渲染通過；`node smoke_puregm.js`：純 GM 15 年通過。正式套件與既有 `manifest.webmanifest` 未動；Mars 真機待驗收。
+- 公開推送：`e159bd09400be69c4d272104ca44442f4091539f` 已上傳 `main`；[Pages build 37447954380](https://github.com/mars0884-chu/baseball-GM/actions/runs/37447954380) 對應同一 commit 且 `completed/success`。公開 `index.html`、`02-finance.js`、`05-ui-dashboard.js`、`style.css`、`sw.js` 以獨立查詢參數與 `no-cache` 實際 GET，五者皆 HTTP 200 且含 r062 預期標記。此為部署／公開檔案證據，不等於 Mars 真機驗收或全遊戲文字減量結案。
 
 # v60-r061 選秀進行中畫面減量與逐頁稽核修正
 
