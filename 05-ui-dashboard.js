@@ -2349,14 +2349,14 @@ function renderCdActivitiesCard() {
         <select id="cd-exchange-nation" class="sortselect" ${canRun ? "" : "disabled"}>${natOpts}</select>
         <p id="cd-exchange-cost" class="v60-state-line"></p>
         <p class="v60-activity-outcome">士氣最高 +2・機會發掘新人</p>
-        <div class="btnrow v60-sticky-actions"><button id="btn-cd-exchange" class="btn-secondary" ${st.exchangeDone || !canRun ? "disabled" : ""}>${st.exchangeDone ? "本季完成" : "執行交流"}</button></div>
+        <div class="btnrow"><button id="btn-cd-exchange" class="btn-secondary" ${st.exchangeDone || !canRun ? "disabled" : ""}>${st.exchangeDone ? "本季完成" : "執行交流"}</button></div>
       </div>
       <div class="v60-marketing-action-column">
         ${v60CompatVisualScene("overseas_marketing_v58", "海外行銷場景", "OVERSEAS", "海外行銷", "", "v60-compact-scene")}
         <select id="cd-marketing-nation" class="sortselect" ${canRun ? "" : "disabled"}>${natOpts}</select>
         <p id="cd-marketing-cost" class="v60-state-line"></p>
         <p class="v60-activity-outcome">成功率 70%・人氣 +1～3</p>
-        <div class="btnrow v60-sticky-actions"><button id="btn-cd-marketing" class="btn-secondary" ${st.marketingDone || !canRun ? "disabled" : ""}>${st.marketingDone ? "本季完成" : "執行行銷"}</button></div>
+        <div class="btnrow"><button id="btn-cd-marketing" class="btn-secondary" ${st.marketingDone || !canRun ? "disabled" : ""}>${st.marketingDone ? "本季完成" : "執行行銷"}</button></div>
       </div>
     </div>
     <div style="margin:6px 0;">${bondNames.length ? bondRows : `<p class="v59-compact-line">交情：尚未建立</p>`}</div>

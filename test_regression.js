@@ -4266,7 +4266,7 @@ const v60Style004 = fs.readFileSync("style.css", "utf8");
 assert(v60Dash004.indexOf("V60_SPRING_POSITION_TABS") >= 0 && v60Dash004.indexOf("v60SpringPositionGroup") >= 0 && v60Dash004.indexOf("data-spring-position") >= 0, "v60-004 春訓名單提供全部／投手／捕手／內野／外野分頁");
 assert(v60Dash004.indexOf("visiblePlayers") >= 0 && v60Dash004.indexOf("此分類目前沒有球員") >= 0 && v60Dash004.indexOf("springAutoAssign(UI.springTab)") >= 0, "v60-004 守位分頁只過濾顯示清單，AI全員建議與資料出口維持原行為");
 assert(v60Dash004.indexOf("function v60MarkStickyScreenAction") >= 0 && v60Dash004.indexOf("v60-sticky-actions") >= 0 && v60Dash004.indexOf('appRoot.querySelector("#btn-back")') >= 0, "v60-004 每個長頁主要操作列與巢狀返回列具備 sticky 標記");
-assert(/btnrow v60-sticky-actions[^\n]*id="btn-cd-exchange"/.test(v60Dash004) && /btnrow v60-sticky-actions[^\n]*id="btn-cd-marketing"/.test(v60Dash004), "v60-004 交流／海外行銷各自按鈕保留sticky，不把大張圖片一起浮起遮住畫面");
+assert(/btnrow[^\n]*id="btn-cd-exchange"/.test(v60Dash004) && /btnrow[^\n]*id="btn-cd-marketing"/.test(v60Dash004) && !/btnrow v60-sticky-actions[^\n]*id="btn-cd-(exchange|marketing)"/.test(v60Dash004), "r062 交流／海外行銷按鈕留在各自卡片，避免 sticky 與國家選單重疊；兩個操作仍保留");
 assert(v60Style004.indexOf(".spring-position-tabs") >= 0 && v60Style004.indexOf(".v60-sticky-actions") >= 0 && v60Style004.indexOf("safe-area-inset-bottom") >= 0 && v60Style004.indexOf("@media(max-width:520px)") >= 0, "v60-004 春訓守位分頁與安全區 sticky 操作列具備手機 responsive CSS");
 g("var __v60SpringP=[{isPitcher:true},{isPitcher:false,positions:[{pos:'C'}]},{isPitcher:false,positions:[{pos:'SS'}]},{isPitcher:false,positions:[{pos:'CF'}]}]; var __v60SpringTabs=v60SpringPositionTabs(__v60SpringP,'C');");
 assert(g("__v60SpringTabs.indexOf('投手<span class=\"pos-count\">1人')>=0 && __v60SpringTabs.indexOf('捕手<span class=\"pos-count\">1人')>=0 && __v60SpringTabs.indexOf('內野<span class=\"pos-count\">1人')>=0 && __v60SpringTabs.indexOf('外野<span class=\"pos-count\">1人')>=0 && __v60SpringTabs.indexOf('data-spring-position=\"C\"')>=0"), "v60-004 春訓守位分頁正確計數並標示目前頁籤");
@@ -4959,6 +4959,14 @@ const r061Radar = fs.readFileSync("01-data-engine.js", "utf8").split("function v
 assert(r061Draft.includes('class="v60-draft-pick-summary"') && r061Draft.includes('v60VisualMetricRail([') && !r061Draft.includes('<div class="scoreboard">'), "r061 選秀頁首輪次、球隊、球探改為並排摘要，原資訊保留");
 assert(r061Draft.includes('v60DraftRadarCardHtml(p, draftEffAcc)') && r061Draft.includes('scoutedAttrRows(p)') && r061Draft.includes('v60-draft-evaluations') && r061Draft.includes('${pager}'), "r061 雷達、逐項球探估值、現況／天花板與雙人分頁均保留");
 assert(r061Radar.includes('v60-radar-values') && r061Radar.includes('data.current[i] + \' → \' + data.ceiling[i]') && !r061Radar.includes('藍色現況 → 珊瑚紅預估天花板'), "r061 雷達各軸精確數值保留，只移除重複色彩說明");
+
+console.log("\n--- r062 行銷決策分頁與國際活動操作可達性 ---");
+const r062Marketing = fs.readFileSync("02-finance.js", "utf8").split("function renderMarketing()")[1].split("function formatMoney(")[0];
+const r062International = fs.readFileSync("05-ui-dashboard.js", "utf8").split("function renderCdActivitiesCard()")[1].split("function wireCdActivitiesActions()")[0];
+assert(r062Marketing.includes('uiTabs("marketing"') && r062Marketing.includes('key: "campaigns", label: "年度企劃"') && r062Marketing.includes('key: "international", label: "國際交流／海外行銷"') && r062Marketing.includes('v60-campaign-grid') && r062Marketing.includes('v60RosterPagerHtml(campaignPage'), "r062 行銷獨立分出年度企劃與國際活動，原企劃比較與分頁均保留");
+assert(r062International.includes('international_exchange_v58') && r062International.includes('overseas_marketing_v58') && r062International.includes('id="cd-exchange-nation"') && r062International.includes('id="cd-marketing-nation"') && r062International.includes('id="btn-cd-exchange"') && r062International.includes('id="btn-cd-marketing"') && !r062International.includes('btnrow v60-sticky-actions'), "r062 兩張核准場景、國家選擇及操作保留，活動按鍵不再蓋住下拉選單");
+assert(r062Marketing.includes('<button id="btn-back" class="btn-outline">返回</button></div>') && !r062Marketing.includes('<div class="btnrow"><button id="btn-back"'), "r062 返回入口移至頁首，不再遮擋行銷卡片");
+assert(fs.readFileSync("style.css", "utf8").includes('.cdact-card .v60-marketing-action-column .sortselect{min-height:44px;font-size:14px;}') && fs.readFileSync("style.css", "utf8").includes('.v60-marketing-screen .v60-marketing-actions{grid-template-columns:minmax(0,1fr);'), "r062 窄手機國際活動改單欄，國家選單維持可讀觸控尺寸");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

@@ -2625,14 +2625,16 @@ function renderMarketing() {
   const canPlan = S.currentDay === 0;
   const cal = getGameCalendar();
   const campaignPage = v60RosterPageSlice(MARKETING_CAMPAIGNS, "marketingPage", 3);
+  const internationalPanel = typeof renderCdActivitiesCard === "function" ? renderCdActivitiesCard() : "";
   app.innerHTML = `
-    <div class="wrap">
-      <div class="topbar"><div class="eyebrow">${team.name} ・ ${cal.dateLabel}</div><h1>行銷企劃</h1></div>
+    <div class="wrap v60-marketing-screen">
+      <div class="topbar"><div><div class="eyebrow">${team.name} ・ ${cal.dateLabel}</div><h1>行銷企劃</h1></div><button id="btn-back" class="btn-outline">返回</button></div>
       ${renderRosterNav("marketing")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
       ${typeof v60CompatVisualScene === "function" ? v60CompatVisualScene("marketing_command_center_v58", "行銷企劃中心場景", "MARKETING VISUAL", "年度活動", "活動配置與投入", "v60-marketing-scene") : ""}
-      ${typeof renderCdActivitiesCard === "function" ? renderCdActivitiesCard() : ""}
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["人氣", `${team.finance.popularity}/100`], ["已投", `${(team.finance.marketingCampaigns || []).length} 項`], ["周邊", `+${Math.round((team.finance.marketingMerchPct || 0) * 100)}%`], ["進場", `+${Math.round((team.finance.marketingAttPct || 0) * 100)}%`]], "行銷企劃摘要") : ""}
+      <div class="v60-marketing-tabs">${uiTabs("marketing", [
+        { key: "campaigns", label: "年度企劃", html: `
       ${canPlan ? '<p class="v60-state-line">春訓可多選・空白無加成。</p>' : ""}
       ${v60RosterPagerHtml(campaignPage, "marketingPage", "行銷企劃", MARKETING_CAMPAIGNS.length, "項")}
       <div class="v60-campaign-grid ${canPlan ? "is-planning" : "is-locked"}" role="table" aria-label="年度行銷企劃成效比較">
@@ -2655,7 +2657,9 @@ function renderMarketing() {
       }).join("")}
       </div>
       <button id="btn-marketing-facilities" class="btn-outline">${typeof v60PreseasonMissingStep === "function" && v60PreseasonMissingStep() === "marketing" ? "完成行銷配置，前往硬體" : "球場容量與收入上限 →"}</button>
-      <div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>
+        ` },
+        ...(internationalPanel ? [{ key: "international", label: "國際交流／海外行銷", html: internationalPanel }] : [])
+      ])}</div>
     </div>`;
   app.querySelectorAll(".marketing-btn").forEach(btn => {
     btn.onclick = () => toggleMarketingCampaign(btn.dataset.plan);
