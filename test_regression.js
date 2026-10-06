@@ -4968,5 +4968,24 @@ assert(r062International.includes('international_exchange_v58') && r062Internati
 assert(r062Marketing.includes('<button id="btn-back" class="btn-outline">返回</button></div>') && !r062Marketing.includes('<div class="btnrow"><button id="btn-back"'), "r062 返回入口移至頁首，不再遮擋行銷卡片");
 assert(fs.readFileSync("style.css", "utf8").includes('.cdact-card .v60-marketing-action-column .sortselect{min-height:44px;font-size:14px;}') && fs.readFileSync("style.css", "utf8").includes('.v60-marketing-screen .v60-marketing-actions{grid-template-columns:minmax(0,1fr);'), "r062 窄手機國際活動改單欄，國家選單維持可讀觸控尺寸");
 
+console.log("\n--- r063 休賽季結算與退休決策分區 ---");
+g(`var __r063SavedS=JSON.stringify(S),__r063SavedUI=JSON.stringify(UI);
+newGame('休賽季分區測試');pickTeam('T0');pickGameMode('gm_coach');S.gameStarted=true;
+var __r063Ids=S.teams[S.userTeamId].roster1.slice(0,3);
+__r063Ids.forEach(id=>{S.retiredPlayers[id]=Object.assign({},S.players[id],{level:'1軍',retiredYear:S.seasonYear});});
+S.offseasonSummary={retiredCount:3,coachesReplaced:0,myRetiredIds:__r063Ids,myFinanceReport:null,contractsRenewed:0,contractsDeparted:[]};
+UI.screen='offseasonSummary';UI.tabs={};renderOffseasonSummary();
+var __r063First=UI.tabs.offseasonSummary==='results'&&app.innerHTML.includes('data-tab="retired"')&&
+ (app.innerHTML.match(/class="card retirecard"/g)||[]).length===2&&app.innerHTML.includes('第 1/2 頁');
+UI.tabs.offseasonSummary='retired';renderOffseasonSummary();
+var __r063Retired=app.innerHTML.includes('uitab-panel active" data-tabgroup="offseasonSummary" data-tab="retired"')&&
+ app.innerHTML.includes('class="pickbtn"')&&app.innerHTML.includes('assign-coach-btn');
+var __r063Before=JSON.stringify(S);renderOffseasonSummary();var __r063Stable=__r063Before===JSON.stringify(S);
+S=JSON.parse(__r063SavedS);UI=JSON.parse(__r063SavedUI);`);
+assert(g("__r063First&&__r063Retired&&__r063Stable"), "r063 年度結算與退休球員分區，兩人分頁及留任／指派教練操作保留，重畫不改存檔");
+const r063Dash = fs.readFileSync("05-ui-dashboard.js", "utf8");
+const r063Css = fs.readFileSync("style.css", "utf8");
+assert(r063Dash.includes('UI.screen === "gameOver" || UI.screen === "offseasonSummary"') && r063Css.includes('.v60-offseason-summary-tabs .uitab-btn{min-width:0;min-height:48px;'), "r063 休賽季長頁的固定前進鈕不遮蓋結算，兩頁籤保留手機觸控尺寸");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

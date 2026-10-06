@@ -235,8 +235,8 @@ function wireUiTabs() {
    只標記每個畫面最外層最後一個操作列；不改按鈕事件、不新增 state，
    讓「確認／繼續／返回」不必滑到數千像素後才找得到。 */
 function v60MarkStickyScreenAction() {
-  // 解職頁同時有聘僱、沉潛與重開存檔；不可讓「結束遊戲」浮在其他決策上方。
-  if (UI.screen === "gameOver") return;
+  // 解職頁有多重決策；休賽季已有頁首待辦。兩者都不讓頁末操作浮在內容上方。
+  if (UI.screen === "gameOver" || UI.screen === "offseasonSummary") return;
   const appRoot = document.getElementById("app");
   if (!appRoot || !appRoot.querySelector) return;
   const wrap = appRoot.querySelector(".wrap");
@@ -1454,11 +1454,13 @@ function renderOffseasonSummary() {
   const myRetired = sum.myRetiredIds.map(id => S.retiredPlayers[id]).filter(Boolean);
   const my1 = myRetired.filter(p => p.level === "1軍").length;
   const my2 = myRetired.filter(p => p.level === "2軍").length;
-  if (UI.offseasonRetiredYear !== S.seasonYear) { UI.offseasonRetiredYear = S.seasonYear; UI.offseasonRetiredPage = 0; }
+  if (UI.offseasonRetiredYear !== S.seasonYear) { UI.offseasonRetiredYear = S.seasonYear; UI.offseasonRetiredPage = 0; UI.tabs = UI.tabs || {}; UI.tabs.offseasonSummary = "results"; }
   const retiredPage = v60RosterPageSlice(myRetired, "offseasonRetiredPage", 2);
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${S.leagueName} ・ 第${S.seasonYear}年休賽季</div><h1>休賽季異動摘要</h1></div>
+      <div class="v60-offseason-summary-tabs">${uiTabs("offseasonSummary", [
+        { key: "results", label: "年度結算", html: `
       <section class="v60-visual-scene v60-compact-scene v60-offseason-scene" aria-label="從球團規劃、名單到春訓的開季準備場景">
         <div class="v60-visual-scene-art"><img src="visual_assets/v60/offseason_planning_r040.jpg" alt="球團辦公室、票務與行銷空間通往春訓球場" loading="lazy" decoding="async"></div>
         <div class="v60-visual-scene-copy"><span class="v60-visual-kicker">開季準備</span><strong>從規劃走到球場</strong></div>
@@ -1506,6 +1508,8 @@ function renderOffseasonSummary() {
         ${sum.myFinanceReport.balanceTaxPaid > 0 ? `<p class="sub dark">${icon('stadium')} 聯盟均衡稅：球場完備度居前段（${sum.myFinanceReport.stadiumCompleteness}%）且營運預算充裕，本季繳納均衡稅 ${formatMoney(sum.myFinanceReport.balanceTaxPaid)}（挹注聯盟弱隊球場基金）。</p>` : ""}
         ${sum.myFinanceReport.balanceTaxReceived > 0 ? `<p class="sub dark">${icon('stadium')} 聯盟均衡稅補貼：球場完備度為聯盟後段（${sum.myFinanceReport.stadiumCompleteness}%），本季領取均衡補貼 ${formatMoney(sum.myFinanceReport.balanceTaxReceived)}（已計入營運預算）。</p>` : ""}
       </div>` : ""}
+      ` },
+        { key: "retired", label: "退休球員", badge: myRetired.length, html: `
       <div class="card">
         <div class="eyebrow">${S.teams[S.userTeamId].name} 本季退休・${myRetired.length}人</div>
         ${myRetired.length === 0 ? `<p class="sub dark">本季你的球隊沒有球員退休。</p>` : `
@@ -1549,6 +1553,8 @@ function renderOffseasonSummary() {
             <button class="btn-secondary assign-coach-btn" data-id="${p.id}">指派為教練</button>
           </div>` : ""}
         </div>`).join("")}
+      ` }
+      ])}</div>
       ${(typeof isOffseasonNow === "function" && isOffseasonNow()) ? `
       <div class="card">
         <div class="eyebrow">${icon('scout')} 應酬季節</div>
