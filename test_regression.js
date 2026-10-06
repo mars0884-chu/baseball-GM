@@ -4492,7 +4492,7 @@ assert(v60CopyIntlMarket.includes("休賽更新・未簽留存") && v60CopyIntlM
 assert(v60CopyFreeAgents.includes("v60-state-line") && v60CopyFreeAgents.includes("簽約金≈年薪30%") && v60CopyScouts.includes("v60-state-line") && v60CopyRotation.includes("v60-state-line") && v60CopyCoaches.includes("v60-state-line"), "v60-r036 市場、球探、牛棚及教練長說明以可見短狀態列呈現");
 assert(v60RosterSource.includes("尚無入選者 · 生涯里程碑達標→自動提名") && v60RosterSource.includes("聘任解鎖：可見數據層級 · 運氣校正 · 套利警訊"), "v60-r036 名人堂與數據主管空狀態保留觸發條件與完整效益");
 assert(v60FacilityUi.includes('data-stadium-panel="build"') && v60FacilityUi.includes('data-stadium-panel="levels"') && v60FacilityUi.includes('UI.facilityStadiumPanel = btn.dataset.stadiumPanel'), "v60-012 球場建造與等級升級分成可見分頁、保留原操作入口");
-assert(v60FacilityUi.includes('v60RosterPageSlice(STADIUM_FACILITY_TYPES, "facilityBuildPage", 4)') && v60FacilityUi.includes("page.items.map(t =>") && v60FacilityUi.includes("btn-build-stadium") && v60FacilityUi.includes("預算不足") && v60FacilityUi.includes("FACILITY_LEVELS.map"), "v60-012 設施分頁仍保留設施效果、費用、可建原因與全部等級選項");
+assert(v60FacilityUi.includes('v60RosterPageSlice(STADIUM_FACILITY_TYPES, "facilityBuildPage", 2)') && v60FacilityUi.includes("page.items.map(t =>") && v60FacilityUi.includes("btn-build-stadium") && v60FacilityUi.includes("預算不足") && v60FacilityUi.includes("FACILITY_LEVELS.map"), "v60-012 設施分頁仍保留設施效果、費用、可建原因與全部等級選項");
 assert(v60StyleSource.includes(".v60-stadium-build-grid") && v60StyleSource.includes("@media(max-width:820px){.v57-dashboard-stage-grid") && v60StyleSource.includes(".v60-stadium-build-grid{grid-template-columns:repeat(2,minmax(0,1fr));}") && v60StyleSource.includes("@media(max-width:350px){.v60-stadium-build-grid{grid-template-columns:1fr;}}") && v60StyleSource.includes("@media(max-width:350px){.v60-preseason-links{grid-template-columns:repeat(4,minmax(0,1fr));}}") && v60StyleSource.includes(".v60-stadium-build-row .btn-build-stadium:disabled{opacity:1"), "v60-012 球場清單具備手機響應式版面、窄螢幕導航與清晰不可用按鈕");
 const v60NegotiationScoutRandomCalls = g(`(function(){
   var p=Object.values(S.players).find(function(x){return x.team===S.userTeamId && x.agent && Number.isFinite(x.potential);});
@@ -4509,18 +4509,18 @@ assert(v60NegotiationScoutRandomCalls === 0, "v60-012 談判球探天花板改�
 
 /* v60-021：硬體頁按管理任務分類與分頁，移除重複標籤，不改設施規則或 Save。 */
 console.log("\n--- v60-021 硬體建設閱讀密度 ---");
-assert(v60FacilityUi.includes('v60RosterPagerHtml(page, "facilityBuildPage", "球場設施", STADIUM_FACILITY_TYPES.length, "種設施")') && v60FacilityUi.includes('data-training-group="${g}"') && v60FacilityUi.includes('TRAINING_ITEMS.filter(it => it.group === trainingGroup)') && v60FacilityUi.includes('wireV60RosterPager();'), "v60-021 球場建設四項分頁、訓練依專項切頁且沿用原操作入口");
+assert(v60FacilityUi.includes('v60RosterPagerHtml(page, "facilityBuildPage", "球場設施", STADIUM_FACILITY_TYPES.length, "種設施")') && v60FacilityUi.includes('data-training-group="${g}"') && v60FacilityUi.includes('TRAINING_ITEMS.filter(it => it.group === trainingGroup)') && v60FacilityUi.includes('wireV60RosterPager();'), "v60-021 球場建設分頁、訓練依專項切頁且沿用原操作入口");
 assert(v60FacilityUi.includes('UI.facilityTrainingGroup = btn.dataset.trainingGroup') && v60FacilityUi.includes('<span>${effect}</span><b>${maxed ? "已滿" : formatMoney(cost)}</b>') && !v60FacilityUi.includes('效果：${effect}・升級'), "v60-021 訓練效果與費用改共用欄名，精確效果與升級費仍可見");
 assert(v60StyleSource.includes(".v60-facility-training-tabs") && v60StyleSource.includes("@media(max-width:620px){.v60-facility-training-tabs{grid-template-columns:repeat(3"), "v60-021 訓練分類按鈕在手機分成可觸控的三欄");
 g(`var __v60FacilitySavedS=JSON.stringify(S),__v60FacilitySavedUI=JSON.stringify(UI),__v60FacilitySavedHtml=app.innerHTML;
 var __v60FacilityTeam=S.teams[S.userTeamId];ensureFinance(__v60FacilityTeam);ensureFacility(__v60FacilityTeam);ensureFacilities(__v60FacilityTeam);ensureStadiumSlots(__v60FacilityTeam);
 var __v60FacilityBefore=JSON.stringify(S),__v60FacilityKeys=[],__v60FacilityPages=[],__v60TrainingKeys=[],__v60TrainingGroups=[...new Set(TRAINING_ITEMS.map(function(it){return it.group;}))],__v60TrainingAll=[];
 UI.screen='facilities';UI.facilityTab='球場';UI.facilityStadiumPanel='build';
-for(var fp=0;fp<3;fp++){UI.facilityBuildPage=fp;renderFacilities();var fh=app.innerHTML;__v60FacilityPages.push((fh.match(/class="v60-stadium-build-row"/g)||[]).length);__v60FacilityKeys=__v60FacilityKeys.concat([...fh.matchAll(/class="pickbtn btn-build-stadium" data-key="([^"]+)"/g)].map(function(m){return m[1];}));if(fp===0&&!fh.includes('共 12 種設施'))__v60FacilityPages.push(-1);}
+for(var fp=0;fp<6;fp++){UI.facilityBuildPage=fp;renderFacilities();var fh=app.innerHTML;__v60FacilityPages.push((fh.match(/class="v60-stadium-build-row"/g)||[]).length);__v60FacilityKeys=__v60FacilityKeys.concat([...fh.matchAll(/class="pickbtn btn-build-stadium" data-key="([^"]+)"/g)].map(function(m){return m[1];}));if(fp===0&&!fh.includes('共 12 種設施'))__v60FacilityPages.push(-1);}
 UI.facilityTab='訓練基地';
 __v60TrainingGroups.forEach(function(gr){UI.facilityTrainingGroup=gr;renderFacilities();var th=app.innerHTML;var groupItems=TRAINING_ITEMS.filter(function(it){return it.group===gr;});var rendered=(th.match(/class="facilityrow"/g)||[]).length;if(rendered!==groupItems.length)__v60TrainingAll.push('count:'+gr);groupItems.forEach(function(it){if(!th.includes('data-key="'+it.key+'"')||!th.includes(it.label))__v60TrainingAll.push('missing:'+it.key);__v60TrainingKeys.push(it.key);});if((th.match(/role="tab" aria-selected="true"/g)||[]).length!==1)__v60TrainingAll.push('selection:'+gr);});
 var __v60FacilityAllKeys=JSON.stringify(__v60FacilityKeys.slice().sort())===JSON.stringify(STADIUM_FACILITY_TYPES.map(function(t){return t.key;}).sort());
-var __v60FacilityRuntimeOk=__v60FacilityPages.join(',')==='4,4,4'&&__v60FacilityAllKeys&&new Set(__v60TrainingKeys).size===TRAINING_ITEMS.length&&__v60TrainingAll.length===0&&JSON.stringify(S)===__v60FacilityBefore;
+var __v60FacilityRuntimeOk=__v60FacilityPages.join(',')==='2,2,2,2,2,2'&&__v60FacilityAllKeys&&new Set(__v60TrainingKeys).size===TRAINING_ITEMS.length&&__v60TrainingAll.length===0&&JSON.stringify(S)===__v60FacilityBefore;
 S=JSON.parse(__v60FacilitySavedS);UI=JSON.parse(__v60FacilitySavedUI);app.innerHTML=__v60FacilitySavedHtml;`);
 assert(g("__v60FacilityRuntimeOk"), "v60-021 實際renderer逐頁完整呈現12種設施、全部訓練項目與原效果，渲染不改 Save");
 
@@ -4985,7 +4985,12 @@ S=JSON.parse(__r063SavedS);UI=JSON.parse(__r063SavedUI);`);
 assert(g("__r063First&&__r063Retired&&__r063Stable"), "r063 年度結算與退休球員分區，兩人分頁及留任／指派教練操作保留，重畫不改存檔");
 const r063Dash = fs.readFileSync("05-ui-dashboard.js", "utf8");
 const r063Css = fs.readFileSync("style.css", "utf8");
-assert(r063Dash.includes('UI.screen === "gameOver" || UI.screen === "offseasonSummary"') && r063Css.includes('.v60-offseason-summary-tabs .uitab-btn{min-width:0;min-height:48px;'), "r063 休賽季長頁的固定前進鈕不遮蓋結算，兩頁籤保留手機觸控尺寸");
+assert(r063Dash.includes('["gameOver", "offseasonSummary", "facilities"].includes(UI.screen)') && r063Css.includes('.v60-offseason-summary-tabs .uitab-btn{min-width:0;min-height:48px;'), "r063 休賽季長頁的固定前進鈕不遮蓋結算，兩頁籤保留手機觸控尺寸");
+
+console.log("\n--- r064 球場建造每頁兩項與返回鈕不遮擋 ---");
+assert(fs.readFileSync("02-finance.js", "utf8").includes('v60RosterPageSlice(STADIUM_FACILITY_TYPES, "facilityBuildPage", 2)') &&
+  r063Dash.includes('["gameOver", "offseasonSummary", "facilities"].includes(UI.screen)'),
+  "r064 球場建造候選仍完整分頁，硬體頁返回鈕不浮在設施效果與費用上方");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

@@ -235,8 +235,8 @@ function wireUiTabs() {
    只標記每個畫面最外層最後一個操作列；不改按鈕事件、不新增 state，
    讓「確認／繼續／返回」不必滑到數千像素後才找得到。 */
 function v60MarkStickyScreenAction() {
-  // 解職頁有多重決策；休賽季已有頁首待辦。兩者都不讓頁末操作浮在內容上方。
-  if (UI.screen === "gameOver" || UI.screen === "offseasonSummary") return;
+  // 解職頁有多重決策；休賽季與硬體頁已有頁首導覽，避免頁末操作浮在內容上方。
+  if (["gameOver", "offseasonSummary", "facilities"].includes(UI.screen)) return;
   const appRoot = document.getElementById("app");
   if (!appRoot || !appRoot.querySelector) return;
   const wrap = appRoot.querySelector(".wrap");

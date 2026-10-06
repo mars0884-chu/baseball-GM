@@ -639,7 +639,7 @@ function renderFacilities() {
       <div class="divlabel">建造設施・效果可疊加</div>
       ${built.length >= slotMax ? `<p class="sub dark">格位已滿：升級球場等級可獲得更多格位。</p>` : ""}
       ${(() => {
-        const page = v60RosterPageSlice(STADIUM_FACILITY_TYPES, "facilityBuildPage", 4);
+        const page = v60RosterPageSlice(STADIUM_FACILITY_TYPES, "facilityBuildPage", 2);
         return `${v60RosterPagerHtml(page, "facilityBuildPage", "球場設施", STADIUM_FACILITY_TYPES.length, "種設施")}
       <div class="v60-stadium-build-grid">${page.items.map(t => {
         const owned = built.filter(k => k === t.key).length;
