@@ -1400,6 +1400,7 @@ function renderDraft() {
   const page = Math.max(0, Math.min(pageCount - 1, Number(UI.draftPage) || 0));
   UI.draftPage = page;
   const visibleDraft = filtered.slice(page * 2, page * 2 + 2);
+  const sharedDraftConfidence = visibleDraft.length > 1 && visibleDraft.every(p => p.scoutConfidence === visibleDraft[0].scoutConfidence) ? visibleDraft[0].scoutConfidence : null;
   const pager = `<nav class="v60-draft-pager" aria-label="選秀人選分頁"><button data-draft-page="${page - 1}" ${page === 0 ? "disabled" : ""}>上一頁</button><span>${page + 1}／${pageCount} 頁・${filtered.length} 人</span><button data-draft-page="${page + 1}" ${page === pageCount - 1 ? "disabled" : ""}>下一頁</button></nav>`;
   const scout = S.teams[S.userTeamId].scouts.domestic;
   const draftEffAcc = effectiveScoutAccuracy(S.teams[S.userTeamId], scout); // ⑦含球探辦公室加成
@@ -1430,6 +1431,7 @@ function renderDraft() {
         <option value="ceiling" ${sortKey === "ceiling" ? "selected" : ""}>依天花板評等排序</option>
       </select>
       ${pager}
+      ${sharedDraftConfidence ? `<p class="v60-state-line" aria-label="本頁共通球探信心">兩人共通・${sharedDraftConfidence}</p>` : ""}
       ${visibleDraft.length ? "" : '<p class="draftnote">此分類沒有待選球員。</p>'}
       ${visibleDraft.map(p => `
         <div class="card draftcard">
@@ -1455,7 +1457,7 @@ function renderDraft() {
           </div>
           <div class="draftnote">${p.maturity}</div>
           ${(() => { const ph = growthPhaseLabel(p); return `<div class="draftnote">生涯：<b class="${ph.cls}">${ph.text}</b>・${ph.desc}</div>`; })()}
-          <div class="draftnote muted">${p.scoutConfidence}</div>
+          ${sharedDraftConfidence ? "" : `<div class="draftnote muted">${p.scoutConfidence}</div>`}
         </div>`).join("")}
       ${pager}
     </div>`;

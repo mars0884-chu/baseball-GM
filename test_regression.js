@@ -4992,5 +4992,16 @@ assert(fs.readFileSync("02-finance.js", "utf8").includes('v60RosterPageSlice(STA
   r063Dash.includes('["gameOver", "offseasonSummary", "facilities"].includes(UI.screen)'),
   "r064 球場建造候選仍完整分頁，硬體頁返回鈕不浮在設施效果與費用上方");
 
+console.log("\n--- r065 選秀兩人共通評估去重 ---");
+g(`var __r065SavedS=JSON.stringify(S),__r065SavedUI=JSON.stringify(UI);
+S.draft=null;UI.screen='draft';UI.draftSort='default';UI.draftPosFilter='all';UI.draftPage=0;UI.draftPageKey=null;
+startDraft();var __r065Sorted=S.draft.pool.slice().sort(DRAFT_SORTS.default);
+__r065Sorted[0].scoutConfidence='共通信心測試';__r065Sorted[1].scoutConfidence='共通信心測試';renderDraft();
+var __r065Common=app.innerHTML.includes('兩人共通・共通信心測試')&&(app.innerHTML.match(/共通信心測試/g)||[]).length===1;
+__r065Sorted[1].scoutConfidence='不同信心測試';renderDraft();
+var __r065Distinct=!app.innerHTML.includes('兩人共通・')&&(app.innerHTML.match(/共通信心測試/g)||[]).length===1&&(app.innerHTML.match(/不同信心測試/g)||[]).length===1;
+S=JSON.parse(__r065SavedS);UI=JSON.parse(__r065SavedUI);`);
+assert(g("__r065Common&&__r065Distinct"), "r065 選秀雙人同評估只顯示一次，評估不同仍各自完整顯示");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);
