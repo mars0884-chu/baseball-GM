@@ -2,7 +2,8 @@
 
 - 2026-10-06 實際 390px 赤字情境顯示「自行承擔風險繼續」固定操作鈕會浮在候選球員卡上，且原每頁八人需長捲動。將兩種原有決策移到財務摘要後，取消本頁固定浮鈕；候選改每頁四人，名單上下均可翻頁。保留赤字說明、目前與聯盟平均薪資、全部球員、薪資比較條、釋出操作及承擔風險分支，不新增機制或刪除資料。
 - 固定有效赤字、薪資偏高、60 名球員的 390px 情境：當頁可見文字估計 357→289 字，頁高 1,349→1,100px。320px 1,183px、1280px 960px，三種寬度均無水平溢位或頁面例外。瀏覽器逐頁翻完 15 頁取得 60 個不同球員，翻頁不改 `S`；實際釋出第一名後名單 60→59，風險分支仍有事件連結，無固定按鈕遮擋。證據：`_staging/v60-010-preseason-flow-candidate/browser-proof/v60-r066-*-route-inventory.json` 與 320／390／1280px 截圖。這是本頁每次閱讀分流，非全遊戲減量比例。
-- `node test_regression.js`：1,909 通過／0 失敗，涵蓋 11 人 4＋4＋3 頁、原兩決策與位置；一般 15 年＋全畫面渲染煙霧、純 GM 15 年煙霧均通過。正式套件及原有未提交 `manifest.webmanifest` 未動。公開推送／Pages 待核對。
+- `node test_regression.js`：1,909 通過／0 失敗，涵蓋 11 人 4＋4＋3 頁、原兩決策與位置；一般 15 年＋全畫面渲染煙霧、純 GM 15 年煙霧均通過。正式套件及原有未提交 `manifest.webmanifest` 未動。
+- 公開推送：`718fb0976efb7fee291fd9129d22409694568236` 已上傳 `main`；[Pages build 37604894568](https://github.com/mars0884-chu/baseball-GM/actions/runs/37604894568) 對應同一 commit，結果 `completed/success`。公開 `index.html`、`02-finance.js`、`05-ui-dashboard.js`、`style.css`、`sw.js` 以獨立查詢參數及 `no-cache` 實際 GET，五者皆 HTTP 200 且含 r066 預期標記。公開部署不等於 Mars 真機驗收。
 
 # v60-r065 選秀同頁球探評估去重與長頁盤點
 
