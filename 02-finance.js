@@ -2541,7 +2541,7 @@ function renderFinanceCuts() {
   refreshPayroll(team, S.players);
   const list = team.roster1.concat(team.roster2).map(id => S.players[id]).filter(Boolean).sort((a, b) => (b.salary || 0) - (a.salary || 0));
   const filtered = applyPosFilter(list, "financeCutsPosFilter");
-  const page = v60RosterPageSlice(filtered, "financeCutsPage");
+  const page = v60RosterPageSlice(filtered, "financeCutsPage", 4);
   const maxSalary = Math.max(1, ...list.map(p => p.salary || 0));
   const leaguePayrolls = Object.values(S.teams).map(t => { ensureFinance(t); return t.finance.payroll || 0; });
   const avgPayroll = leaguePayrolls.reduce((a, b) => a + b, 0) / leaguePayrolls.length;
@@ -2567,6 +2567,10 @@ function renderFinanceCuts() {
         <div class="sb-row small"><div class="sb-label">目前薪資總額</div><div class="sb-value small">${formatMoney(team.finance.payroll)}</div></div>
         <div class="sb-row small"><div class="sb-label">聯盟平均薪資</div><div class="sb-value small">${formatMoney(Math.round(avgPayroll))}</div></div>
       </div>
+      <div class="v60-finance-cut-actions">
+        <button id="btn-cuts-continue" class="btn-primary" ${payrollHealthy ? "" : "disabled"}>${payrollHealthy ? "薪資已回到合理範圍，繼續下一步" : "薪資仍偏高，請繼續釋出球員"}</button>
+        <button id="btn-cuts-override" class="btn-danger">維持目前狀況，自行承擔風險繼續</button>
+      </div>
       ${posFilterBarHtml(list, "financeCutsPosFilter")}
       ${v60RosterPagerHtml(page, "financeCutsPage", "財務裁員名單", filtered.length)}
       <table class="stattable v60-finance-cut-table">
@@ -2574,10 +2578,7 @@ function renderFinanceCuts() {
         <tbody>${page.items.map(row).join("")}</tbody>
       </table>
       <div class="v60-finance-cut-cards" aria-label="目前頁裁員候選">${page.items.map(mobileCard).join("")}</div>
-      <div class="btnrow">
-        <button id="btn-cuts-continue" class="btn-primary" ${payrollHealthy ? "" : "disabled"}>${payrollHealthy ? "薪資已回到合理範圍，繼續下一步" : "薪資仍偏高，請繼續釋出球員"}</button>
-      </div>
-      <div class="btnrow"><button id="btn-cuts-override" class="btn-danger">維持目前狀況，自行承擔風險繼續</button></div>
+      ${v60RosterPagerHtml(page, "financeCutsPage", "財務裁員名單", filtered.length)}
     </div>`;
   app.querySelectorAll(".cut-btn").forEach(btn => { btn.onclick = () => cutPlayerForFinance(btn.dataset.id); });
   wirePosFilterButtons();

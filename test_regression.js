@@ -4645,7 +4645,7 @@ console.log("\n--- v60-017 財務裁員頁分頁與手機視覺化 ---");
 const v60FinanceCutsStart = v60FinanceSource.indexOf("function renderFinanceCuts()");
 const v60FinanceCutsEnd = v60FinanceSource.indexOf("/* ---------- 合約續約談判", v60FinanceCutsStart);
 const v60FinanceCutsSource = v60FinanceSource.slice(v60FinanceCutsStart, v60FinanceCutsEnd);
-assert(v60FinanceCutsSource.includes('applyPosFilter(list, "financeCutsPosFilter")') && v60FinanceCutsSource.includes('v60RosterPageSlice(filtered, "financeCutsPage")') && v60FinanceCutsSource.includes("page.items.map(row)") && v60FinanceCutsSource.includes("page.items.map(mobileCard)") && v60FinanceCutsSource.includes("wireV60RosterPager()") && !v60FinanceCutsSource.includes("list.map(p => `<tr>"), "v60-017 裁員候選依守位篩選並分頁，桌面操作與手機卡片共用同一候選頁");
+assert(v60FinanceCutsSource.includes('applyPosFilter(list, "financeCutsPosFilter")') && v60FinanceCutsSource.includes('v60RosterPageSlice(filtered, "financeCutsPage", 4)') && v60FinanceCutsSource.includes("page.items.map(row)") && v60FinanceCutsSource.includes("page.items.map(mobileCard)") && v60FinanceCutsSource.includes("wireV60RosterPager()") && !v60FinanceCutsSource.includes("list.map(p => `<tr>"), "v60-017 裁員候選依守位篩選並分頁，桌面操作與手機卡片共用同一候選頁");
 assert(v60FinanceCutsSource.includes("v60-finance-cut-salary-rail") && v60FinanceCutsSource.includes("不會回收轉會金") && !v60FinanceCutsSource.includes("才能繼續下個球季") && v60RosterSource.includes('if (btn.dataset.filterkey === "financeCutsPosFilter") UI.financeCutsPage = 0'), "v60-017 薪資比較視覺與短說明保留裁員代價，篩選回到第一頁");
 assert(v60StyleSource.includes(".v60-finance-cut-cards{display:grid") && v60StyleSource.includes(".v60-finance-cut-card>.cut-btn{width:68px;min-height:48px"), "v60-017 手機候選卡改為薪資比較條，釋出觸控目標至少68×48px");
 g(`var __v60CutsSavedS=JSON.stringify(S),__v60CutsSavedUI=JSON.stringify(UI),__v60CutsSavedHtml=app.innerHTML;
@@ -4664,9 +4664,11 @@ var __v60CutsSalaryBars=(app.innerHTML.match(/v60-finance-cut-salary-rail/g)||[]
 UI.financeCutsPage=1;renderFinanceCuts();__v60CutsTableStart=app.innerHTML.indexOf('<table class="stattable v60-finance-cut-table">');__v60CutsTableEnd=app.innerHTML.indexOf('</table>',__v60CutsTableStart)+8;
 __v60CutsTable=app.innerHTML.slice(__v60CutsTableStart,__v60CutsTableEnd);var __v60CutsPageTwoRows=(__v60CutsTable.match(/<tr>/g)||[]).length-1;
 var __v60CutsPageTwoName=(__v60CutsTable.match(/<tr><td>([^<]+)/)||[])[1]||'';
+UI.financeCutsPage=2;renderFinanceCuts();__v60CutsTableStart=app.innerHTML.indexOf('<table class="stattable v60-finance-cut-table">');__v60CutsTableEnd=app.innerHTML.indexOf('</table>',__v60CutsTableStart)+8;
+__v60CutsTable=app.innerHTML.slice(__v60CutsTableStart,__v60CutsTableEnd);var __v60CutsPageThreeRows=(__v60CutsTable.match(/<tr>/g)||[]).length-1;
 UI.financeCutsPosFilter='P';UI.financeCutsPage=0;renderFinanceCuts();var __v60CutsPitcherTotal=app.innerHTML.includes('共 9 人');
 S=JSON.parse(__v60CutsSavedS);UI=JSON.parse(__v60CutsSavedUI);app.innerHTML=__v60CutsSavedHtml;`);
-assert(g("__v60CutsRows===8 && __v60CutsActions===8 && __v60CutsMobileCards===8 && __v60CutsSalaryBars===8 && __v60CutsPageTwoRows===3 && __v60CutsFirstName!==__v60CutsPageTwoName && __v60CutsPitcherTotal"), "v60-017 renderer 實際呈現11人分為8＋3頁、頁間換人、桌面釋出按鈕及手機薪資條完整");
+assert(g("__v60CutsRows===4 && __v60CutsActions===4 && __v60CutsMobileCards===4 && __v60CutsSalaryBars===4 && __v60CutsPageTwoRows===4 && __v60CutsPageThreeRows===3 && __v60CutsFirstName!==__v60CutsPageTwoName && __v60CutsPitcherTotal"), "v60-017 renderer 實際呈現11人分為4＋4＋3頁、頁間換人、桌面釋出按鈕及手機薪資條完整");
 
 /* v60-018／r057：春訓成果按一／二軍分頁，每頁四人；手機用主練／連動／特性增幅卡取代窄表格。 */
 console.log("\n--- v60-018 春訓成果報告閱讀減量 ---");
@@ -4985,11 +4987,11 @@ S=JSON.parse(__r063SavedS);UI=JSON.parse(__r063SavedUI);`);
 assert(g("__r063First&&__r063Retired&&__r063Stable"), "r063 年度結算與退休球員分區，兩人分頁及留任／指派教練操作保留，重畫不改存檔");
 const r063Dash = fs.readFileSync("05-ui-dashboard.js", "utf8");
 const r063Css = fs.readFileSync("style.css", "utf8");
-assert(r063Dash.includes('["gameOver", "offseasonSummary", "facilities"].includes(UI.screen)') && r063Css.includes('.v60-offseason-summary-tabs .uitab-btn{min-width:0;min-height:48px;'), "r063 休賽季長頁的固定前進鈕不遮蓋結算，兩頁籤保留手機觸控尺寸");
+assert(r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts"].includes(UI.screen)') && r063Css.includes('.v60-offseason-summary-tabs .uitab-btn{min-width:0;min-height:48px;'), "r063 休賽季長頁的固定前進鈕不遮蓋結算，兩頁籤保留手機觸控尺寸");
 
 console.log("\n--- r064 球場建造每頁兩項與返回鈕不遮擋 ---");
 assert(fs.readFileSync("02-finance.js", "utf8").includes('v60RosterPageSlice(STADIUM_FACILITY_TYPES, "facilityBuildPage", 2)') &&
-  r063Dash.includes('["gameOver", "offseasonSummary", "facilities"].includes(UI.screen)'),
+  r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts"].includes(UI.screen)'),
   "r064 球場建造候選仍完整分頁，硬體頁返回鈕不浮在設施效果與費用上方");
 
 console.log("\n--- r065 選秀兩人共通評估去重 ---");
@@ -5002,6 +5004,14 @@ __r065Sorted[1].scoutConfidence='不同信心測試';renderDraft();
 var __r065Distinct=!app.innerHTML.includes('兩人共通・')&&(app.innerHTML.match(/共通信心測試/g)||[]).length===1&&(app.innerHTML.match(/不同信心測試/g)||[]).length===1;
 S=JSON.parse(__r065SavedS);UI=JSON.parse(__r065SavedUI);`);
 assert(g("__r065Common&&__r065Distinct"), "r065 選秀雙人同評估只顯示一次，評估不同仍各自完整顯示");
+
+console.log("\n--- r066 財務裁員短頁與決策鈕位置 ---");
+assert((v60FinanceCutsSource.match(/v60RosterPagerHtml\(page, "financeCutsPage"/g) || []).length === 2 &&
+  v60FinanceCutsSource.indexOf('class="v60-finance-cut-actions"') < v60FinanceCutsSource.indexOf('posFilterBarHtml(list, "financeCutsPosFilter")') &&
+  v60FinanceCutsSource.includes('id="btn-cuts-override"') && v60FinanceCutsSource.includes('id="btn-cuts-continue"') &&
+  r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts"].includes(UI.screen)') &&
+  v60StyleSource.includes('.v60-finance-cut-actions button{min-height:48px;'),
+  "r066 四人分頁上下皆可翻，兩種原決策位於名單前且不浮在球員卡上");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

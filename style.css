@@ -1353,6 +1353,9 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-listing-table{margin-top:8px;}
 .v60-listing-cards{display:none;}
 .v60-finance-cut-cards{display:none;}
+.v60-finance-cut-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0;}
+.v60-finance-cut-actions button{min-height:48px;min-width:0;white-space:normal;line-height:1.35;}
+@media(max-width:620px){.v60-finance-cut-actions{grid-template-columns:1fr;}}
 @media(max-width:520px){
   .v60-preseason-dock{padding:5px 6px 6px;}
   .v60-preseason-finance{gap:2px;padding:5px 3px;}
