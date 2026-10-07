@@ -2,7 +2,8 @@
 
 - 2026-10-07 固定有效選秀情境的 390px 畫面約 839 可見字／2,398px 高。原先兩張候選卡分別列出同名逐項能力，現在保留核准肖像、雙層雷達、現況／天花板評等、球風、成熟度、選擇按鈕與每頁兩人，將所有原逐項球探估值改為一張共用欄名的雙人對照。核心、對位／跑壘、守備／捕手、體能／球路四類皆可觸控切換，原數值不刪除，也不新增裝飾圖示。
 - 同一情境 390px 約 745 可見字／2,174px；320px 2,277px、1280px 2,055px，三寬度無橫向溢位或頁面例外。瀏覽器驗證兩候選卡、四類皆可切換、雙人分頁可到達且頁籤切換不更動 `S`。證據：`_staging/v60-010-preseason-flow-candidate/browser-proof/v60-r069-draft-*-route-inventory.json` 與三寬度截圖。此是單頁改善，並非全遊戲減量百分比；情境入口本身存在既有選秀 lazy state 初始化，不能把該狀態變更誤說成本次分頁副作用。
-- `node test_regression.js`：1,914 通過／0 失敗，含共用比較全部原估值、原兩人分頁／雷達與不改 `S` 的斷言；一般 15 年＋全畫面渲染煙霧、純 GM 15 年煙霧均通過。Pages 公開證據另待部署完成後記錄；正式套件與原有未提交 `manifest.webmanifest` 不動。
+- `node test_regression.js`：1,914 通過／0 失敗，含共用比較全部原估值、原兩人分頁／雷達與不改 `S` 的斷言；一般 15 年＋全畫面渲染煙霧、純 GM 15 年煙霧均通過。正式套件與原有未提交 `manifest.webmanifest` 不動。
+- 程式 commit `257cffa48d24cb0a84bda541d04d4eb8bab3700c` 已推送至 `main`；[Pages build 37608701227](https://github.com/mars0884-chu/baseball-GM/actions/runs/37608701227) 對應該 commit，`completed/success`。公開 `index.html`、`06-ui-roster.js`、`test_regression.js`、`sw.js` 以獨立查詢參數與 `no-cache` 實際 GET，四者皆 HTTP 200 且含預期標記。公開部署不是 Mars 真機接受。
 
 # v60-r068 休賽季讀檔回到未完成關卡
 
