@@ -2,7 +2,8 @@
 
 - 2026-10-07 接續選秀雙人對照後，兩名候選卡仍各有養成與生涯的長句。將標準成熟度的完整語意轉成短階段資訊：長期養成約 4–6 年、潛力新秀約 3–5 年、即戰力成長有限且較快可上一軍；生涯仍標示成長、顛峰或衰退，保留顛峰年齡及長青型衰退較慢的差異。這些資訊直接置於已核准的「目前數據／未來天花板」卡內，不增第三排卡片、不改 `p.maturity` 或 Save；舊存檔特殊成熟度原文維持原樣。
 - 先試獨立階段雙卡時，390px 可見字 745→709，但頁高 2,174→2,184px，因加高頁面而未採用；改為併入原評等卡後，固定情境 390px 約 697 可見字／2,108px。320px 2,209px、1280px 2,015px，無橫向溢位與頁面例外；兩候選肖像、雷達、全部逐項估值、四類比較及選擇／翻頁操作仍可用。證據：`_staging/v60-010-preseason-flow-candidate/browser-proof/v60-r070-draft-*-route-inventory.json` 與截圖。這是單頁改善，非全遊戲減量完成。
-- `node test_regression.js`：1,916 通過／0 失敗，涵蓋三種標準養成時程、顛峰年齡、特殊舊值保留與不改 `S`；一般 15 年＋全畫面渲染煙霧、純 GM 15 年煙霧均通過。Pages 公開證據待部署後記錄；正式套件與原有未提交 `manifest.webmanifest` 不動。
+- `node test_regression.js`：1,916 通過／0 失敗，涵蓋三種標準養成時程、顛峰年齡、特殊舊值保留與不改 `S`；一般 15 年＋全畫面渲染煙霧、純 GM 15 年煙霧均通過。正式套件與原有未提交 `manifest.webmanifest` 不動。
+- 程式 commit `fe2673fd73918d620c08933a19d31663a9a110fb` 已推送 `main`；[Pages build 37609913778](https://github.com/mars0884-chu/baseball-GM/actions/runs/37609913778) 對應該 commit 且 `completed/success`。公開 `index.html`、`06-ui-roster.js`、`style.css`、`sw.js` 以獨立查詢參數與 `no-cache` 實際 GET，四者皆 HTTP 200 且含預期標記。公開部署不等於 Mars 真機接受。
 
 # v60-r069 選秀雙人逐項能力共享比較
 
