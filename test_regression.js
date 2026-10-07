@@ -1391,7 +1391,7 @@ assert(g("!scoutVacant(S.teams[__v35ai],'trade') && !!S.teams[__v35ai].scouts.tr
 g("S.gmCareer.fired=true; S.idSeq=ID_SEQ; var __sn35=JSON.parse(JSON.stringify(S)); hydrateLoadedState(__sn35);");
 assert(g("UI.screen==='gameOver'"), "v35 解職中重載優先還原gameOver");
 g("S.gmCareer.fired=false;");
-g("S.offseasonEnteredYear=S.seasonYear; if(!S.offseasonSummary)S.offseasonSummary={retiredCount:0,coachesReplaced:0,myRetiredIds:[],myFinanceReport:null,contractsRenewed:0,contractsDeparted:[]}; S.pendingStaffRenewals=[]; S.pendingContractRenewals=[]; S.forcedCutRequired=false; if(S.draft)S.draft.active=false;");
+g("S.offseasonEnteredYear=S.seasonYear; S.springCamp=null; if(!S.offseasonSummary)S.offseasonSummary={retiredCount:0,coachesReplaced:0,myRetiredIds:[],myFinanceReport:null,contractsRenewed:0,contractsDeparted:[]}; S.pendingStaffRenewals=[]; S.pendingContractRenewals=[]; S.forcedCutRequired=false; if(S.draft)S.draft.active=false;");
 g("S.idSeq=ID_SEQ; var __sn35b=JSON.parse(JSON.stringify(S)); hydrateLoadedState(__sn35b);");
 assert(g("UI.screen==='offseasonSummary'"), "v35 休賽季進行中重載回摘要（不再落到dashboard）");
 assert(g("UI.negotiation===null && UI.coachPicker===null"), "v35 hydrate清除暫時性UI殘留");
@@ -4406,6 +4406,8 @@ UI.screen='selfTraining';`);
 assert(g("v60PreseasonNextStage().screen==='financeDeals'"), "r040 換季後 draftDoneYear 屬上個休賽季，不得把開季準備誤判為重辦選秀");
 g("v60PreseasonGoNext(); v60PreseasonGoNext();");
 assert(g("UI.screen==='finance' && UI.tabs.finance==='deals' && v60PreseasonMissingStep()==='deals'"), "r041 重複點目前項目不得跳過談約");
+g("S.offseasonEnteredYear=S.seasonYear; S.offseasonSummary=S.offseasonSummary||{retiredCount:0,coachesReplaced:0,myRetiredIds:[]}; S.idSeq=ID_SEQ; hydrateLoadedState(JSON.parse(JSON.stringify(S)));");
+assert(g("UI.screen==='finance' && UI.tabs.finance==='deals' && v60PreseasonMissingStep()==='deals'"), "r068 已進開季準備的休賽季存檔重載後，仍回第一個未完成項目而非退回摘要");
 g(`var __r044BudgetBefore=S.teams[S.userTeamId].finance.budget; executeSpringCamp();`);
 assert(g("!S.springCamp.executed && S.springCampDoneYear!==S.seasonYear && S.teams[S.userTeamId].finance.budget===__r044BudgetBefore && v60PreseasonMissingStep()==='deals'"), "r044 直接呼叫春訓執行入口也不可略過開季準備或扣款");
 g("v60PreseasonCompleteStep('deals');");
@@ -4431,6 +4433,7 @@ assert(v60PrepDash.includes('key === "roster" && typeof rosterBlockingIssues') &
 assert(v60PrepDash.includes('review.teamId === S.userTeamId') && v60PrepDash.includes('review.year === S.seasonYear'), "r041 換季或換隊不沿用前一份開季檢查進度");
 assert(v60PrepFinance.includes('S.pendingContractRenewals.length === 0 && typeof proceedFromContractRenewals') && v60PrepFinance.includes('neg.kind === "renewal" && (S.pendingContractRenewals || []).length === 0'), "r044 最後一位球員談約或不續約完成後自動接下一關");
 assert(v60PrepDash.includes('data-v60-prep="current"') && !v60PrepDash.includes('data-v60-prep="next"') && v60PrepDash.includes('return v60PreseasonCompleteStep(button.dataset.step)'), "r047 頁首只提供返回目前待辦，完成項目後直接進下一站，不要求另按下一步");
+assert(v60PrepRoster.includes('&& !(S.springCamp && S.springCamp.year === S.seasonYear)) UI.screen = "offseasonSummary"') && v60PrepRoster.includes('UI.screen = missing || (S.springCamp.executed ? "springReport" : "springCamp")'), "r068 重載已有春訓的休賽季存檔，回到當前準備項目，不退回摘要或跳開季");
 assert(v60RosterSource.includes('完成選秀，進入開季準備') && !v60RosterSource.includes('<button id="btn-start-season" class="btn-primary">開始新球季</button>'), "r047 選秀完成按鈕不得誤稱準備尚未完成的球季已開季");
 assert(v60DashboardSource.includes('visual_assets/v60/offseason_planning_r040.jpg') && v60DashboardSource.includes('loading="lazy" decoding="async"'), "r040 休賽季場景圖按需載入並取代流程長文");
 
@@ -4987,11 +4990,11 @@ S=JSON.parse(__r063SavedS);UI=JSON.parse(__r063SavedUI);`);
 assert(g("__r063First&&__r063Retired&&__r063Stable"), "r063 年度結算與退休球員分區，兩人分頁及留任／指派教練操作保留，重畫不改存檔");
 const r063Dash = fs.readFileSync("05-ui-dashboard.js", "utf8");
 const r063Css = fs.readFileSync("style.css", "utf8");
-assert(r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts"].includes(UI.screen)') && r063Css.includes('.v60-offseason-summary-tabs .uitab-btn{min-width:0;min-height:48px;'), "r063 休賽季長頁的固定前進鈕不遮蓋結算，兩頁籤保留手機觸控尺寸");
+assert(r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp"].includes(UI.screen)') && r063Css.includes('.v60-offseason-summary-tabs .uitab-btn{min-width:0;min-height:48px;'), "r063 休賽季長頁的固定前進鈕不遮蓋結算，兩頁籤保留手機觸控尺寸");
 
 console.log("\n--- r064 球場建造每頁兩項與返回鈕不遮擋 ---");
 assert(fs.readFileSync("02-finance.js", "utf8").includes('v60RosterPageSlice(STADIUM_FACILITY_TYPES, "facilityBuildPage", 2)') &&
-  r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts"].includes(UI.screen)'),
+  r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp"].includes(UI.screen)'),
   "r064 球場建造候選仍完整分頁，硬體頁返回鈕不浮在設施效果與費用上方");
 
 console.log("\n--- r065 選秀兩人共通評估去重 ---");
@@ -5009,9 +5012,19 @@ console.log("\n--- r066 財務裁員短頁與決策鈕位置 ---");
 assert((v60FinanceCutsSource.match(/v60RosterPagerHtml\(page, "financeCutsPage"/g) || []).length === 2 &&
   v60FinanceCutsSource.indexOf('class="v60-finance-cut-actions"') < v60FinanceCutsSource.indexOf('posFilterBarHtml(list, "financeCutsPosFilter")') &&
   v60FinanceCutsSource.includes('id="btn-cuts-override"') && v60FinanceCutsSource.includes('id="btn-cuts-continue"') &&
-  r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts"].includes(UI.screen)') &&
+  r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp"].includes(UI.screen)') &&
   v60StyleSource.includes('.v60-finance-cut-actions button{min-height:48px;'),
   "r066 四人分頁上下皆可翻，兩種原決策位於名單前且不浮在球員卡上");
+
+console.log("\n--- r067 春訓短頁與出發操作 ---");
+g(`var __r067SavedS=JSON.stringify(S),__r067SavedUI=JSON.stringify(UI);
+S.springCamp=null;prepareSpringCamp();UI.screen='springCamp';UI.springTab='1軍';UI.springPositionTab='all';UI.springPageKey=null;UI.springPage=0;
+var __r067Before=JSON.stringify(S),__r067Ids=[],__r067Pages=Math.ceil(S.teams[S.userTeamId].roster1.length/4);
+for(var __r067Page=0;__r067Page<__r067Pages;__r067Page++){UI.springPage=__r067Page;renderSpringCamp();__r067Ids.push(...Array.from(app.innerHTML.matchAll(/class="sortselect spring-menu-select"[^>]*data-id="([^"]+)"/g),m=>m[1]));}
+var __r067Stable=JSON.stringify(S)===__r067Before,__r067All=__r067Ids.length===S.teams[S.userTeamId].roster1.length&&new Set(__r067Ids).size===__r067Ids.length;
+UI.springPage=0;renderSpringCamp();var __r067Controls=(app.innerHTML.match(/class="v60-choice-pager"/g)||[]).length===2&&(app.innerHTML.match(/class="sortselect spring-menu-select"/g)||[]).length===4&&!!document.getElementById('btn-spring-go').onclick&&app.innerHTML.indexOf('id="btn-spring-go"')<app.innerHTML.indexOf('<table class="stattable">');
+S=JSON.parse(__r067SavedS);UI=JSON.parse(__r067SavedUI);`);
+assert(g("__r067Stable&&__r067All&&__r067Controls") && r063Dash.includes('"financeCuts", "springCamp"].includes(UI.screen)'), "r067 春訓一軍四人短頁可完整翻完，名單前出發操作可用且渲染不改存檔");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

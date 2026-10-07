@@ -236,7 +236,7 @@ function wireUiTabs() {
    讓「確認／繼續／返回」不必滑到數千像素後才找得到。 */
 function v60MarkStickyScreenAction() {
   // 解職頁有多重決策；休賽季與硬體頁已有頁首導覽，避免頁末操作浮在內容上方。
-  if (["gameOver", "offseasonSummary", "facilities", "financeCuts"].includes(UI.screen)) return;
+  if (["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp"].includes(UI.screen)) return;
   const appRoot = document.getElementById("app");
   if (!appRoot || !appRoot.querySelector) return;
   const wrap = appRoot.querySelector(".wrap");
@@ -1866,9 +1866,10 @@ function renderSpringCamp() {
   const visiblePlayers = springPositionKey === "all" ? players : players.filter(p => v60SpringPositionGroup(p) === springPositionKey);
   const springPageKey = `${S.seasonYear}:${UI.springTab}:${springPositionKey}`;
   if (UI.springPageKey !== springPageKey) { UI.springPageKey = springPageKey; UI.springPage = 0; }
-  const springPages = Math.max(1, Math.ceil(visiblePlayers.length / 6));
+  const springPages = Math.max(1, Math.ceil(visiblePlayers.length / 4));
   UI.springPage = Math.min(Math.max(0, UI.springPage || 0), springPages - 1);
-  const pagePlayers = visiblePlayers.slice(UI.springPage * 6, UI.springPage * 6 + 6);
+  const pagePlayers = visiblePlayers.slice(UI.springPage * 4, UI.springPage * 4 + 4);
+  const springPager = `<nav class="v60-choice-pager" aria-label="春訓名單分頁"><button type="button" class="spring-page-btn" data-spring-step="-1" ${UI.springPage === 0 ? 'disabled' : ''}>上一頁</button><span>${UI.springPage + 1}/${springPages}</span><button type="button" class="spring-page-btn" data-spring-step="1" ${UI.springPage === springPages - 1 ? 'disabled' : ''}>下一頁</button></nav>`;
   // v29（Mars定案）：海外春訓僅開放B級以上國家（C/D級訓練環境不足）；母國青雲國不受限
   const gradeNations = ["S", "A", "B"].map(g => ({ g, list: NATIONS.filter(n => n.grade === g) }));
   const specLabels = nation.specialties.map(k => SPRING_MENU_LABEL[k]).join("、");
@@ -1903,7 +1904,9 @@ function renderSpringCamp() {
       </div>
       ${v60SpringPositionTabs(players, springPositionKey)}
       <div class="btnrow"><button id="btn-spring-auto" class="btn-secondary">AI建議・${UI.springTab}全員</button></div>
-      <nav class="v60-choice-pager" aria-label="春訓名單分頁"><button id="spring-prev" ${UI.springPage === 0 ? 'disabled' : ''}>上一頁</button><span>${UI.springPage + 1}/${springPages}</span><button id="spring-next" ${UI.springPage === springPages - 1 ? 'disabled' : ''}>下一頁</button></nav>
+      <div class="v60-training-limit"><span>單項上限</span><b>最多 +5</b><span>不超潛力</span></div>
+      <div class="btnrow v60-spring-go-row"><button id="btn-spring-go" class="btn-primary">確認出發春訓${cost > 0 ? `（支付 ${formatMoney(cost)}）` : "（母國・免費）"}</button></div>
+      ${springPager}
       <table class="stattable">
         <thead><tr><th>球員・現況／上限</th><th>訓練</th></tr></thead>
         <tbody>
@@ -1917,15 +1920,18 @@ function renderSpringCamp() {
           </tr>`;}).join("")}
         </tbody>
       </table>
-      <div class="v60-training-limit"><span>單項上限</span><b>最多 +5</b><span>不超潛力</span></div>
-      <div class="btnrow"><button id="btn-spring-go" class="btn-primary">確認出發春訓${cost > 0 ? `（支付 ${formatMoney(cost)}）` : "（母國・免費）"}</button></div>
+      ${springPager}
     </div>`;
   document.getElementById("spring-nation").onchange = e => setSpringNation(e.target.value);
   app.querySelectorAll(".tab").forEach(btn => { btn.onclick = () => { UI.springTab = btn.dataset.tab; render(); }; });
   app.querySelectorAll("[data-spring-position]").forEach(btn => { btn.onclick = () => { UI.springPositionTab = btn.dataset.springPosition; render(); }; });
   document.getElementById("btn-spring-auto").onclick = () => springAutoAssign(UI.springTab);
-  document.getElementById('spring-prev').onclick = () => { UI.springPage--; render(); };
-  document.getElementById('spring-next').onclick = () => { UI.springPage++; render(); };
+  app.querySelectorAll('.spring-page-btn').forEach(btn => { btn.onclick = () => {
+    UI.springPage += Number(btn.dataset.springStep);
+    render();
+    const target = app.querySelector('.v60-choice-pager');
+    if (target && target.scrollIntoView) target.scrollIntoView({ block: 'start' });
+  }; });
   app.querySelectorAll(".spring-menu-select").forEach(sel => { sel.onchange = e => setSpringAssignment(sel.dataset.id, e.target.value); });
   document.getElementById("btn-spring-go").onclick = () => {
     const missing = v60PreseasonMissingStep();
