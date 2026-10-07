@@ -1035,6 +1035,21 @@ function v60ScoutedComparisonHtml(players, scope) {
 }
 function v60IntlComparisonHtml(players) { return v60ScoutedComparisonHtml(players, "intl"); }
 function v60DraftComparisonHtml(players) { return v60ScoutedComparisonHtml(players, "draft"); }
+function v60DraftDevelopmentNote(p, kind) {
+  const phase = growthPhaseLabel(p);
+  const standardMaturity = maturityLabel(p.age);
+  let maturity = p.maturity || "—";
+  if (maturity === standardMaturity) {
+    if (p.age <= 19) maturity = "長期養成・約4–6年近天花板";
+    else if (p.age <= 21) maturity = "潛力新秀・約3–5年近天花板";
+    else maturity = "即戰力可期・成長有限／較快上一軍";
+  }
+  const peakAge = p.peakAge || 27;
+  const phaseNote = phase.key === "grow" ? `仍可成長・顛峰約${peakAge}歲`
+    : phase.key === "peak" ? "能力近最高水準" : "逐年下滑・長青型較慢";
+  return kind === "current" ? `<small class="v60-draft-development-note ${phase.cls}">${phase.text}・${phaseNote}</small>`
+    : `<small class="v60-draft-development-note">${v60UiEscape(maturity)}</small>`;
+}
 function renderInternationalMarket() {
   const team = S.teams[S.userTeamId];
   ensureFacilities(team);
@@ -1455,12 +1470,10 @@ function renderDraft() {
             ${p.isPitcher ? `角色傾向：${p.role}` : `主守位：${POS_LABEL[p.positions[0].pos]}`}　球風：${p.archetype}
           </div>
           <div class="draftgrades v60-draft-evaluations">
-            <div class="v60-draft-evaluation"><span>目前數據</span><strong><span class="gradebadge grade-${p.scoutedGrade}">${p.scoutedGrade}</span> ${p.scoutedOverall != null ? p.scoutedOverall : "—"}</strong></div>
-            <div class="v60-draft-evaluation ceiling"><span>未來天花板</span><strong><span class="gradebadge grade-${p.scoutedCeiling}">${p.scoutedCeiling}</span> ${p.scoutedCeilingVal != null ? `約 ${p.scoutedCeilingVal}` : "—"}</strong></div>
+            <div class="v60-draft-evaluation"><span>目前數據</span><strong><span class="gradebadge grade-${p.scoutedGrade}">${p.scoutedGrade}</span> ${p.scoutedOverall != null ? p.scoutedOverall : "—"}</strong>${v60DraftDevelopmentNote(p, "current")}</div>
+            <div class="v60-draft-evaluation ceiling"><span>未來天花板</span><strong><span class="gradebadge grade-${p.scoutedCeiling}">${p.scoutedCeiling}</span> ${p.scoutedCeilingVal != null ? `約 ${p.scoutedCeilingVal}` : "—"}</strong>${v60DraftDevelopmentNote(p, "future")}</div>
           </div>
           ${p.isPitcher ? `<div class="draftnote muted">${p.pitches ? p.pitches.length : "?"} 種球路</div>` : ""}
-          <div class="draftnote">${p.maturity}</div>
-          ${(() => { const ph = growthPhaseLabel(p); return `<div class="draftnote">生涯：<b class="${ph.cls}">${ph.text}</b>・${ph.desc}</div>`; })()}
           ${sharedDraftConfidence ? "" : `<div class="draftnote muted">${p.scoutConfidence}</div>`}
         </div>`).join("")}
       ${visibleDraft.length ? `<div class="card v60-draft-shared-compare"><div class="eyebrow">逐項能力・雙人對照</div>${v60DraftComparisonHtml(visibleDraft)}</div>` : ""}

@@ -5034,5 +5034,15 @@ var __r069Unchanged=JSON.stringify(S)===__r069Before;UI=JSON.parse(__r069OldUi);
 assert(g("__r069AllValues&&__r069Unchanged&&__r069Html.includes('比較甲')&&__r069Html.includes('比較乙')&&__r069Html.includes('data-draft-compare-tab=\"core\"')&&__r069Html.includes('data-draft-compare-panel=\"body\"')"), "r069 選秀雙人共用欄名，四類仍保留兩人全部逐項估值且不改存檔");
 assert(r061Draft.includes('v60DraftComparisonHtml(visibleDraft)') && r061Draft.includes('data-draft-compare-tab') && !r061Draft.includes('scoutedAttrRows(p)') && r061Draft.includes('v60DraftRadarCardHtml(p, draftEffAcc)') && r061Draft.includes('data-draft-page'), "r069 選秀原肖像雷達與雙人分頁保留，重複逐卡能力網格由共享比較取代");
 
+console.log("\n--- r070 選秀養成階段資訊圖像化 ---");
+g(`var __r070Before=JSON.stringify(S),__r070Young=v60DraftDevelopmentNote({age:18,peakAge:29,maturity:maturityLabel(18)},'future'),
+__r070Phase=v60DraftDevelopmentNote({age:18,peakAge:29,maturity:maturityLabel(18)},'current'),
+__r070Middle=v60DraftDevelopmentNote({age:21,peakAge:27,maturity:maturityLabel(21)},'future'),
+__r070Ready=v60DraftDevelopmentNote({age:23,peakAge:27,maturity:maturityLabel(23)},'future'),
+__r070Custom=v60DraftDevelopmentNote({age:18,peakAge:29,maturity:'原有特殊養成資訊'},'future'),
+__r070Stable=JSON.stringify(S)===__r070Before;`);
+assert(g("__r070Young.includes('4–6年近天花板')&&__r070Phase.includes('顛峰約29歲')&&__r070Middle.includes('3–5年近天花板')&&__r070Ready.includes('較快上一軍')&&__r070Custom.includes('原有特殊養成資訊')&&__r070Stable"), "r070 標準三種養成時程與顛峰年齡保留，舊存檔特殊文字不被覆蓋且不改遊戲狀態");
+assert(r061Draft.includes('v60DraftDevelopmentNote(p, "current")') && r061Draft.includes('v60DraftDevelopmentNote(p, "future")') && !r061Draft.includes('phase.desc') && fs.readFileSync('style.css','utf8').includes('.v60-draft-evaluation .v60-draft-development-note{'), "r070 養成／生涯階段直接併入現況及天花板視覺卡，不增加第三排卡片");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);
