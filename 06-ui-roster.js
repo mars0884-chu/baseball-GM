@@ -1001,7 +1001,12 @@ function renderFreeAgents() {
 
 
 /* 國際市場每頁共用一組能力欄名，兩名球員並排比較；資料仍取自原球探視圖。 */
-function v60IntlComparisonHtml(players) {
+function v60ScoutedComparisonHtml(players, scope) {
+  const isDraft = scope === "draft";
+  const activeField = isDraft ? "draftCompareTab" : "intlCompareTab";
+  const tabAttribute = isDraft ? "data-draft-compare-tab" : "data-intl-compare-tab";
+  const panelAttribute = isDraft ? "data-draft-compare-panel" : "data-intl-compare-panel";
+  const comparisonName = isDraft ? "選秀候選人" : "國際球員";
   const columns = players.map(p => {
     const occurrences = {};
     return scoutedAttrPairs(p).map(([label, value]) => {
@@ -1019,15 +1024,17 @@ function v60IntlComparisonHtml(players) {
     { key: "body", name: "體能／球路", values: [] }
   ];
   const shown = groups.map(group => ({ ...group, rows: labels.filter(item => group.key === "body" ? !groups.slice(0, 3).some(other => other.values.includes(item.label)) : group.values.includes(item.label)) })).filter(group => group.rows.length);
-  const active = shown.some(group => group.key === UI.intlCompareTab) ? UI.intlCompareTab : shown[0].key;
-  UI.intlCompareTab = active;
+  const active = shown.some(group => group.key === UI[activeField]) ? UI[activeField] : shown[0].key;
+  UI[activeField] = active;
   const rowHtml = item => `<div class="v60-intl-compare-row" role="row"><span role="rowheader">${v60UiEscape(item.label)}</span>${columns.map(col => `<span role="cell">${(col.find(row => row.key === item.key) || {}).value || "—"}</span>`).join("")}</div>`;
-  return `<div class="v60-intl-compare-tabs" role="tablist" aria-label="球員能力類別">${shown.map(group => `<button type="button" role="tab" data-intl-compare-tab="${group.key}" aria-selected="${group.key === active}">${group.name}・${group.rows.length}</button>`).join("")}</div>
-    ${shown.map(group => `<div class="v60-intl-compare ${players.length === 1 ? "is-single" : ""}" role="table" data-intl-compare-panel="${group.key}" aria-label="${group.name}能力比較" ${group.key === active ? "" : "hidden"}>
+  return `<div class="v60-intl-compare-tabs" role="tablist" aria-label="${comparisonName}能力類別">${shown.map(group => `<button type="button" role="tab" ${tabAttribute}="${group.key}" aria-selected="${group.key === active}">${group.name}・${group.rows.length}</button>`).join("")}</div>
+    ${shown.map(group => `<div class="v60-intl-compare ${players.length === 1 ? "is-single" : ""}" role="table" ${panelAttribute}="${group.key}" aria-label="${group.name}能力比較" ${group.key === active ? "" : "hidden"}>
       <div class="v60-intl-compare-row v60-intl-compare-head" role="row"><span role="columnheader">能力</span>${players.map(p => `<span role="columnheader">${v60UiEscape(p.name)}</span>`).join("")}</div>
       ${group.rows.map(rowHtml).join("")}
     </div>`).join("")}`;
 }
+function v60IntlComparisonHtml(players) { return v60ScoutedComparisonHtml(players, "intl"); }
+function v60DraftComparisonHtml(players) { return v60ScoutedComparisonHtml(players, "draft"); }
 function renderInternationalMarket() {
   const team = S.teams[S.userTeamId];
   ensureFacilities(team);
@@ -1452,13 +1459,11 @@ function renderDraft() {
             <div class="v60-draft-evaluation ceiling"><span>未來天花板</span><strong><span class="gradebadge grade-${p.scoutedCeiling}">${p.scoutedCeiling}</span> ${p.scoutedCeilingVal != null ? `約 ${p.scoutedCeilingVal}` : "—"}</strong></div>
           </div>
           ${p.isPitcher ? `<div class="draftnote muted">${p.pitches ? p.pitches.length : "?"} 種球路</div>` : ""}
-          <div class="attrgrid">
-            ${scoutedAttrRows(p)}
-          </div>
           <div class="draftnote">${p.maturity}</div>
           ${(() => { const ph = growthPhaseLabel(p); return `<div class="draftnote">生涯：<b class="${ph.cls}">${ph.text}</b>・${ph.desc}</div>`; })()}
           ${sharedDraftConfidence ? "" : `<div class="draftnote muted">${p.scoutConfidence}</div>`}
         </div>`).join("")}
+      ${visibleDraft.length ? `<div class="card v60-draft-shared-compare"><div class="eyebrow">逐項能力・雙人對照</div>${v60DraftComparisonHtml(visibleDraft)}</div>` : ""}
       ${pager}
     </div>`;
   app.querySelectorAll("[data-draft-page]").forEach(btn => {
@@ -1469,6 +1474,11 @@ function renderDraft() {
       if (target && target.scrollIntoView) target.scrollIntoView({ block: "start" });
     };
   });
+  app.querySelectorAll("[data-draft-compare-tab]").forEach(btn => { btn.onclick = () => {
+    UI.draftCompareTab = btn.dataset.draftCompareTab;
+    app.querySelectorAll("[data-draft-compare-tab]").forEach(tab => tab.setAttribute("aria-selected", String(tab.dataset.draftCompareTab === UI.draftCompareTab)));
+    app.querySelectorAll("[data-draft-compare-panel]").forEach(panel => { panel.hidden = panel.dataset.draftComparePanel !== UI.draftCompareTab; });
+  }; });
   document.getElementById("sort-draft").onchange = (e) => { UI.draftSort = e.target.value; render(); };
   wirePosFilterButtons();
   if (UI.draftSkipConfirm) {

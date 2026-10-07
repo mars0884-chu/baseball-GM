@@ -4962,7 +4962,7 @@ console.log("\n--- r061 選秀頁重複文字減量與數值保留 ---");
 const r061Draft = fs.readFileSync("06-ui-roster.js", "utf8").split("function renderDraft()")[1].split("function renderMatchupCard")[0];
 const r061Radar = fs.readFileSync("01-data-engine.js", "utf8").split("function v60DraftRadarCardHtml")[1].split("function v46Cell")[0];
 assert(r061Draft.includes('class="v60-draft-pick-summary"') && r061Draft.includes('v60VisualMetricRail([') && !r061Draft.includes('<div class="scoreboard">'), "r061 選秀頁首輪次、球隊、球探改為並排摘要，原資訊保留");
-assert(r061Draft.includes('v60DraftRadarCardHtml(p, draftEffAcc)') && r061Draft.includes('scoutedAttrRows(p)') && r061Draft.includes('v60-draft-evaluations') && r061Draft.includes('${pager}'), "r061 雷達、逐項球探估值、現況／天花板與雙人分頁均保留");
+assert(r061Draft.includes('v60DraftRadarCardHtml(p, draftEffAcc)') && r061Draft.includes('v60DraftComparisonHtml(visibleDraft)') && r061Draft.includes('v60-draft-evaluations') && r061Draft.includes('${pager}'), "r061 雷達、逐項球探估值、現況／天花板與雙人分頁均保留");
 assert(r061Radar.includes('v60-radar-values') && r061Radar.includes('data.current[i] + \' → \' + data.ceiling[i]') && !r061Radar.includes('藍色現況 → 珊瑚紅預估天花板'), "r061 雷達各軸精確數值保留，只移除重複色彩說明");
 
 console.log("\n--- r062 行銷決策分頁與國際活動操作可達性 ---");
@@ -5025,6 +5025,14 @@ var __r067Stable=JSON.stringify(S)===__r067Before,__r067All=__r067Ids.length===S
 UI.springPage=0;renderSpringCamp();var __r067Controls=(app.innerHTML.match(/class="v60-choice-pager"/g)||[]).length===2&&(app.innerHTML.match(/class="sortselect spring-menu-select"/g)||[]).length===4&&!!document.getElementById('btn-spring-go').onclick&&app.innerHTML.indexOf('id="btn-spring-go"')<app.innerHTML.indexOf('<table class="stattable">');
 S=JSON.parse(__r067SavedS);UI=JSON.parse(__r067SavedUI);`);
 assert(g("__r067Stable&&__r067All&&__r067Controls") && r063Dash.includes('"financeCuts", "springCamp"].includes(UI.screen)'), "r067 春訓一軍四人短頁可完整翻完，名單前出發操作可用且渲染不改存檔");
+
+console.log("\n--- r069 選秀雙人逐項能力共享比較 ---");
+g(`var __r069Before=JSON.stringify(S),__r069OldUi=JSON.stringify(UI);
+UI.draftCompareTab='core';var __r069Html=v60DraftComparisonHtml([__r047A,__r047B]);
+var __r069AllValues=scoutedAttrPairs(__r047A).concat(scoutedAttrPairs(__r047B)).every(function(pair){return __r069Html.includes(pair[1]);});
+var __r069Unchanged=JSON.stringify(S)===__r069Before;UI=JSON.parse(__r069OldUi);`);
+assert(g("__r069AllValues&&__r069Unchanged&&__r069Html.includes('比較甲')&&__r069Html.includes('比較乙')&&__r069Html.includes('data-draft-compare-tab=\"core\"')&&__r069Html.includes('data-draft-compare-panel=\"body\"')"), "r069 選秀雙人共用欄名，四類仍保留兩人全部逐項估值且不改存檔");
+assert(r061Draft.includes('v60DraftComparisonHtml(visibleDraft)') && r061Draft.includes('data-draft-compare-tab') && !r061Draft.includes('scoutedAttrRows(p)') && r061Draft.includes('v60DraftRadarCardHtml(p, draftEffAcc)') && r061Draft.includes('data-draft-page'), "r069 選秀原肖像雷達與雙人分頁保留，重複逐卡能力網格由共享比較取代");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);
