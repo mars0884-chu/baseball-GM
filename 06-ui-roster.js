@@ -1436,14 +1436,11 @@ function renderDraft() {
         ["球探／準度", `${scout ? scout.name : "職位空缺・盲評"}・${draftEffAcc}`]
       ], "選秀目前順位與球探")}</div>
       ${UI.draftSkipConfirm ? `
-      <div class="card issuecard">
-        <div class="eyebrow">放棄選秀權</div>
-        <p class="sub dark">只跳過這一個順位，還是放棄本次選秀會「剩餘所有」順位（之後每輪不會再跳出來詢問，直接自動跳過到選秀結束）？</p>
-        <div class="btnrow">
-          <button id="btn-skip-once" class="btn-secondary">只跳過這次</button>
-          <button id="btn-skip-all" class="btn-danger">放棄剩餘所有順位</button>
-        </div>
-        <div class="btnrow"><button id="btn-skip-cancel" class="btn-outline">取消</button></div>
+      <div class="card issuecard v60-draft-skip-choice" role="group" aria-label="跳過選秀順位選擇">
+        <div class="eyebrow">跳過選秀順位</div>
+        <button id="btn-skip-once" class="btn-secondary" type="button"><strong>只跳過本順位</strong><span>下一輪仍可選人</span></button>
+        <button id="btn-skip-all" class="btn-danger" type="button"><strong>放棄本屆剩餘順位</strong><span>自動跳到選秀結束</span></button>
+        <button id="btn-skip-cancel" class="btn-outline" type="button">取消</button>
       </div>` : `<div class="btnrow"><button id="btn-skip-pick" class="btn-outline">放棄本輪選秀權</button></div>`}
       <p class="v60-state-line">能力與天花板為球探估值；獨家新秀僅你可選。</p>
       ${posFilterBarHtml(d.pool, "draftPosFilter")}

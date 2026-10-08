@@ -5058,5 +5058,17 @@ document.getElementById('btn-back').onclick();var __r071Back=UI.screen==='dashbo
 S=JSON.parse(__r071SavedS);UI=JSON.parse(__r071SavedUI);`);
 assert(g("__r071Nav&&__r071Once&&__r071Controls&&__r071Descriptions&&__r071Back") && fs.readFileSync('style.css','utf8').includes('.v60-dev-policy-selects{'), "r071 育成導覽正確、同方針描述只顯示一次、不同方針說明與雙下拉及返回保留");
 
+console.log("\n--- r072 選秀跳過順位的兩種後果 ---");
+g(`var __r072SavedS=JSON.stringify(S),__r072SavedUI=JSON.stringify(UI);
+newGame('選秀順位確認');pickTeam('T0');proceedFromOffseasonSummary();
+UI.draftSkipConfirm=true;UI.screen='draft';renderDraft();
+var __r072Html=app.innerHTML,__r072Before=JSON.stringify(S.draft),__r072Index=S.draft.pickIndex;
+document.getElementById('btn-skip-cancel').onclick();
+var __r072Cancel=JSON.stringify(S.draft)===__r072Before&&!UI.draftSkipConfirm;
+userSkipPick();document.getElementById('btn-skip-once').onclick();
+var __r072Once=S.draft&&S.draft.active&&S.draft.pickIndex>__r072Index&&S.draft.skippedByUser===1&&!S.draft.userAutoSkip;
+S=JSON.parse(__r072SavedS);UI=JSON.parse(__r072SavedUI);`);
+assert(g("__r072Cancel&&__r072Once&&__r072Html.includes('下一輪仍可選人')&&__r072Html.includes('自動跳到選秀結束')&&__r072Html.includes('放棄本屆剩餘順位')") && !fs.readFileSync('06-ui-roster.js','utf8').includes('之後每輪不會再跳出來詢問，直接自動跳過到選秀結束'), "r072 取消不改選秀、只跳過單一順位且清楚標明放棄剩餘順位的後果");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

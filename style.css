@@ -394,6 +394,12 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .v60-dev-policy-compare strong{color:#17233B;font-size:14px;line-height:1.35;overflow-wrap:anywhere;}
 .v60-roster-topbar #btn-back{width:auto;min-width:68px;min-height:44px;padding:8px 10px;flex:0 0 auto;}
 @media(max-width:360px){.v60-dev-policy-selects{grid-template-columns:1fr;}}
+.v60-draft-skip-choice{display:grid;gap:8px;}
+.v60-draft-skip-choice button{width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;text-align:left;}
+.v60-draft-skip-choice button strong{font-size:16px;line-height:1.25;}
+.v60-draft-skip-choice button span{font-size:14px;line-height:1.25;text-align:right;}
+.v60-draft-skip-choice #btn-skip-cancel{justify-content:center;min-height:44px;}
+@media(max-width:360px){.v60-draft-skip-choice button{align-items:flex-start;flex-direction:column;}.v60-draft-skip-choice button span{text-align:left;}}
 .v60-draft-pick-summary .v60-visual-metric-rail{grid-template-columns:repeat(3,minmax(0,1fr));}
 .v60-draft-pick-summary .v60-visual-metric b{font-size:14px;}
 .v60-draft-pick-summary .v60-visual-metric strong{font-size:16px;}
