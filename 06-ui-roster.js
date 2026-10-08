@@ -1750,8 +1750,8 @@ function renderRoster() {
   const warnings = UI.rosterTab === "1軍" ? lineupRotationWarnings(team) : [];
   app.innerHTML = `
     <div class="wrap">
-      <div class="topbar"><div class="eyebrow">${team.name}</div><h1>球員名單</h1></div>
-      ${renderRosterNav(UI.rosterTab === "2軍" ? "roster2" : "roster1")}
+      <div class="topbar v60-roster-topbar"><div><div class="eyebrow">${team.name}</div><h1>球員名單</h1></div><button id="btn-back" class="btn-outline">返回</button></div>
+      ${renderRosterNav(UI.rosterTab === "育成" ? "rosterDev" : (UI.rosterTab === "2軍" ? "roster2" : "roster1"))}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
       <div class="v60-roster-side-tabs" role="tablist" aria-label="球員類型">
         <button type="button" class="v60-roster-side-tab ${showPitchers ? "active" : ""}" role="tab" aria-selected="${showPitchers}" data-roster-group="pitchers">投手 <span>${pitchers.length}</span></button>
@@ -1777,23 +1777,22 @@ function renderRoster() {
         };
         var curPolPObj = policyOpts[curPolicyP] || policyOpts.balanced;
         var curPolBObj = policyOpts[curPolicyB] || policyOpts.balanced;
+        var sharedPolicyDesc = curPolicyP === curPolicyB && curPolPObj.desc === curPolBObj.desc;
         return `<div class="card" style="margin-bottom:12px;">
-          <div class="eyebrow">育成方針（影響育成球員的屬性成長分配）</div>
-          <div style="margin-bottom:8px;"><span class="sub dark" style="font-weight:700;">投手方針</span></div>
-          <div class="btnrow" style="align-items:center;margin-bottom:4px;">
-            <select id="v54-dev-policy-pitcher" class="sortselect" style="flex:1;">
-              ${optHtml(pitcherOpts, curPolicyP)}
-            </select>
+          <div class="eyebrow">育成方針</div>
+          <div class="v60-dev-policy-selects">
+            <label>投手方針<select id="v54-dev-policy-pitcher" class="sortselect">${optHtml(pitcherOpts, curPolicyP)}</select>
+              ${!sharedPolicyDesc && curPolPObj.desc ? `<span class="v60-dev-policy-desc">${curPolPObj.desc}</span>` : ""}
+            </label>
+            <label>野手方針<select id="v54-dev-policy-batter" class="sortselect">${optHtml(batterOpts, curPolicyB)}</select>
+              ${!sharedPolicyDesc && curPolBObj.desc ? `<span class="v60-dev-policy-desc">${curPolBObj.desc}</span>` : ""}
+            </label>
           </div>
-          <p class="draftnote muted" style="margin-bottom:10px;">${curPolPObj.desc || ""}</p>
-          <div style="margin-bottom:8px;"><span class="sub dark" style="font-weight:700;">野手方針</span></div>
-          <div class="btnrow" style="align-items:center;margin-bottom:4px;">
-            <select id="v54-dev-policy-batter" class="sortselect" style="flex:1;">
-              ${optHtml(batterOpts, curPolicyB)}
-            </select>
+          ${sharedPolicyDesc && curPolPObj.desc ? `<p class="draftnote muted v60-dev-policy-desc">投手／野手共通・${curPolPObj.desc}</p>` : ""}
+          <div class="v60-dev-policy-compare" role="group" aria-label="育成方針成長倍率比較">
+            <div><span>均衡・非保底</span><strong>全項 ×0.8</strong></div>
+            <div><span>專項</span><strong>主項 ×1.0–1.2<br>副項 ×0.5–0.7</strong></div>
           </div>
-          <p class="draftnote muted" style="margin-bottom:6px;">${curPolBObj.desc || ""}</p>
-          <p class="draftnote muted">均衡方針全屬性 ×0.8（刻意的代價，不是安全選擇）。專項方針主屬性 ×1.0–1.2，副屬性 ×0.5–0.7。</p>
         </div>`;
       })() : ""}
       ${showPitchers ? `<div class="divlabel">投手（${pitchers.length}）</div>
@@ -1840,7 +1839,6 @@ function renderRoster() {
           ${batterPage.items.map(p => `<tr data-id="${p.id}"><td class="rowlink" data-id="${p.id}">${nameWithDutyTag(p)}</td><td>${conditionTagHtml(p)}</td><td>${p.age}</td><td>${p.positions.map(x => POS_LABEL[x.pos]).join("/")}</td><td>${UI.rosterTab === "1軍" ? batterLineupTag(team, p) : "－"}</td><td>${p.contact}</td><td>${p.power}</td><td>${p.eye}</td><td>${p.bunting || "-"}</td><td>${p.speed}</td><td>${p.fielding}</td><td><button class="movebtn" data-id="${p.id}">${actionLabel}</button></td></tr>`).join("")}
         </tbody>
       </table></div>` : ""}
-      <div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>
     </div>`;
   var sortPEl = document.getElementById("sort-pitcher");
   if (sortPEl) sortPEl.onchange = (e) => { UI.pitcherSort = e.target.value; UI.rosterPitcherPage = 0; render(); };

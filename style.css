@@ -384,6 +384,16 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .draftcard .attr>span{font-size:14px;}
 .draftcard .attr2 b .proj{color:#254E80;opacity:1;}
 .v60-draft-evaluation .v60-draft-development-note{display:block;color:#254E80;font-size:14px;font-weight:700;line-height:1.35;overflow-wrap:anywhere;}
+.v60-dev-policy-selects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+.v60-dev-policy-selects label{display:flex;flex-direction:column;gap:6px;min-width:0;color:#17233B;font-size:14px;font-weight:800;}
+.v60-dev-policy-selects select{width:100%;min-width:0;min-height:44px;font-size:14px;}
+.v60-dev-policy-desc{display:block;margin:4px 0 8px;color:#245C9E;font-size:14px;line-height:1.35;font-weight:500;}
+.v60-dev-policy-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px;}
+.v60-dev-policy-compare>div{display:flex;flex-direction:column;gap:4px;padding:8px 10px;border:1px solid #B7D3F5;border-radius:8px;background:#F4F9FF;min-width:0;}
+.v60-dev-policy-compare span{color:#245C9E;font-size:14px;font-weight:800;}
+.v60-dev-policy-compare strong{color:#17233B;font-size:14px;line-height:1.35;overflow-wrap:anywhere;}
+.v60-roster-topbar #btn-back{width:auto;min-width:68px;min-height:44px;padding:8px 10px;flex:0 0 auto;}
+@media(max-width:360px){.v60-dev-policy-selects{grid-template-columns:1fr;}}
 .v60-draft-pick-summary .v60-visual-metric-rail{grid-template-columns:repeat(3,minmax(0,1fr));}
 .v60-draft-pick-summary .v60-visual-metric b{font-size:14px;}
 .v60-draft-pick-summary .v60-visual-metric strong{font-size:16px;}

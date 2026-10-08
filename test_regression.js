@@ -5044,5 +5044,19 @@ __r070Stable=JSON.stringify(S)===__r070Before;`);
 assert(g("__r070Young.includes('4–6年近天花板')&&__r070Phase.includes('顛峰約29歲')&&__r070Middle.includes('3–5年近天花板')&&__r070Ready.includes('較快上一軍')&&__r070Custom.includes('原有特殊養成資訊')&&__r070Stable"), "r070 標準三種養成時程與顛峰年齡保留，舊存檔特殊文字不被覆蓋且不改遊戲狀態");
 assert(r061Draft.includes('v60DraftDevelopmentNote(p, "current")') && r061Draft.includes('v60DraftDevelopmentNote(p, "future")') && !r061Draft.includes('phase.desc') && fs.readFileSync('style.css','utf8').includes('.v60-draft-evaluation .v60-draft-development-note{'), "r070 養成／生涯階段直接併入現況及天花板視覺卡，不增加第三排卡片");
 
+console.log("\n--- r071 育成名單方針緊湊比較 ---");
+g(`var __r071SavedS=JSON.stringify(S),__r071SavedUI=JSON.stringify(UI);
+UI.screen='roster';UI.rosterTab='育成';UI.rosterGroup='pitchers';
+var __r071Team=S.teams[S.userTeamId];__r071Team.devPolicyPitcher='balanced';__r071Team.devPolicyBatter='balanced';
+renderRoster();var __r071Same=app.innerHTML;
+var __r071Nav=__r071Same.includes('育成（')||__r071Same.includes('育成 (');
+var __r071Once=__r071Same.split('全屬性同步成長').length===2;
+var __r071Controls=!!document.getElementById('v54-dev-policy-pitcher').onchange&&!!document.getElementById('v54-dev-policy-batter').onchange&&!!document.getElementById('btn-back').onclick;
+__r071Team.devPolicyBatter='power';renderRoster();var __r071Different=app.innerHTML;
+var __r071Descriptions=__r071Different.includes(V54_DEV_POLICIES.balanced.desc)&&__r071Different.includes(V54_DEV_POLICIES.power.desc);
+document.getElementById('btn-back').onclick();var __r071Back=UI.screen==='dashboard';
+S=JSON.parse(__r071SavedS);UI=JSON.parse(__r071SavedUI);`);
+assert(g("__r071Nav&&__r071Once&&__r071Controls&&__r071Descriptions&&__r071Back") && fs.readFileSync('style.css','utf8').includes('.v60-dev-policy-selects{'), "r071 育成導覽正確、同方針描述只顯示一次、不同方針說明與雙下拉及返回保留");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);
