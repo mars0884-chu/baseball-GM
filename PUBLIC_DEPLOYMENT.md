@@ -2,7 +2,8 @@
 
 - 2026-10-08 對 54 路由矩陣中的「選秀跳過確認」子畫面做資訊減量。原確認長句與三個按鈕重複敘述，改為兩個直接寫明後果的決策列：只跳過本順位、下一輪仍可選人；放棄本屆剩餘順位、自動跳到選秀結束。取消保留且不更動選秀。未新增裝飾圖示或改選秀規則、狀態結構、共享亂數。
 - 固定情境 390px 可見字約 769→732、頁高 2,316→2,273px，長段落 53→0 字；320px 頁高 2,409px、1280px 2,181px。三寬度無水平溢位與頁面例外。實際瀏覽器點擊驗證取消不改選秀、單次跳過只前進一個順位、放棄剩餘順位後完成選秀；三按鈕高度 48／48／44px。證據：`_staging/v60-010-preseason-flow-candidate/browser-proof/v60-r072-*-route-inventory.json` 與截圖。此為單一子畫面，不是全遊戲減量百分比。
-- `node test_regression.js`：1,918 通過／0 失敗；一般 15 年＋全畫面渲染煙霧及純 GM 15 年煙霧均通過。正式套件與原有未提交 `manifest.webmanifest` 均不動。Pages 部署證據待推送後補記。
+- `node test_regression.js`：1,918 通過／0 失敗；一般 15 年＋全畫面渲染煙霧及純 GM 15 年煙霧均通過。正式套件與原有未提交 `manifest.webmanifest` 均不動。
+- 程式 commit `153771ca05286363675608fb30fa809861166c27` 已推送 `main`；[Pages build 37763761872](https://github.com/mars0884-chu/baseball-GM/actions/runs/37763761872) 對應該 commit 且 `completed/success`。公開 `index.html`、`06-ui-roster.js`、`style.css`、`sw.js` 以獨立查詢參數與 `no-cache` 實際 GET 均為 HTTP 200，且含新快取鍵或跳過選秀確認卡標記。公開部署不等於 Mars 真機接受。
 
 # v60-r071 育成名單方針比較與短頁
 
