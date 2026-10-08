@@ -395,9 +395,19 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .v60-roster-topbar #btn-back{width:auto;min-width:68px;min-height:44px;padding:8px 10px;flex:0 0 auto;}
 .v60-scout-topbar #btn-back{width:auto;min-width:68px;min-height:44px;padding:8px 10px;flex:0 0 auto;}
 .v60-coach-topbar #btn-back{width:auto;min-width:68px;min-height:44px;padding:8px 10px;flex:0 0 auto;}
+.v60-rotation-preview-topbar #btn-back{width:auto;min-width:68px;min-height:44px;padding:8px 10px;flex:0 0 auto;}
 .v60-coach-mobile-label{display:none;}
+.v60-rotation-preview-cards{display:none;}
 .v60-scout-mobile-label{display:none;}
 @media(max-width:600px){
+  .v60-rotation-preview-table{display:none;}
+  .v60-rotation-preview-cards{display:grid;gap:8px;}
+  .v60-rotation-preview-card{padding:9px 11px;border:1px solid #B7D3F5;border-radius:10px;background:#FFFFFF;color:#17233B;}
+  .v60-rotation-preview-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;min-width:0;font-size:14px;}
+  .v60-rotation-preview-head strong{font-size:16px;overflow-wrap:anywhere;}
+  .v60-rotation-preview-head span{color:#36577F;text-align:right;}
+  .v60-rotation-preview-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 8px;margin-top:5px;font-size:14px;}
+  .v60-rotation-preview-metrics b{color:#17233B;}
   .v60-coach-staff-table{background:transparent;overflow:visible;}
   .v60-coach-staff-table thead{display:none;}
   .v60-coach-staff-table tbody{display:grid;gap:8px;}

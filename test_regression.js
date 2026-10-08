@@ -2165,7 +2165,7 @@ assert(g("(function(){ var hc=headCoachOf(__ut43); if(hc){hc.trust=95; hc.teachi
 assert(g("(function(){ var other=Object.values(S.teams).find(t=>t.id!==S.userTeamId); return v43EffRotationKey(other)===((other.tactics&&other.tactics.rotation)||'five');})()"), "v43 輪值折射：AI 隊一律照 GM 方針（不觸發人格初始化）");
 assert(g("typeof renderRotationCoachManaged==='function'"), "v43 純GM 輪值唯讀畫面函式存在");
 g("UI.screen='rotation'; render();");
-assert(g("app.innerHTML.indexOf('教練管理')>=0 || app.innerHTML.indexOf('投手調度')>=0"), "v43 純GM 進入輪值頁→教練管理唯讀畫面");
+assert(g("app.innerHTML.indexOf('教練調度')>=0 && app.innerHTML.indexOf('今日先發・唯讀')>=0 && app.innerHTML.indexOf('btn-add-rotation')<0"), "v43 純GM 進入輪值頁→教練唯讀預覽且無手排入口");
 
 /* v43 傷兵遞補提案（純GM，准駁制） */
 g("delete S.v43; ensureV43(); S.gameMode='pure_gm'; S.takeover=null; var __inj=S.players[__ut43.roster1[0]]; __inj.injury={name:'測試傷',part:'肩',severity:'mid',severityLabel:'中度',daysLeft:20,totalDays:20}; if(!__ut43.lineup||__ut43.lineup.length<1) __ut43.lineup=[{playerId:__inj.id,position:'C'}]; else __ut43.lineup[0]={playerId:__inj.id,position:__ut43.lineup[0].position};");
@@ -5104,6 +5104,19 @@ var __r074BeforeEmpty=JSON.stringify(S);renderCoaches();
 var __r074Empty=app.innerHTML.includes('育成教練團')&&app.innerHTML.includes('is-vacant')&&JSON.stringify(S)===__r074BeforeEmpty;
 S=JSON.parse(__r074SavedS);UI=JSON.parse(__r074SavedUI);`);
 assert(g("__r074Controls&&__r074Paged&&__r074Cancel&&__r074Vacant&&__r074Back&&__r074Empty&&__r074Html.includes('測試教練')&&__r074Html.includes('意願保留')&&__r074Html.includes('要價+25%')&&__r074Html.includes(formatMoney(1800000))&&!__r074Html.includes('比較指導力與特殊能力後聘用')") && fs.readFileSync('style.css','utf8').includes('.v60-coach-staff-table tr{'), "r074 教練全職位分頁可到達且不改存檔，育成配置缺失仍顯示空缺，取消不扣款、返回正常");
+
+console.log("\n--- r075 純GM 教練調度唯讀短頁 ---");
+g(`var __r075SavedS=JSON.stringify(S),__r075SavedUI=JSON.stringify(UI);
+S.gameMode='pure_gm';S.takeover=null;UI.screen='rotation';UI.rotationTab='先發';UI.rotationPreviewPage=0;
+var __r075Before=JSON.stringify(S);renderRotationCoachManaged();
+var __r075Html=app.innerHTML,__r075ReadSafe=JSON.stringify(S)===__r075Before;
+var __r075Cards=(__r075Html.match(/class="v60-rotation-preview-card"/g)||[]).length;
+UI.rotationPreviewPage=1;renderRotationCoachManaged();var __r075PageSafe=JSON.stringify(S)===__r075Before;
+var __r075Select=document.getElementById('sel-tactic-rotation-pg'),__r075Old=(S.teams[S.userTeamId].tactics||{}).rotation;
+var __r075New=__r075Old==='four'?'six':'four';__r075Select.onchange({target:{value:__r075New}});
+var __r075Write=S.teams[S.userTeamId].tactics.rotation===__r075New;
+S=JSON.parse(__r075SavedS);UI=JSON.parse(__r075SavedUI);`);
+assert(g("__r075ReadSafe&&__r075PageSafe&&__r075Write&&__r075Cards<=2&&__r075Html.includes('教練調度')&&__r075Html.includes('今日先發・唯讀')&&__r075Html.includes('v60-rotation-preview-page')&&__r075Html.includes('btn-back')&&!__r075Html.includes('btn-add-rotation')") && fs.readFileSync('style.css','utf8').includes('.v60-rotation-preview-cards{'), "r075 純GM 查看與分頁不改輪值，明確調整方針才寫入；手機兩人卡保留能力資料與頁首返回");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

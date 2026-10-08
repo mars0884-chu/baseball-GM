@@ -3076,7 +3076,9 @@ function renderListingScreen() {
    純GM 未接管時，輪值/牛棚不給手排入口，改顯示「教練今日調度預覽」＋輪值方針（受折射）。 */
 function renderRotationCoachManaged() {
   try {
-    const team = S.teams[S.userTeamId];
+    const sourceTeam = S.teams[S.userTeamId];
+    // 教練預覽只在副本排陣；正式輪值仍由每日模擬更新，查看畫面不可改存檔。
+    const team = JSON.parse(JSON.stringify(sourceTeam));
     if (typeof ensureRotation === "function") ensureRotation(team);
     if (typeof ensureBullpenOrder === "function") ensureBullpenOrder(team, S.players);
     if (typeof coachDailyRotation === "function") coachDailyRotation(team); // 先讓教練排一次當預覽
@@ -3088,13 +3090,17 @@ function renderRotationCoachManaged() {
     const deviated = effKey !== gmKey;
     const tab = BULLPEN_TABS.includes(UI.rotationTab) ? UI.rotationTab : "先發";
     const arr = (typeof orderArrayFor === "function") ? orderArrayFor(team, tab) : (tab === "先發" ? team.rotation : (team.bullpenOrder[tab] || []));
+    const previewPageCount = Math.max(1, Math.ceil(arr.length / 2));
+    const previewPage = Math.max(0, Math.min(previewPageCount - 1, Number(UI.rotationPreviewPage) || 0));
+    UI.rotationPreviewPage = previewPage;
+    const visiblePreview = arr.slice(previewPage * 2, previewPage * 2 + 2);
     app.innerHTML = `
     <div class="wrap">
-      <div class="topbar"><div class="eyebrow">${team.name}</div><h1>投手調度（教練管理）</h1></div>
+      <div class="topbar v60-rotation-preview-topbar"><div><div class="eyebrow">純GM・${team.name}</div><h1>教練調度</h1></div><button id="btn-back" class="btn-outline" type="button">返回</button></div>
       ${renderRosterNav("rotation")}
       <div class="card">
         <div class="eyebrow">${icon('cap')} 純GM模式：投手輪值與牛棚由總教練安排</div>
-        <p class="sub dark">${hc ? `總教練 <b>${hc.name}</b>` : "教練團"} 每天依你設定的輪值方針（經哲學折射）調度先發與牛棚。純GM模式下沒有手排入口——想親自調度，只能到「先發打線」頁付代價接管。</p>
+        <p class="sub dark">${hc ? `總教練 <b>${hc.name}</b>` : "教練團"}每日排先發／牛棚；GM只選方針。要手排，請到「先發打線」接管。</p>
         ${(typeof TACTICS_ROTATION !== "undefined") ? `<div class="tacticrow"><span>輪值方針（GM設定）</span>
           <select id="sel-tactic-rotation-pg">${TACTICS_ROTATION.map(o => `<option value="${o.key}" ${gmKey === o.key ? "selected" : ""}>${o.label}——${o.desc}</option>`).join("")}</select>
         </div>` : ""}
@@ -3104,21 +3110,29 @@ function renderRotationCoachManaged() {
       <div class="tabrow">
         ${BULLPEN_TABS.map(t => `<button class="tab rot-tab ${tab === t ? "active" : ""}" data-rotationtab="${t}">${t}</button>`).join("")}
       </div>
-      <p class="sub dark" style="margin-bottom:10px;">教練今日「${tab}」調度預覽（唯讀）。</p>
-      <table class="stattable">
+      <div class="eyebrow">今日${tab}・唯讀</div>
+      <nav class="v60-choice-pager" aria-label="教練調度分頁"><button type="button" class="v60-rotation-preview-page" data-rotation-preview-step="-1" ${previewPage === 0 ? "disabled" : ""}>上一頁</button><span>${previewPage + 1}/${previewPageCount}</span><button type="button" class="v60-rotation-preview-page" data-rotation-preview-step="1" ${previewPage === previewPageCount - 1 ? "disabled" : ""}>下一頁</button></nav>
+      <table class="stattable v60-rotation-preview-table">
         <thead><tr><th>順位</th><th>姓名</th><th>狀況</th><th>年齡</th><th>球速(km/h)</th><th>控球</th><th>體力</th><th>疲勞</th></tr></thead>
         <tbody>
-          ${arr.map((pid, i) => { const p = S.players[pid]; if (!p) return ""; return `<tr>
-            <td>${i + 1}</td><td>${p.name}${isInjured(p) ? ` <span class="injurytag">傷${p.injury.daysLeft}天</span>` : ""}</td><td>${conditionTagHtml(p)}</td><td>${p.age}</td><td>${velocityKmh(p.velocity)}</td><td>${p.control}</td><td>${p.stamina}</td><td>${fatigueOf(p) > 70 ? `<b style="color:#c0392b;">${fatigueOf(p)}</b>` : fatigueOf(p)}</td>
+          ${visiblePreview.map((pid, i) => { const p = S.players[pid]; if (!p) return ""; return `<tr>
+            <td>${previewPage * 2 + i + 1}</td><td>${p.name}${isInjured(p) ? ` <span class="injurytag">傷${p.injury.daysLeft}天</span>` : ""}</td><td>${conditionTagHtml(p)}</td><td>${p.age}</td><td>${velocityKmh(p.velocity)}</td><td>${p.control}</td><td>${p.stamina}</td><td>${fatigueOf(p) > 70 ? `<b style="color:#c0392b;">${fatigueOf(p)}</b>` : fatigueOf(p)}</td>
           </tr>`; }).join("")}
           ${arr.length === 0 ? `<tr><td colspan="8" class="draftnote muted">目前「${tab}」沒有可用投手。</td></tr>` : ""}
         </tbody>
       </table>
-      <div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>
+      <div class="v60-rotation-preview-cards" aria-label="今日${tab}教練調度預覽">
+        ${visiblePreview.map((pid, i) => { const p = S.players[pid]; if (!p) return ""; return `<article class="v60-rotation-preview-card">
+          <div class="v60-rotation-preview-head"><strong>${previewPage * 2 + i + 1}. ${p.name}</strong><span>${conditionTagHtml(p)}・${p.age}歲${isInjured(p) ? `・傷${p.injury.daysLeft}天` : ""}</span></div>
+          <div class="v60-rotation-preview-metrics"><span>球速 <b>${velocityKmh(p.velocity)}</b></span><span>控球 <b>${p.control}</b></span><span>體力 <b>${p.stamina}</b></span><span>疲勞 <b>${fatigueOf(p)}</b></span></div>
+        </article>`; }).join("")}
+        ${arr.length === 0 ? `<p class="v60-state-line">目前「${tab}」沒有可用投手。</p>` : ""}
+      </div>
     </div>`;
-    app.querySelectorAll(".rot-tab").forEach(btn => { btn.onclick = () => { UI.rotationTab = btn.dataset.rotationtab; render(); }; });
+    app.querySelectorAll(".rot-tab").forEach(btn => { btn.onclick = () => { UI.rotationTab = btn.dataset.rotationtab; UI.rotationPreviewPage = 0; render(); }; });
+    app.querySelectorAll(".v60-rotation-preview-page").forEach(btn => { btn.onclick = () => { UI.rotationPreviewPage = previewPage + Number(btn.dataset.rotationPreviewStep); render(); }; });
     const selRotPg = document.getElementById("sel-tactic-rotation-pg");
-    if (selRotPg) selRotPg.onchange = (e) => { ensureTactics(team); team.tactics.rotation = e.target.value; UI.flash = `輪值方針已改為「${(typeof rotationPolicyOf === "function") ? rotationPolicyOf(team).label : e.target.value}」（教練會依哲學折射執行）。`; persist(); render(); };
+    if (selRotPg) selRotPg.onchange = (e) => { ensureTactics(sourceTeam); sourceTeam.tactics.rotation = e.target.value; UI.flash = `輪值方針已改為「${(typeof rotationPolicyOf === "function") ? rotationPolicyOf(sourceTeam).label : e.target.value}」（教練會依哲學折射執行）。`; persist(); render(); };
     document.getElementById("btn-back").onclick = () => { UI.screen = "dashboard"; render(); };
     if (typeof wireRosterNav === "function") wireRosterNav();
   } catch (e) {
