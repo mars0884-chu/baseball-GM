@@ -5,6 +5,7 @@
 - 額外發現：固定稽核情境的育成教練配置物件缺失時，原畫面會跳安全模式；本批以不寫入存檔的空職位顯示修正。最終 390px 四條教練路由均實際渲染為教練頁，無例外、無橫向溢位，開頁不改 `S`。此修正不等於替存檔虛構教練或改聘用規則。
 - 最終修改後 `node test_regression.js` 為 1,920 通過／0 失敗；一般 15 年＋全畫面渲染及純 GM 15 年煙霧均通過。320px、390px 實際瀏覽器候選分頁互動均為四頁／八職位、取消安全、返回有效；1280px 無溢位與頁面例外。瀏覽器通過不冒稱 Mars 真機通過。
 - 程式僅改公開儲存庫的 `06-ui-roster.js`、`style.css`、`test_regression.js`、首頁與離線快取鍵；正式套件及使用者原有未提交 `manifest.webmanifest` 未動。技術測試、推送及 Pages 狀態以本節後續紀錄為準；Mars 真機仍未驗證。
+- 程式 commit `d8a499e78c2295a3b9608845c3c31e07281d560f` 已推送 `main`；[Pages build 37769138076](https://github.com/mars0884-chu/baseball-GM/actions/runs/37769138076) 與此 SHA 一致且 `completed/success`。以獨立查詢參數與 `no-cache` 實際 GET 公開 `index.html`、`06-ui-roster.js`、`style.css`、`sw.js` 均為 HTTP 200，四檔均包含本批新版標記。公開部署不等於已安裝 PWA 當前分頁即時重載，也不等於 Mars 真機接受。
 
 # v60-r073 球探候選短頁與手機職務卡
 
