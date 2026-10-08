@@ -2568,8 +2568,8 @@ function renderFinanceCuts() {
         <div class="sb-row small"><div class="sb-label">聯盟平均薪資</div><div class="sb-value small">${formatMoney(Math.round(avgPayroll))}</div></div>
       </div>
       <div class="v60-finance-cut-actions">
-        <button id="btn-cuts-continue" class="btn-primary" ${payrollHealthy ? "" : "disabled"}>${payrollHealthy ? "薪資已回到合理範圍，繼續下一步" : "薪資仍偏高，請繼續釋出球員"}</button>
-        <button id="btn-cuts-override" class="btn-danger">維持目前狀況，自行承擔風險繼續</button>
+        ${payrollHealthy ? '<p class="v60-state-line">薪資已達標；若預算仍赤字，請決定是否承擔風險。</p>' : '<p class="v60-state-line">薪資仍偏高；可繼續釋出球員，或自行承擔風險。</p>'}
+        <button id="btn-cuts-override" class="btn-danger">承擔財務風險，完成裁員決策</button>
       </div>
       ${posFilterBarHtml(list, "financeCutsPosFilter")}
       ${v60RosterPagerHtml(page, "financeCutsPage", "財務裁員名單", filtered.length)}
@@ -2583,8 +2583,6 @@ function renderFinanceCuts() {
   app.querySelectorAll(".cut-btn").forEach(btn => { btn.onclick = () => cutPlayerForFinance(btn.dataset.id); });
   wirePosFilterButtons();
   wireV60RosterPager();
-  const btnCont = document.getElementById("btn-cuts-continue");
-  if (payrollHealthy) btnCont.onclick = () => proceedFromFinanceCuts();
   document.getElementById("btn-cuts-override").onclick = () => proceedFromFinanceCuts();
 }
 
@@ -3236,6 +3234,12 @@ function runAiSpringCamps() {
 function executeSpringCamp() {
   const camp = S.springCamp;
   if (!camp || camp.executed) return;
+  // 春訓不可繞過休賽季玩家決策；即使舊存檔已先建立春訓物件也要守門。
+  if (typeof v60PreseasonMandatoryStage === "function" && v60PreseasonMandatoryStage()) {
+    UI.flash = "請先完成休賽季必要決策。";
+    v60PreseasonGoNext();
+    return;
+  }
   if (typeof v60PreseasonMissingStep === "function") {
     const missing = v60PreseasonMissingStep();
     if (missing) {

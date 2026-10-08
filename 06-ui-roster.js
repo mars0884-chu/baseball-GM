@@ -509,6 +509,7 @@ function moveRotationSlot(tab, idx, dir) {
   const newIdx = idx + dir;
   if (newIdx < 0 || newIdx >= arr.length) return;
   [arr[idx], arr[newIdx]] = [arr[newIdx], arr[idx]];
+  UI.rotationManualPage = Math.floor(newIdx / 2);
   persist();
   render();
 }
@@ -556,21 +557,33 @@ function addRotationSlot(tab, playerId) {
   ensureRotation(team); ensureBullpenOrder(team, S.players);
   const arr = orderArrayFor(team, tab);
   if (!arr.includes(playerId)) arr.push(playerId);
+  UI.rotationManualPage = Math.floor((arr.length - 1) / 2);
   UI.rotationAdding = false;
   persist();
   render();
 }
 
 function renderRotation() {
-  const team = S.teams[S.userTeamId];
+  // 開啟輪值頁只預覽既有或預設排序；玩家按下操作時才初始化並寫入正式球隊。
+  const team = JSON.parse(JSON.stringify(S.teams[S.userTeamId]));
   ensureRotation(team); ensureBullpenOrder(team, S.players);
   const tab = BULLPEN_TABS.includes(UI.rotationTab) ? UI.rotationTab : "先發";
   const arr = orderArrayFor(team, tab);
+  const manualPageCount = Math.max(1, Math.ceil(arr.length / 2));
+  const manualPage = Math.max(0, Math.min(manualPageCount - 1, Number(UI.rotationManualPage) || 0));
+  UI.rotationManualPage = manualPage;
+  const visibleRotation = arr.slice(manualPage * 2, manualPage * 2 + 2);
   const usedIds = new Set(arr);
   const picking = UI.rotationPicker;
   const adding = UI.rotationAdding;
   const candidates = team.roster1.map(id => S.players[id])
     .filter(p => p && p.isPitcher && !usedIds.has(p.id) && (tab === "先發" || p.role === tab));
+  const candidatePageCount = Math.max(1, Math.ceil(candidates.length / 2));
+  const candidatePage = Math.max(0, Math.min(candidatePageCount - 1, Number(UI.rotationCandidatePage) || 0));
+  UI.rotationCandidatePage = candidatePage;
+  const visibleCandidates = candidates.slice(candidatePage * 2, candidatePage * 2 + 2);
+  const candidatePager = candidates.length > 2 ? `<nav class="v60-choice-pager" aria-label="可用投手分頁"><button type="button" class="v60-rotation-candidate-page" data-rotation-candidate-step="-1" ${candidatePage === 0 ? "disabled" : ""}>上一頁</button><span>${candidatePage + 1}/${candidatePageCount}</span><button type="button" class="v60-rotation-candidate-page" data-rotation-candidate-step="1" ${candidatePage === candidatePageCount - 1 ? "disabled" : ""}>下一頁</button></nav>` : "";
+  const candidateCard = (p, addingCandidate) => `<article class="v60-rotation-candidate-card"><div class="v60-rotation-preview-head"><strong>${p.name}${isInjured(p) ? `・傷${p.injury.daysLeft}天` : ""}</strong><span>${p.age}歲・${p.role}</span></div><div class="v60-rotation-candidate-metrics"><span>球速 <b>${velocityKmh(p.velocity)}</b></span><span>控球 <b>${p.control}</b></span><span>抗壓 <b>${p.composure}</b></span></div><button class="pickbtn ${addingCandidate ? "rot-add-pick" : ""}" data-id="${p.id}">${addingCandidate ? "加入" : "選他"}</button></article>`;
   const tabDesc = {
     "先發": "依序輪值 · 至少1人 · 少人耗體快／多人間隔長 · 可增減",
     "中繼": "順位決定接手先後 · 可增減",
@@ -578,68 +591,77 @@ function renderRotation() {
     "終結": "第1順位優先救援 · 可增減"
   };
   app.innerHTML = `
-    <div class="wrap">
-      <div class="topbar"><div class="eyebrow">${team.name}</div><h1>投手輪值與牛棚</h1></div>
+    <div class="wrap ${picking !== null && picking !== undefined || adding ? "v60-rotation-manual-choosing" : ""}">
+      <div class="topbar v60-rotation-manual-topbar"><div><div class="eyebrow">${team.name}</div><h1>投手輪值與牛棚</h1></div><button id="btn-back" class="btn-outline" type="button">返回</button></div>
       ${renderRosterNav("rotation")}
       <div class="tabrow">
         ${BULLPEN_TABS.map(t => `<button class="tab rot-tab ${tab === t ? "active" : ""}" data-rotationtab="${t}">${t}</button>`).join("")}
       </div>
-      <p class="v60-state-line" aria-label="輪值規則">${tabDesc[tab]} · 目前 ${arr.length} 人</p>
-      <table class="stattable">
+      <p class="v60-state-line v60-rotation-manual-rule" aria-label="輪值規則">${tabDesc[tab]} · 目前 ${arr.length} 人</p>
+      <div class="v60-rotation-manual-actions"><button id="btn-add-rotation" class="btn-secondary">新增人選</button><button id="btn-auto-rotation" class="btn-secondary">自動排列（${tab}）</button></div>
+      <nav class="v60-choice-pager v60-rotation-manual-pager" aria-label="投手輪值分頁"><button type="button" class="v60-rotation-manual-page" data-rotation-manual-step="-1" ${manualPage === 0 ? "disabled" : ""}>上一頁</button><span>${manualPage + 1}/${manualPageCount}</span><button type="button" class="v60-rotation-manual-page" data-rotation-manual-step="1" ${manualPage === manualPageCount - 1 ? "disabled" : ""}>下一頁</button></nav>
+      <table class="stattable v60-rotation-manual-table">
         <thead><tr><th>順位</th><th>姓名</th><th>狀況</th><th>年齡</th><th>球速(km/h)</th><th>控球</th><th>體力</th><th>疲勞</th><th>抗壓</th><th></th></tr></thead>
         <tbody>
-          ${arr.map((pid, i) => {
+          ${visibleRotation.map((pid, i) => {
             const p = S.players[pid];
             if (!p) return "";
             return `<tr>
-              <td>${i + 1}</td><td>${p.name}${isInjured(p) ? ` <span class="injurytag">傷${p.injury.daysLeft}天</span>` : ""}</td><td>${conditionTagHtml(p)}</td><td>${p.age}</td><td>${velocityKmh(p.velocity)}</td><td>${p.control}</td><td>${p.stamina}</td><td>${fatigueOf(p) > 70 ? `<b style="color:#c0392b;">${fatigueOf(p)}</b>` : fatigueOf(p)}</td><td>${p.composure}</td>
+              <td>${manualPage * 2 + i + 1}</td><td>${p.name}${isInjured(p) ? ` <span class="injurytag">傷${p.injury.daysLeft}天</span>` : ""}</td><td>${conditionTagHtml(p)}</td><td>${p.age}</td><td>${velocityKmh(p.velocity)}</td><td>${p.control}</td><td>${p.stamina}</td><td>${fatigueOf(p) > 70 ? `<b style="color:#c0392b;">${fatigueOf(p)}</b>` : fatigueOf(p)}</td><td>${p.composure}</td>
               <td>
-                <button class="movebtn rot-up-btn" data-idx="${i}">↑</button>
-                <button class="movebtn rot-down-btn" data-idx="${i}">↓</button>
-                <button class="movebtn rot-swap-btn" data-idx="${i}">更換</button>
-                <button class="movebtn rot-remove-btn" data-idx="${i}">移除</button>
+                <button class="movebtn rot-up-btn" data-idx="${manualPage * 2 + i}" aria-label="上移${p.name}">↑</button>
+                <button class="movebtn rot-down-btn" data-idx="${manualPage * 2 + i}" aria-label="下移${p.name}">↓</button>
+                <button class="movebtn rot-swap-btn" data-idx="${manualPage * 2 + i}">更換</button>
+                <button class="movebtn rot-remove-btn" data-idx="${manualPage * 2 + i}">移除</button>
               </td>
             </tr>`;
           }).join("")}
           ${arr.length === 0 ? `<tr><td colspan="10" class="draftnote muted">目前「${tab}」名單是空的，可用下方「新增人選」加入投手。</td></tr>` : ""}
         </tbody>
       </table>
+      <div class="v60-rotation-manual-cards" aria-label="${tab}投手輪值名單">
+        ${visibleRotation.map((pid, i) => { const p = S.players[pid]; if (!p) return ""; const idx = manualPage * 2 + i; return `<article class="v60-rotation-manual-card">
+          <div class="v60-rotation-preview-head"><strong>${idx + 1}. ${p.name}${isInjured(p) ? `・傷${p.injury.daysLeft}天` : ""}</strong><span>${conditionTagHtml(p)}・${p.age}歲</span></div>
+          <div class="v60-rotation-manual-metrics"><span>球速 <b>${velocityKmh(p.velocity)}</b></span><span>控球 <b>${p.control}</b></span><span>體力 <b>${p.stamina}</b></span><span>疲勞 <b>${fatigueOf(p)}</b></span><span>抗壓 <b>${p.composure}</b></span></div>
+          <div class="v60-rotation-manual-controls"><button class="movebtn rot-up-btn" data-idx="${idx}" aria-label="上移${p.name}">↑</button><button class="movebtn rot-down-btn" data-idx="${idx}" aria-label="下移${p.name}">↓</button><button class="movebtn rot-swap-btn" data-idx="${idx}">更換</button><button class="movebtn rot-remove-btn" data-idx="${idx}">移除</button></div>
+        </article>`; }).join("")}
+        ${arr.length === 0 ? `<p class="v60-state-line">目前「${tab}」沒有投手；可按新增人選。</p>` : ""}
+      </div>
       ${picking !== null && picking !== undefined ? `
       <div class="card">
-        <div class="eyebrow">選擇第 ${picking + 1} 順位人選</div>
+        <div class="eyebrow">更換第 ${picking + 1} 順位・${S.players[arr[picking]] ? S.players[arr[picking]].name : "空缺"}</div>
+        ${candidatePager}
         ${candidates.length === 0 ? `<p class="sub dark">1軍已無其他可用（角色為「${tab}」的）投手。</p>` : `
-        <table class="stattable">
+        <table class="stattable v60-rotation-candidate-table">
           <thead><tr><th>姓名</th><th>年齡</th><th>角色</th><th>球速(km/h)</th><th>控球</th><th>抗壓</th><th></th></tr></thead>
           <tbody>
-            ${candidates.map(p => `<tr><td>${p.name}${isInjured(p) ? ` <span class="injurytag">傷${p.injury.daysLeft}天</span>` : ""}</td><td>${p.age}</td><td>${p.role}</td><td>${velocityKmh(p.velocity)}</td><td>${p.control}</td><td>${p.composure}</td><td><button class="pickbtn" data-id="${p.id}">選他</button></td></tr>`).join("")}
+            ${visibleCandidates.map(p => `<tr><td>${p.name}${isInjured(p) ? ` <span class="injurytag">傷${p.injury.daysLeft}天</span>` : ""}</td><td>${p.age}</td><td>${p.role}</td><td>${velocityKmh(p.velocity)}</td><td>${p.control}</td><td>${p.composure}</td><td><button class="pickbtn" data-id="${p.id}">選他</button></td></tr>`).join("")}
           </tbody>
-        </table>`}
+        </table><div class="v60-rotation-candidate-cards">${visibleCandidates.map(p => candidateCard(p, false)).join("")}</div>`}
         <div class="btnrow"><button id="btn-cancel-rot-pick" class="btn-secondary">取消</button></div>
       </div>` : ""}
       ${adding ? `
       <div class="card">
         <div class="eyebrow">新增人選至「${tab}」</div>
+        ${candidatePager}
         ${candidates.length === 0 ? `<p class="sub dark">1軍已無其他可加入的${tab === "先發" ? "" : `（角色為「${tab}」的）`}投手。</p>` : `
-        <table class="stattable">
+        <table class="stattable v60-rotation-candidate-table">
           <thead><tr><th>姓名</th><th>年齡</th><th>角色</th><th>球速(km/h)</th><th>控球</th><th>抗壓</th><th></th></tr></thead>
           <tbody>
-            ${candidates.map(p => `<tr><td>${p.name}${isInjured(p) ? ` <span class="injurytag">傷${p.injury.daysLeft}天</span>` : ""}</td><td>${p.age}</td><td>${p.role}</td><td>${velocityKmh(p.velocity)}</td><td>${p.control}</td><td>${p.composure}</td><td><button class="pickbtn rot-add-pick" data-id="${p.id}">加入</button></td></tr>`).join("")}
+            ${visibleCandidates.map(p => `<tr><td>${p.name}${isInjured(p) ? ` <span class="injurytag">傷${p.injury.daysLeft}天</span>` : ""}</td><td>${p.age}</td><td>${p.role}</td><td>${velocityKmh(p.velocity)}</td><td>${p.control}</td><td>${p.composure}</td><td><button class="pickbtn rot-add-pick" data-id="${p.id}">加入</button></td></tr>`).join("")}
           </tbody>
-        </table>`}
+        </table><div class="v60-rotation-candidate-cards">${visibleCandidates.map(p => candidateCard(p, true)).join("")}</div>`}
         <div class="btnrow"><button id="btn-cancel-rot-add" class="btn-secondary">取消</button></div>
       </div>` : ""}
-      <div class="btnrow">
-        <button id="btn-add-rotation" class="btn-secondary">新增人選</button>
-        <button id="btn-auto-rotation" class="btn-secondary">自動排列（${tab}）</button>
-        <button id="btn-back" class="btn-outline">返回</button>
-      </div>
     </div>`;
   app.querySelectorAll(".rot-tab").forEach(btn => {
-    btn.onclick = () => { UI.rotationTab = btn.dataset.rotationtab; UI.rotationPicker = null; UI.rotationAdding = false; render(); };
+    btn.onclick = () => { UI.rotationTab = btn.dataset.rotationtab; UI.rotationManualPage = 0; UI.rotationCandidatePage = 0; UI.rotationPicker = null; UI.rotationAdding = false; render(); };
   });
+  app.querySelectorAll(".v60-rotation-manual-page").forEach(btn => { btn.onclick = () => { UI.rotationManualPage = manualPage + Number(btn.dataset.rotationManualStep); render(); }; });
+  app.querySelectorAll(".v60-rotation-candidate-page").forEach(btn => { btn.onclick = () => { UI.rotationCandidatePage = candidatePage + Number(btn.dataset.rotationCandidateStep); render(); }; });
   app.querySelectorAll(".rot-up-btn").forEach(btn => { btn.onclick = () => moveRotationSlot(tab, Number(btn.dataset.idx), -1); });
   app.querySelectorAll(".rot-down-btn").forEach(btn => { btn.onclick = () => moveRotationSlot(tab, Number(btn.dataset.idx), 1); });
-  app.querySelectorAll(".rot-swap-btn").forEach(btn => { btn.onclick = () => { UI.rotationPicker = Number(btn.dataset.idx); UI.rotationAdding = false; render(); }; });
+  app.querySelectorAll(".rot-swap-btn").forEach(btn => { btn.onclick = () => { UI.rotationPicker = Number(btn.dataset.idx); UI.rotationAdding = false; UI.rotationCandidatePage = 0; render(); }; });
   app.querySelectorAll(".rot-remove-btn").forEach(btn => { btn.onclick = () => removeRotationSlot(tab, Number(btn.dataset.idx)); });
   if (picking !== null && picking !== undefined) {
     document.getElementById("btn-cancel-rot-pick").onclick = () => { UI.rotationPicker = null; render(); };
@@ -651,7 +673,7 @@ function renderRotation() {
     document.getElementById("btn-cancel-rot-add").onclick = () => { UI.rotationAdding = false; render(); };
     app.querySelectorAll(".rot-add-pick").forEach(btn => { btn.onclick = () => addRotationSlot(tab, btn.dataset.id); });
   }
-  document.getElementById("btn-add-rotation").onclick = () => { UI.rotationAdding = true; UI.rotationPicker = null; render(); };
+  document.getElementById("btn-add-rotation").onclick = () => { UI.rotationAdding = true; UI.rotationPicker = null; UI.rotationCandidatePage = 0; render(); };
   document.getElementById("btn-auto-rotation").onclick = () => resetRotation(tab);
   document.getElementById("btn-back").onclick = () => { UI.rotationPicker = null; UI.rotationAdding = false; UI.screen = "dashboard"; render(); };
   wireRosterNav();

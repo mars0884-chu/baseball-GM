@@ -2506,6 +2506,7 @@ function enterOffseason() {
   // 直接回到休賽季摘要，避免財務/老化/合約被二次結算。
   if (S.offseasonEnteredYear === S.seasonYear && S.offseasonSummary) {
     UI.screen = (S.gmCareer && S.gmCareer.fired) ? "gameOver" : "offseasonSummary";
+    if (UI.screen !== "gameOver" && typeof v60PreseasonGoNext === "function") { v60PreseasonGoNext(); return; }
     render();
     return;
   }
@@ -2553,6 +2554,9 @@ function enterOffseason() {
   // v27：信任歸零＝遭高層解職，改進Game Over畫面（生涯總結）
   UI.screen = (kpiResult && kpiResult.fired) ? "gameOver" : "offseasonSummary";
   persist();
+  // 年度結算資料已存檔；未遭解職時直接進入第一個需要玩家處理的關卡。
+  // 摘要仍可從關卡頁回看，但不再要求額外按「下一步」才能開始裁員／續約／選秀。
+  if (UI.screen !== "gameOver" && typeof v60PreseasonGoNext === "function") { v60PreseasonGoNext(); return; }
   render();
 }
 

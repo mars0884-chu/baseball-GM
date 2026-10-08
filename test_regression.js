@@ -308,11 +308,11 @@ for (let y = 1; y <= 6; y++) {
     g("S.gmCareer.fired=false; S.gmCareer.firedYear=null; S.gmCareer.trust=50; S.jobOffers=null; UI.screen='offseasonSummary';");
     if (g("!S.offseasonSummary")) g("S.offseasonSummary={retiredCount:0,coachesReplaced:0,myRetiredIds:[],myFinanceReport:null,contractsRenewed:0,contractsDeparted:[]};");
   }
-  assert(g("UI.screen==='offseasonSummary'"), `第${y}年進入休賽季摘要`);
+  assert(g("!!S.offseasonSummary && (S.gmCareer.fired || UI.screen===v60PreseasonNextStage().screen)"), `第${y}年年度結算後自動進入當前關卡並保留摘要`);
   assert(g("S.offseasonSummary.sponsorMissionResult===null || typeof S.offseasonSummary.sponsorMissionResult==='object'"), `第${y}年贊助任務結算`);
   if (y === 6) break;
   if (g("S.forcedCutRequired")) { g("S.teams[S.userTeamId].finance.budget=200000000; S.forcedCutRequired=false;"); }
-  g("proceedFromOffseasonSummary()");
+  if (g("UI.screen==='offseasonSummary'")) g("v60PreseasonGoNext()"); // 解職測試夾具解除解職後才補進關卡
   if (g("UI.screen==='contractRenewals'")) { g("autoRenewAllPending(); if((S.pendingContractRenewals||[]).length===0) proceedFromContractRenewals()"); }
   if (g("UI.screen==='financeCuts'")) { g("S.teams[S.userTeamId].finance.budget=200000000; proceedFromFinanceCuts()"); }
   if (g("UI.screen==='staffRenewal'")) { g("autoRenewAllStaff()"); } // v31：一鍵續約到期教練/球探
@@ -1399,7 +1399,7 @@ assert(g("UI.negotiation===null && UI.coachPicker===null"), "v35 hydrate清除�
 /* --- 9. enterOffseason 重入防護 --- */
 g("var __py35=S.teams[S.userTeamId].finance.budget; var __age35=S.players[S.teams[S.userTeamId].roster1[0]].age;");
 g("enterOffseason();"); // 本年已結算過（offseasonEnteredYear===seasonYear）
-assert(g("UI.screen==='offseasonSummary'"), "v35 enterOffseason重入直接回摘要");
+assert(g("UI.screen==='draft' && !!S.offseasonSummary"), "休賽季重入直接恢復選秀關卡，年度結算摘要仍可回看");
 assert(g("S.players[S.teams[S.userTeamId].roster1[0]].age===__age35"), "v35 重入不會二次老化球員");
 assert(g("S.teams[S.userTeamId].finance.budget===__py35"), "v35 重入不會二次財務結算");
 
@@ -4859,6 +4859,18 @@ V60_PRESEASON_STEPS.forEach(function(key){
 var __r053Arrived=UI.screen==='springCamp'&&!S.springCamp.executed;
 S=JSON.parse(__r053SavedS);UI=JSON.parse(__r053SavedUI);`);
 assert(g("__r053Blocked.every(Boolean)&&__r053Transitions.every(Boolean)&&__r053Arrived"), "r053 每項完成後直接進下一站；漏掉任一項不能執行春訓或扣款");
+g(`var __r076GateSavedS=JSON.stringify(S),__r076GateSavedUI=JSON.stringify(UI);
+newGame('休賽季必要決策守門');pickTeam('T0');pickGameMode('gm_coach');
+S.gameStarted=true;S.currentDay=0;prepareSpringCamp();
+S.preseasonReview={year:S.seasonYear,teamId:S.userTeamId,steps:Object.fromEntries(V60_PRESEASON_STEPS.map(k=>[k,true]))};
+S.forcedCutRequired=true;var __r076Before=JSON.stringify(S.springCamp);executeSpringCamp();
+var __r076CutBlocked=UI.screen==='financeCuts'&&JSON.stringify(S.springCamp)===__r076Before;
+S.forcedCutRequired=false;S.pendingContractRenewals=[S.teams[S.userTeamId].roster1[0]];executeSpringCamp();
+var __r076RenewBlocked=UI.screen==='contractRenewals'&&!S.springCamp.executed;
+S.pendingContractRenewals=[];S.draft={active:true,picks:[],pool:[],pickIndex:0};executeSpringCamp();
+var __r076DraftBlocked=UI.screen==='draft'&&!S.springCamp.executed;
+S=JSON.parse(__r076GateSavedS);UI=JSON.parse(__r076GateSavedUI);`);
+assert(g("__r076CutBlocked&&__r076RenewBlocked&&__r076DraftBlocked"), "休賽季裁員、談約或選秀未完成時，春訓執行入口不得跳關");
 const r053Sw = fs.readFileSync("sw.js", "utf8");
 assert(r053Sw.includes('if (e.request.mode === "navigate")') && r053Sw.indexOf('if (e.request.mode === "navigate")') < r053Sw.indexOf('const cached = await c.match(e.request)') && r053Sw.includes('await c.match("./index.html")'), "r053 線上導覽優先取新版，離線仍能回到已快取首頁");
 
@@ -5011,10 +5023,11 @@ assert(g("__r065Common&&__r065Distinct"), "r065 選秀雙人同評估只顯示�
 console.log("\n--- r066 財務裁員短頁與決策鈕位置 ---");
 assert((v60FinanceCutsSource.match(/v60RosterPagerHtml\(page, "financeCutsPage"/g) || []).length === 2 &&
   v60FinanceCutsSource.indexOf('class="v60-finance-cut-actions"') < v60FinanceCutsSource.indexOf('posFilterBarHtml(list, "financeCutsPosFilter")') &&
-  v60FinanceCutsSource.includes('id="btn-cuts-override"') && v60FinanceCutsSource.includes('id="btn-cuts-continue"') &&
+  v60FinanceCutsSource.includes('id="btn-cuts-override"') && !v60FinanceCutsSource.includes('id="btn-cuts-continue"') &&
+  v60FinanceSource.includes('if (team.finance.payroll <= avgPayroll * 1.15) { proceedFromFinanceCuts(); return; }') &&
   r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp"].includes(UI.screen)') &&
   v60StyleSource.includes('.v60-finance-cut-actions button{min-height:48px;'),
-  "r066 四人分頁上下皆可翻，兩種原決策位於名單前且不浮在球員卡上");
+  "r066 四人分頁上下皆可翻；薪資達標自動銜接，另保留一個明確承擔風險決策且不遮球員卡");
 
 console.log("\n--- r067 春訓短頁與出發操作 ---");
 g(`var __r067SavedS=JSON.stringify(S),__r067SavedUI=JSON.stringify(UI);
@@ -5117,6 +5130,19 @@ var __r075New=__r075Old==='four'?'six':'four';__r075Select.onchange({target:{val
 var __r075Write=S.teams[S.userTeamId].tactics.rotation===__r075New;
 S=JSON.parse(__r075SavedS);UI=JSON.parse(__r075SavedUI);`);
 assert(g("__r075ReadSafe&&__r075PageSafe&&__r075Write&&__r075Cards<=2&&__r075Html.includes('教練調度')&&__r075Html.includes('今日先發・唯讀')&&__r075Html.includes('v60-rotation-preview-page')&&__r075Html.includes('btn-back')&&!__r075Html.includes('btn-add-rotation')") && fs.readFileSync('style.css','utf8').includes('.v60-rotation-preview-cards{'), "r075 純GM 查看與分頁不改輪值，明確調整方針才寫入；手機兩人卡保留能力資料與頁首返回");
+
+console.log("\n--- r076 手排輪值與候選短頁 ---");
+g(`var __r076SavedS=JSON.stringify(S),__r076SavedUI=JSON.stringify(UI);
+newGame('輪值短頁測試');pickTeam('T0');pickGameMode('gm_coach');
+S.teams[S.userTeamId].rotation=S.teams[S.userTeamId].roster1.filter(id=>S.players[id]&&S.players[id].isPitcher).slice(0,5);
+UI.screen='rotation';UI.rotationTab='先發';UI.rotationPicker=null;UI.rotationAdding=false;UI.rotationManualPage=0;UI.rotationCandidatePage=0;
+var __r076Before=JSON.stringify(S);renderRotation();
+var __r076First=app.innerHTML,__r076ReadSafe=JSON.stringify(S)===__r076Before;
+UI.rotationManualPage=1;renderRotation();var __r076Second=app.innerHTML,__r076PageSafe=JSON.stringify(S)===__r076Before;
+UI.rotationPicker=2;UI.rotationCandidatePage=0;renderRotation();var __r076Picker=app.innerHTML,__r076PickerSafe=JSON.stringify(S)===__r076Before;
+UI.rotationPicker=null;UI.rotationAdding=true;renderRotation();var __r076Adding=app.innerHTML,__r076AddingSafe=JSON.stringify(S)===__r076Before;
+S=JSON.parse(__r076SavedS);UI=JSON.parse(__r076SavedUI);`);
+assert(g("__r076ReadSafe&&__r076PageSafe&&__r076PickerSafe&&__r076AddingSafe&&(__r076First.match(/class=\"v60-rotation-manual-card\"/g)||[]).length<=2&&__r076Second.includes('data-idx=\"2\"')&&__r076Picker.includes('更換第 3 順位')&&__r076Picker.includes('v60-rotation-candidate-cards')&&__r076Adding.includes('rot-add-pick')") && fs.readFileSync('style.css','utf8').includes('.v60-rotation-manual-cards{'), "r076 手排輪值及更換／新增候選均為每頁兩人，翻頁唯讀且操作仍對應全域順位");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

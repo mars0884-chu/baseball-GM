@@ -396,10 +396,29 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .v60-scout-topbar #btn-back{width:auto;min-width:68px;min-height:44px;padding:8px 10px;flex:0 0 auto;}
 .v60-coach-topbar #btn-back{width:auto;min-width:68px;min-height:44px;padding:8px 10px;flex:0 0 auto;}
 .v60-rotation-preview-topbar #btn-back{width:auto;min-width:68px;min-height:44px;padding:8px 10px;flex:0 0 auto;}
+.v60-rotation-manual-topbar #btn-back{width:auto;min-width:68px;min-height:44px;padding:8px 10px;flex:0 0 auto;}
+.v60-rotation-manual-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0;}
+.v60-rotation-manual-actions button{min-height:44px;}
+.v60-rotation-manual-cards{display:none;}
+.v60-rotation-candidate-cards{display:none;}
+.v60-rotation-manual-choosing .v60-rotation-manual-rule,.v60-rotation-manual-choosing .v60-rotation-manual-actions,.v60-rotation-manual-choosing .v60-rotation-manual-pager,.v60-rotation-manual-choosing .v60-rotation-manual-table,.v60-rotation-manual-choosing .v60-rotation-manual-cards{display:none;}
 .v60-coach-mobile-label{display:none;}
 .v60-rotation-preview-cards{display:none;}
 .v60-scout-mobile-label{display:none;}
 @media(max-width:600px){
+  .v60-rotation-manual-table{display:none;}
+  .v60-rotation-manual-cards{display:grid;gap:8px;}
+  .v60-rotation-manual-card{padding:9px 10px;border:1px solid #B7D3F5;border-radius:10px;background:#FFFFFF;color:#17233B;}
+  .v60-rotation-manual-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px 6px;margin:5px 0;font-size:14px;}
+  .v60-rotation-manual-metrics b{color:#17233B;}
+  .v60-rotation-manual-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;}
+  .v60-rotation-manual-controls button{min-width:0;min-height:44px;padding:4px;font-size:14px;}
+  .v60-rotation-candidate-table{display:none;}
+  .v60-rotation-candidate-cards{display:grid;gap:8px;}
+  .v60-rotation-candidate-card{display:grid;gap:5px;padding:9px 10px;border:1px solid #B7D3F5;border-radius:10px;background:#FFFFFF;color:#17233B;}
+  .v60-rotation-candidate-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;font-size:14px;}
+  .v60-rotation-candidate-metrics b{color:#17233B;}
+  .v60-rotation-candidate-card .pickbtn{width:100%;min-height:44px;}
   .v60-rotation-preview-table{display:none;}
   .v60-rotation-preview-cards{display:grid;gap:8px;}
   .v60-rotation-preview-card{padding:9px 11px;border:1px solid #B7D3F5;border-radius:10px;background:#FFFFFF;color:#17233B;}
@@ -1716,3 +1735,5 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-approved-teamcard .v50-team-name{font-size:15px;white-space:normal;line-height:1.3}
 .v60-approved-teamcard .v55-city-tier,.v60-approved-teamcard .v55-persona-tag{font-size:14px;line-height:1.25;padding:2px 5px}
 @media(max-width:520px){.v60-approved-teamcard{min-height:110px!important}}
+.v60-offseason-review-link { display:flex; justify-content:flex-end; margin:0 0 12px; }
+.v60-offseason-review-link button { width:auto; min-width:132px; min-height:44px; padding:8px 14px; }

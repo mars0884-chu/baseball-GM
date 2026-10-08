@@ -360,6 +360,8 @@ function v60PreseasonOpenStep(key) {
 }
 function v60PreseasonCompleteStep(key) {
   if (!V60_PRESEASON_STEPS.includes(key) || !S.gameStarted || S.currentDay !== 0 || !v60PreseasonSpringReady()) return false;
+  const mandatory = v60PreseasonMandatoryStage();
+  if (mandatory) { UI.flash = "請先完成休賽季必要決策。"; v60PreseasonGoNext(); return false; }
   const missing = v60PreseasonMissingStep();
   if (missing !== key) { if (missing) v60PreseasonOpenStep(missing); return false; }
   if (key === "roster" && typeof rosterBlockingIssues === "function" && rosterBlockingIssues(S.teams[S.userTeamId]).length) {
@@ -375,12 +377,17 @@ function v60PreseasonCompleteStep(key) {
   else { UI.screen = "springCamp"; render(); }
   return true;
 }
+function v60PreseasonMandatoryStage() {
+  if (S.forcedCutRequired) return "financeCuts";
+  if ((S.pendingContractRenewals || []).length) return "contractRenewals";
+  if ((S.pendingStaffRenewals || []).length) return "staffRenewal";
+  if (S.v55PendingDirectorRenewal) return "directorRenewal";
+  if (S.draft && S.draft.active) return "draft";
+  return null;
+}
 function v60PreseasonNextStage() {
-  if (S.forcedCutRequired) return { label: "處理裁員", short: "裁員", screen: "financeCuts" };
-  if ((S.pendingContractRenewals || []).length) return { label: "處理談約", short: "球員約", screen: "contractRenewals" };
-  if ((S.pendingStaffRenewals || []).length) return { label: "教練／球探續約", short: "教練約", screen: "staffRenewal" };
-  if (S.v55PendingDirectorRenewal) return { label: "主管續約", short: "主管約", screen: "directorRenewal" };
-  if (S.draft && S.draft.active) return { label: "繼續選秀", short: "選秀", screen: "draft" };
+  const mandatory = v60PreseasonMandatoryStage();
+  if (mandatory) return { label: "處理目前決策", short: ({ financeCuts: "裁員", contractRenewals: "球員約", staffRenewal: "教練約", directorRenewal: "主管約", draft: "選秀" })[mandatory], screen: mandatory };
   // 選秀的年度屬於休賽季；換季後 seasonYear 已前進，不能因此重開選秀。
   if (!v60PreseasonSpringReady() && S.draftDoneYear !== S.seasonYear) return { label: "進入選秀", short: "選秀", screen: "draft" };
   if (!S.gameStarted && S.draftDoneYear === S.seasonYear) return { label: "開始新球季", short: "開季", screen: "beginFirstSeason" };
@@ -408,6 +415,16 @@ function v60PreseasonGoNext() {
     UI.screen = "springCamp";
   } else UI.screen = stage.screen;
   render();
+}
+function v60MountOffseasonReviewLink() {
+  if (!S || !S.offseasonSummary || S.offseasonEnteredYear !== S.seasonYear ||
+    !["financeCuts", "contractRenewals", "staffRenewal", "directorRenewal", "draft", "negotiation"].includes(UI.screen)) return;
+  const root = document.getElementById("app");
+  const wrap = root && root.querySelector && root.querySelector(".wrap");
+  const topbar = wrap && wrap.querySelector(".topbar");
+  if (!topbar || !topbar.insertAdjacentHTML || wrap.querySelector(".v60-offseason-review-link")) return;
+  topbar.insertAdjacentHTML("afterend", '<div class="v60-offseason-review-link"><button type="button" class="btn-outline">查看年度結算</button></div>');
+  wrap.querySelector(".v60-offseason-review-link button").onclick = () => { UI.screen = "offseasonSummary"; render(); };
 }
 function v60PreseasonOpenContracts() {
   if (S.forcedCutRequired) { UI.screen = "financeCuts"; }
@@ -496,7 +513,7 @@ function render() {
   try { if (document.body && document.body.setAttribute) document.body.setAttribute("data-skin", (S && S.skin) || "emoji"); } catch (_) {} // v41⑦：皮膚插槽（預設emoji）
   try { if (document.body && document.body.setAttribute) document.body.setAttribute("data-screen", (typeof UI !== "undefined" && UI && UI.screen) || ""); } catch (_) {} // v47：分頁背景槽位（未導入資產包時無任何視覺變化）
   try { if (typeof v49ClearPortraitCache === "function") v49ClearPortraitCache(); } catch (_) {} // v49：清除肖像快取（轉隊後即時換帽）
-  try { const r = renderScreen(); try { v60MountPreseasonDock(); wireUiTabs(); v60MarkStickyScreenAction(); } catch (e) { console.error("開季準備快捷列掛線失敗：", e); } v60KickRenderedSceneImages(); return r; }
+  try { const r = renderScreen(); try { v60MountPreseasonDock(); v60MountOffseasonReviewLink(); wireUiTabs(); v60MarkStickyScreenAction(); } catch (e) { console.error("開季準備快捷列掛線失敗：", e); } v60KickRenderedSceneImages(); return r; }
   catch (e) {
     UI.__bootError = "畫面渲染發生錯誤：" + ((e && e.message) || e);
     try { return renderBootRecovery(); }
