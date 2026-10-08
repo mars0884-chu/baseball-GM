@@ -2,7 +2,8 @@
 
 - 2026-10-08 以 54 個路由／子畫面的固定狀態矩陣稽核，育成名單原本把投手、野手同一方針說明重複寫兩次，返回鈕浮在名單下方且可能遮擋操作；導覽標籤也錯顯示為一軍。現改正育成導覽、合併相同說明，方針並排並以兩格呈現原有均衡與專項倍率；原兩個獨立選單及資料寫入保留。返回鈕移至頁首，320px 方針選單改單欄避免文字截斷。
 - 固定情境 390px 可見字約 506→465、頁高 1,275→1,182px；320px 1,317px、1280px 1,205px。三寬度無水平溢位與頁面例外，320px 截圖確認選單全文可讀。證據：`_staging/v60-010-preseason-flow-candidate/browser-proof/v60-r071-*-route-inventory.json` 及相應截圖。這是育成子畫面結果，不是全遊戲文字減量百分比；矩陣僅覆蓋固定模擬狀態，未涵蓋所有存檔組合。
-- `node test_regression.js`：1,917 通過／0 失敗；一般 15 年＋全畫面渲染煙霧、純 GM 15 年煙霧均通過。新增測試覆蓋育成導覽、同／不同方針說明、兩選單與返回。正式套件及原有未提交 `manifest.webmanifest` 均不動。GitHub Pages 建置與公開 GET 證據待推送後補記。
+- `node test_regression.js`：1,917 通過／0 失敗；一般 15 年＋全畫面渲染煙霧、純 GM 15 年煙霧均通過。新增測試覆蓋育成導覽、同／不同方針說明、兩選單與返回。正式套件及原有未提交 `manifest.webmanifest` 均不動。
+- 程式 commit `f77f43a52bbf110a84566123d871eb1a9b54ed0c` 已推送 `main`；[Pages build 37762681013](https://github.com/mars0884-chu/baseball-GM/actions/runs/37762681013) 對應該 commit 且 `completed/success`。公開 `index.html`、`06-ui-roster.js`、`style.css`、`sw.js` 使用獨立查詢參數與 `no-cache` 實際 GET 均為 HTTP 200，且各含新快取鍵或育成方針標記。公開部署不等於 Mars 真機接受。
 
 # v60-r070 選秀養成／生涯階段緊湊呈現
 
