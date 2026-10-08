@@ -5083,5 +5083,27 @@ document.getElementById('btn-back').onclick();var __r073Back=UI.screen==='dashbo
 S=JSON.parse(__r073SavedS);UI=JSON.parse(__r073SavedUI);`);
 assert(g("__r073Controls&&__r073Cancel&&__r073Vacant&&__r073Back&&__r073Html.includes('測試候選')&&__r073Html.includes('投手潛力評估')&&__r073Html.includes(formatMoney(1800000))&&__r073Html.includes(formatMoney(250000))&&__r073Html.includes('現任準度')&&!__r073Html.includes('並排比較候選人的')") && fs.readFileSync('style.css','utf8').includes('.v60-scout-topbar #btn-back{'), "r073 候選資料與空缺盲評保留，取消不扣款、返回在頁首且原操作可用");
 
+console.log("\n--- r074 教練候選與手機職務卡 ---");
+g(`var __r074SavedS=JSON.stringify(S),__r074SavedUI=JSON.stringify(UI);
+UI.screen='coaches';UI.coachTab='1軍';UI.coachPicker=COACH_ROLES[0];
+UI.coachCandidates=[{name:'測試教練',kind:'retiree',age:39,specialty:'contact',teaching:72,contractYears:2,salary:1800000,specialAbility:null,will:{state:'ask',why:'期待加薪'}}];
+var __r074Budget=S.teams[S.userTeamId].finance.budget,__r074Staff=JSON.stringify(S.teams[S.userTeamId].coachStaff);
+renderCoaches();var __r074Html=app.innerHTML;
+var __r074Controls=!!document.getElementById('btn-back').onclick&&!!document.getElementById('btn-cancel-pick').onclick&&__r074Html.includes('hire-btn');
+var __r074RoleNames=new Set();var __r074BeforePages=JSON.stringify(S);
+for(var __r074Page=0;__r074Page<Math.ceil(COACH_ROLES.length/2);__r074Page++){UI.coachRolePage=__r074Page;renderCoaches();COACH_ROLES.slice(__r074Page*2,__r074Page*2+2).forEach(__role=>{if(app.innerHTML.includes(__role))__r074RoleNames.add(__role);});}
+var __r074Paged=__r074RoleNames.size===COACH_ROLES.length&&JSON.stringify(S)===__r074BeforePages;
+UI.coachRolePage=0;renderCoaches();
+document.getElementById('btn-cancel-pick').onclick();
+var __r074Cancel=!UI.coachPicker&&!UI.coachCandidates&&S.teams[S.userTeamId].finance.budget===__r074Budget&&JSON.stringify(S.teams[S.userTeamId].coachStaff)===__r074Staff;
+var __r074Role=COACH_ROLES[0];S.teams[S.userTeamId].coachStaff['1軍'][__r074Role]=null;renderCoaches();
+var __r074Vacant=app.innerHTML.includes('is-vacant')&&app.innerHTML.includes('指導 </span>0')&&app.innerHTML.includes('自由市場簽人');
+document.getElementById('btn-back').onclick();var __r074Back=UI.screen==='dashboard';
+UI.screen='coaches';UI.coachTab='育成';delete S.teams[S.userTeamId].coachStaff['育成'];
+var __r074BeforeEmpty=JSON.stringify(S);renderCoaches();
+var __r074Empty=app.innerHTML.includes('育成教練團')&&app.innerHTML.includes('is-vacant')&&JSON.stringify(S)===__r074BeforeEmpty;
+S=JSON.parse(__r074SavedS);UI=JSON.parse(__r074SavedUI);`);
+assert(g("__r074Controls&&__r074Paged&&__r074Cancel&&__r074Vacant&&__r074Back&&__r074Empty&&__r074Html.includes('測試教練')&&__r074Html.includes('意願保留')&&__r074Html.includes('要價+25%')&&__r074Html.includes(formatMoney(1800000))&&!__r074Html.includes('比較指導力與特殊能力後聘用')") && fs.readFileSync('style.css','utf8').includes('.v60-coach-staff-table tr{'), "r074 教練全職位分頁可到達且不改存檔，育成配置缺失仍顯示空缺，取消不扣款、返回正常");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

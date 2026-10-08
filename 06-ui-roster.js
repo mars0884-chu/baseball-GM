@@ -1259,36 +1259,41 @@ function renderScouts() {
 function renderCoaches() {
   const team = S.teams[S.userTeamId];
   const level = UI.coachTab || "1軍";
-  const staff = team.coachStaff[level];
+  const staff = team.coachStaff && team.coachStaff[level] || {};
   const picking = UI.coachPicker;
   const candidates = UI.coachCandidates || [];
   const pending = (S.pendingCoachHires || []).filter(x => x.level === level);
+  const coachPageCount = Math.max(1, Math.ceil(COACH_ROLES.length / 2));
+  const coachPage = Math.max(0, Math.min(coachPageCount - 1, Number(UI.coachRolePage) || 0));
+  UI.coachRolePage = coachPage;
+  const visibleCoachRoles = COACH_ROLES.slice(coachPage * 2, coachPage * 2 + 2);
   app.innerHTML = `
     <div class="wrap">
-      <div class="topbar"><div class="eyebrow">${team.name}</div><h1>教練團</h1></div>
+      <div class="topbar v60-coach-topbar"><div><div class="eyebrow">${team.name}</div><h1>教練團</h1></div>${picking ? '<button id="btn-back" class="btn-outline" type="button">返回</button>' : ""}</div>
       ${renderRosterNav("coaches")}
       ${renderCoachRefusalCard()}
       ${pending.length > 0 ? `<div class="card issuecard"><div class="eyebrow">合約到期・待你確認人選</div>
-        <p class="sub dark">以下職位教練合約到期，系統已暫時自動指派人選頂上，你可以直接點「更換」重新比較候選人：${pending.map(x => x.role).join("、")}</p>
+        <p class="sub dark">待確認：${pending.map(x => x.role).join("、")}；可按「更換」比較人選。</p>
       </div>` : ""}
       <div class="tabrow">
         <button class="tab ${level === "1軍" ? "active" : ""}" data-tab="1軍">1軍教練團</button>
         <button class="tab ${level === "2軍" ? "active" : ""}" data-tab="2軍">2軍教練團</button>
         <button class="tab ${level === "育成" ? "active" : ""}" data-tab="育成">育成教練團</button>
       </div>
-      <table class="stattable">
+      <nav class="v60-choice-pager" aria-label="教練職位分頁"><button type="button" class="v60-coach-page-btn" data-coach-step="-1" ${coachPage === 0 ? "disabled" : ""}>上一頁</button><span>${coachPage + 1}/${coachPageCount}</span><button type="button" class="v60-coach-page-btn" data-coach-step="1" ${coachPage === coachPageCount - 1 ? "disabled" : ""}>下一頁</button></nav>
+      <table class="stattable v60-coach-staff-table">
         <thead><tr><th>職位</th><th>姓名</th><th>專精</th><th>指導力</th><th>合約</th><th></th></tr></thead>
         <tbody>
-          ${COACH_ROLES.map(role => {
+          ${visibleCoachRoles.map(role => {
             const c = S.coaches[staff[role]];
             if (!c) {
               // v31：職位空缺（到期未續約）→ 加成歸零，顯示補人入口
-              return `<tr style="background:rgba(255,90,90,.10);"><td>${role}<br><span class="specialabilitytag" style="color:var(--redline);">空缺</span></td><td colspan="3"><span style="color:var(--redline);">此職位空缺中，加成歸零。請到自由市場補人。</span></td><td>—</td><td>
+              return `<tr class="is-vacant"><td>${role}<br><span class="specialabilitytag" style="color:var(--redline);">空缺</span></td><td>待補人</td><td><span class="v60-coach-mobile-label">專精 </span>—</td><td><span class="v60-coach-mobile-label">指導 </span>0</td><td><span class="v60-coach-mobile-label">合約 </span>—</td><td>
                 <button class="movebtn open-picker-btn" data-role="${role}">自由市場簽人</button></td></tr>`;
             }
             const abilityTag = c.specialAbility ? `<br><span class="specialabilitytag">${icon('star-solid')}${c.specialAbility.name}</span>` : "";
             const expiring = c.contractYears <= 1;
-            return `<tr><td>${role}${expiring ? `<br><span class="specialabilitytag" style="color:var(--redline);">合約將到期</span>` : ""}</td><td>${c.name}${c.formerPlayer ? "（退休轉任）" : ""}${abilityTag}</td><td>${SPECIALTY_LABEL[c.specialty]}</td><td>${c.teaching}</td><td>${c.contractYears}年</td><td>
+            return `<tr><td>${role}${expiring ? `<br><span class="specialabilitytag" style="color:var(--redline);">合約將到期</span>` : ""}</td><td>${c.name}${c.formerPlayer ? "（退休轉任）" : ""}${abilityTag}</td><td><span class="v60-coach-mobile-label">專精 </span>${SPECIALTY_LABEL[c.specialty]}</td><td><span class="v60-coach-mobile-label">指導 </span>${c.teaching}</td><td><span class="v60-coach-mobile-label">合約 </span>${c.contractYears}年</td><td>
               <button class="movebtn open-picker-btn" data-role="${role}">更換</button>
               <button class="movebtn swap-level-btn" data-role="${role}">與${level === "1軍" ? "2軍" : "1軍"}互換</button>
             </td></tr>`;
@@ -1299,7 +1304,6 @@ function renderCoaches() {
       ${picking ? `
       <div class="card">
         <div class="eyebrow">聘僱新教練：${picking}（${level}）・${S.coaches[staff[picking]] ? `現任指導力 ${S.coaches[staff[picking]].teaching}` : "目前空缺"}</div>
-        <p class="sub dark" style="margin-bottom:10px;">比較指導力與特殊能力後聘用。</p>
         <div class="teamgrid" style="grid-template-columns:1fr;gap:10px;">
           ${candidates.map((cand, idx) => {
             const curT = S.coaches[staff[picking]] ? S.coaches[staff[picking]].teaching : 0;
@@ -1329,13 +1333,16 @@ function renderCoaches() {
             </div>`;
           }).join("")}
         </div>
-        <div class="btnrow" style="margin-top:10px;"><button id="btn-cancel-pick" class="btn-secondary">取消</button></div>
+        <div class="btnrow" style="margin-top:10px;"><button id="btn-cancel-pick" class="btn-secondary">取消聘用</button></div>
       </div>` : ""}
-      <div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>
+      ${picking ? "" : '<div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>'}
     </div>`;
   wireCoachRefusalCard();
   app.querySelectorAll(".tab").forEach(btn => {
-    btn.onclick = () => { UI.coachTab = btn.dataset.tab; UI.coachPicker = null; UI.coachCandidates = null; render(); };
+    btn.onclick = () => { UI.coachTab = btn.dataset.tab; UI.coachRolePage = 0; UI.coachPicker = null; UI.coachCandidates = null; render(); };
+  });
+  app.querySelectorAll(".v60-coach-page-btn").forEach(btn => {
+    btn.onclick = () => { UI.coachRolePage = coachPage + Number(btn.dataset.coachStep); render(); };
   });
   app.querySelectorAll(".open-picker-btn").forEach(btn => {
     btn.onclick = () => openCoachPicker(btn.dataset.role);
