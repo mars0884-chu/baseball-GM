@@ -393,6 +393,25 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .v60-dev-policy-compare span{color:#245C9E;font-size:14px;font-weight:800;}
 .v60-dev-policy-compare strong{color:#17233B;font-size:14px;line-height:1.35;overflow-wrap:anywhere;}
 .v60-roster-topbar #btn-back{width:auto;min-width:68px;min-height:44px;padding:8px 10px;flex:0 0 auto;}
+.v60-scout-topbar #btn-back{width:auto;min-width:68px;min-height:44px;padding:8px 10px;flex:0 0 auto;}
+.v60-scout-mobile-label{display:none;}
+@media(max-width:600px){
+  .v60-scout-staff-table{background:transparent;overflow:visible;}
+  .v60-scout-staff-table thead{display:none;}
+  .v60-scout-staff-table tbody{display:grid;gap:8px;}
+  .v60-scout-staff-table tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(48px,auto);grid-template-areas:"area name action" "accuracy specialty action" "contract salary action";gap:3px 6px;padding:8px;border:1px solid #B7D3F5;border-radius:10px;background:#FFFFFF!important;}
+  .v60-scout-staff-table tr.is-vacant{border-color:#FD8080;background:#FFF4F4!important;}
+  .v60-scout-staff-table td{display:block;min-width:0;padding:0;border:0;font-size:14px;line-height:1.3;overflow-wrap:anywhere;}
+  .v60-scout-staff-table td:nth-child(1){grid-area:area;font-weight:800;}
+  .v60-scout-staff-table td:nth-child(2){grid-area:name;}
+  .v60-scout-staff-table td:nth-child(3){grid-area:accuracy;}
+  .v60-scout-staff-table td:nth-child(4){grid-area:specialty;}
+  .v60-scout-staff-table td:nth-child(5){grid-area:contract;}
+  .v60-scout-staff-table td:nth-child(6){grid-area:salary;}
+  .v60-scout-staff-table td:nth-child(7){grid-area:action;display:flex;align-items:center;justify-content:flex-end;}
+  .v60-scout-staff-table .v60-scout-mobile-label{display:inline;color:#36577F;}
+  .v60-scout-staff-table .movebtn{min-width:48px;min-height:48px;white-space:normal;font-size:14px;padding:6px;}
+}
 @media(max-width:360px){.v60-dev-policy-selects{grid-template-columns:1fr;}}
 .v60-draft-skip-choice{display:grid;gap:8px;}
 .v60-draft-skip-choice button{width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;text-align:left;}

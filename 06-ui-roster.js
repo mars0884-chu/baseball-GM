@@ -1150,11 +1150,11 @@ function renderScouts() {
   const candidates = UI.scoutCandidates || [];
   app.innerHTML = `
     <div class="wrap">
-      <div class="topbar"><div class="eyebrow">${team.name}</div><h1>球探室</h1></div>
+      <div class="topbar v60-scout-topbar"><div><div class="eyebrow">${team.name}</div><h1>球探室</h1></div><button id="btn-back" class="btn-outline">返回</button></div>
       ${renderRosterNav("scouts")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      <p class="v60-state-line" aria-label="球探職務與效果">國內選秀／育成 · 國際海外估值／獨家人選 · 交易估對手 · 缺員盲評 · ${scoutAccuracyBonus(team) > 0 ? `辦公室全員準度+${scoutAccuracyBonus(team)}` : "升級辦公室→準度↑"}</p>
-      <table class="stattable">
+      <p class="v60-state-line" aria-label="球探職務與效果">國內：選秀／育成 · 國際：海外／獨家 · 交易：對手估值 · 空缺：盲評 · ${scoutAccuracyBonus(team) > 0 ? `辦公室全員準度+${scoutAccuracyBonus(team)}` : "辦公室升級可增準度"}</p>
+      <table class="stattable v60-scout-staff-table">
         <thead><tr><th>類別</th><th>姓名</th><th>準確度</th><th>專精</th><th>合約</th><th>年薪</th><th></th></tr></thead>
         <tbody>
           ${areas.map(area => {
@@ -1162,17 +1162,16 @@ function renderScouts() {
             const label = AREA_LABEL[area];
             if (!s) {
               // v31：球探空缺（到期未續約）→ 精準度歸零（盲評），顯示補人入口
-              return `<tr style="background:rgba(255,90,90,.10);"><td>${label}<br><span class="specialabilitytag" style="color:var(--redline);">空缺</span></td><td colspan="4"><span style="color:var(--redline);">此球探職位空缺中，該區評估精準度歸零。</span></td><td><button class="movebtn open-scout-picker-btn" data-area="${area}">自由市場簽人</button></td></tr>`;
+              return `<tr class="is-vacant" style="background:rgba(255,90,90,.10);"><td>${label}<br><span class="specialabilitytag" style="color:var(--redline);">空缺</span></td><td>—</td><td><span class="v60-scout-mobile-label">準度 </span>0・盲評</td><td><span class="v60-scout-mobile-label">專精 </span>—</td><td><span class="v60-scout-mobile-label">合約 </span>—</td><td><span class="v60-scout-mobile-label">年薪 </span>—</td><td><button class="movebtn open-scout-picker-btn" data-area="${area}">自由市場簽人</button></td></tr>`;
             }
             const expiring = s.contractYears <= 1;
-            return `<tr><td>${s.areaLabel}${expiring ? `<br><span class="specialabilitytag" style="color:var(--redline);">合約將到期</span>` : ""}</td><td>${s.name}</td><td>${s.accuracy}</td><td>${s.specialty}</td><td>${s.contractYears}年</td><td>${formatMoney(s.salary)}</td><td><button class="movebtn open-scout-picker-btn" data-area="${area}">更換</button></td></tr>`;
+            return `<tr><td>${s.areaLabel}${expiring ? `<br><span class="specialabilitytag" style="color:var(--redline);">合約將到期</span>` : ""}</td><td>${s.name}</td><td><span class="v60-scout-mobile-label">準度 </span>${s.accuracy}</td><td><span class="v60-scout-mobile-label">專精 </span>${s.specialty}</td><td><span class="v60-scout-mobile-label">合約 </span>${s.contractYears}年</td><td><span class="v60-scout-mobile-label">年薪 </span>${formatMoney(s.salary)}</td><td><button class="movebtn open-scout-picker-btn" data-area="${area}">更換</button></td></tr>`;
           }).join("")}
         </tbody>
       </table>
       ${picking ? `
       <div class="card">
-        <div class="eyebrow">簽新球探：${AREA_LABEL[picking]}・${team.scouts[picking] ? `現任準確度 ${team.scouts[picking].accuracy}` : "目前空缺"}</div>
-        <p class="sub dark" style="margin-bottom:10px;">並排比較候選人的評估準確度／專精／年薪／簽約金後再決定，<b>簽下才扣款</b>。</p>
+        <div class="eyebrow">${AREA_LABEL[picking]}候選・${team.scouts[picking] ? `現任準度 ${team.scouts[picking].accuracy}` : "目前空缺"}</div>
         <div class="teamgrid" style="grid-template-columns:1fr;gap:10px;">
           ${candidates.map((cand, idx) => {
             const curAcc = team.scouts[picking] ? team.scouts[picking].accuracy : 0;
@@ -1221,7 +1220,6 @@ function renderScouts() {
           </div>` : ""}
         </div>`;
       })()}
-      <div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>
     </div>`;
   app.querySelectorAll(".open-scout-picker-btn").forEach(btn => {
     btn.onclick = () => openScoutPicker(btn.dataset.area);

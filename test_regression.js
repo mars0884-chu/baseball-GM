@@ -4486,7 +4486,7 @@ const v60FacilityUi = v60FinanceSource.slice(v60FacilityStart, v60FacilityEnd);
 assert(v60CopyIntlMarket.includes("v60IntlComparisonHtml(visibleInternational)") && v60CopyIntlMarket.includes("data-intl-compare-tab") && !v60CopyIntlMarket.includes("已評估：現況→天花板") && !v60CopyIntlMarket.includes("逐項能力：現在(評估)"), "r047 國際市場以共享能力比較與可見分類取代重複估值說明");
 assert(v60CopyIntlMarket.includes("const pageSize = 2") && v60CopyIntlMarket.includes("data-intl-page") && v60CopyIntlMarket.includes("國際球員分頁") && v60CopyIntlMarket.includes("sign-intl-btn"), "v60-012 海外人選兩人一頁、保留分頁與簽約操作");
 assert(v60CopyIntlMarket.includes("40國分級") && v60CopyIntlMarket.includes("評估準度") && v60CopyIntlMarket.includes("effAcc") && v60CopyIntlMarket.includes("獨家限本隊") && v60CopyIntlMarket.includes("1軍 ${team.roster1.length}/28"), "r047 國際市場短狀態列與視覺指標保留國家等級、估值精準度、獨家與名單限制");
-assert(v60CopyScouts.includes("國內選秀／育成 · 國際海外估值／獨家人選 · 交易估對手") && v60CopyScouts.includes("缺員盲評") && v60CopyScouts.includes("全員準度"), "v60-012 球探頁以掃讀狀態列保留三職評估出口、獨家人選與空缺後果");
+assert(v60CopyScouts.includes("國內：選秀／育成") && v60CopyScouts.includes("國際：海外／獨家") && v60CopyScouts.includes("交易：對手估值") && v60CopyScouts.includes("空缺：盲評") && v60CopyScouts.includes("辦公室全員準度"), "v60-012 球探頁以掃讀狀態列保留三職評估出口、獨家人選與空缺後果");
 assert(v60CopyScouts.includes("發掘15–20歲 · 休賽季1次 · 準度↑→品質↑") && v60CopyScouts.includes("${devCount}/25"), "v60-012 育成候選短列保留年齡、頻率、品質關係與名額");
 assert(v60CopyFreeAgents.includes("本土未續→入市") && v60CopyFreeAgents.includes("能力公開") && v60CopyFreeAgents.includes("生涯＝球探預測") && v60CopyFreeAgents.includes("簽約金≈年薪30%"), "v60-012 自由球員狀態列保留入市條件、公開數據、預測與成本");
 assert(v60CopyAgency.includes("代理人事務所規則") && v60CopyAgency.includes("談成→交情↑／談崩→交情↓") && v60CopyAgency.includes("應酬每類型每季1次") && v60CopyAgency.includes("成功70%好感+1") && v60CopyAgency.includes("大失敗10%好感-1") && v60CopyAgency.includes("交好≥4情報") && v60CopyAgency.includes("莫逆10引薦") && !v60CopyAgency.includes("foldNote("), "v60-r036 代理人規則常駐可見且保留各項門檻");
@@ -5069,6 +5069,19 @@ userSkipPick();document.getElementById('btn-skip-once').onclick();
 var __r072Once=S.draft&&S.draft.active&&S.draft.pickIndex>__r072Index&&S.draft.skippedByUser===1&&!S.draft.userAutoSkip;
 S=JSON.parse(__r072SavedS);UI=JSON.parse(__r072SavedUI);`);
 assert(g("__r072Cancel&&__r072Once&&__r072Html.includes('下一輪仍可選人')&&__r072Html.includes('自動跳到選秀結束')&&__r072Html.includes('放棄本屆剩餘順位')") && !fs.readFileSync('06-ui-roster.js','utf8').includes('之後每輪不會再跳出來詢問，直接自動跳過到選秀結束'), "r072 取消不改選秀、只跳過單一順位且清楚標明放棄剩餘順位的後果");
+
+console.log("\n--- r073 球探候選短頁與返回 ---");
+g(`var __r073SavedS=JSON.stringify(S),__r073SavedUI=JSON.stringify(UI);
+UI.screen='scouts';UI.scoutPicker='international';UI.scoutCandidates=[{name:'測試候選',specialty:'投手潛力評估',accuracy:63,salary:1800000,contractYears:2,signing:250000}];
+var __r073Budget=S.teams[S.userTeamId].finance.budget,__r073Staff=JSON.stringify(S.teams[S.userTeamId].scouts);
+renderScouts();var __r073Html=app.innerHTML;
+var __r073Controls=!!document.getElementById('btn-back').onclick&&!!document.getElementById('btn-cancel-scout-pick').onclick&&__r073Html.includes('hire-scout-btn');
+document.getElementById('btn-cancel-scout-pick').onclick();
+var __r073Cancel=!UI.scoutPicker&&!UI.scoutCandidates&&S.teams[S.userTeamId].finance.budget===__r073Budget&&JSON.stringify(S.teams[S.userTeamId].scouts)===__r073Staff;
+S.teams[S.userTeamId].scouts.trade=null;renderScouts();var __r073Vacant=app.innerHTML.includes('is-vacant')&&app.innerHTML.includes('0・盲評')&&app.innerHTML.includes('自由市場簽人');
+document.getElementById('btn-back').onclick();var __r073Back=UI.screen==='dashboard';
+S=JSON.parse(__r073SavedS);UI=JSON.parse(__r073SavedUI);`);
+assert(g("__r073Controls&&__r073Cancel&&__r073Vacant&&__r073Back&&__r073Html.includes('測試候選')&&__r073Html.includes('投手潛力評估')&&__r073Html.includes(formatMoney(1800000))&&__r073Html.includes(formatMoney(250000))&&__r073Html.includes('現任準度')&&!__r073Html.includes('並排比較候選人的')") && fs.readFileSync('style.css','utf8').includes('.v60-scout-topbar #btn-back{'), "r073 候選資料與空缺盲評保留，取消不扣款、返回在頁首且原操作可用");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);
