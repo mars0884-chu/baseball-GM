@@ -4,6 +4,7 @@
 - 同批完成先前進行中的手排輪值減量：先發／牛棚每頁兩人，手機使用可讀卡；更換、新增各每頁兩名候選。原有能力、順位、增減／更換／自動排列操作保留。開頁、翻頁與候選預覽不寫存檔、不用共享亂數，明確操作才寫正式球隊。固定情境 320px 主頁約 304→209 可見字、1,195→863px；候選頁約 432→127 字、1,548→844px。這只代表當頁閱讀量，不代表全遊戲文字減量完成。
 - 回歸測試 **1,923 通過／0 失敗**；一般與純 GM 15 年煙霧測試均通過。實際 Edge 320／390／1280px 輪值主頁與兩個候選子頁無水平溢位或頁面錯誤；手機互動翻完全部五位先發／八位候選，更換、加入、移除、取消均實測。休賽季財務裁員關卡於 390／1280px 可直接抵達、回看結算再返回，無水平溢位或頁面錯誤。證據：`_staging/v60-010-preseason-flow-candidate/browser-proof/v60-r076-manual-rotation-*-route-inventory.json`、`v60-r077-flow-browser.json` 與對應截圖。瀏覽器測試不冒稱 Mars 真機接受。
 - 本批僅更新公開儲存庫的模組、樣式、測試、首頁及離線快取鍵；正式 `current/`、正式 ZIP／manifest／SHA／`CURRENT_PACKAGE.json` 與使用者原有未提交 `manifest.webmanifest` 均不動。推送與 Pages 狀態以後續實際證據為準。
+- 程式 commit `e550cdc26d2517f74f3caf997bcc5fbdbf805e40` 已推送 `main`；[Pages build 37805324388](https://github.com/mars0884-chu/baseball-GM/actions/runs/37805324388) 對應此 SHA 且 `completed/success`。公開 `index.html`、`01-data-engine.js`、`02-finance.js`、`05-ui-dashboard.js`、`06-ui-roster.js`、`style.css`、`sw.js` 以獨立查詢參數與 `no-cache` 實際 GET 皆 HTTP 200，七檔皆含本批預期標記。公開部署不等於玩家已開啟的 PWA 分頁即時重載，也不等於 Mars 真機接受。
 
 # v60-r075 純GM 教練調度預覽減量與唯讀修正
 
