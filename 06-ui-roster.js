@@ -3197,6 +3197,22 @@ function renderRotationCoachManaged() {
 function v45WantKindLabel(k) {
   return ({ cash: "純現金", player: "單一球員", player_cash: "球員＋現金", multi: "多換一" })[k] || k;
 }
+function v60WantPlayerPreview(p, scouted) {
+  if (!p) return "";
+  const view = scouted ? v46ScoutViewFor(p) : p;
+  const field = key => view[key] == null ? "—" : view[key];
+  const metrics = p.isPitcher
+    ? [["球速", view.velocity == null ? "—" : `${velocityKmh(view.velocity)} km/h`], ["控球", field("control")], ["體力", field("stamina")], ["抗壓", field("composure")], ["耐久", field("durability")], ["潛力", field("potential")]]
+    : [["接觸", field("contact")], ["長打", field("power")], ["選球", field("eye")], ["速度", field("speed")], ["守備", field("fielding")], ["潛力", field("potential")]];
+  const portrait = typeof themePlayerPhoto === "function" ? themePlayerPhoto(p.id) : "";
+  const radar = typeof v48RadarSVG === "function" ? v48RadarSVG(p, scouted ? { scoutView: {} } : {}) : "";
+  const position = p.isPitcher ? (p.role || "投手") : (p.positions || []).map(x => POS_LABEL[x.pos] || x.pos).join("/");
+  return `<article class="v60-want-player-preview">
+    <div class="v60-want-player-visual">${portrait}${radar}</div>
+    <div class="v60-want-player-info"><strong>${p.name}</strong><span>${p.isPitcher ? "投手" : "野手"}・${position}・${p.age}歲</span></div>
+    <div class="v60-want-player-metrics">${metrics.map(([label, value]) => `<span><small>${label}</small><b>${value}</b></span>`).join("")}</div>
+  </article>`;
+}
 function renderWantMarket() {
   try {
     if (typeof ensureV45WantState === "function") ensureV45WantState();
@@ -3213,10 +3229,11 @@ function renderWantMarket() {
           : `${v60RosterPagerHtml(responsePage, "wantResponsePage", "球團報價", openResp.length, "筆")}
             ${responsePage.items.map(r => {
               const gp = S.players[r.aiPlayerId];
+              const detail = UI.wantDetailRid === r.id;
               // 他們願給：對方球員 → 球探評估完整卡（全欄位）
-              const giveCard = gp ? ((typeof v46FullPlayerCard === "function") ? v46FullPlayerCard(gp, { scoutView: {} }) : gp.name) : "（球員）";
+              const giveCard = gp ? (detail ? v46FullPlayerCard(gp, { scoutView: {} }) : v60WantPlayerPreview(gp, true)) : "（球員）";
               // 他們要你付出：球員 → 你自家真實完整卡；現金另列
-              const payCards = (r.askPlayerIds || []).map(id => { const pp = S.players[id]; return pp ? ((typeof v46FullPlayerCard === "function") ? v46FullPlayerCard(pp, null) : pp.name) : ""; }).join("");
+              const payCards = (r.askPlayerIds || []).map(id => { const pp = S.players[id]; return pp ? (detail ? v46FullPlayerCard(pp, null) : v60WantPlayerPreview(pp, false)) : ""; }).join("");
               const cashLine = (r.askCash > 0) ? `<div class="v43cashrow">${icon('money')} 另需付出現金 <b>${(typeof formatMoney === "function") ? formatMoney(r.askCash) : r.askCash}</b></div>` : "";
               return `<div class="card issuecard v60-want-offer" style="margin:8px 0;">
                 <div class="eyebrow">${ai(r.aiTeamId)}・${v45WantKindLabel(r.kind)}</div>
@@ -3224,6 +3241,8 @@ function renderWantMarket() {
                   <section aria-label="換入球員的球探評估"><div class="divlabel small">換入・球探評估</div>${giveCard}</section>
                   <section aria-label="換出球員的真實能力與現金"><div class="divlabel small">換出・真實能力</div>${payCards || `<p class="draftnote muted">不換出球員</p>`}${cashLine}</section>
                 </div>
+                ${detail ? '<p class="v60-state-line">換入能力與潛力為球探估值；簽入後可查看真實能力。</p>' : ""}
+                <div class="btnrow"><button class="btn-outline v60-want-detail" data-rid="${r.id}" type="button">${detail ? "返回交易比較" : "查看完整估值"}</button></div>
                 <div class="btnrow"><button class="btn-primary v45-want-accept" data-wid="${w.id}" data-rid="${r.id}">接受這筆求購</button></div>
               </div>`;
             }).join("")}
@@ -3237,22 +3256,27 @@ function renderWantMarket() {
     app.innerHTML = `<div class="wrap v60-want-market">
       <div class="topbar"><div class="eyebrow">${S.leagueName}</div><h1>求購市場</h1></div>
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      <div class="v60-want-rule-strip" aria-label="求購規則"><span><b>探詢</b> 教練需求</span><span><b>報價</b> 球員／現金／混合／多換一</span><span><b>無回覆</b> 已努力，過期少扣信任</span></div>
+      <div class="btnrow v60-want-back-row"><button id="btn-want-back" class="btn-outline">返回名單</button></div>
+      <div class="v60-want-rule-strip" aria-label="求購規則"><span><b>需求</b> 教練補強</span><span><b>報價</b> 球員／現金／混合／多換一</span><span><b>無回覆</b> 過期少扣信任</span></div>
       ${wants.length === 0 ? `<div class="card"><p class="sub dark">目前沒有進行中的求購。到球員名單頁的教練需求卡，點「${icon('search')} 求購市場找人」即可張貼。</p></div>` : `${v60RosterPagerHtml(wantPage, "wantMarketPage", "教練需求", wants.length, "筆")}${wantPage.items.map(wantCard).join("")}${v60RosterPagerHtml(wantPage, "wantMarketPage", "教練需求", wants.length, "筆")}`}
-      <div class="btnrow"><button id="btn-want-back" class="btn-outline">返回</button></div>
     </div>`;
     UI.flash = null;
     wireV60RosterPager();
     app.querySelectorAll('.roster-page-btn[data-page-key="wantMarketPage"]').forEach(b => {
       b.onclick = () => {
         UI.wantMarketPage = Math.max(0, Math.min(Number(b.dataset.pageCount) - 1, (Number(UI.wantMarketPage) || 0) + Number(b.dataset.pageStep)));
-        UI.wantResponsePage = 0;
+        UI.wantResponsePage = 0; UI.wantDetailRid = null;
         render();
       };
     });
+    app.querySelectorAll('.roster-page-btn[data-page-key="wantResponsePage"]').forEach(b => {
+      const previous = b.onclick;
+      b.onclick = () => { UI.wantDetailRid = null; previous(); };
+    });
+    app.querySelectorAll(".v60-want-detail").forEach(b => { b.onclick = () => { UI.wantDetailRid = UI.wantDetailRid === b.dataset.rid ? null : b.dataset.rid; render(); }; });
     app.querySelectorAll(".v45-want-accept").forEach(b => { b.onclick = () => { const r = v45AcceptWantResponse(b.dataset.wid, b.dataset.rid); UI.flash = r.msg; render(); }; });
-    app.querySelectorAll(".v45-want-cancel").forEach(b => { b.onclick = () => { const r = v45CancelWant(b.dataset.wid); UI.flash = r.msg; render(); }; });
-    const bk = document.getElementById("btn-want-back"); if (bk) bk.onclick = () => { UI.screen = "roster"; render(); };
+    app.querySelectorAll(".v45-want-cancel").forEach(b => { b.onclick = () => { const r = v45CancelWant(b.dataset.wid); UI.wantDetailRid = null; UI.flash = r.msg; render(); }; });
+    const bk = document.getElementById("btn-want-back"); if (bk) bk.onclick = () => { UI.wantDetailRid = null; UI.screen = "roster"; render(); };
   } catch (e) {
     console.error("求購市場畫面渲染失敗：", e);
     UI.flash = `求購市場暫時無法顯示：${e && e.message ? e.message : "未知錯誤"}`;

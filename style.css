@@ -1770,7 +1770,22 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-want-rule-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:8px 0 14px}
 .v60-want-rule-strip span{display:block;min-width:0;padding:10px 12px;border:1px solid var(--line,#b9d7ef);border-radius:12px;background:var(--card,#fff);font-size:14px;line-height:1.4}
 .v60-want-rule-strip b{display:block;color:var(--primary,#163b7a)}
+.v60-want-market.wrap{max-width:900px;}
 .v60-want-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
 .v60-want-compare section{min-width:0}
+.v60-want-back-row{justify-content:flex-start;margin:5px 0;}
+.v60-want-back-row button{min-height:44px;}
+.v60-want-player-preview{display:grid;grid-template-columns:150px minmax(0,1fr);gap:5px 8px;margin:6px 0;padding:8px;border:1px solid #B7D4FF;border-radius:9px;background:#F8FBFF;color:#17385E;}
+.v60-want-player-visual{display:flex;align-items:center;gap:4px;min-width:0;}
+.v60-want-player-visual .v48photo{width:48px;height:48px;flex-basis:48px;}
+.v60-want-player-visual .v48radar{width:96px;height:96px;flex-basis:96px;}
+.v60-want-player-info{display:grid;align-content:center;gap:3px;min-width:0;font-size:14px;}
+.v60-want-player-info strong{font-size:18px;overflow-wrap:anywhere;}
+.v60-want-player-metrics{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;}
+.v60-want-player-metrics span{display:flex;justify-content:space-between;gap:2px;min-width:0;padding:3px 5px;border:1px solid #C9DFFF;border-radius:6px;background:#FFF;font-size:14px;}
+.v60-want-player-metrics small{font-size:14px;}
+.v60-want-player-metrics b{font-size:14px;}
+.v60-want-detail{min-height:44px;}
 .v60-want-market .v60-roster-pager button{min-height:44px}
-@media(max-width:720px){.v60-want-rule-strip{grid-template-columns:1fr}.v60-want-compare{grid-template-columns:1fr}}
+@media(max-width:720px){.v60-want-rule-strip{gap:4px;margin:6px 0;}.v60-want-rule-strip span{padding:6px;font-size:14px;line-height:1.2;}.v60-want-compare{grid-template-columns:1fr}}
+@media(max-width:360px){.v60-want-player-preview{grid-template-columns:1fr;}.v60-want-player-visual{justify-content:center;}.v60-want-player-visual .v48radar{width:84px;height:84px;flex-basis:84px;}.v60-want-player-info{display:flex;align-items:baseline;gap:4px 8px;flex-wrap:wrap;}}

@@ -4422,6 +4422,7 @@ g("S.springCamp.executed=true; S.springCampDoneYear=S.seasonYear; UI.screen='spr
 assert(g("v60PreseasonNextStage().screen==='dashboard'"), "r040 春訓成果後下一步返回開季主控台");
 g("S=JSON.parse(__r040SavedState); UI=JSON.parse(__r040SavedUi);");
 assert(v60PrepDash.includes('if (missing) { UI.flash = "開季準備尚未完成') && v60PrepDash.includes('if (missing) return v60PreseasonOpenStep(missing)'), "r041 春訓出發與主控台入口不能繞過漏項");
+assert(v60PrepDash.includes('if (v60PreseasonMandatoryStage()) return v60PreseasonGoNext();'), "r078 主控台春訓入口也須先回未完成的裁員、續約或選秀決策");
 g(`var __r041ReviewSaved=JSON.stringify(S.preseasonReview), __r041DaySaved=S.currentDay, __r041SpringDoneSaved=S.springCampDoneYear;
 S.preseasonReview=null; S.currentDay=0; S.springCampDoneYear=S.seasonYear-1; ensureV60();
 var __r041OldPending=JSON.stringify(S.preseasonReview); ensureV60(); var __r041Idempotent=JSON.stringify(S.preseasonReview)===__r041OldPending;
@@ -5220,9 +5221,21 @@ var __r077DonePage=app.innerHTML.includes('已完成的教練需求')&&!app.inne
 UI.wantMarketPage=1;UI.wantResponsePage=0;renderWantMarket();
 var __r077OpenPage=app.innerHTML.includes('尋找長打球員')&&app.innerHTML.includes('data-rid=');
 var __r077WantOuterSafe=__r077DonePage&&__r077OpenPage&&JSON.stringify(S)===__r077WantTwoBefore;
+UI.wantMarketPage=1;var __r078WantBefore=JSON.stringify(S),__r078DetailsSafe=true;
+for(var __r078Idx=0;__r078Idx<__r077WantOpen.length;__r078Idx++){
+ var __r078Response=__r077WantOpen[__r078Idx];UI.wantResponsePage=__r078Idx;UI.wantDetailRid=null;renderWantMarket();
+ var __r078PreviewCount=(app.innerHTML.match(/class="v60-want-player-preview"/g)||[]).length;
+ __r078DetailsSafe=__r078DetailsSafe&&__r078PreviewCount===1+(__r078Response.askPlayerIds||[]).length&&app.innerHTML.includes('查看完整估值')&&!app.innerHTML.includes('class="v46card"');
+ UI.wantDetailRid=__r078Response.id;renderWantMarket();
+ __r078DetailsSafe=__r078DetailsSafe&&(app.innerHTML.match(/class="v46card"/g)||[]).length===__r078PreviewCount&&app.innerHTML.includes('返回交易比較')&&app.innerHTML.includes('換入能力與潛力為球探估值');
+ UI.wantDetailRid=null;renderWantMarket();
+ __r078DetailsSafe=__r078DetailsSafe&&(app.innerHTML.match(/class="v60-want-player-preview"/g)||[]).length===__r078PreviewCount;
+}
+__r078DetailsSafe=__r078DetailsSafe&&JSON.stringify(S)===__r078WantBefore;
 S=JSON.parse(__r077WantSavedS);UI=JSON.parse(__r077WantSavedUI);`);
 assert(g("__r077WantValid"), "r077 求購市場有教練需求與 AI 報價時逐筆顯示，所有報價可達且翻頁不改正式狀態");
 assert(g("__r077WantOuterSafe"), "r077 多筆教練需求可分頁回看，切換需求不改正式狀態");
+assert(g("__r078DetailsSafe"), "r078 求購市場每筆交易比較保留完整球探報告與全部換出球員，切換畫面不改正式狀態");
 
 g(`var __r077RecapSavedS=JSON.stringify(S),__r077RecapSavedUI=JSON.stringify(UI);
 newGame('選秀成果稽核');pickTeam('T0');pickGameMode('gm_coach');
