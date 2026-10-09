@@ -5,6 +5,7 @@
 - Edge 已在 320／390／1280px 實際走完 19 筆報價，逐筆開啟完整估值、核對換入及全部換出球員的完整卡、返回比較、接受鈕掛線、圖片解碼、44px 操作與無水平溢位，S 不變。320px 初版姓名被擠成直排，已改為視覺與姓名分列並重拍檢查；桌面初版 520px 窄容器導致兩欄擠壓，已將求購頁擴至 900px 並重拍。證據：`_staging/v60-010-preseason-flow-candidate/browser-proof/v60-r077-fixed-baseline-390-route-inventory.json`、`v60-r078-fixed-candidate-390-route-inventory.json`、`v60-r078-want-final-320-route-inventory.json`、`v60-r078-want-preview-1280-wide-route-inventory.json`。
 - Mars 再次確認：每個休賽季關卡完成後應自動進下一關，不能忘按「下一步」就直接春訓開季。現有談約、票價、行銷、硬體、名單完成接續維持；主控台「前往春訓」入口補查尚未完成的裁員／續約／選秀，會先帶回該關。尚未做決定的可選項目仍需玩家明確選擇或確認維持現況，遊戲不擅自代選。
 - 本機回歸 **1,932 通過／0 失敗**；一般與純 GM 15 年煙霧測試均通過。Edge 最終 390px 的 56 個畫面／子畫面無例外、水平溢位或渲染抽共享亂數；19 筆求購報價的詳情及返回可操作。證據：`_staging/v60-010-preseason-flow-candidate/browser-proof/v60-r078-final-390-route-inventory.json`。既有打線／輪值／牛棚 render 對遊戲狀態的寫入仍是已知問題，未冒稱本批修正。Mars 真機仍需另外確認。
+- 程式提交 `fe011b888018ffb937070381644280dea3494710` 已推送 `main`；[Pages build 37949890244](https://github.com/mars0884-chu/baseball-GM/actions/runs/37949890244) 對應該 SHA，`completed/success`。公開 `index.html`、`05-ui-dashboard.js`、`06-ui-roster.js`、`style.css`、`sw.js` 以獨立查詢參數和 `no-cache` 實際 GET 均 HTTP 200；HTML／Service Worker 含 r078 快取標記、主控台含新增必要決策守門、求購頁含視覺比較元件。公開上線不等於 Mars 真機接受。
 
 # v60-r077 開季流程與閱讀短頁
 
