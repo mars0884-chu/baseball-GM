@@ -1413,28 +1413,32 @@ function renderDraft() {
   if (!d.active) {
     const myPicks = d.picks.filter(pk => pk.team === S.userTeamId && S.players[pk.playerId]);
     const myFailed = d.picks.filter(pk => pk.team === S.userTeamId && pk.failed);
-    const skipNote = d.skippedByUser ? `本次選秀你主動放棄了 ${d.skippedByUser} 個名額，保留給未來的交易或國際選秀。` : "名單缺額已自動以增援新秀補齊。";
+    const pickedPage = v60RosterPageSlice(myPicks, "draftRecapPage", 4);
+    const pickedPager = v60RosterPagerHtml(pickedPage, "draftRecapPage", "選秀成果", myPicks.length);
+    const skipNote = d.skippedByUser ? `放棄 ${d.skippedByUser} 個名額・保留供交易或國際選秀` : "缺額已由增援新秀補齊";
     app.innerHTML = `
       <div class="wrap">
         <div class="topbar"><div class="eyebrow">${S.leagueName} ・ 第${S.seasonYear}年</div><h1>選秀會結束</h1></div>
-        <div class="card">
-          <div class="eyebrow">${S.teams[S.userTeamId].name} 選秀成果</div>
-          <p class="sub dark">共選進 ${myPicks.length} 位新秀，已分發至2軍名單。${skipNote}</p>
-          ${myFailed.length > 0 ? `<p class="sub dark" style="color:var(--redline);">有 ${myFailed.length} 個順位因新秀合約談判破局（5次來回都談不成），這幾位新秀直接放棄加盟、退出本屆選秀，你這幾個順位沒有選進球員：${myFailed.map(pk => pk.failedName).join("、")}</p>` : ""}
-        </div>
-        <table class="stattable">
-          <thead><tr><th>輪次</th><th>姓名</th><th>類型</th><th>年齡</th><th>新秀合約</th><th>簽約金</th></tr></thead>
-          <tbody>
-            ${myPicks.map(pk => {
+        <section class="card v60-draft-recap-summary" aria-label="${S.teams[S.userTeamId].name}選秀成果">
+          <div class="v60-draft-recap-counts" aria-label="選秀結果摘要"><span><strong>${myPicks.length}</strong>選進</span><span><strong>${myFailed.length}</strong>談約破局</span><span><strong>2軍</strong>新秀去向</span></div>
+          <p class="v60-state-line">${skipNote}</p>
+          ${myFailed.length > 0 ? `<p class="v60-state-line v60-draft-recap-failed">${myFailed.map(pk => pk.failedName).join("、")}：合約談判 5 次未成，退出選秀；該順位無人加盟。</p>` : ""}
+        </section>
+        ${recap ? '<div class="btnrow v60-draft-recap-back"><button id="btn-draft-recap-back" class="btn-outline">返回開季準備</button></div>' : ""}
+        ${pickedPager}
+        <section class="v60-draft-recap-grid" aria-label="本頁選進新秀">
+          ${pickedPage.items.map(pk => {
               const p = S.players[pk.playerId];
-              return `<tr><td>第${pk.round}輪</td><td>${p.name}</td><td>${p.isPitcher ? "投手" : "野手"}</td><td>${p.age}</td><td>${p.contractYears}年・${formatMoney(p.salary)}</td><td>${formatMoney(pk.signingBonus)}</td></tr>`;
+              return `<article class="v60-draft-recap-pick"><div class="v60-draft-recap-pick-head"><strong>${p.name}</strong><span>第${pk.round}輪・${p.isPitcher ? "投手" : "野手"}・${p.age}歲</span></div><div class="v60-draft-recap-pick-facts"><span>合約 ${p.contractYears}年・${formatMoney(p.salary)}</span><span>簽約金 ${formatMoney(pk.signingBonus)}</span></div></article>`;
             }).join("")}
-          </tbody>
-        </table>
-        <div class="btnrow"><button id="btn-start-season" class="btn-primary">${recap ? "返回開季準備" : "完成選秀，進入開季準備"}</button></div>
+          ${myPicks.length ? "" : '<p class="v60-state-line">本屆未選進新秀。</p>'}
+        </section>
+        ${recap ? "" : pickedPager}
+        ${recap ? "" : '<div class="btnrow"><button id="btn-start-season" class="btn-primary">完成選秀，進入開季準備</button></div>'}
       </div>`;
+    wireV60RosterPager();
     // 舊存檔若仍停在選秀成果頁，也必須走同一個自動銜接入口，不可直接跳換季。
-    document.getElementById("btn-start-season").onclick = () => { if (recap) v60PreseasonGoNext(); else v60AdvanceAfterDraftAction(); };
+    document.getElementById(recap ? "btn-draft-recap-back" : "btn-start-season").onclick = () => { if (recap) v60PreseasonGoNext(); else v60AdvanceAfterDraftAction(); };
     return;
   }
 
@@ -1768,10 +1772,31 @@ function renderRoster() {
   const showPitchers = rosterGroup === "pitchers";
   const showBatters = rosterGroup === "batters";
   const filteredBatters = rosterPosF === "all" || rosterPosF === "P" ? batters : batters.filter(p => posFilterGroup(p) === rosterPosF);
-  const pitcherPage = v60RosterPageSlice(pitchers, "rosterPitcherPage");
-  const batterPage = v60RosterPageSlice(filteredBatters, "rosterBatterPage");
+  const rosterPageSize = typeof window !== "undefined" && Number(window.innerWidth) <= 520 ? 3 : V60_ROSTER_PAGE_SIZE;
+  const pitcherPage = v60RosterPageSlice(pitchers, "rosterPitcherPage", rosterPageSize);
+  const batterPage = v60RosterPageSlice(filteredBatters, "rosterBatterPage", rosterPageSize);
   const actionLabel = UI.rosterTab === "1軍" ? "下放2軍" : (UI.rosterTab === "育成" ? "詳細" : "升上1軍");
   const warnings = UI.rosterTab === "1軍" ? lineupRotationWarnings(team) : [];
+  const rosterPortrait = p => {
+    if (typeof compositePortrait !== "function") return "";
+    try { return compositePortrait(p.id, { player: p, teamId: p.team, isAway: false }, 48) || ""; }
+    catch (e) { console.error("名單肖像顯示失敗：", e); return ""; }
+  };
+  const rosterCard = p => {
+    const pitcher = !!p.isPitcher;
+    const portrait = rosterPortrait(p);
+    const duty = UI.rosterTab === "1軍" ? (pitcher ? pitcherRoleTag(team, p) : batterLineupTag(team, p)) : "";
+    const metrics = pitcher
+      ? [["球速", `${velocityKmh(p.velocity)} km/h`], ["控球", p.control], ["體力", p.stamina], ["疲勞", fatigueOf(p)], ["抗壓", p.composure]]
+      : [["接觸", p.contact], ["長打", p.power], ["選球", p.eye], ["觸擊", p.bunting || "－"], ["速度", p.speed], ["守備", `${p.fielding}%`]];
+    return `<article class="v60-roster-mobile-card" data-roster-id="${p.id}">
+      <div class="v60-roster-mobile-head">${portrait ? `<div class="v60-roster-mobile-portrait" aria-hidden="true">${portrait}</div>` : ""}
+        <div class="v60-roster-mobile-title"><button type="button" class="v60-roster-card-name" data-id="${p.id}">${nameWithDutyTag(p)}</button>
+          <span>${conditionTagHtml(p)}・${p.age}歲・${pitcher ? p.role : p.positions.map(x => POS_LABEL[x.pos]).join("/")}${duty && duty !== "－" ? `・${duty}` : ""}</span></div>
+        <button type="button" class="movebtn" data-id="${p.id}">${actionLabel}</button>
+      </div><div class="v60-roster-mobile-metrics">${metrics.map(([label, value]) => `<span><small>${label}</small><b>${value}</b></span>`).join("")}</div>
+    </article>`;
+  };
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar v60-roster-topbar"><div><div class="eyebrow">${team.name}</div><h1>球員名單</h1></div><button id="btn-back" class="btn-outline">返回</button></div>
@@ -1839,7 +1864,8 @@ function renderRoster() {
         <tbody>
           ${pitcherPage.items.map(p => `<tr data-id="${p.id}"><td class="rowlink" data-id="${p.id}">${nameWithDutyTag(p)}</td><td>${conditionTagHtml(p)}</td><td>${p.age}</td><td>${p.role}</td><td>${UI.rosterTab === "1軍" ? pitcherRoleTag(team, p) : "－"}</td><td>${velocityKmh(p.velocity)}</td><td>${p.control}</td><td>${p.stamina}</td><td>${fatigueOf(p) > 70 ? `<b style="color:#c0392b;">${fatigueOf(p)}</b>` : fatigueOf(p)}</td><td>${p.composure}</td><td><button class="movebtn" data-id="${p.id}">${actionLabel}</button></td></tr>`).join("")}
         </tbody>
-      </table></div>` : ""}
+      </table></div><div class="v60-roster-mobile-cards" aria-label="投手名單">${pitcherPage.items.map(rosterCard).join("")}</div>
+      <div class="v60-roster-bottom-pager">${v60RosterPagerHtml(pitcherPage, "rosterPitcherPage", "投手", pitchers.length)}</div>` : ""}
       ${showBatters ? `<div class="divlabel">野手（${filteredBatters.length}）</div>
       <div class="btnrow" style="align-items:center;">
         <select id="sort-batter" class="sortselect" style="flex:1;">
@@ -1862,7 +1888,8 @@ function renderRoster() {
         <tbody>
           ${batterPage.items.map(p => `<tr data-id="${p.id}"><td class="rowlink" data-id="${p.id}">${nameWithDutyTag(p)}</td><td>${conditionTagHtml(p)}</td><td>${p.age}</td><td>${p.positions.map(x => POS_LABEL[x.pos]).join("/")}</td><td>${UI.rosterTab === "1軍" ? batterLineupTag(team, p) : "－"}</td><td>${p.contact}</td><td>${p.power}</td><td>${p.eye}</td><td>${p.bunting || "-"}</td><td>${p.speed}</td><td>${p.fielding}</td><td><button class="movebtn" data-id="${p.id}">${actionLabel}</button></td></tr>`).join("")}
         </tbody>
-      </table></div>` : ""}
+      </table></div><div class="v60-roster-mobile-cards" aria-label="野手名單">${batterPage.items.map(rosterCard).join("")}</div>
+      <div class="v60-roster-bottom-pager">${v60RosterPagerHtml(batterPage, "rosterBatterPage", "野手", filteredBatters.length)}</div>` : ""}
     </div>`;
   var sortPEl = document.getElementById("sort-pitcher");
   if (sortPEl) sortPEl.onchange = (e) => { UI.pitcherSort = e.target.value; UI.rosterPitcherPage = 0; render(); };
@@ -1893,6 +1920,9 @@ function renderRoster() {
   });
   app.querySelectorAll(".rowlink").forEach(td => {
     td.onclick = () => openPlayerDetail(td.dataset.id);
+  });
+  app.querySelectorAll(".v60-roster-card-name").forEach(btn => {
+    btn.onclick = () => openPlayerDetail(btn.dataset.id);
   });
   app.querySelectorAll(".movebtn").forEach(btn => {
     btn.onclick = (e) => {
@@ -3171,54 +3201,61 @@ function renderWantMarket() {
   try {
     if (typeof ensureV45WantState === "function") ensureV45WantState();
     const wants = (S.v45Wants || []).filter(w => w.status === "open" || w.status === "fulfilled").slice().reverse();
-    const askHtml = r => {
-      const parts = [];
-      (r.askPlayerIds || []).forEach(id => { const p = S.players[id]; if (p) parts.push(`${p.name}（${p.isPitcher ? (p.role || "投") : p.positions.map(x => POS_LABEL[x.pos]).join("/")}・${p.age}歲）`); });
-      if (r.askCash > 0) parts.push(`現金 ${(typeof formatMoney === "function") ? formatMoney(r.askCash) : r.askCash}`);
-      return parts.length ? parts.join("＋") : "（無）";
-    };
+    const wantPage = v60RosterPageSlice(wants, "wantMarketPage", 1);
     const wantCard = w => {
       const ai = id => (S.teams[id] || {}).name || "他隊";
       const openResp = (w.responses || []).filter(r => r.status === "open");
+      const responsePage = v60RosterPageSlice(openResp, "wantResponsePage", 1);
       const body = w.status === "fulfilled"
         ? `<p class="sub dark">${icon('check')} 已透過求購成交，補進了球員。</p>`
         : (openResp.length === 0
           ? `<p class="draftnote muted">目前沒有球團願意割愛合適人選——這也向教練證明了你確實去找過人（若最終仍補不到，教練過期只會小幅扣信任）。</p>`
-          : openResp.map(r => {
+          : `${v60RosterPagerHtml(responsePage, "wantResponsePage", "球團報價", openResp.length, "筆")}
+            ${responsePage.items.map(r => {
               const gp = S.players[r.aiPlayerId];
               // 他們願給：對方球員 → 球探評估完整卡（全欄位）
               const giveCard = gp ? ((typeof v46FullPlayerCard === "function") ? v46FullPlayerCard(gp, { scoutView: {} }) : gp.name) : "（球員）";
               // 他們要你付出：球員 → 你自家真實完整卡；現金另列
               const payCards = (r.askPlayerIds || []).map(id => { const pp = S.players[id]; return pp ? ((typeof v46FullPlayerCard === "function") ? v46FullPlayerCard(pp, null) : pp.name) : ""; }).join("");
               const cashLine = (r.askCash > 0) ? `<div class="v43cashrow">${icon('money')} 另需付出現金 <b>${(typeof formatMoney === "function") ? formatMoney(r.askCash) : r.askCash}</b></div>` : "";
-              return `<div class="card issuecard" style="margin:8px 0;">
+              return `<div class="card issuecard v60-want-offer" style="margin:8px 0;">
                 <div class="eyebrow">${ai(r.aiTeamId)}・${v45WantKindLabel(r.kind)}</div>
-                <div class="divlabel small">他們願給（球探評估完整資料）</div>
-                ${giveCard}
-                <div class="divlabel small">你要付出（自家真實完整資料）</div>
-                ${payCards || `<p class="draftnote muted">（無球員，見下方現金）</p>`}
-                ${cashLine}
+                <div class="v60-want-compare">
+                  <section aria-label="換入球員的球探評估"><div class="divlabel small">換入・球探評估</div>${giveCard}</section>
+                  <section aria-label="換出球員的真實能力與現金"><div class="divlabel small">換出・真實能力</div>${payCards || `<p class="draftnote muted">不換出球員</p>`}${cashLine}</section>
+                </div>
                 <div class="btnrow"><button class="btn-primary v45-want-accept" data-wid="${w.id}" data-rid="${r.id}">接受這筆求購</button></div>
               </div>`;
-            }).join(""));
+            }).join("")}
+            ${v60RosterPagerHtml(responsePage, "wantResponsePage", "球團報價", openResp.length, "筆")}`);
       return `<div class="card">
         <div class="eyebrow">${icon('search')} 求購：${w.title}</div>
         ${body}
         ${w.status === "open" ? `<div class="btnrow"><button class="btn-outline v45-want-cancel" data-wid="${w.id}">撤下這筆求購</button></div>` : ""}
       </div>`;
     };
-    app.innerHTML = `<div class="wrap">
+    app.innerHTML = `<div class="wrap v60-want-market">
       <div class="topbar"><div class="eyebrow">${S.leagueName}</div><h1>求購市場</h1></div>
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      <p class="draftnote muted">依教練的補強需求向全聯盟探詢。有合適人選的球團會回覆「他們願給的球員」與「他們要你付出的條件」（球員／球員加錢／純現金／多換一）。就算沒人回覆，張貼本身也是對教練展現努力。</p>
-      ${wants.length === 0 ? `<div class="card"><p class="sub dark">目前沒有進行中的求購。到球員名單頁的教練需求卡，點「${icon('search')} 求購市場找人」即可張貼。</p></div>` : wants.map(wantCard).join("")}
+      <div class="v60-want-rule-strip" aria-label="求購規則"><span><b>探詢</b> 教練需求</span><span><b>報價</b> 球員／現金／混合／多換一</span><span><b>無回覆</b> 已努力，過期少扣信任</span></div>
+      ${wants.length === 0 ? `<div class="card"><p class="sub dark">目前沒有進行中的求購。到球員名單頁的教練需求卡，點「${icon('search')} 求購市場找人」即可張貼。</p></div>` : `${v60RosterPagerHtml(wantPage, "wantMarketPage", "教練需求", wants.length, "筆")}${wantPage.items.map(wantCard).join("")}${v60RosterPagerHtml(wantPage, "wantMarketPage", "教練需求", wants.length, "筆")}`}
       <div class="btnrow"><button id="btn-want-back" class="btn-outline">返回</button></div>
     </div>`;
     UI.flash = null;
+    wireV60RosterPager();
+    app.querySelectorAll('.roster-page-btn[data-page-key="wantMarketPage"]').forEach(b => {
+      b.onclick = () => {
+        UI.wantMarketPage = Math.max(0, Math.min(Number(b.dataset.pageCount) - 1, (Number(UI.wantMarketPage) || 0) + Number(b.dataset.pageStep)));
+        UI.wantResponsePage = 0;
+        render();
+      };
+    });
     app.querySelectorAll(".v45-want-accept").forEach(b => { b.onclick = () => { const r = v45AcceptWantResponse(b.dataset.wid, b.dataset.rid); UI.flash = r.msg; render(); }; });
     app.querySelectorAll(".v45-want-cancel").forEach(b => { b.onclick = () => { const r = v45CancelWant(b.dataset.wid); UI.flash = r.msg; render(); }; });
     const bk = document.getElementById("btn-want-back"); if (bk) bk.onclick = () => { UI.screen = "roster"; render(); };
   } catch (e) {
+    console.error("求購市場畫面渲染失敗：", e);
+    UI.flash = `求購市場暫時無法顯示：${e && e.message ? e.message : "未知錯誤"}`;
     UI.screen = "roster"; if (typeof render === "function") render();
   }
 }

@@ -470,7 +470,7 @@ function v60MountPreseasonDock() {
         <button type="button" data-v60-prep="roster">名單</button>
         ${UI.completedDraft ? '<button type="button" data-v60-prep="draftRecap">選秀成果</button>' : ""}
         ${S.selfTrainingReport && S.springCampDoneYear !== S.seasonYear ? '<button type="button" data-v60-prep="selfTraining">自主訓練成果</button>' : ""}
-        <button type="button" data-v60-prep="spring" ${!v60PreseasonSpringReady() || v60PreseasonMissingStep() ? "disabled" : ""}>春訓</button>
+        <button type="button" data-v60-prep="spring" ${!v60PreseasonSpringReady() || v60PreseasonMissingStep() ? "disabled" : ""}>${S.springCamp && S.springCamp.executed ? "春訓成果" : "春訓"}</button>
       </nav>
       ${reviewAction ? `<button type="button" class="v60-preseason-review-action" data-v60-prep="complete" data-step="${reviewAction.key}">${reviewAction.label}</button>` : ""}
     </div>
@@ -2025,12 +2025,11 @@ function renderSpringReport() {
       </div>
       ${pager}
       <div class="v60-spring-report-metrics">${v60VisualMetricRail([["主練", "主要提升"], ["連動", "相關能力"], ["特性", "額外提升"]], "春訓成果判定")}</div>
-      <div class="btnrow"><button id="btn-spring-done" class="btn-primary">春訓結束，迎接開幕戰！</button></div>
+      <div class="btnrow"><button id="btn-spring-done" class="btn-secondary">回主控台</button></div>
     </div>`;
   app.querySelectorAll(".tab").forEach(btn => { btn.onclick = () => { UI.springReportPage = 0; UI.springReportTab = btn.dataset.tab; render(); }; });
   wireV60RosterPager();
   document.getElementById("btn-spring-done").onclick = () => {
-    UI.flash = `第 ${S.seasonYear} 年球季正式開幕！`;
     UI.screen = "dashboard";
     persist();
     render();

@@ -223,7 +223,7 @@ assert(g("!S.springCamp.executed && UI.flash && UI.flash.includes('預算不足'
 /* 母國免費執行 */
 g("setSpringNation(HOME_NATION_NAME); executeSpringCamp()");
 assert(g("S.springCamp.executed && S.springCampDoneYear===1"), "母國春訓執行完成");
-assert(g("UI.screen==='springReport'"), "進入春訓報告");
+assert(g("UI.screen==='dashboard' && S.springCamp.report && S.springCampDoneYear===S.seasonYear"), "春訓完成後自動進主控台，成果保留可回看");
 assert(g("S.springCamp.report.lines.length === S.teams.T0.roster1.length + S.teams.T0.roster2.length"), "報告涵蓋全員");
 assert(g("S.springCamp.report.cost===0"), "母國免費");
 assert(g("S.sponsorMission && S.sponsorMission.year===1"), "贊助任務已產生");
@@ -5143,6 +5143,104 @@ UI.rotationPicker=2;UI.rotationCandidatePage=0;renderRotation();var __r076Picker
 UI.rotationPicker=null;UI.rotationAdding=true;renderRotation();var __r076Adding=app.innerHTML,__r076AddingSafe=JSON.stringify(S)===__r076Before;
 S=JSON.parse(__r076SavedS);UI=JSON.parse(__r076SavedUI);`);
 assert(g("__r076ReadSafe&&__r076PageSafe&&__r076PickerSafe&&__r076AddingSafe&&(__r076First.match(/class=\"v60-rotation-manual-card\"/g)||[]).length<=2&&__r076Second.includes('data-idx=\"2\"')&&__r076Picker.includes('更換第 3 順位')&&__r076Picker.includes('v60-rotation-candidate-cards')&&__r076Adding.includes('rot-add-pick')") && fs.readFileSync('style.css','utf8').includes('.v60-rotation-manual-cards{'), "r076 手排輪值及更換／新增候選均為每頁兩人，翻頁唯讀且操作仍對應全域順位");
+
+console.log("\n--- r077 球員名單手機短頁與肖像卡 ---");
+g(`var __r077SavedS=JSON.stringify(S),__r077SavedUI=JSON.stringify(UI);
+window={innerWidth:390};newGame('球員短頁測試');pickTeam('T0');pickGameMode('gm_coach');
+UI.rosterTab='育成';UI.rosterGroup='pitchers';UI.rosterPitcherPage=0;UI.rosterBatterPage=0;
+renderRoster();var __r077First=app.innerHTML,__r077Before=JSON.stringify(S);
+var __r077Team=S.teams[S.userTeamId],__r077ExpectedP=__r077Team.rosterDev.filter(id=>S.players[id].isPitcher),__r077ExpectedB=__r077Team.rosterDev.filter(id=>!S.players[id].isPitcher);
+var __r077SeenP=[],__r077SeenB=[];
+for(var __r077Page=0;__r077Page<Math.ceil(__r077ExpectedP.length/3);__r077Page++){UI.rosterPitcherPage=__r077Page;renderRoster();__r077SeenP.push(...Array.from(app.innerHTML.matchAll(/data-roster-id="([^"]+)"/g),m=>m[1]));}
+UI.rosterGroup='batters';
+for(var __r077Page=0;__r077Page<Math.ceil(__r077ExpectedB.length/3);__r077Page++){UI.rosterBatterPage=__r077Page;renderRoster();__r077SeenB.push(...Array.from(app.innerHTML.matchAll(/data-roster-id="([^"]+)"/g),m=>m[1]));}
+var __r077AllReached=__r077SeenP.length===__r077ExpectedP.length&&__r077SeenB.length===__r077ExpectedB.length&&new Set(__r077SeenP).size===__r077ExpectedP.length&&new Set(__r077SeenB).size===__r077ExpectedB.length;
+var __r077Safe=JSON.stringify(S)===__r077Before;
+S=JSON.parse(__r077SavedS);UI=JSON.parse(__r077SavedUI);delete window;`);
+assert(g("__r077AllReached&&__r077Safe&&(__r077First.match(/class=\"v60-roster-mobile-card\"/g)||[]).length<=3&&__r077First.includes('v60-roster-mobile-metrics')&&__r077First.includes('v60-roster-card-name')&&__r077First.includes('rosterPitcherPage')") && fs.readFileSync('style.css','utf8').includes('.v60-roster-mobile-cards{display:grid'), "r077 育成投手與野手手機每頁三人，全員可達，肖像卡保留數值與詳細操作，翻頁不改存檔");
+
+g(`var __r077SavedS=JSON.stringify(S),__r077SavedUI=JSON.stringify(UI),__r077AllTabs=true;
+window={innerWidth:390};newGame('三層名單測試');pickTeam('T0');pickGameMode('gm_coach');
+for(var __r077Tab of ['1軍','2軍','育成']){
+  UI.rosterTab=__r077Tab;UI.rosterPosFilter='all';UI.rosterPitcherPage=0;UI.rosterBatterPage=0;
+  UI.rosterGroup='pitchers';renderRoster();
+  var __r077RosterKey=__r077Tab==='1軍'?'roster1':__r077Tab==='2軍'?'roster2':'rosterDev';
+  var __r077RosterIds=S.teams[S.userTeamId][__r077RosterKey].filter(id=>!!S.players[id]);
+  var __r077TabBefore=JSON.stringify(S),__r077TabSeen=[];
+  for(var __r077Group of ['pitchers','batters']){
+    UI.rosterGroup=__r077Group;
+    var __r077GroupIds=__r077RosterIds.filter(id=>S.players[id].isPitcher===(__r077Group==='pitchers'));
+    for(var __r077Page=0;__r077Page<Math.ceil(__r077GroupIds.length/3);__r077Page++){
+      UI[__r077Group==='pitchers'?'rosterPitcherPage':'rosterBatterPage']=__r077Page;renderRoster();
+      var __r077CardIds=Array.from(app.innerHTML.matchAll(/data-roster-id="([^"]+)"/g),m=>m[1]);
+      __r077AllTabs=__r077AllTabs&&__r077CardIds.length<=3;
+      __r077TabSeen.push(...__r077CardIds);
+    }
+  }
+  __r077AllTabs=__r077AllTabs&&__r077TabSeen.length===__r077RosterIds.length&&new Set(__r077TabSeen).size===__r077RosterIds.length&&__r077RosterIds.every(id=>__r077TabSeen.includes(id))&&JSON.stringify(S)===__r077TabBefore;
+}
+S=JSON.parse(__r077SavedS);UI=JSON.parse(__r077SavedUI);delete window;`);
+assert(g("__r077AllTabs"), "r077 一軍、二軍、育成投野手機短頁全員可達且翻頁不改正式狀態");
+
+console.log("\n--- r077 全路由稽核季後賽情境有效性 ---");
+g(`var __r077RouteSavedS=JSON.stringify(S),__r077RouteSavedUI=JSON.stringify(UI);
+newGame('季後賽稽核');pickTeam('T0');pickGameMode('gm_coach');generatePlayoffs();
+UI.screen='playoffs';UI.__bootError=null;render();
+var __r077PlayoffsValid=!!S.playoffs&&S.playoffs.matchups.length===4&&
+  app.innerHTML.includes('<h1>季後賽</h1>')&&!app.innerHTML.includes('安全模式・載入救援')&&
+  !UI.__bootError&&app.innerHTML.includes('btn-playoff-game');
+S=JSON.parse(__r077RouteSavedS);UI=JSON.parse(__r077RouteSavedUI);`);
+assert(g("__r077PlayoffsValid"), "r077 季後賽盤點必須建立有效對戰，不得把安全錯誤頁當成正常畫面");
+
+g(`var __r077WantSavedS=JSON.stringify(S),__r077WantSavedUI=JSON.stringify(UI);
+newGame('求購市場稽核');pickTeam('T0');pickGameMode('gm_coach');ensureV45WantState();
+var __r077WantTeam=S.teams[S.userTeamId],__r077WantCoach=headCoachOf(__r077WantTeam);
+var __r077Demand={id:'AUDIT_WANT',coachId:__r077WantCoach?__r077WantCoach.id:'audit',role:'總教練',priority:'mid',
+ need:{pos:null,attrs:{power:1}},title:'尋找長打球員',reason:'固定稽核情境',deadline:30,status:'open',year:S.seasonYear,snapshot:__r077WantTeam.roster1.slice()};
+S.demands.push(__r077Demand);var __r077Post=v45PostWant(__r077Demand.id);
+UI.screen='wantMarket';renderWantMarket();
+var __r077WantValid=__r077Post.ok&&S.v45Wants[0]?.responses?.length>0&&UI.screen==='wantMarket'&&
+ app.innerHTML.includes('<h1>求購市場</h1>')&&app.innerHTML.includes('v45-want-accept');
+var __r077WantInitial=__r077WantValid,__r077WantPerPage=true;
+var __r077WantOpen=S.v45Wants[0].responses.filter(r=>r.status==='open'),__r077WantBefore=JSON.stringify(S),__r077WantSeen=[];
+for(var __r077WantPage=0;__r077WantPage<__r077WantOpen.length;__r077WantPage++){
+ UI.wantResponsePage=__r077WantPage;renderWantMarket();
+ var __r077Visible=Array.from(app.innerHTML.matchAll(/class="btn-primary v45-want-accept"[^>]*data-rid="([^"]+)"/g),m=>m[1]);
+ __r077WantPerPage=__r077WantPerPage&&__r077Visible.length===1;
+ __r077WantSeen.push(...__r077Visible);
+}
+var __r077WantStateSafe=JSON.stringify(S)===__r077WantBefore;
+var __r077WantIdsSafe=__r077WantSeen.length===__r077WantOpen.length&&
+ new Set(__r077WantSeen).size===__r077WantOpen.length&&__r077WantOpen.every(r=>__r077WantSeen.includes(r.id));
+__r077WantValid=__r077WantInitial&&__r077WantPerPage&&__r077WantIdsSafe&&__r077WantStateSafe;
+S.v45Wants.push({id:'AUDIT_DONE',title:'已完成的教練需求',status:'fulfilled',responses:[]});
+var __r077WantTwoBefore=JSON.stringify(S);
+UI.wantMarketPage=0;UI.wantResponsePage=8;renderWantMarket();
+var __r077DonePage=app.innerHTML.includes('已完成的教練需求')&&!app.innerHTML.includes('data-rid=');
+UI.wantMarketPage=1;UI.wantResponsePage=0;renderWantMarket();
+var __r077OpenPage=app.innerHTML.includes('尋找長打球員')&&app.innerHTML.includes('data-rid=');
+var __r077WantOuterSafe=__r077DonePage&&__r077OpenPage&&JSON.stringify(S)===__r077WantTwoBefore;
+S=JSON.parse(__r077WantSavedS);UI=JSON.parse(__r077WantSavedUI);`);
+assert(g("__r077WantValid"), "r077 求購市場有教練需求與 AI 報價時逐筆顯示，所有報價可達且翻頁不改正式狀態");
+assert(g("__r077WantOuterSafe"), "r077 多筆教練需求可分頁回看，切換需求不改正式狀態");
+
+g(`var __r077RecapSavedS=JSON.stringify(S),__r077RecapSavedUI=JSON.stringify(UI);
+newGame('選秀成果稽核');pickTeam('T0');pickGameMode('gm_coach');
+var __r077RecapPlayers=S.teams[S.userTeamId].roster2.slice(0,5).map(id=>S.players[id]);
+UI.completedDraft={active:false,picks:[...__r077RecapPlayers.map((p,i)=>({team:S.userTeamId,playerId:p.id,round:i+1,signingBonus:1000000+i*100000})),{team:S.userTeamId,failed:true,failedName:'測試新秀'}],skippedByUser:1};
+UI.screen='draftRecap';render();
+var __r077RecapValid=UI.screen==='draftRecap'&&app.innerHTML.includes('<h1>選秀會結束</h1>')&&
+ __r077RecapPlayers.slice(0,4).every(p=>app.innerHTML.includes(p.name))&&
+ !app.innerHTML.includes(__r077RecapPlayers[4].name)&&app.innerHTML.includes('返回開季準備')&&
+ app.innerHTML.includes('測試新秀')&&app.innerHTML.includes('保留供交易或國際選秀')&&
+ app.innerHTML.includes('合約 ')&&app.innerHTML.includes('簽約金 ')&&
+ !app.innerHTML.includes('<table')&&!app.innerHTML.includes('安全模式・載入救援');
+var __r077RecapState=JSON.stringify(S);UI.draftRecapPage=1;render();
+var __r077RecapSecond=app.innerHTML.includes(__r077RecapPlayers[4].name)&&
+ !app.innerHTML.includes(__r077RecapPlayers[0].name)&&JSON.stringify(S)===__r077RecapState;
+S=JSON.parse(__r077RecapSavedS);UI=JSON.parse(__r077RecapSavedUI);`);
+assert(g("__r077RecapValid"), "r077 全路由盤點納入非空選秀成果，不能漏掉 draftRecap 子畫面");
+assert(g("__r077RecapSecond"), "r077 選秀成果每頁四人、全員可達，翻頁不改正式狀態");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

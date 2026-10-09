@@ -3287,7 +3287,9 @@ function executeSpringCamp() {
   camp.executed = true;
   camp.report = report;
   S.springCampDoneYear = S.seasonYear;
-  UI.screen = "springReport";
+  // 春訓執行成功即進入新球季主控台；成果保存在春訓入口供隨時回看。
+  UI.screen = "dashboard";
+  UI.flash = `第 ${S.seasonYear} 年春訓完成，球季已準備開幕；春訓成果可從開季準備列回看。`;
   persist();
   render();
 }

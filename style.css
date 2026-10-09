@@ -493,6 +493,19 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .v60-draft-pager button:hover:not(:disabled){background:#DDF9FC;}
 .v60-draft-pager button:focus-visible{outline:3px solid #143CFF;outline-offset:2px;}
 .v60-draft-pager span{font-size:14px;color:#17385E;text-align:center;}
+.v60-draft-recap-summary{display:grid;gap:6px;}
+.v60-draft-recap-summary .v60-state-line{margin:0;}
+.v60-draft-recap-counts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;}
+.v60-draft-recap-counts span{display:grid;gap:1px;padding:5px 7px;border:1px solid #B7D4FF;border-radius:8px;background:#F4F9FF;color:#17385E;font-size:14px;min-width:0;}
+.v60-draft-recap-counts strong{font-size:18px;line-height:1.1;}
+.v60-draft-recap-failed{color:#8A2131;font-weight:700;}
+.v60-draft-recap-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+.v60-draft-recap-pick{min-width:0;margin:0;padding:8px 10px;display:grid;gap:3px;border:1px solid #B7D4FF;border-radius:8px;background:#FFF;}
+.v60-draft-recap-pick-head{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;color:#17385E;}
+.v60-draft-recap-pick-head strong{font-size:18px;line-height:1.2;overflow-wrap:anywhere;}
+.v60-draft-recap-pick-head span{font-size:14px;}
+.v60-draft-recap-pick-facts{display:flex;align-items:baseline;gap:4px 12px;flex-wrap:wrap;color:#17385E;font-size:14px;line-height:1.25;}
+@media(max-width:620px){.v60-draft-recap-grid{grid-template-columns:1fr;}}
 .v60-campaign-grid{overflow:hidden;margin:8px 0 12px;border:1px solid #B7D3F5;border-radius:12px;background:#FFF;}
 .v60-marketing-tabs>.uitabs>.uitab-bar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;}
 .v60-marketing-tabs .uitab-btn{min-width:0;min-height:48px;padding:8px 6px;border:1px solid #AFCBF0;border-radius:10px;background:#FFF;color:#1459B8;font-family:inherit;font-size:14px;font-weight:800;letter-spacing:0;line-height:1.3;opacity:1;overflow-wrap:anywhere;}
@@ -1426,6 +1439,7 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-roster-side-tab:focus-visible{outline:3px solid #21C9D6;outline-offset:2px;}
 .v60-roster-table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px;border-radius:4px;}
 .v60-roster-table-wrap .stattable{margin-bottom:0;}
+.v60-roster-mobile-cards,.v60-roster-bottom-pager{display:none;}
 .v60-roster-pager{display:grid;grid-template-columns:minmax(72px,1fr) auto minmax(72px,1fr);gap:8px;align-items:center;margin:8px 0 16px;padding:7px;border:1px solid #B7D3F5;border-radius:10px;background:#F8FBFF;}
 .v60-roster-pager button{min-height:44px;padding:7px 10px;}
 .v60-roster-pager button:focus-visible{outline:3px solid #21C9D6;outline-offset:2px;}
@@ -1448,6 +1462,22 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
   .v60-preseason-links button{min-height:42px;padding:4px 1px;font-size:11px;}
   .v60-preseason-links button:first-child small{font-size:9px;}
   .v60-roster-table-wrap .stattable{min-width:680px;}
+  .v60-roster-table-wrap{display:none;}
+  .v60-roster-mobile-cards{display:grid;gap:8px;margin:8px 0 4px;}
+  .v60-roster-bottom-pager{display:block;}
+  .v60-roster-mobile-card{min-width:0;padding:9px 10px;border:1px solid #B7D3F5;border-radius:11px;background:#FFFFFF;color:#17233B;}
+  .v60-roster-mobile-head{display:flex;align-items:center;gap:8px;min-width:0;}
+  .v60-roster-mobile-portrait{flex:0 0 48px;width:48px;height:48px;overflow:hidden;border-radius:9px;background:#EAF5FF;}
+  .v60-roster-mobile-portrait>*{max-width:100%;max-height:100%;}
+  .v60-roster-mobile-title{display:grid;gap:2px;min-width:0;flex:1;}
+  .v60-roster-card-name{width:max-content;max-width:100%;min-height:44px;padding:2px 0;border:0;background:none;color:#1459B8;font-size:16px;font-weight:800;text-align:left;overflow-wrap:anywhere;}
+  .v60-roster-card-name:focus-visible{outline:3px solid #21C9D6;outline-offset:2px;}
+  .v60-roster-mobile-title>span{color:#36577F;font-size:14px;line-height:1.25;overflow-wrap:anywhere;}
+  .v60-roster-mobile-head>.movebtn{flex:0 0 auto;min-width:58px;min-height:44px;padding:4px 5px;font-size:14px;}
+  .v60-roster-mobile-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 8px;margin-top:6px;padding-top:5px;border-top:1px solid #D9E8F9;}
+  .v60-roster-mobile-metrics span{display:flex;justify-content:space-between;gap:3px;min-width:0;font-size:14px;white-space:nowrap;}
+  .v60-roster-mobile-metrics small{color:#36577F;font-size:14px;}
+  .v60-roster-mobile-metrics b{color:#17233B;font-size:14px;}
   .v60-roster-pager{gap:4px;padding:5px 3px;}
   .v60-roster-pager button{padding:6px 3px;font-size:12px;}
   .v60-roster-pager span{font-size:11px;}
@@ -1737,3 +1767,10 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 @media(max-width:520px){.v60-approved-teamcard{min-height:110px!important}}
 .v60-offseason-review-link { display:flex; justify-content:flex-end; margin:0 0 12px; }
 .v60-offseason-review-link button { width:auto; min-width:132px; min-height:44px; padding:8px 14px; }
+.v60-want-rule-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:8px 0 14px}
+.v60-want-rule-strip span{display:block;min-width:0;padding:10px 12px;border:1px solid var(--line,#b9d7ef);border-radius:12px;background:var(--card,#fff);font-size:14px;line-height:1.4}
+.v60-want-rule-strip b{display:block;color:var(--primary,#163b7a)}
+.v60-want-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+.v60-want-compare section{min-width:0}
+.v60-want-market .v60-roster-pager button{min-height:44px}
+@media(max-width:720px){.v60-want-rule-strip{grid-template-columns:1fr}.v60-want-compare{grid-template-columns:1fr}}

@@ -3610,7 +3610,7 @@ function v46Fog(trueVal, acc, seedStr) {
   } catch (_) { return trueVal; }
 }
 
-// 全欄位球探視圖（每季＋精準度快取，避免重繪跳動）；優先沿用既有 p.scouted 以與選秀畫面一致
+// 全欄位球探視圖由確定性雜湊計算；可讀舊存檔既有快取，但渲染不得新增快取欄位。
 function v46ScoutViewFor(p, acc) {
   try {
     if (!p) return {};
@@ -3638,7 +3638,6 @@ function v46ScoutViewFor(p, acc) {
       vals.potential = (p.scoutedCeilingVal != null) ? p.scoutedCeilingVal : est(p.potential, "potential");
       if (p.gameCalling != null) { vals.gameCalling = pref("gameCalling"); vals.framing = pref("framing"); vals.caughtStealing = pref("caughtStealing"); vals.blocking = pref("blocking"); vals.popTime = pref("popTime"); vals.pitcherHandling = pref("pitcherHandling"); }
     }
-    p._v46scout = { year: yr, acc, vals };
     return vals;
   } catch (_) { return {}; }
 }
