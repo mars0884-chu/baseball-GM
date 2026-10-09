@@ -5096,6 +5096,16 @@ S.teams[S.userTeamId].scouts.trade=null;renderScouts();var __r073Vacant=app.inne
 document.getElementById('btn-back').onclick();var __r073Back=UI.screen==='dashboard';
 S=JSON.parse(__r073SavedS);UI=JSON.parse(__r073SavedUI);`);
 assert(g("__r073Controls&&__r073Cancel&&__r073Vacant&&__r073Back&&__r073Html.includes('測試候選')&&__r073Html.includes('投手潛力評估')&&__r073Html.includes(formatMoney(1800000))&&__r073Html.includes(formatMoney(250000))&&__r073Html.includes('現任準度')&&!__r073Html.includes('並排比較候選人的')") && fs.readFileSync('style.css','utf8').includes('.v60-scout-topbar #btn-back{'), "r073 候選資料與空缺盲評保留，取消不扣款、返回在頁首且原操作可用");
+g(`var __r079SavedS=JSON.stringify(S),__r079SavedUI=JSON.stringify(UI);
+UI.screen='scouts';UI.scoutPicker='international';UI.scoutCandidates=[
+ {name:'甲球探',specialty:'投手潛力評估',accuracy:71,salary:1800000,contractYears:3,signing:250000},
+ {name:'乙球探',specialty:'綜合評估',accuracy:58,salary:1300000,contractYears:2,signing:180000},
+ {name:'丙球探',specialty:'打者潛力評估',accuracy:45,salary:900000,contractYears:1,signing:120000}
+];var __r079Before=JSON.stringify(S);renderScouts();var __r079Html=app.innerHTML;
+var __r079Cards=(__r079Html.match(/class="v60-scout-candidate"/g)||[]).length;
+var __r079Safe=JSON.stringify(S)===__r079Before&&__r079Cards===3&&[...UI.scoutCandidates].every(c=>__r079Html.includes(c.name)&&__r079Html.includes(c.specialty)&&__r079Html.includes('準度 <b>'+c.accuracy+'</b>')&&__r079Html.includes(formatMoney(c.salary))&&__r079Html.includes(formatMoney(c.signing))&&__r079Html.includes(c.contractYears+' 年'))&&(__r079Html.match(/hire-scout-btn/g)||[]).length===3;
+S=JSON.parse(__r079SavedS);UI=JSON.parse(__r079SavedUI);`);
+assert(g("__r079Safe") && fs.readFileSync('style.css','utf8').includes('.v60-scout-candidate-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))'), "r079 三位球探準度／專精／薪約／簽約金比較與簽下操作完整，渲染不改遊戲狀態");
 
 console.log("\n--- r074 教練候選與手機職務卡 ---");
 g(`var __r074SavedS=JSON.stringify(S),__r074SavedUI=JSON.stringify(UI);

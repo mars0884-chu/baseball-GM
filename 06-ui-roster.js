@@ -1192,29 +1192,26 @@ function renderScouts() {
         </tbody>
       </table>
       ${picking ? `
-      <div class="card">
+      <div class="card v60-scout-market">
         <div class="eyebrow">${AREA_LABEL[picking]}候選・${team.scouts[picking] ? `現任準度 ${team.scouts[picking].accuracy}` : "目前空缺"}</div>
-        <div class="teamgrid" style="grid-template-columns:1fr;gap:10px;">
+        <p class="v60-scout-market-note">簽下時扣簽約金・年薪按合約支付</p>
+        <div class="v60-scout-candidate-list">
           ${candidates.map((cand, idx) => {
             const curAcc = team.scouts[picking] ? team.scouts[picking].accuracy : 0;
             const diff = cand.accuracy - curAcc;
-            const diffLabel = !team.scouts[picking] ? "（補實空缺）" : (diff > 3 ? `<span style="color:var(--green-text);">優於現任 +${diff}</span>` : (diff < -3 ? `<span style="color:var(--redline);">劣於現任 ${diff}</span>` : "與現任相當"));
+            const diffLabel = !team.scouts[picking] ? "補實空缺" : (diff > 3 ? `優於現任 +${diff}` : (diff < -3 ? `劣於現任 ${diff}` : "與現任相當"));
             const signing = cand.signing != null ? cand.signing : scoutSigningCost(cand);
-            return `<div class="card" style="margin-bottom:0;padding:14px 16px;">
-              <div class="draftcard-head">
-                <div>
-                  <div class="draftname">${cand.name}</div>
-                  <div class="draftmeta">專精：${cand.specialty}</div>
-                </div>
-                <button class="pickbtn hire-scout-btn" data-idx="${idx}">簽下</button>
+            return `<article class="v60-scout-candidate" aria-label="${cand.name}，專精${cand.specialty}，準度${cand.accuracy}，${diffLabel}，年薪${formatMoney(cand.salary)}，合約${cand.contractYears}年，簽約金${formatMoney(signing)}">
+              <div class="v60-scout-candidate-head">
+                <div><strong>${cand.name}</strong><span>${cand.specialty}</span></div>
+                <button class="pickbtn hire-scout-btn" data-idx="${idx}" aria-label="簽下${cand.name}">簽下</button>
               </div>
-              <div class="draftnote">評估準確度 ${cand.accuracy}（${diffLabel}）</div>
-              <div class="draftnote">年薪 ${formatMoney(cand.salary)}・合約 ${cand.contractYears} 年</div>
-              <div class="draftnote muted">簽約金 ${formatMoney(signing)}（簽下時扣除）</div>
-            </div>`;
+              <div class="v60-scout-candidate-rating"><span>準度 <b>${cand.accuracy}</b></span><span class="${diff < -3 ? "is-lower" : diff > 3 ? "is-higher" : ""}">${diffLabel}</span><i aria-hidden="true"><b style="width:${Math.max(0, Math.min(100, cand.accuracy))}%"></b>${team.scouts[picking] ? `<em style="left:${Math.max(0, Math.min(100, curAcc))}%"></em>` : ""}</i></div>
+              <div class="v60-scout-candidate-terms"><span><small>年薪</small><strong>${formatMoney(cand.salary)}</strong></span><span><small>合約</small><strong>${cand.contractYears} 年</strong></span><span><small>簽約金</small><strong>${formatMoney(signing)}</strong></span></div>
+            </article>`;
           }).join("")}
         </div>
-        <div class="btnrow" style="margin-top:10px;"><button id="btn-cancel-scout-pick" class="btn-secondary">取消</button></div>
+        <div class="btnrow v60-scout-candidate-cancel"><button id="btn-cancel-scout-pick" class="btn-secondary">取消</button></div>
       </div>` : ""}
       ${(() => {
         /* v54 A2：球探發掘育成候選 */
