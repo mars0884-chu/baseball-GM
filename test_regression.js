@@ -4254,7 +4254,7 @@ assert(v60Roster003.indexOf("rankingMetricTabs") >= 0 && v60Roster003.indexOf("l
 assert(v60Roster003.indexOf("<th>' + title + '</th>") >= 0 && v60Roster003.indexOf("<th>數值</th>") < 0, "v60-003 排行欄位標題使用實際數據名稱，不再統一顯示數值");
 assert(v60Sim003.indexOf("function v60AutoResolveInjuryRoster") >= 0 && v60Sim003.indexOf("movedDown") >= 0, "v60-003 教練遞補核准含自動升降二軍交換");
 assert(v60Data003.indexOf("function v60DraftRadarData") >= 0 && v60Data003.indexOf("function v60DraftRadarSVG") >= 0 && v60Data003.indexOf("v60-radar-current") >= 0 && v60Data003.indexOf("v60-radar-ceiling") >= 0, "v60-003 選秀現況／天花板重疊雷達 renderer");
-assert(v60Roster003.indexOf("v60DraftRadarCardHtml(p, draftEffAcc)") >= 0, "v60-003 選秀候選卡實際插入雙層雷達");
+assert(v60Roster003.indexOf("v60DraftRadarCardHtml(p, draftEffAcc, true)") >= 0, "v60-003 選秀候選卡實際插入雙層雷達");
 assert(v60Style003.indexOf(".v60-draft-radar-wrap") >= 0 && v60Style003.indexOf(".v60-radar-legend") >= 0 && v60Style003.indexOf("@media(max-width:620px)") >= 0, "v60-003 雷達圖圖例與手機 reflow CSS");
 g("var __v60RadarPlayer=S.players[S.teams[S.userTeamId].roster1[0]]; var __v60RadarHtml=v60DraftRadarCardHtml(__v60RadarPlayer,70);");
 assert(g("__v60RadarHtml.indexOf('v60-radar-current')>=0 && __v60RadarHtml.indexOf('v60-radar-ceiling')>=0 && __v60RadarHtml.indexOf('現況')>=0 && __v60RadarHtml.indexOf('天花板')>=0"), "v60-003 雷達輸出同時含現況／天花板與圖例");
@@ -4975,7 +4975,7 @@ console.log("\n--- r061 選秀頁重複文字減量與數值保留 ---");
 const r061Draft = fs.readFileSync("06-ui-roster.js", "utf8").split("function renderDraft()")[1].split("function renderMatchupCard")[0];
 const r061Radar = fs.readFileSync("01-data-engine.js", "utf8").split("function v60DraftRadarCardHtml")[1].split("function v46Cell")[0];
 assert(r061Draft.includes('class="v60-draft-pick-summary"') && r061Draft.includes('v60VisualMetricRail([') && !r061Draft.includes('<div class="scoreboard">'), "r061 選秀頁首輪次、球隊、球探改為並排摘要，原資訊保留");
-assert(r061Draft.includes('v60DraftRadarCardHtml(p, draftEffAcc)') && r061Draft.includes('v60DraftComparisonHtml(visibleDraft)') && r061Draft.includes('v60-draft-evaluations') && r061Draft.includes('${pager}'), "r061 雷達、逐項球探估值、現況／天花板與雙人分頁均保留");
+assert(r061Draft.includes('v60DraftRadarCardHtml(p, draftEffAcc, true)') && r061Draft.includes('v60DraftComparisonHtml(visibleDraft, draftEffAcc)') && r061Draft.includes('v60-draft-evaluations') && r061Draft.includes('${pager}'), "r061 雷達、逐項球探估值、現況／天花板與雙人分頁均保留");
 assert(r061Radar.includes('v60-radar-values') && r061Radar.includes('data.current[i] + \' → \' + data.ceiling[i]') && !r061Radar.includes('藍色現況 → 珊瑚紅預估天花板'), "r061 雷達各軸精確數值保留，只移除重複色彩說明");
 
 console.log("\n--- r062 行銷決策分頁與國際活動操作可達性 ---");
@@ -5046,7 +5046,7 @@ UI.draftCompareTab='core';var __r069Html=v60DraftComparisonHtml([__r047A,__r047B
 var __r069AllValues=scoutedAttrPairs(__r047A).concat(scoutedAttrPairs(__r047B)).every(function(pair){return __r069Html.includes(pair[1]);});
 var __r069Unchanged=JSON.stringify(S)===__r069Before;UI=JSON.parse(__r069OldUi);`);
 assert(g("__r069AllValues&&__r069Unchanged&&__r069Html.includes('比較甲')&&__r069Html.includes('比較乙')&&__r069Html.includes('data-draft-compare-tab=\"core\"')&&__r069Html.includes('data-draft-compare-panel=\"body\"')"), "r069 選秀雙人共用欄名，四類仍保留兩人全部逐項估值且不改存檔");
-assert(r061Draft.includes('v60DraftComparisonHtml(visibleDraft)') && r061Draft.includes('data-draft-compare-tab') && !r061Draft.includes('scoutedAttrRows(p)') && r061Draft.includes('v60DraftRadarCardHtml(p, draftEffAcc)') && r061Draft.includes('data-draft-page'), "r069 選秀原肖像雷達與雙人分頁保留，重複逐卡能力網格由共享比較取代");
+assert(r061Draft.includes('v60DraftComparisonHtml(visibleDraft, draftEffAcc)') && r061Draft.includes('data-draft-compare-tab') && !r061Draft.includes('scoutedAttrRows(p)') && r061Draft.includes('v60DraftRadarCardHtml(p, draftEffAcc, true)') && r061Draft.includes('data-draft-page'), "r069 選秀原肖像雷達與雙人分頁保留，重複逐卡能力網格由共享比較取代");
 
 console.log("\n--- r070 選秀養成階段資訊圖像化 ---");
 g(`var __r070Before=JSON.stringify(S),__r070Young=v60DraftDevelopmentNote({age:18,peakAge:29,maturity:maturityLabel(18)},'future'),
@@ -5267,6 +5267,21 @@ var __r077RecapSecond=app.innerHTML.includes(__r077RecapPlayers[4].name)&&
 S=JSON.parse(__r077RecapSavedS);UI=JSON.parse(__r077RecapSavedUI);`);
 assert(g("__r077RecapValid"), "r077 全路由盤點納入非空選秀成果，不能漏掉 draftRecap 子畫面");
 assert(g("__r077RecapSecond"), "r077 選秀成果每頁四人、全員可達，翻頁不改正式狀態");
+
+console.log("\n--- r081 選秀雷達數值集中比較 ---");
+g(`var __r081SavedS=JSON.stringify(S),__r081SavedUI=JSON.stringify(UI);
+UI.draftCompareTab=null;
+var __r081Players=[__r047A,__r047B],__r081Data=__r081Players.map(p=>v60DraftRadarData(p,70));
+var __r081Html=v60DraftComparisonHtml(__r081Players,70);
+var __r081Exact=__r081Data.every(data=>data.axes.every((axis,i)=>__r081Html.includes(data.current[i]+' → '+data.ceiling[i])));
+var __r081Visual=v60DraftRadarCardHtml(__r047A,70,true);
+var __r081Full=v60DraftRadarCardHtml(__r047A,70);
+var __r081StateSafe=JSON.stringify(S)===__r081SavedS;
+UI=JSON.parse(__r081SavedUI);`);
+assert(g("__r081Html.includes('data-draft-compare-tab=\"radar\"')&&__r081Html.includes('data-draft-compare-panel=\"radar\"')&&__r081Exact"), "r081 雷達六軸兩人精確估值集中在同一比較頁，數字未刪除");
+assert(g("__r081Html.includes('data-draft-compare-tab=\"core\"')&&__r081Html.includes('data-draft-compare-panel=\"body\"')&&__r081StateSafe"), "r081 原四類球探細項保留，組表不修改正式狀態");
+assert(g("__r081Visual.includes('v60-draft-radar')&&!__r081Visual.includes('v60-radar-values')&&__r081Full.includes('v60-radar-values')"), "r081 候選卡用圖形判讀，原雷達完整數值元件仍可用");
+assert(v60Roster003.includes('v60-draft-card-visuals')&&v60Style003.includes('.v60-draft-card-visuals')&&v60Roster003.includes('雷達色彩說明'), "r081 雙人卡圖像化與共享色彩圖例保留");
 
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

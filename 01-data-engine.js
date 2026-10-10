@@ -3784,10 +3784,11 @@ function v60DraftRadarSVG(p, opts) {
     return '<svg class="v48radar v60-draft-radar" viewBox="0 0 176 176" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="選秀球員現況與天花板能力重疊雷達圖"><title>藍色現況、珊瑚紅預估天花板</title>' + grid + polygon(data.ceiling, "v60-radar-ceiling", "rgba(255,90,102,.16)", ceilingColor) + polygon(data.current, "v60-radar-current", "rgba(20,60,255,.22)", currentColor) + dots(data.ceiling, ceilingColor) + dots(data.current, currentColor) + labels + '</svg>';
   } catch (_) { return ""; }
 }
-function v60DraftRadarCardHtml(p, acc) {
+function v60DraftRadarCardHtml(p, acc, visualOnly) {
   try {
     const data = v60DraftRadarData(p, acc);
     if (!data) return "";
+    if (visualOnly) return '<div class="v60-draft-radar-wrap v60-draft-radar-only">' + v60DraftRadarSVG(p, { acc: acc }) + '</div>';
     const rows = data.axes.map(function(a, i) { return '<span><b>' + a.label + '</b><em>' + data.current[i] + ' → ' + data.ceiling[i] + '</em></span>'; }).join("");
     return '<div class="v60-draft-radar-wrap"><div>' + v60DraftRadarSVG(p, { acc: acc }) + '</div><div class="v60-draft-radar-side"><div class="v60-radar-legend"><span class="v60-radar-key current">現況</span><span class="v60-radar-key ceiling">天花板</span></div><div class="v60-radar-values" aria-label="雷達圖數值">' + rows + '</div></div></div>';
   } catch (_) { return ""; }

@@ -1023,7 +1023,7 @@ function renderFreeAgents() {
 
 
 /* 國際市場每頁共用一組能力欄名，兩名球員並排比較；資料仍取自原球探視圖。 */
-function v60ScoutedComparisonHtml(players, scope) {
+function v60ScoutedComparisonHtml(players, scope, radarAccuracy) {
   const isDraft = scope === "draft";
   const activeField = isDraft ? "draftCompareTab" : "intlCompareTab";
   const tabAttribute = isDraft ? "data-draft-compare-tab" : "data-intl-compare-tab";
@@ -1039,24 +1039,36 @@ function v60ScoutedComparisonHtml(players, scope) {
   const labels = [];
   columns.forEach(col => col.forEach(row => { if (!labels.some(item => item.key === row.key)) labels.push({ key: row.key, label: row.label }); }));
   if (!labels.length) return `<p class="v60-state-line">尚無球探詳細能力資料。</p>`;
+  const radarColumns = isDraft ? players.map(p => v60DraftRadarData(p, radarAccuracy)) : [];
+  const radarRows = [];
+  radarColumns.forEach(data => (data ? data.axes : []).forEach(axis => {
+    if (!radarRows.some(row => row.label === axis.label)) radarRows.push({ key: `radar:${axis.label}`, label: axis.label, radar: true });
+  }));
   const groups = [
+    ...(radarRows.length ? [{ key: "radar", name: "雷達數值", rows: radarRows }] : []),
     { key: "core", name: "核心", values: ["接觸", "長打", "選球", "球速", "控球"] },
     { key: "running", name: "對位／跑壘", values: ["對左投", "對右投", "速度", "盜壘", "觸擊"] },
     { key: "fielding", name: "守備／捕手", values: ["守備", "臂力", "配球", "接捕", "阻殺", "阻擋", "傳球", "調教"] },
     { key: "body", name: "體能／球路", values: [] }
   ];
-  const shown = groups.map(group => ({ ...group, rows: labels.filter(item => group.key === "body" ? !groups.slice(0, 3).some(other => other.values.includes(item.label)) : group.values.includes(item.label)) })).filter(group => group.rows.length);
-  const active = shown.some(group => group.key === UI[activeField]) ? UI[activeField] : shown[0].key;
+  const detailGroups = groups.filter(group => group.key !== "radar");
+  const shown = groups.map(group => ({ ...group, rows: group.key === "radar" ? radarRows : labels.filter(item => group.key === "body" ? !detailGroups.slice(0, 3).some(other => other.values.includes(item.label)) : group.values.includes(item.label)) })).filter(group => group.rows.length);
+  const active = shown.some(group => group.key === UI[activeField]) ? UI[activeField] : (isDraft && shown.some(group => group.key === "core") ? "core" : shown[0].key);
   UI[activeField] = active;
   const rowHtml = item => `<div class="v60-intl-compare-row" role="row"><span role="rowheader">${v60UiEscape(item.label)}</span>${columns.map(col => `<span role="cell">${(col.find(row => row.key === item.key) || {}).value || "—"}</span>`).join("")}</div>`;
-  return `<div class="v60-intl-compare-tabs" role="tablist" aria-label="${comparisonName}能力類別">${shown.map(group => `<button type="button" role="tab" ${tabAttribute}="${group.key}" aria-selected="${group.key === active}">${group.name}・${group.rows.length}</button>`).join("")}</div>
-    ${shown.map(group => `<div class="v60-intl-compare ${players.length === 1 ? "is-single" : ""}" role="table" ${panelAttribute}="${group.key}" aria-label="${group.name}能力比較" ${group.key === active ? "" : "hidden"}>
+  const radarPanelHtml = group => `<div class="v60-draft-radar-ledger" ${panelAttribute}="radar" role="group" aria-label="${group.name}雙人精確值" ${group.key === active ? "" : "hidden"}>${players.map((p, index) => {
+    const data = radarColumns[index];
+    return `<div class="v60-draft-radar-column" role="table" aria-label="${v60UiEscape(p.name)}雷達精確值"><div class="v60-intl-compare-row v60-draft-radar-column-head" role="row"><strong role="columnheader">${v60UiEscape(p.name)}</strong></div>${data ? data.axes.map((axis, i) => `<div class="v60-intl-compare-row" role="row"><span role="rowheader">${v60UiEscape(axis.label)}</span><strong role="cell">${data.current[i]} → ${data.ceiling[i]}</strong></div>`).join("") : '<p>暫無雷達估值</p>'}</div>`;
+  }).join("")}</div>`;
+  const draftTabNames = { radar: "雷達", core: "核心", running: "對位", fielding: "守備", body: "體能" };
+  return `<div class="v60-intl-compare-tabs" role="tablist" aria-label="${comparisonName}能力類別">${shown.map(group => `<button type="button" role="tab" ${tabAttribute}="${group.key}" aria-label="${group.name}・${group.rows.length}項" aria-selected="${group.key === active}">${isDraft ? draftTabNames[group.key] : group.name}・${group.rows.length}</button>`).join("")}</div>
+    ${shown.map(group => group.key === "radar" ? radarPanelHtml(group) : `<div class="v60-intl-compare ${players.length === 1 ? "is-single" : ""}" role="table" ${panelAttribute}="${group.key}" aria-label="${group.name}能力比較" ${group.key === active ? "" : "hidden"}>
       <div class="v60-intl-compare-row v60-intl-compare-head" role="row"><span role="columnheader">能力</span>${players.map(p => `<span role="columnheader">${v60UiEscape(p.name)}</span>`).join("")}</div>
       ${group.rows.map(rowHtml).join("")}
     </div>`).join("")}`;
 }
 function v60IntlComparisonHtml(players) { return v60ScoutedComparisonHtml(players, "intl"); }
-function v60DraftComparisonHtml(players) { return v60ScoutedComparisonHtml(players, "draft"); }
+function v60DraftComparisonHtml(players, radarAccuracy) { return v60ScoutedComparisonHtml(players, "draft", radarAccuracy); }
 function v60DraftDevelopmentNote(p, kind) {
   const phase = growthPhaseLabel(p);
   const standardMaturity = maturityLabel(p.age);
@@ -1067,8 +1079,8 @@ function v60DraftDevelopmentNote(p, kind) {
     else maturity = "即戰力可期・成長有限／較快上一軍";
   }
   const peakAge = p.peakAge || 27;
-  const phaseNote = phase.key === "grow" ? `仍可成長・顛峰約${peakAge}歲`
-    : phase.key === "peak" ? "能力近最高水準" : "逐年下滑・長青型較慢";
+  const phaseNote = phase.key === "grow" ? `顛峰約${peakAge}歲`
+    : phase.key === "peak" ? "能力近頂" : "逐年下滑・長青型較慢";
   return kind === "current" ? `<small class="v60-draft-development-note ${phase.cls}">${phase.text}・${phaseNote}</small>`
     : `<small class="v60-draft-development-note">${v60UiEscape(maturity)}</small>`;
 }
@@ -1505,18 +1517,20 @@ function renderDraft() {
             </div>
             <button class="pickbtn" data-id="${p.id}">選他</button>
           </div>
-          ${typeof v60DraftRadarCardHtml === "function" ? v60DraftRadarCardHtml(p, draftEffAcc) : ""}
+          <div class="v60-draft-card-visuals">
+            ${typeof v60DraftRadarCardHtml === "function" ? v60DraftRadarCardHtml(p, draftEffAcc, true) : ""}
+            <div class="draftgrades v60-draft-evaluations">
+              <div class="v60-draft-evaluation"><span>目前數據</span><strong><span class="gradebadge grade-${p.scoutedGrade}">${p.scoutedGrade}</span> ${p.scoutedOverall != null ? p.scoutedOverall : "—"}</strong>${v60DraftDevelopmentNote(p, "current")}</div>
+              <div class="v60-draft-evaluation ceiling"><span>未來天花板</span><strong><span class="gradebadge grade-${p.scoutedCeiling}">${p.scoutedCeiling}</span> ${p.scoutedCeilingVal != null ? `約 ${p.scoutedCeilingVal}` : "—"}</strong>${v60DraftDevelopmentNote(p, "future")}</div>
+            </div>
+          </div>
           <div class="draftmeta" style="margin-bottom:6px;">
             ${p.isPitcher ? `角色傾向：${p.role}` : `主守位：${POS_LABEL[p.positions[0].pos]}`}　球風：${p.archetype}
-          </div>
-          <div class="draftgrades v60-draft-evaluations">
-            <div class="v60-draft-evaluation"><span>目前數據</span><strong><span class="gradebadge grade-${p.scoutedGrade}">${p.scoutedGrade}</span> ${p.scoutedOverall != null ? p.scoutedOverall : "—"}</strong>${v60DraftDevelopmentNote(p, "current")}</div>
-            <div class="v60-draft-evaluation ceiling"><span>未來天花板</span><strong><span class="gradebadge grade-${p.scoutedCeiling}">${p.scoutedCeiling}</span> ${p.scoutedCeilingVal != null ? `約 ${p.scoutedCeilingVal}` : "—"}</strong>${v60DraftDevelopmentNote(p, "future")}</div>
           </div>
           ${p.isPitcher ? `<div class="draftnote muted">${p.pitches ? p.pitches.length : "?"} 種球路</div>` : ""}
           ${sharedDraftConfidence ? "" : `<div class="draftnote muted">${p.scoutConfidence}</div>`}
         </div>`).join("")}
-      ${visibleDraft.length ? `<div class="card v60-draft-shared-compare"><div class="eyebrow">逐項能力・雙人對照</div>${v60DraftComparisonHtml(visibleDraft)}</div>` : ""}
+      ${visibleDraft.length ? `<div class="card v60-draft-shared-compare"><div class="eyebrow">逐項能力・雙人對照</div><div class="v60-radar-legend" aria-label="雷達色彩說明"><span class="v60-radar-key current">現況</span><span class="v60-radar-key ceiling">預估天花板</span></div>${v60DraftComparisonHtml(visibleDraft, draftEffAcc)}</div>` : ""}
       ${pager}
     </div>`;
   app.querySelectorAll("[data-draft-page]").forEach(btn => {

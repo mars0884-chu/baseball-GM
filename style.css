@@ -956,6 +956,24 @@ body[data-screen="mail"]      #app{ background-image: var(--pack-screen-mail,non
 .v60-radar-values span{display:flex;justify-content:space-between;gap:5px;border-bottom:1px dotted rgba(12,45,114,.2);}
 .v60-radar-values em{font-style:normal;font-weight:700;white-space:nowrap;}
 @media(max-width:620px){.v60-draft-radar-wrap{align-items:flex-start;gap:7px;padding:6px;}.v60-draft-radar{width:142px;height:142px;flex-basis:142px;}.v60-radar-values{grid-template-columns:1fr;font-size:10px;gap:2px;}.v60-standings-ranking>.uitab-bar{gap:4px;}.v60-standings-ranking>.uitab-bar .uitab-btn{padding:8px 10px;}}
+.v60-draft-card-visuals{display:grid;grid-template-columns:176px minmax(0,1fr);gap:8px;align-items:stretch;margin:8px 0;}
+.v60-draft-card-visuals .v60-draft-radar-only{margin:0;padding:4px;justify-content:center;min-width:0;}
+.v60-draft-card-visuals .v60-draft-evaluations{grid-template-columns:repeat(2,minmax(0,1fr));margin:0;}
+.v60-draft-card-visuals .v60-draft-evaluation{padding:6px;gap:2px;}
+.v60-draft-card-visuals .v60-draft-evaluation>span{font-size:14px;}
+.v60-draft-card-visuals .v60-draft-evaluation strong{font-size:20px;}
+.draftcard-head .pickbtn{min-width:48px;min-height:44px;font-size:14px;flex-shrink:0;}
+.v60-draft-shared-compare>.v60-radar-legend{margin:5px 0 8px;}
+.v60-draft-shared-compare .v60-intl-compare-tabs{grid-template-columns:repeat(3,minmax(0,1fr));}
+.v60-draft-radar-ledger{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+.v60-draft-radar-ledger[hidden]{display:none;}
+.v60-draft-radar-column{min-width:0;border:1px solid #B7D4FF;border-radius:8px;overflow:hidden;background:#F4F9FF;}
+.v60-draft-radar-column .v60-intl-compare-row{display:flex;justify-content:space-between;align-items:center;gap:3px;min-width:0;padding:6px 7px;color:#17385E;font-size:14px;line-height:1.25;}
+.v60-draft-radar-column .v60-intl-compare-row+ .v60-intl-compare-row{border-top:1px solid #C8DAEF;}
+.v60-draft-radar-column .v60-intl-compare-row strong{font-size:14px;white-space:nowrap;}
+.v60-draft-radar-column .v60-draft-radar-column-head{background:#E5F1FF;}
+@media(max-width:620px){.v60-draft-card-visuals{grid-template-columns:154px minmax(0,1fr);}.v60-draft-card-visuals .v60-draft-evaluations{grid-template-columns:1fr;}.v60-draft-card-visuals .v60-draft-radar-only .v60-draft-radar{width:142px;height:142px;flex-basis:142px;}}
+@media(max-width:360px){.v60-draft-card-visuals{grid-template-columns:1fr;}.v60-draft-card-visuals .v60-draft-evaluations{grid-template-columns:repeat(2,minmax(0,1fr));}.v60-draft-card-visuals .v60-draft-radar-only{justify-content:center;}}
 
 /* 戰績榜隊徽對齊 */
 .stattable .v49team-logo { vertical-align: -4px; }
