@@ -1455,6 +1455,27 @@ function renderDraft() {
   const scout = S.teams[S.userTeamId].scouts.domestic;
   const draftEffAcc = effectiveScoutAccuracy(S.teams[S.userTeamId], scout); // ⑦含球探辦公室加成
 
+  // 跳過順位是獨立決策畫面；候選人保留在取消後的原頁，不堆在確認按鈕下方。
+  if (UI.draftSkipConfirm) {
+    app.innerHTML = `
+      <div class="wrap v60-draft-skip-screen">
+        <div class="topbar"><div class="eyebrow">${S.leagueName} ・ 第${S.seasonYear}年休賽季</div><h1>跳過選秀順位</h1></div>
+        <div class="v60-draft-pick-summary">${v60VisualMetricRail([
+          ["目前順位", `第 ${round} 輪・第 ${pickNo} 順位`],
+          ["選秀球隊", S.teams[S.userTeamId].name]
+        ], "目前選秀順位與球隊")}</div>
+        <div class="card issuecard v60-draft-skip-choice" role="group" aria-label="跳過選秀順位選擇">
+          <button id="btn-skip-once" class="btn-secondary" type="button"><strong>只跳過本順位</strong><span>下一輪仍可選人</span></button>
+          <button id="btn-skip-all" class="btn-danger" type="button"><strong>放棄本屆剩餘順位</strong><span>自動跳到選秀結束</span></button>
+          <button id="btn-skip-cancel" class="btn-outline" type="button">取消・返回候選人</button>
+        </div>
+      </div>`;
+    document.getElementById("btn-skip-once").onclick = () => { confirmSkipOnce(); v60AdvanceAfterDraftAction(); };
+    document.getElementById("btn-skip-all").onclick = () => { confirmSkipAllRemaining(); v60AdvanceAfterDraftAction(); };
+    document.getElementById("btn-skip-cancel").onclick = () => cancelSkip();
+    return;
+  }
+
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${S.leagueName} ・ 第${S.seasonYear}年休賽季</div><h1>新人選秀會</h1></div>
@@ -1463,13 +1484,7 @@ function renderDraft() {
         ["選秀球隊", S.teams[S.userTeamId].name],
         ["球探／準度", `${scout ? scout.name : "職位空缺・盲評"}・${draftEffAcc}`]
       ], "選秀目前順位與球探")}</div>
-      ${UI.draftSkipConfirm ? `
-      <div class="card issuecard v60-draft-skip-choice" role="group" aria-label="跳過選秀順位選擇">
-        <div class="eyebrow">跳過選秀順位</div>
-        <button id="btn-skip-once" class="btn-secondary" type="button"><strong>只跳過本順位</strong><span>下一輪仍可選人</span></button>
-        <button id="btn-skip-all" class="btn-danger" type="button"><strong>放棄本屆剩餘順位</strong><span>自動跳到選秀結束</span></button>
-        <button id="btn-skip-cancel" class="btn-outline" type="button">取消</button>
-      </div>` : `<div class="btnrow"><button id="btn-skip-pick" class="btn-outline">放棄本輪選秀權</button></div>`}
+      <div class="btnrow"><button id="btn-skip-pick" class="btn-outline">放棄本輪選秀權</button></div>
       <p class="v60-state-line">能力與天花板為球探估值；獨家新秀僅你可選。</p>
       ${posFilterBarHtml(d.pool, "draftPosFilter")}
       <select id="sort-draft" class="sortselect">
@@ -1519,13 +1534,7 @@ function renderDraft() {
   }; });
   document.getElementById("sort-draft").onchange = (e) => { UI.draftSort = e.target.value; render(); };
   wirePosFilterButtons();
-  if (UI.draftSkipConfirm) {
-    document.getElementById("btn-skip-once").onclick = () => { confirmSkipOnce(); v60AdvanceAfterDraftAction(); };
-    document.getElementById("btn-skip-all").onclick = () => { confirmSkipAllRemaining(); v60AdvanceAfterDraftAction(); };
-    document.getElementById("btn-skip-cancel").onclick = () => cancelSkip();
-  } else {
-    document.getElementById("btn-skip-pick").onclick = () => userSkipPick();
-  }
+  document.getElementById("btn-skip-pick").onclick = () => userSkipPick();
   app.querySelectorAll(".pickbtn").forEach(btn => {
     btn.onclick = () => userDraftPick(btn.dataset.id);
   });

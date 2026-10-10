@@ -5079,10 +5079,13 @@ UI.draftSkipConfirm=true;UI.screen='draft';renderDraft();
 var __r072Html=app.innerHTML,__r072Before=JSON.stringify(S.draft),__r072Index=S.draft.pickIndex;
 document.getElementById('btn-skip-cancel').onclick();
 var __r072Cancel=JSON.stringify(S.draft)===__r072Before&&!UI.draftSkipConfirm;
+var __r080Restored=!!document.getElementById('btn-skip-pick')&&(app.innerHTML.match(/class="card draftcard"/g)||[]).length===2;
+var __r080Focused=__r072Html.includes('取消・返回候選人')&&!__r072Html.includes('class="card draftcard"')&&!__r072Html.includes('v60-draft-shared-compare')&&!__r072Html.includes('sort-draft');
 userSkipPick();document.getElementById('btn-skip-once').onclick();
 var __r072Once=S.draft&&S.draft.active&&S.draft.pickIndex>__r072Index&&S.draft.skippedByUser===1&&!S.draft.userAutoSkip;
 S=JSON.parse(__r072SavedS);UI=JSON.parse(__r072SavedUI);`);
 assert(g("__r072Cancel&&__r072Once&&__r072Html.includes('下一輪仍可選人')&&__r072Html.includes('自動跳到選秀結束')&&__r072Html.includes('放棄本屆剩餘順位')") && !fs.readFileSync('06-ui-roster.js','utf8').includes('之後每輪不會再跳出來詢問，直接自動跳過到選秀結束'), "r072 取消不改選秀、只跳過單一順位且清楚標明放棄剩餘順位的後果");
+assert(g("__r080Focused&&__r080Restored"), "r080 跳過順位使用獨立決策頁，取消回同輪兩名候選與原操作，不把候選清單堆在確認選項下");
 
 console.log("\n--- r073 球探候選短頁與返回 ---");
 g(`var __r073SavedS=JSON.stringify(S),__r073SavedUI=JSON.stringify(UI);

@@ -480,6 +480,8 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 }
 @media(max-width:360px){.v60-dev-policy-selects{grid-template-columns:1fr;}}
 .v60-draft-skip-choice{display:grid;gap:8px;}
+.v60-draft-skip-screen .topbar{display:block;}
+.v60-draft-skip-screen .topbar h1{margin-top:4px;}
 .v60-draft-skip-choice button{width:100%;min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;text-align:left;}
 .v60-draft-skip-choice button strong{font-size:16px;line-height:1.25;}
 .v60-draft-skip-choice button span{font-size:14px;line-height:1.25;text-align:right;}
