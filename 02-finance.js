@@ -1964,6 +1964,7 @@ function finalizeNegotiation(neg, salary, years) {
     UI.screen = "contractRenewals";
   }
   persist();
+  if (neg.kind === "rookie" && S.draft && !S.draft.active && typeof v60AdvanceAfterDraftAction === "function" && v60AdvanceAfterDraftAction()) return;
   if (neg.kind === "renewal" && (S.pendingContractRenewals || []).length === 0 && typeof proceedFromContractRenewals === "function") { proceedFromContractRenewals(); return; }
   render();
 }
@@ -2001,6 +2002,7 @@ function failNegotiation(neg) {
     UI.screen = "contractRenewals";
   }
   persist();
+  if (neg.kind === "rookie" && S.draft && !S.draft.active && typeof v60AdvanceAfterDraftAction === "function" && v60AdvanceAfterDraftAction()) return;
   render();
 }
 
