@@ -5119,10 +5119,16 @@ UI.screen='scouts';UI.scoutPicker='international';UI.scoutCandidates=[
  {name:'乙球探',specialty:'綜合評估',accuracy:58,salary:1300000,contractYears:2,signing:180000},
  {name:'丙球探',specialty:'打者潛力評估',accuracy:45,salary:900000,contractYears:1,signing:120000}
 ];var __r079Before=JSON.stringify(S);renderScouts();var __r079Html=app.innerHTML;
-var __r079Cards=(__r079Html.match(/class="v60-scout-candidate"/g)||[]).length;
-var __r079Safe=JSON.stringify(S)===__r079Before&&__r079Cards===3&&[...UI.scoutCandidates].every(c=>__r079Html.includes(c.name)&&__r079Html.includes(c.specialty)&&__r079Html.includes('準度 <b>'+c.accuracy+'</b>')&&__r079Html.includes(formatMoney(c.salary))&&__r079Html.includes(formatMoney(c.signing))&&__r079Html.includes(c.contractYears+' 年'))&&(__r079Html.match(/hire-scout-btn/g)||[]).length===3;
+var __r079Safe=[...UI.scoutCandidates].every((c,i)=>__r079Html.includes(c.name)&&__r079Html.includes('準度 '+c.accuracy)&&__r079Html.includes('年薪 '+formatMoney(c.salary))&&__r079Html.includes('data-idx="'+i+'"'));
+for(var __r079Idx=0;__r079Idx<UI.scoutCandidates.length;__r079Idx++){
+ UI.scoutCompareIndex=__r079Idx;renderScouts();var __r079Detail=app.innerHTML,__r079Candidate=UI.scoutCandidates[__r079Idx];
+ __r079Safe=__r079Safe&&JSON.stringify(S)===__r079Before&&(__r079Detail.match(/class="v60-scout-candidate"/g)||[]).length===1&&__r079Detail.includes(__r079Candidate.specialty)&&__r079Detail.includes('準度 <b>'+__r079Candidate.accuracy+'</b>')&&__r079Detail.includes(formatMoney(__r079Candidate.signing))&&__r079Detail.includes(__r079Candidate.contractYears+' 年')&&__r079Detail.includes('class="pickbtn hire-scout-btn" data-idx="'+__r079Idx+'"');
+}
+var __r079ThirdName=UI.scoutCandidates[2].name,__r079ThirdFee=UI.scoutCandidates[2].signing;
+S.teams[S.userTeamId].finance.budget=1000000000;hireScoutCandidate('international',2);
+var __r079Hire=S.teams[S.userTeamId].scouts.international.name===__r079ThirdName&&S.teams[S.userTeamId].finance.budget===1000000000-__r079ThirdFee&&UI.scoutPicker===null;
 S=JSON.parse(__r079SavedS);UI=JSON.parse(__r079SavedUI);`);
-assert(g("__r079Safe") && fs.readFileSync('style.css','utf8').includes('.v60-scout-candidate-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))'), "r079 三位球探準度／專精／薪約／簽約金比較與簽下操作完整，渲染不改遊戲狀態");
+assert(g("__r079Safe&&__r079Hire") && fs.readFileSync('style.css','utf8').includes('.v60-scout-compare-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))'), "r083 三位球探同頁比較準度與年薪，各自完整條件可點選、第三人可簽下且扣款正確，切換不改遊戲狀態");
 
 console.log("\n--- r074 教練候選與手機職務卡 ---");
 g(`var __r074SavedS=JSON.stringify(S),__r074SavedUI=JSON.stringify(UI);

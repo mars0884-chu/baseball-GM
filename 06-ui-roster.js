@@ -889,6 +889,7 @@ function openScoutPicker(area) {
   const team = S.teams[S.userTeamId];
   UI.scoutPicker = area;
   UI.scoutCandidates = generateScoutCandidates(team.id, area);
+  UI.scoutCompareIndex = 0;
   render();
 }
 function hireScoutCandidate(area, idx) {
@@ -1182,6 +1183,7 @@ function renderScouts() {
   const AREA_LABEL = { domestic: "國內球探", international: "國際球探", trade: "交易球探" };
   const picking = UI.scoutPicker;
   const candidates = UI.scoutCandidates || [];
+  const compareIndex = Math.min(Math.max(0, Number(UI.scoutCompareIndex) || 0), Math.max(0, candidates.length - 1));
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar v60-scout-topbar"><div><div class="eyebrow">${team.name}</div><h1>球探室</h1></div><button id="btn-back" class="btn-outline">返回</button></div>
@@ -1207,8 +1209,10 @@ function renderScouts() {
       <div class="card v60-scout-market">
         <div class="eyebrow">${AREA_LABEL[picking]}候選・${team.scouts[picking] ? `現任準度 ${team.scouts[picking].accuracy}` : "目前空缺"}</div>
         <p class="v60-scout-market-note">簽下時扣簽約金・年薪按合約支付</p>
+        <div class="v60-scout-compare-tabs" role="tablist" aria-label="球探候選比較">${candidates.map((cand, idx) => `<button type="button" role="tab" class="v60-scout-compare-btn ${idx === compareIndex ? "active" : ""}" aria-selected="${idx === compareIndex}" data-idx="${idx}"><strong>${cand.name}</strong><span>準度 ${cand.accuracy}</span><span>年薪 ${formatMoney(cand.salary)}</span></button>`).join("")}</div>
         <div class="v60-scout-candidate-list">
-          ${candidates.map((cand, idx) => {
+          ${candidates.slice(compareIndex, compareIndex + 1).map((cand) => {
+            const idx = compareIndex;
             const curAcc = team.scouts[picking] ? team.scouts[picking].accuracy : 0;
             const diff = cand.accuracy - curAcc;
             const diffLabel = !team.scouts[picking] ? "補實空缺" : (diff > 3 ? `優於現任 +${diff}` : (diff < -3 ? `劣於現任 ${diff}` : "與現任相當"));
@@ -1257,6 +1261,7 @@ function renderScouts() {
   });
   if (picking) {
     document.getElementById("btn-cancel-scout-pick").onclick = () => { UI.scoutPicker = null; UI.scoutCandidates = null; render(); };
+    app.querySelectorAll(".v60-scout-compare-btn").forEach(btn => { btn.onclick = () => { UI.scoutCompareIndex = Number(btn.dataset.idx); render(); }; });
     app.querySelectorAll(".hire-scout-btn").forEach(btn => {
       btn.onclick = () => hireScoutCandidate(picking, Number(btn.dataset.idx));
     });
