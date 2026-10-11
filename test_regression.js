@@ -4997,7 +4997,7 @@ assert(r060Hof.includes('v60RosterPageSlice(hof, "hofMemberPage", 2)') && r060Ho
 console.log("\n--- r061 選秀頁重複文字減量與數值保留 ---");
 const r061Draft = fs.readFileSync("06-ui-roster.js", "utf8").split("function renderDraft()")[1].split("function renderMatchupCard")[0];
 const r061Radar = fs.readFileSync("01-data-engine.js", "utf8").split("function v60DraftRadarCardHtml")[1].split("function v46Cell")[0];
-assert(r061Draft.includes('class="v60-draft-pick-summary"') && r061Draft.includes('v60VisualMetricRail([') && !r061Draft.includes('<div class="scoreboard">'), "r061 選秀頁首輪次、球隊、球探改為並排摘要，原資訊保留");
+assert(r061Draft.includes('class="v60-draft-context"') && r061Draft.includes('第 ${round} 輪・第 ${pickNo} 順位') && r061Draft.includes('球探 ${scout ? scout.name') && r061Draft.includes('準度 ${draftEffAcc}') && r061Draft.includes('id="btn-skip-pick"') && !r061Draft.includes('<div class="scoreboard">'), "r086 選秀順位、球隊、球探準度與放棄入口同區呈現，原資訊保留");
 assert(r061Draft.includes('v60DraftRadarCardHtml(p, draftEffAcc, true)') && r061Draft.includes('v60DraftComparisonHtml(visibleDraft, draftEffAcc)') && r061Draft.includes('v60-draft-evaluations') && r061Draft.includes('${pager}'), "r061 雷達、逐項球探估值、現況／天花板與雙人分頁均保留");
 assert(r061Radar.includes('v60-radar-values') && r061Radar.includes('data.current[i] + \' → \' + data.ceiling[i]') && !r061Radar.includes('藍色現況 → 珊瑚紅預估天花板'), "r061 雷達各軸精確數值保留，只移除重複色彩說明");
 
@@ -5078,7 +5078,7 @@ __r070Middle=v60DraftDevelopmentNote({age:21,peakAge:27,maturity:maturityLabel(2
 __r070Ready=v60DraftDevelopmentNote({age:23,peakAge:27,maturity:maturityLabel(23)},'future'),
 __r070Custom=v60DraftDevelopmentNote({age:18,peakAge:29,maturity:'原有特殊養成資訊'},'future'),
 __r070Stable=JSON.stringify(S)===__r070Before;`);
-assert(g("__r070Young.includes('4–6年近天花板')&&__r070Phase.includes('顛峰約29歲')&&__r070Middle.includes('3–5年近天花板')&&__r070Ready.includes('較快上一軍')&&__r070Custom.includes('原有特殊養成資訊')&&__r070Stable"), "r070 標準三種養成時程與顛峰年齡保留，舊存檔特殊文字不被覆蓋且不改遊戲狀態");
+assert(g("__r070Young.includes('4–6年近頂')&&__r070Phase.includes('顛峰約29歲')&&__r070Middle.includes('3–5年近頂')&&__r070Ready.includes('較快一軍')&&__r070Ready.includes('成長有限')&&__r070Custom.includes('原有特殊養成資訊')&&__r070Stable"), "r086 精簡後仍保留三種養成時程、顛峰年齡、即戰力與成長上限，舊存檔特殊文字不被覆蓋");
 assert(r061Draft.includes('v60DraftDevelopmentNote(p, "current")') && r061Draft.includes('v60DraftDevelopmentNote(p, "future")') && !r061Draft.includes('phase.desc') && fs.readFileSync('style.css','utf8').includes('.v60-draft-evaluation .v60-draft-development-note{'), "r070 養成／生涯階段直接併入現況及天花板視覺卡，不增加第三排卡片");
 
 console.log("\n--- r071 育成名單方針緊湊比較 ---");

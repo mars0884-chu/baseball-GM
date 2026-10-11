@@ -499,6 +499,11 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .v60-draft-pick-summary .v60-visual-metric-rail{grid-template-columns:repeat(3,minmax(0,1fr));}
 .v60-draft-pick-summary .v60-visual-metric b{font-size:14px;}
 .v60-draft-pick-summary .v60-visual-metric strong{font-size:16px;}
+.v60-draft-context{display:grid;gap:5px;margin:8px 0 10px;padding:7px 10px;border:1px solid #B7D4FF;border-radius:10px;background:#F4F9FF;color:#17385E;}
+.v60-draft-context-main{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.v60-draft-context-main strong{font-size:17px;line-height:1.25;}
+.v60-draft-context-main button{min-height:44px;min-width:88px;padding:6px 10px;font-size:14px;}
+.v60-draft-context-meta{display:flex;gap:3px 12px;flex-wrap:wrap;font-size:14px;line-height:1.25;}
 @media(max-width:620px){.v60-draft-pick-summary .v60-visual-metric-rail{grid-template-columns:repeat(2,minmax(0,1fr));}.v60-draft-pick-summary .v60-visual-metric:last-child{grid-column:1 / -1;}}
 .v60-intl-market .v60-visual-metric-rail{grid-template-columns:repeat(2,minmax(0,1fr));}
 .v60-intl-market .v60-visual-metric b,.v60-intl-market .v60-visual-metric strong{font-size:14px;}
@@ -982,7 +987,7 @@ body[data-screen="mail"]      #app{ background-image: var(--pack-screen-mail,non
 .v60-draft-radar-column .v60-intl-compare-row strong{font-size:14px;white-space:nowrap;}
 .v60-draft-radar-column .v60-draft-radar-column-head{background:#E5F1FF;}
 @media(max-width:620px){.v60-draft-card-visuals{grid-template-columns:154px minmax(0,1fr);}.v60-draft-card-visuals .v60-draft-evaluations{grid-template-columns:1fr;}.v60-draft-card-visuals .v60-draft-radar-only .v60-draft-radar{width:142px;height:142px;flex-basis:142px;}}
-@media(max-width:360px){.v60-draft-card-visuals{grid-template-columns:1fr;}.v60-draft-card-visuals .v60-draft-evaluations{grid-template-columns:repeat(2,minmax(0,1fr));}.v60-draft-card-visuals .v60-draft-radar-only{justify-content:center;}}
+@media(max-width:360px){.v60-draft-card-visuals{grid-template-columns:110px minmax(0,1fr);gap:6px;}.v60-draft-card-visuals .v60-draft-evaluations{grid-template-columns:1fr;}.v60-draft-card-visuals .v60-draft-radar-only{justify-content:center;padding:2px;}.v60-draft-card-visuals .v60-draft-radar-only .v60-draft-radar{width:104px;height:104px;flex-basis:104px;}.v60-draft-card-visuals .v60-draft-evaluation strong{font-size:18px;}}
 
 /* 戰績榜隊徽對齊 */
 .stattable .v49team-logo { vertical-align: -4px; }

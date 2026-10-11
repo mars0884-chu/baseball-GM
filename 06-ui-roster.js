@@ -1075,15 +1075,22 @@ function v60DraftDevelopmentNote(p, kind) {
   const standardMaturity = maturityLabel(p.age);
   let maturity = p.maturity || "—";
   if (maturity === standardMaturity) {
-    if (p.age <= 19) maturity = "長期養成・約4–6年近天花板";
-    else if (p.age <= 21) maturity = "潛力新秀・約3–5年近天花板";
-    else maturity = "即戰力可期・成長有限／較快上一軍";
+    if (p.age <= 19) maturity = "長期養成・約4–6年近頂";
+    else if (p.age <= 21) maturity = "潛力新秀・約3–5年近頂";
+    else maturity = "即戰力・較快一軍／成長有限";
   }
   const peakAge = p.peakAge || 27;
   const phaseNote = phase.key === "grow" ? `顛峰約${peakAge}歲`
     : phase.key === "peak" ? "能力近頂" : "逐年下滑・長青型較慢";
   return kind === "current" ? `<small class="v60-draft-development-note ${phase.cls}">${phase.text}・${phaseNote}</small>`
     : `<small class="v60-draft-development-note">${v60UiEscape(maturity)}</small>`;
+}
+function v60DraftConfidenceShort(label) {
+  return ({
+    "評估高度可信": "可信度高",
+    "評估中等可信，仍有落差空間": "可信度中・有誤差",
+    "球探情報有限，評估落差可能較大": "情報少・誤差大"
+  })[label] || label;
 }
 function renderInternationalMarket() {
   const team = S.teams[S.userTeamId];
@@ -1496,13 +1503,11 @@ function renderDraft() {
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${S.leagueName} ・ 第${S.seasonYear}年休賽季</div><h1>新人選秀會</h1></div>
-      <div class="v60-draft-pick-summary">${v60VisualMetricRail([
-        ["目前順位", `第 ${round} 輪・第 ${pickNo} 順位`],
-        ["選秀球隊", S.teams[S.userTeamId].name],
-        ["球探／準度", `${scout ? scout.name : "職位空缺・盲評"}・${draftEffAcc}`]
-      ], "選秀目前順位與球探")}</div>
-      <div class="btnrow"><button id="btn-skip-pick" class="btn-outline">放棄本輪選秀權</button></div>
-      <p class="v60-state-line">能力與天花板為球探估值；獨家新秀僅你可選。</p>
+      <section class="v60-draft-context" aria-label="選秀目前順位、球隊與球探">
+        <div class="v60-draft-context-main"><strong>第 ${round} 輪・第 ${pickNo} 順位</strong><button id="btn-skip-pick" class="btn-outline" type="button">放棄順位</button></div>
+        <div class="v60-draft-context-meta"><span>${S.teams[S.userTeamId].name}</span><span>球探 ${scout ? scout.name : "空缺・盲評"}・準度 ${draftEffAcc}</span></div>
+      </section>
+      <p class="v60-state-line">球探估值有誤差・獨家新秀僅你可選</p>
       ${posFilterBarHtml(d.pool, "draftPosFilter")}
       <select id="sort-draft" class="sortselect">
         <option value="default" ${sortKey === "default" ? "selected" : ""}>依現在能力評等排序</option>
@@ -1510,7 +1515,7 @@ function renderDraft() {
         <option value="ceiling" ${sortKey === "ceiling" ? "selected" : ""}>依天花板評等排序</option>
       </select>
       ${pager}
-      ${sharedDraftConfidence ? `<p class="v60-state-line" aria-label="本頁共通球探信心">兩人共通・${sharedDraftConfidence}</p>` : ""}
+      ${sharedDraftConfidence ? `<p class="v60-state-line" aria-label="本頁共通球探信心">兩人共通・${v60DraftConfidenceShort(sharedDraftConfidence)}</p>` : ""}
       ${visibleDraft.length ? "" : '<p class="draftnote">此分類沒有待選球員。</p>'}
       ${visibleDraft.map(p => `
         <div class="card draftcard">
@@ -1533,7 +1538,7 @@ function renderDraft() {
             ${p.isPitcher ? `角色傾向：${p.role}` : `主守位：${POS_LABEL[p.positions[0].pos]}`}　球風：${p.archetype}
           </div>
           ${p.isPitcher ? `<div class="draftnote muted">${p.pitches ? p.pitches.length : "?"} 種球路</div>` : ""}
-          ${sharedDraftConfidence ? "" : `<div class="draftnote muted">${p.scoutConfidence}</div>`}
+          ${sharedDraftConfidence ? "" : `<div class="draftnote muted">${v60DraftConfidenceShort(p.scoutConfidence)}</div>`}
         </div>`).join("")}
       ${visibleDraft.length ? `<div class="card v60-draft-shared-compare"><div class="eyebrow">逐項能力・雙人對照</div><div class="v60-radar-legend" aria-label="雷達色彩說明"><span class="v60-radar-key current">現況</span><span class="v60-radar-key ceiling">預估天花板</span></div>${v60DraftComparisonHtml(visibleDraft, draftEffAcc)}</div>` : ""}
       ${pager}
