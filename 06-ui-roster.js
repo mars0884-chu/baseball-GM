@@ -2966,8 +2966,10 @@ function renderTradeBuilderV43() {
         const aff = (typeof gmAffinity === "function") ? gmAffinity(teamB) : 0;
         const af = (typeof affinityLabel === "function") ? affinityLabel(aff) : { cls: "", text: "" };
         const events = (teamB.gmMemory && teamB.gmMemory.events || []).slice(0, 5);
-        return `<div class="card">
-          <div class="eyebrow">對手檔案：${ps ? `${ps.name}球團` : "未知風格"}・交情 <span class="afftag ${af.cls}">${af.text}</span></div>
+        const identity = `${ps ? `${ps.name}球團` : "未知風格"}・交情 <span class="afftag ${af.cls}">${af.text}</span>`;
+        if (tradeStage !== "terms") return `<div class="v60-trade-opponent-summary" aria-label="對手球團風格與交情">${identity}${events.length > 0 ? "・有過往互動" : ""}</div>`;
+        return `<div class="card v60-trade-opponent-review">
+          <div class="eyebrow">對手檔案：${identity}</div>
           <p class="sub dark">${ps ? ps.desc : ""}${aff !== 0 ? `（交情會影響他們的成交門檻${ps && ps.affinityW === 0 ? "——但這隊只認數字，交情無效" : ""}）` : ""}</p>
           ${events.length > 0 ? `<p class="draftnote muted">${icon('notebook')} 他們記得：${events.map(e => `第${e.year}年${e.text}（${e.delta > 0 ? "+" : ""}${e.delta}）`).join("；")}</p>` : ""}
         </div>`;

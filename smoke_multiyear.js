@@ -166,7 +166,7 @@ try {
 } catch (e) { fails++; console.log("✗ 渲染失敗: dashboard手術決策卡 -", e.message); }
 try { g("UI.screen='dashboard'; render();"); } catch (e) { fails++; console.log("✗ 渲染失敗: dashboard特訓/情蒐卡 -", e.message); }
 try { g("UI.screen='intlTournament'; render();"); } catch (e) { fails++; console.log("✗ 渲染失敗: intlTournament -", e.message); }
-/* v27渲染：談判畫面（含經紀人列）＋交易編成（含對手檔案卡）＋GameOver */
+/* 談判畫面（含經紀人列）＋交易對手摘要／確認頁完整檔案＋GameOver */
 try {
   g("var __np=Object.values(S.freeAgents)[0]; if(__np){ delete __np.negoDesired; startNegotiation('freeAgent', __np.id, {}); } render();");
   chk(!g("Object.values(S.freeAgents)[0]") || appEl.innerHTML.includes("經紀人"), "v27談判畫面顯示經紀人");
@@ -174,7 +174,9 @@ try {
 } catch (e) { fails++; console.log("✗ 渲染失敗: negotiation經紀人 -", e.message); }
 try {
   g("var __tb=Object.values(S.teams).find(t=>!t.isUser); openTradeBuilder(__tb.id); render();");
-  chk(appEl.innerHTML.includes("對手檔案"), "v27交易編成顯示對手檔案卡");
+  chk(appEl.innerHTML.includes("v60-trade-opponent-summary"), "r090交易選人時顯示對手風格與交情摘要");
+  g("UI.tradeStage='terms'; render();");
+  chk(appEl.innerHTML.includes("v60-trade-opponent-review") && appEl.innerHTML.includes("對手檔案"), "r090交易送出前顯示完整對手檔案");
   g("UI.screen='dashboard';");
 } catch (e) { fails++; console.log("✗ 渲染失敗: tradeBuilder對手檔案 -", e.message); }
 try {

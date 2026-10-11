@@ -4890,6 +4890,7 @@ UI.tradeStage='terms';render();var __r052TermsHtml=app.innerHTML;
 S=JSON.parse(__r052SavedS);UI=JSON.parse(__r052SavedUI);`);
 assert(g("(__r052GiveHtml.match(/class=\"give-pick-check\"/g)||[]).length===6 && !__r052GiveHtml.includes('class=\"get-pick-check\"') && (__r052GetHtml.match(/class=\"get-pick-check\"/g)||[]).length===6 && !__r052GetHtml.includes('class=\"give-pick-check\"')"), "r052 選秀權分頁每次僅呈現一側六筆，兩側皆可到達");
 assert(g("__r052GiveHtml.includes('本屆＋後2年・各6輪') && __r052GiveHtml.includes('原隊戰績差→順位前、估值高') && __r052GetHtml.includes('持有者選人') && __r052ScoutHtml.includes('守位') && __r052ScoutHtml.includes('球探估值') && __r052TermsHtml.includes('現金計入估值') && __r052TermsHtml.includes('v43-cash-give') && __r052TermsHtml.includes('btn-submit-trade')"), "r052 精簡後仍保留選秀權、球探估值、現金與交易提交規則及操作");
+assert(g("__r052GiveHtml.includes('v60-trade-opponent-summary')&&__r052GetHtml.includes('v60-trade-opponent-summary')&&__r052ScoutHtml.includes('v60-trade-opponent-summary')&&!__r052ScoutHtml.includes('v60-trade-opponent-review')&&__r052TermsHtml.includes('v60-trade-opponent-review')&&__r052TermsHtml.includes('他們記得：')===__r052ScoutHtml.includes('有過往互動')"), "r090 選人時保留對手風格與交情摘要，完整背景與互動在送出前確認頁呈現");
 
 console.log("\n--- r053 開季逐站守門與首頁更新 ---");
 g(`var __r053SavedS=JSON.stringify(S),__r053SavedUI=JSON.stringify(UI);

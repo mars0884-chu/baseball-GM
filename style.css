@@ -1783,6 +1783,7 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 }
 /* 交易組合依決策階段分區；選取狀態跨分頁保留。 */
 .v60-trade-stages{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0}
+.v60-trade-opponent-summary{padding:9px 12px;border:1px solid #bad4f1;border-radius:10px;background:#f5faff;color:#153d70;font-size:14px;line-height:1.45}
 .v60-trade-stages .tab{min-height:44px;white-space:normal;line-height:1.25}
 .v60-trade-guidance{margin:8px 0;color:#254A78;font-size:14px;line-height:1.45}
 .v60-trade-pick-rules{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline}
