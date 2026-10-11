@@ -1501,6 +1501,7 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-roster-pager button:disabled{opacity:.48;cursor:not-allowed;}
 .v60-roster-pager span{color:#1459B8;font-size:13px;font-weight:800;text-align:center;white-space:nowrap;}
 .v60-listing-table{margin-top:8px;}
+.v60-listing-table .v43-list-btn,.v60-listing-table .v43-unlist-btn{min-height:44px;min-width:64px;}
 .v60-listing-cards{display:none;}
 .v60-finance-cut-cards{display:none;}
 .v60-finance-cut-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0;}

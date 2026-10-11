@@ -4652,7 +4652,7 @@ console.log("\n--- v60-016 掛牌市場分頁與文字精簡 ---");
 const v60ListingStart = v60RosterSource.indexOf("function renderListingScreen()");
 const v60ListingEnd = v60RosterSource.indexOf("/* ---------- v43③", v60ListingStart);
 const v60ListingSource = v60RosterSource.slice(v60ListingStart, v60ListingEnd);
-assert(v60ListingSource.includes('v60RosterPageSlice(listFiltered, "listingPage")') && v60ListingSource.includes('v60RosterPagerHtml(listingPage, "listingPage", "掛牌交易", listFiltered.length)') && v60ListingSource.includes("listingPage.items.map(row)") && v60ListingSource.includes("listingPage.items.map(mobileCard)") && v60ListingSource.includes("wireV60RosterPager()") && !v60ListingSource.includes("listFiltered.map(row)"), "v60-016 掛牌清單每頁呈現分頁資料，桌面表格與手機卡片保留掛牌／撤牌");
+assert(v60ListingSource.includes('v60RosterPageSlice(listFiltered, "listingPage", 4)') && v60ListingSource.includes('v60RosterPagerHtml(listingPage, "listingPage", "掛牌交易", listFiltered.length)') && v60ListingSource.includes("listingPage.items.map(row)") && v60ListingSource.includes("listingPage.items.map(mobileCard)") && v60ListingSource.includes("wireV60RosterPager()") && !v60ListingSource.includes("listFiltered.map(row)"), "v60-016/r091 掛牌清單每頁四人，桌面表格與手機卡片保留掛牌／撤牌");
 assert(v60RosterSource.includes('if (btn.dataset.filterkey === "listingPosFilter") UI.listingPage = 0') && v60RosterSource.includes('v60-listing-cards') && v60StyleSource.includes(".v60-listing-card-action .v43-list-btn"), "v60-016 守位篩選回到首頁，窄螢幕使用可觸控卡片操作");
 g(`var __v60ListingSavedS=JSON.stringify(S),__v60ListingSavedUI=JSON.stringify(UI),__v60ListingSavedHtml=app.innerHTML;
 var __v60ListingTotal=S.teams[S.userTeamId].roster1.concat(S.teams[S.userTeamId].roster2).length;
@@ -4667,7 +4667,8 @@ UI.listingPage=1;renderListingScreen();__v60ListingTableStart=app.innerHTML.inde
 __v60ListingTable=app.innerHTML.slice(__v60ListingTableStart,__v60ListingTableEnd);var __v60ListingPageTwoRows=(__v60ListingTable.match(/<tr>/g)||[]).length-1;
 var __v60ListingPageTwoName=(__v60ListingTable.match(/<tr>\\s*<td>([\\s\\S]*?)<\\/td>/)||[])[1]||'';
 S=JSON.parse(__v60ListingSavedS);UI=JSON.parse(__v60ListingSavedUI);app.innerHTML=__v60ListingSavedHtml;`);
-assert(g("__v60ListingTotal > 8 && __v60ListingRows===8 && __v60ListingPageTwoRows===Math.min(8,__v60ListingTotal-8) && __v60ListingFirstName!==__v60ListingPageTwoName && __v60ListingNavVisible && __v60ListingActionCount===8 && __v60ListingMobileCards===8"), "v60-016 renderer 實際輸出每頁8人、翻頁換人、桌面操作與手機卡片資料均完整");
+assert(g("__v60ListingTotal > 8 && __v60ListingRows===4 && __v60ListingPageTwoRows===4 && __v60ListingFirstName!==__v60ListingPageTwoName && __v60ListingNavVisible && __v60ListingActionCount===4 && __v60ListingMobileCards===4"), "v60-016/r091 renderer 實際輸出每頁4人、翻頁換人、桌面操作與手機卡片資料均完整");
+assert(v60ListingSource.split('v60RosterPagerHtml(listingPage, "listingPage", "掛牌交易", listFiltered.length)').length===3 && v60PrepDash.includes('if (UI.screen === "listing") return;'), "r091 清單上下均可翻頁，返回操作不浮在球員卡片上方");
 g(`var __r084SavedS=JSON.stringify(S),__r084SavedUI=JSON.stringify(UI);
 ensureV43State();var __r084Buyer=Object.values(S.teams).find(t=>t.id!==S.userTeamId),__r084Target=S.teams[S.userTeamId].roster1[0];
 S.v43.offers.push({id:'r084-offer',buyerId:__r084Buyer.id,targetId:__r084Target,playerIds:[],cash:1000000,expiresDay:(S.currentDay||0)+3,status:'open'});

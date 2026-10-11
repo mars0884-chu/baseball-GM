@@ -236,6 +236,7 @@ function wireUiTabs() {
    讓「確認／繼續／返回」不必滑到數千像素後才找得到。 */
 function v60MarkStickyScreenAction() {
   // 解職頁有多重決策；休賽季與硬體頁已有頁首導覽，避免頁末操作浮在內容上方。
+  if (UI.screen === "listing") return; // 四人短頁的返回鍵在頁尾，不覆蓋下方球員卡。
   if (["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp"].includes(UI.screen)
     || ["wantMarket", "draftRecap"].includes(UI.screen)) return;
   const appRoot = document.getElementById("app");

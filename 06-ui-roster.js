@@ -3119,7 +3119,7 @@ function renderListingScreen() {
     const listed = new Set(S.v43.listings || []);
     const all = team.roster1.concat(team.roster2).map(id => S.players[id]).filter(Boolean);
     const listFiltered = applyPosFilter(all, "listingPosFilter");
-    const listingPage = v60RosterPageSlice(listFiltered, "listingPage");
+    const listingPage = v60RosterPageSlice(listFiltered, "listingPage", 4);
     const openOffers = (S.v43.offers || []).filter(o => o.status === "open");
     const playerName = p => `${p.name}${isInjured(p) ? ` <span class="injurytag">傷</span>` : ""}`;
     const positionLabel = p => p.isPitcher ? `投手・${p.role || "投手"}` : `野手・${p.positions.map(x => POS_LABEL[x.pos]).join("/")}`;
@@ -3152,6 +3152,7 @@ function renderListingScreen() {
         <tbody>${listingPage.items.map(row).join("")}</tbody>
       </table>
       <div class="v60-listing-cards" aria-label="目前頁球員掛牌名單">${listingPage.items.map(mobileCard).join("")}</div>
+      ${v60RosterPagerHtml(listingPage, "listingPage", "掛牌交易", listFiltered.length)}
       <div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>
     </div>`;
     app.querySelectorAll(".v43-list-btn").forEach(b => { b.onclick = () => { const r = v43ListPlayer(b.dataset.id); UI.flash = r.msg; render(); }; });
