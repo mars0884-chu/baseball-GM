@@ -1581,7 +1581,7 @@ function renderOffseasonSummary() {
         <p class="sub dark">選秀前可拜訪事務所；每種類型每年一次。</p>
         <div class="btnrow"><button id="btn-oss-agency" class="btn-outline">前往代理人事務所</button></div>
       </div>` : ""}
-      <div class="btnrow"><button id="btn-go-draft" class="btn-primary">${S.forcedCutRequired ? "前往財務強制裁員" : ((S.pendingContractRenewals || []).length > 0 ? "前往合約續約談判" : "進入選秀會")}</button></div>
+      <div class="btnrow"><button id="btn-go-draft" class="btn-primary">返回目前待辦・${v60PreseasonNextStage().short}</button></div>
     </div>`;
   app.querySelectorAll(".retirecard .pickbtn").forEach(btn => {
     btn.onclick = () => reinstatePlayer(btn.dataset.id);
@@ -1593,7 +1593,8 @@ function renderOffseasonSummary() {
       assignRetiredPlayerAsCoach(btn.dataset.id, S.userTeamId, level, role);
     };
   });
-  document.getElementById("btn-go-draft").onclick = () => proceedFromOffseasonSummary();
+  // 舊年度摘要可能在選秀後再次開啟；永遠回到實際待辦，不重啟已完成的選秀。
+  document.getElementById("btn-go-draft").onclick = () => v60PreseasonGoNext();
   // v35：首玩教學提示（僅初始休賽季顯示）
   const ossTut = document.getElementById("btn-oss-tutorial");
   if (ossTut) ossTut.onclick = () => { UI.tutorialReturn = "offseasonSummary"; UI.screen = "tutorial"; render(); };

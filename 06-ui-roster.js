@@ -1092,6 +1092,13 @@ function v60DraftConfidenceShort(label) {
     "球探情報有限，評估落差可能較大": "情報少・誤差大"
   })[label] || label;
 }
+function v60MaturityShort(label) {
+  return ({
+    "長期養成型（預估至少4~6年才可能接近天花板評等）": "長期養成・至少4–6年近頂",
+    "潛力新秀（預估約3~5年逐步成長至天花板附近）": "潛力新秀・約3–5年近頂",
+    "即戰力可期（成長空間較有限，但可望較快登上一軍）": "即戰力・較快一軍／成長有限"
+  })[label] || label;
+}
 function renderInternationalMarket() {
   const team = S.teams[S.userTeamId];
   ensureFacilities(team);
@@ -1148,13 +1155,13 @@ function renderInternationalMarket() {
         </select>
         ${sortDirButtonHtml("intlSortDir")}
       </div>
-      <p class="v60-state-line" aria-label="國際市場規則">休賽更新・未簽留存 · 40國分級 · 獨家限本隊 · 名單 1軍 ${team.roster1.length}/28・2軍 ${team.roster2.length}/32</p>
+      <p class="v60-state-line" aria-label="國際市場規則與名單容量">未簽留存・休賽更新／1軍 ${team.roster1.length}/28・2軍 ${team.roster2.length}/32</p>
       ${intlFiltered.length === 0 ? `<p class="sub dark">目前沒有可簽人選。</p>` : `${pager}${visibleInternational.map(p => `
       <div class="card draftcard">
         <div class="draftcard-head">
           ${(() => { try { return (typeof themePlayerPhoto === "function") ? themePlayerPhoto(p.id, { player: p, teamId: null, isAway: false }) : ""; } catch(_){ return ""; } })()}
           <div>
-            <div class="draftname">${p.name}${p.exclusive ? `<span class="exclusivetag">獨家情報</span>` : ""}</div>
+            <div class="draftname">${p.name}${p.exclusive ? `<span class="exclusivetag">本隊獨家</span>` : ""}</div>
             <div class="draftmeta"><span class="nationtag">${(typeof v53NationFlagByName === "function") ? v53NationFlagByName(p.nationality, 16) : ""}${p.nationality}${(nationByName(p.nationality) || {}).grade ? "・" + nationByName(p.nationality).grade + "級" : ""}</span> ${p.isPitcher ? "投手" : "野手"} ・ ${p.age}歲 ・ ${p.isPitcher ? p.throws + "投" : p.bats + "打／" + p.throws + "投"}${p.isPitcher ? ` ・ ${p.role}` : ` ・ ${p.positions.map(x => POS_LABEL[x.pos]).join("/")}`}</div>
           </div>
           <button class="pickbtn sign-intl-btn" data-id="${p.id}">簽下</button>
@@ -1163,9 +1170,9 @@ function renderInternationalMarket() {
           <span class="gradebadge grade-${p.scoutedGrade}">現況 ${p.scoutedGrade}${p.scoutedOverall != null ? `（${p.scoutedOverall}）` : ""}</span>
           <span class="gradebadge grade-${p.scoutedCeiling}">天花板 ${p.scoutedCeiling}${p.scoutedCeilingVal != null ? `（約${p.scoutedCeilingVal}）` : ""}</span>
         </div>
-        <div class="draftnote">${p.archetype}${sharedMaturity ? "" : ` ・ ${p.maturity}`}</div>
-        ${sharedConfidence ? "" : `<div class="draftnote muted">${p.scoutConfidence}</div>`}
-      </div>`).join("")}${sharedMaturity || sharedConfidence ? `<p class="v60-state-line" aria-label="本頁球員共通評估">兩人共通・${[sharedMaturity, sharedConfidence].filter(Boolean).join("・")}</p>` : ""}${v60IntlComparisonHtml(visibleInternational)}`}
+        <div class="draftnote">${p.archetype}${sharedMaturity ? "" : ` ・ ${v60MaturityShort(p.maturity)}`}</div>
+        ${sharedConfidence ? "" : `<div class="draftnote muted">${v60DraftConfidenceShort(p.scoutConfidence)}</div>`}
+      </div>`).join("")}${sharedMaturity || sharedConfidence ? `<p class="v60-state-line" aria-label="本頁球員共通評估">兩人共通・${[sharedMaturity ? v60MaturityShort(sharedMaturity) : null, sharedConfidence ? v60DraftConfidenceShort(sharedConfidence) : null].filter(Boolean).join("・")}</p>` : ""}${v60IntlComparisonHtml(visibleInternational)}${pager}`}
     </div>`;
   document.getElementById("sort-intl").onchange = e => { UI.intlSort = e.target.value; render(); };
   app.querySelectorAll("[data-intl-page]").forEach(btn => { btn.onclick = () => { UI.intlMarketPage = Number(btn.dataset.intlPage); render(); window.scrollTo(0, 0); }; });

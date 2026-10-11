@@ -1404,8 +1404,9 @@ assert(g("S.players[S.teams[S.userTeamId].roster1[0]].age===__age35"), "v35 重�
 assert(g("S.teams[S.userTeamId].finance.budget===__py35"), "v35 重入不會二次財務結算");
 
 /* --- 10. proceedToDraft 防重複選秀 --- */
-g("S.draftDoneYear=S.seasonYear; if(!S.draft)S.draft={active:false,rounds:6,order:[],pickIndex:0,pool:[],picks:[]}; S.draft.active=false; var __pk35=(S.draft.picks||[]).length; proceedToDraft();");
-assert(g("UI.screen==='draft' && !S.draft.active && (S.draft.picks||[]).length===__pk35"), "v35 本年已選秀→不重辦、顯示結束摘要");
+g("var __v35DraftSavedS=JSON.stringify(S), __v35DraftSavedUI=JSON.stringify(UI); S.draftDoneYear=S.seasonYear; if(!S.draft)S.draft={active:false,rounds:6,order:[],pickIndex:0,pool:[],picks:[]}; S.draft.active=false; var __pk35=(S.draft.picks||[]).length; var __year35=S.seasonYear; proceedToDraft();");
+assert(g("UI.screen==='finance' && UI.tabs.finance==='deals' && S.seasonYear===__year35+1 && S.springCamp && S.springCamp.executed===false"), "v35/r088 本年已選秀→不重辦、自動進下一季談約，不停在摘要等待下一步");
+g("S=JSON.parse(__v35DraftSavedS); UI=JSON.parse(__v35DraftSavedUI);");
 
 /* --- 11. 新手教學 --- */
 assert(g("typeof renderTutorial==='function' && tutorialSections().length===9"), "v35 教學畫面與九大章節齊備");
@@ -4421,6 +4422,22 @@ assert(g("UI.screen==='springCamp' && v60PreseasonMissingStep()===null && S.draf
 g("S.springCamp.executed=true; S.springCampDoneYear=S.seasonYear; UI.screen='springReport';");
 assert(g("v60PreseasonNextStage().screen==='dashboard'"), "r040 春訓成果後下一步返回開季主控台");
 g("S=JSON.parse(__r040SavedState); UI=JSON.parse(__r040SavedUi);");
+g(`var __r088SavedS=JSON.stringify(S), __r088SavedUI=JSON.stringify(UI);
+newGame('完成關卡自動前進'); pickTeam('T0'); pickGameMode('gm_coach'); proceedFromOffseasonSummary();
+confirmSkipAllRemaining();
+var __r088Finished=!!S.draft&&!S.draft.active&&S.draftDoneYear===S.seasonYear;
+proceedToDraft();
+var __r088Advanced=__r088Finished&&UI.screen==='finance'&&UI.tabs.finance==='deals'&&
+  S.gameStarted===true&&S.seasonYear===1&&S.springCamp&&S.springCamp.year===1&&
+  S.springCamp.executed===false&&v60PreseasonMissingStep()==='deals';
+UI.screen='offseasonSummary';render();
+var __r088SummaryLabel=app.innerHTML.includes('返回目前待辦・談約');
+document.getElementById('btn-go-draft').onclick();
+var __r088NoReplay=UI.screen==='finance'&&UI.tabs.finance==='deals'&&S.draft===null&&
+  v60PreseasonMissingStep()==='deals'&&S.springCamp.executed===false;
+S=JSON.parse(__r088SavedS); UI=JSON.parse(__r088SavedUI);`);
+assert(g("__r088Advanced"), "r088 已完成的選秀重入時自動銜接談約，不需再按下一步且不跳春訓");
+assert(g("__r088SummaryLabel&&__r088NoReplay"), "r088 從年度摘要返回目前待辦不重辦選秀、不跳過開季準備");
 assert(v60PrepDash.includes('if (missing) { UI.flash = "開季準備尚未完成') && v60PrepDash.includes('if (missing) return v60PreseasonOpenStep(missing)'), "r041 春訓出發與主控台入口不能繞過漏項");
 assert(v60PrepDash.includes('if (v60PreseasonMandatoryStage()) return v60PreseasonGoNext();'), "r078 主控台春訓入口也須先回未完成的裁員、續約或選秀決策");
 g(`var __r041ReviewSaved=JSON.stringify(S.preseasonReview), __r041DaySaved=S.currentDay, __r041SpringDoneSaved=S.springCampDoneYear;
@@ -4486,13 +4503,21 @@ const v60FacilityEnd = v60FinanceSource.indexOf("v26季中訓練指派：球季�
 const v60FacilityUi = v60FinanceSource.slice(v60FacilityStart, v60FacilityEnd);
 assert(v60CopyIntlMarket.includes("v60IntlComparisonHtml(visibleInternational)") && v60CopyIntlMarket.includes("data-intl-compare-tab") && !v60CopyIntlMarket.includes("已評估：現況→天花板") && !v60CopyIntlMarket.includes("逐項能力：現在(評估)"), "r047 國際市場以共享能力比較與可見分類取代重複估值說明");
 assert(v60CopyIntlMarket.includes("const pageSize = 2") && v60CopyIntlMarket.includes("data-intl-page") && v60CopyIntlMarket.includes("國際球員分頁") && v60CopyIntlMarket.includes("sign-intl-btn"), "v60-012 海外人選兩人一頁、保留分頁與簽約操作");
-assert(v60CopyIntlMarket.includes("40國分級") && v60CopyIntlMarket.includes("評估準度") && v60CopyIntlMarket.includes("effAcc") && v60CopyIntlMarket.includes("獨家限本隊") && v60CopyIntlMarket.includes("1軍 ${team.roster1.length}/28"), "r047 國際市場短狀態列與視覺指標保留國家等級、估值精準度、獨家與名單限制");
+assert(v60CopyIntlMarket.includes('nationByName(p.nationality).grade') && v60CopyIntlMarket.includes('v53NationFlagByName') && v60CopyIntlMarket.includes("評估準度") && v60CopyIntlMarket.includes("effAcc") && v60CopyIntlMarket.includes("本隊獨家") && v60CopyIntlMarket.includes("1軍 ${team.roster1.length}/28"), "r087 國別分級留在球員國旗卡、估值準度與本隊獨家及名單限制保留");
 assert(v60CopyScouts.includes("國內：選秀／育成") && v60CopyScouts.includes("國際：海外／獨家") && v60CopyScouts.includes("交易：對手估值") && v60CopyScouts.includes("空缺：盲評") && v60CopyScouts.includes("辦公室全員準度"), "v60-012 球探頁以掃讀狀態列保留三職評估出口、獨家人選與空缺後果");
 assert(v60CopyScouts.includes("發掘15–20歲 · 休賽季1次 · 準度↑→品質↑") && v60CopyScouts.includes("${devCount}/25"), "v60-012 育成候選短列保留年齡、頻率、品質關係與名額");
 assert(v60CopyFreeAgents.includes("本土未續→入市") && v60CopyFreeAgents.includes("能力公開") && v60CopyFreeAgents.includes("生涯＝球探預測") && v60CopyFreeAgents.includes("簽約金≈年薪30%"), "v60-012 自由球員狀態列保留入市條件、公開數據、預測與成本");
 assert(v60CopyAgency.includes("代理人事務所規則") && v60CopyAgency.includes("談成→交情↑／談崩→交情↓") && v60CopyAgency.includes("應酬每類型每季1次") && v60CopyAgency.includes("成功70%好感+1") && v60CopyAgency.includes("大失敗10%好感-1") && v60CopyAgency.includes("交好≥4情報") && v60CopyAgency.includes("莫逆10引薦") && !v60CopyAgency.includes("foldNote("), "v60-r036 代理人規則常駐可見且保留各項門檻");
 assert(v60CopyAgency.includes("尚無情蒐 · 談判→委託（查性格／底線）"), "v60-r036 情蒐空狀態保留明確入口與查詢內容");
-assert(v60CopyIntlMarket.includes("休賽更新・未簽留存") && v60CopyIntlMarket.includes("獨家限本隊") && v60CopyIntlMarket.includes("評估準度") && v60CopyIntlMarket.includes("1軍 ${team.roster1.length}/28"), "r047 國際市場短狀態列保留刷新、估值可信度、獨家及名單限制");
+assert(v60CopyIntlMarket.includes("未簽留存・休賽更新") && v60CopyIntlMarket.includes("本隊獨家") && v60CopyIntlMarket.includes("評估準度") && v60CopyIntlMarket.includes("1軍 ${team.roster1.length}/28") && v60CopyIntlMarket.includes("2軍 ${team.roster2.length}/32") && v60CopyIntlMarket.includes("${v60IntlComparisonHtml(visibleInternational)}${pager}"), "r087 短狀態列保留市場刷新與容量，獨家規則落在卡片，完整比較後可翻下一頁");
+g(`var __r087SavedS=JSON.stringify(S),__r087SavedUI=JSON.stringify(UI);
+newGame('國際市場頁尾翻頁');pickTeam('T0');pickGameMode('gm_coach');UI.screen='internationalMarket';UI.intlMarketPage=0;renderInternationalMarket();
+var __r087Before=JSON.stringify(S),__r087StartHtml=app.innerHTML;
+UI.intlMarketPage=1;renderInternationalMarket();var __r087NextHtml=app.innerHTML;
+UI.intlMarketPage=0;renderInternationalMarket();
+var __r087RoundTrip=JSON.stringify(S)===__r087Before&&app.innerHTML===__r087StartHtml;
+S=JSON.parse(__r087SavedS);UI=JSON.parse(__r087SavedUI);`);
+assert(g("(__r087StartHtml.match(/aria-label=\"國際球員分頁\"/g)||[]).length===2&&__r087StartHtml.includes('data-intl-page=\"1\"')&&__r087NextHtml.includes('data-intl-page=\"0\"')&&__r087StartHtml!==__r087NextHtml&&__r087RoundTrip"), "r087 兩端分頁渲染可切換海外球員並返回，正式狀態不變（真實點擊另由瀏覽器驗證）");
 assert(v60CopyFreeAgents.includes("v60-state-line") && v60CopyFreeAgents.includes("簽約金≈年薪30%") && v60CopyScouts.includes("v60-state-line") && v60CopyRotation.includes("v60-state-line") && v60CopyCoaches.includes("v60-state-line"), "v60-r036 市場、球探、牛棚及教練長說明以可見短狀態列呈現");
 assert(v60RosterSource.includes("尚無入選者 · 生涯里程碑達標→自動提名") && v60RosterSource.includes("聘任解鎖：可見數據層級 · 運氣校正 · 套利警訊"), "v60-r036 名人堂與數據主管空狀態保留觸發條件與完整效益");
 assert(v60FacilityUi.includes('data-stadium-panel="build"') && v60FacilityUi.includes('data-stadium-panel="levels"') && v60FacilityUi.includes('UI.facilityStadiumPanel = btn.dataset.stadiumPanel'), "v60-012 球場建造與等級升級分成可見分頁、保留原操作入口");
