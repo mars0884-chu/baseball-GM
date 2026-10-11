@@ -5146,7 +5146,14 @@ var __r073Cancel=!UI.scoutPicker&&!UI.scoutCandidates&&S.teams[S.userTeamId].fin
 S.teams[S.userTeamId].scouts.trade=null;renderScouts();var __r073Vacant=app.innerHTML.includes('is-vacant')&&app.innerHTML.includes('0・盲評')&&app.innerHTML.includes('自由市場簽人');
 document.getElementById('btn-back').onclick();var __r073Back=UI.screen==='dashboard';
 S=JSON.parse(__r073SavedS);UI=JSON.parse(__r073SavedUI);`);
-assert(g("__r073Controls&&__r073Cancel&&__r073Vacant&&__r073Back&&__r073Html.includes('測試候選')&&__r073Html.includes('投手潛力評估')&&__r073Html.includes(formatMoney(1800000))&&__r073Html.includes(formatMoney(250000))&&__r073Html.includes('現任準度')&&!__r073Html.includes('並排比較候選人的')") && fs.readFileSync('style.css','utf8').includes('.v60-scout-topbar #btn-back{'), "r073 候選資料與空缺盲評保留，取消不扣款、返回在頁首且原操作可用");
+assert(g("__r073Controls&&__r073Cancel&&__r073Vacant&&__r073Back&&__r073Html.includes('測試候選')&&__r073Html.includes('投手潛力評估')&&__r073Html.includes(formatMoney(1800000))&&__r073Html.includes(formatMoney(250000))&&__r073Html.includes('現任 ')&&!__r073Html.includes('並排比較候選人的')") && fs.readFileSync('style.css','utf8').includes('.v60-scout-topbar #btn-back{'), "r073/r089 候選資料與空缺盲評保留，取消不扣款、返回在頁首且原操作可用");
+assert(g("__r073Html.includes('返回球探室')&&!__r073Html.includes('v60-scout-staff-table')&&!__r073Html.includes('發掘業餘新秀')"), "r089 招募決策頁不混入三職現任清單與育成發掘，返回球探室仍可處理原操作");
+g(`var __r089SavedS=JSON.stringify(S),__r089SavedUI=JSON.stringify(UI);
+UI.screen='scouts';UI.scoutPicker='international';UI.scoutCandidates=[{name:'測試球探',specialty:'國際評估',accuracy:60,salary:1000000,contractYears:2,signing:100000}];
+var __r089Before=JSON.stringify(S);renderScouts();document.getElementById('btn-back').onclick();
+var __r089Returned=UI.screen==='scouts'&&!UI.scoutPicker&&!UI.scoutCandidates&&app.innerHTML.includes('v60-scout-staff-table')&&app.innerHTML.includes('發掘業餘新秀')&&JSON.stringify(S)===__r089Before;
+S=JSON.parse(__r089SavedS);UI=JSON.parse(__r089SavedUI);`);
+assert(g("__r089Returned"), "r089 候選頁返回現任球探與育成操作，不改遊戲狀態");
 g(`var __r079SavedS=JSON.stringify(S),__r079SavedUI=JSON.stringify(UI);
 UI.screen='scouts';UI.scoutPicker='international';UI.scoutCandidates=[
  {name:'甲球探',specialty:'投手潛力評估',accuracy:71,salary:1800000,contractYears:3,signing:250000},

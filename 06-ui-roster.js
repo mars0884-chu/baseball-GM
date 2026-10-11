@@ -1200,9 +1200,10 @@ function renderScouts() {
   const compareIndex = Math.min(Math.max(0, Number(UI.scoutCompareIndex) || 0), Math.max(0, candidates.length - 1));
   app.innerHTML = `
     <div class="wrap">
-      <div class="topbar v60-scout-topbar"><div><div class="eyebrow">${team.name}</div><h1>球探室</h1></div><button id="btn-back" class="btn-outline">返回</button></div>
+      <div class="topbar v60-scout-topbar"><div><div class="eyebrow">${team.name}</div><h1>${picking ? AREA_LABEL[picking] + "候選" : "球探室"}</h1></div><button id="btn-back" class="btn-outline">${picking ? "返回球探室" : "返回"}</button></div>
       ${renderRosterNav("scouts")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
+      ${picking ? "" : `
       <p class="v60-state-line" aria-label="球探職務與效果">國內：選秀／育成 · 國際：海外／獨家 · 交易：對手估值 · 空缺：盲評 · ${scoutAccuracyBonus(team) > 0 ? `辦公室全員準度+${scoutAccuracyBonus(team)}` : "辦公室升級可增準度"}</p>
       <table class="stattable v60-scout-staff-table">
         <thead><tr><th>類別</th><th>姓名</th><th>準確度</th><th>專精</th><th>合約</th><th>年薪</th><th></th></tr></thead>
@@ -1218,11 +1219,11 @@ function renderScouts() {
             return `<tr><td>${s.areaLabel}${expiring ? `<br><span class="specialabilitytag" style="color:var(--redline);">合約將到期</span>` : ""}</td><td>${s.name}</td><td><span class="v60-scout-mobile-label">準度 </span>${s.accuracy}</td><td><span class="v60-scout-mobile-label">專精 </span>${s.specialty}</td><td><span class="v60-scout-mobile-label">合約 </span>${s.contractYears}年</td><td><span class="v60-scout-mobile-label">年薪 </span>${formatMoney(s.salary)}</td><td><button class="movebtn open-scout-picker-btn" data-area="${area}">更換</button></td></tr>`;
           }).join("")}
         </tbody>
-      </table>
+      </table>`}
       ${picking ? `
       <div class="card v60-scout-market">
-        <div class="eyebrow">${AREA_LABEL[picking]}候選・${team.scouts[picking] ? `現任準度 ${team.scouts[picking].accuracy}` : "目前空缺"}</div>
-        <p class="v60-scout-market-note">簽下時扣簽約金・年薪按合約支付</p>
+        <div class="eyebrow">${team.scouts[picking] ? `現任 ${team.scouts[picking].name}・準度 ${team.scouts[picking].accuracy}・${team.scouts[picking].specialty}・合約 ${team.scouts[picking].contractYears}年・年薪 ${formatMoney(team.scouts[picking].salary)}` : "目前空缺・簽下即可補實"}</div>
+        <p class="v60-scout-market-note">簽約金立即支付・年薪按合約支付</p>
         <div class="v60-scout-compare-tabs" role="tablist" aria-label="球探候選比較">${candidates.map((cand, idx) => `<button type="button" role="tab" class="v60-scout-compare-btn ${idx === compareIndex ? "active" : ""}" aria-selected="${idx === compareIndex}" data-idx="${idx}"><strong>${cand.name}</strong><span>準度 ${cand.accuracy}</span><span>年薪 ${formatMoney(cand.salary)}</span></button>`).join("")}</div>
         <div class="v60-scout-candidate-list">
           ${candidates.slice(compareIndex, compareIndex + 1).map((cand) => {
@@ -1243,7 +1244,7 @@ function renderScouts() {
         </div>
         <div class="btnrow v60-scout-candidate-cancel"><button id="btn-cancel-scout-pick" class="btn-secondary">取消</button></div>
       </div>` : ""}
-      ${(() => {
+      ${picking ? "" : (() => {
         /* v54 A2：球探發掘育成候選 */
         if (typeof V54_DISCOVERY_DIRECTIONS === "undefined") return "";
         var devDiscovered = UI.v54DevCandidates || [];
@@ -1280,7 +1281,7 @@ function renderScouts() {
       btn.onclick = () => hireScoutCandidate(picking, Number(btn.dataset.idx));
     });
   }
-  document.getElementById("btn-back").onclick = () => { UI.scoutPicker = null; UI.scoutCandidates = null; UI.v54DevCandidates = null; UI.screen = "dashboard"; render(); };
+  document.getElementById("btn-back").onclick = () => { if (picking) { UI.scoutPicker = null; UI.scoutCandidates = null; UI.scoutCompareIndex = 0; render(); return; } UI.v54DevCandidates = null; UI.screen = "dashboard"; render(); };
   /* v54 A2：球探發掘育成候選事件綁定 */
   var discoverBtn = document.getElementById("btn-v54-discover");
   if (discoverBtn) discoverBtn.onclick = function() {
