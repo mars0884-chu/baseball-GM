@@ -680,6 +680,9 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .agencyrel-metrics { display:grid; grid-template-columns:1fr 1fr; gap:4px; }
 .agencyrel-metric { font-size:16px; font-weight:700; font-variant-numeric:tabular-nums; color:var(--ink); }
 .agencyrel-row .wine-btn { min-height:44px; width:100%; margin-top:auto; white-space:normal; padding:6px 3px; }
+.v60-agency-cause,.v60-agency-rule-grid{margin:6px 0;color:#234975;font-size:14px;line-height:1.45}
+.v60-agency-cause span,.v60-agency-rule-grid span{display:inline;margin-right:9px;white-space:nowrap}
+.v60-agency-cause b,.v60-agency-rule-grid b{color:#123d76;font-variant-numeric:tabular-nums}
 @media(min-width:700px){.agencyrel-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 
 /* ==================== v29 新增樣式 ==================== */

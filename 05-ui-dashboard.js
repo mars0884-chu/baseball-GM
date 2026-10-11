@@ -236,6 +236,7 @@ function wireUiTabs() {
    讓「確認／繼續／返回」不必滑到數千像素後才找得到。 */
 function v60MarkStickyScreenAction() {
   // 解職頁有多重決策；休賽季與硬體頁已有頁首導覽，避免頁末操作浮在內容上方。
+  if (UI.screen === "agency") return; // 人脈卡與情蒐資訊須完整可見，返回鍵維持頁尾。
   if (UI.screen === "listing") return; // 四人短頁的返回鍵在頁尾，不覆蓋下方球員卡。
   if (["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp"].includes(UI.screen)
     || ["wantMarket", "draftRecap"].includes(UI.screen)) return;
@@ -472,7 +473,7 @@ function v60MountPreseasonDock() {
         <button type="button" data-v60-prep="roster">名單</button>
         ${UI.completedDraft ? '<button type="button" data-v60-prep="draftRecap">選秀成果</button>' : ""}
         ${S.selfTrainingReport && S.springCampDoneYear !== S.seasonYear ? '<button type="button" data-v60-prep="selfTraining">自主訓練成果</button>' : ""}
-        <button type="button" data-v60-prep="spring" ${!v60PreseasonSpringReady() || v60PreseasonMissingStep() ? "disabled" : ""}>${S.springCamp && S.springCamp.executed ? "春訓成果" : "春訓"}</button>
+        <button type="button" data-v60-prep="spring" ${!v60PreseasonSpringReady() || v60PreseasonMandatoryStage() || v60PreseasonMissingStep() ? "disabled" : ""}>${S.springCamp && S.springCamp.executed ? "春訓成果" : "春訓"}</button>
       </nav>
       ${reviewAction ? `<button type="button" class="v60-preseason-review-action" data-v60-prep="complete" data-step="${reviewAction.key}">${reviewAction.label}</button>` : ""}
     </div>
@@ -491,6 +492,7 @@ function v60MountPreseasonDock() {
       else if (route === "draftRecap") UI.screen = "draftRecap";
       else if (route === "selfTraining") UI.screen = "selfTraining";
       else if (route === "spring") {
+        if (v60PreseasonMandatoryStage()) return v60PreseasonGoNext();
         const missing = v60PreseasonMissingStep();
         if (missing) return v60PreseasonOpenStep(missing);
         if (S.springCamp && S.springCamp.year === S.seasonYear && S.springCamp.executed) UI.screen = "springReport";
@@ -1733,7 +1735,7 @@ function doSlotAction(type, slot) {
 }
 
 /* ---------- v33-B2/B3 事務所紅利卡（休賽季摘要顯示引薦與動向情報） ---------- */
-function renderAgencyPerkCards() {
+function renderAgencyPerkCards(inAgency = false) {
   const a = S.agency;
   if (!a) return "";
   const refs = (a.referrals || []).filter(r => r.year === S.seasonYear);
@@ -1756,7 +1758,7 @@ function renderAgencyPerkCards() {
   return `<div class="card">
     <div class="eyebrow">${icon('scout')} 事務所人脈紅利</div>
     ${refHtml}${intelHtml}
-    <p class="draftnote muted">詳情可到「代理人事務所」畫面查看。</p>
+    ${inAgency ? "" : '<p class="draftnote muted">詳情可到「代理人事務所」畫面查看。</p>'}
   </div>`;
 }
 function wireAgencyPerkCards() { /* 目前為純資訊卡，無需接線 */ }
@@ -1956,6 +1958,7 @@ function renderSpringCamp() {
   }; });
   app.querySelectorAll(".spring-menu-select").forEach(sel => { sel.onchange = e => setSpringAssignment(sel.dataset.id, e.target.value); });
   document.getElementById("btn-spring-go").onclick = () => {
+    if (v60PreseasonMandatoryStage()) { UI.flash = "休賽季必要決策尚未完成。"; v60PreseasonGoNext(); return; }
     const missing = v60PreseasonMissingStep();
     if (missing) { UI.flash = "開季準備尚未完成，先處理目前項目。"; v60PreseasonOpenStep(missing); return; }
     UI.flash = null; executeSpringCamp();
@@ -2633,7 +2636,9 @@ function renderAgency() {
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${team.name}</div><h1>${icon('scout')} 代理人事務所</h1></div>
-      <p class="v60-state-line" aria-label="代理人事務所規則">談成→交情↑／談崩→交情↓ · 好感高→談約更易 · 情蒐→談判桌</p>
+      <div class="v60-agency-cause" role="group" aria-label="代理人事務所規則：談成增加交情，談崩降低交情；好感越高談約越容易；情蒐可在談判桌委託">
+        <span>談成 <b>交情↑</b></span><span>談崩 <b>交情↓</b></span><span>好感↑ <b>談約易</b></span><span>情蒐 <b>談判桌</b></span>
+      </div>
       <div class="card">
         <div class="eyebrow">${icon('handshake')} GM人脈網</div>
         ${v60RosterPagerHtml(agencyPage, "agencyPage", "代理人", AGENT_KEYS.length, "類")}
@@ -2656,9 +2661,11 @@ function renderAgency() {
           </div>`;
         }).join("")}
         </div>
-        <p class="v60-state-line" aria-label="經紀人應酬與人脈規則">應酬每類型每季1次 · 成功70%好感+1 · 大失敗10%好感-1 · 交好≥4情報 · 莫逆10引薦</p>
+        <div class="v60-agency-rule-grid" role="group" aria-label="經紀人應酬與人脈規則：每類型每季一次；成功機率70%增加好感1；大失敗機率10%減少好感1；交好達4獲得情報；莫逆達10獲得引薦">
+          <span><b>每類每季1次</b>應酬</span><span><b>70%</b>好感+1</span><span><b>10%</b>好感-1</span><span><b>交好≥4</b>情報</span><span><b>莫逆≥10</b>引薦</span>
+        </div>
       </div>
-      ${renderAgencyPerkCards()}
+      ${renderAgencyPerkCards(true)}
       <div class="card">
         <div class="eyebrow">${icon('clipboard')} 本季已情蒐（${scoutedPlayers.length}）</div>
         ${scoutedPlayers.length > 0 ? scoutedPlayers.map(p => {

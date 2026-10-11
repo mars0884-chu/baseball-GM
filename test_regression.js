@@ -1763,11 +1763,18 @@ assert(g("app.innerHTML.indexOf('foldNote(')<0"), "v39⑥ 主控台無模板逸�
 g("UI.screen='marketing'; render(); var __v39mk=app.innerHTML; UI.screen='dashboard'; render();");
 assert(g("__v39mk.indexOf('v60-visual-metric-rail')>=0 && __v39mk.indexOf('春訓可多選')>=0"), "v39⑥ 行銷畫面改為可見指標資訊層級");
 g("UI.screen='agency'; render(); var __v39ag=app.innerHTML; UI.screen='dashboard'; render();");
-if (!g("__v39ag.indexOf('<details class=\"fold\"')<0 && __v39ag.includes('代理人事務所規則') && __v39ag.includes('談成→交情↑／談崩→交情↓')")) console.log("[v60-r036 agency diagnostic]", g("__v39ag.slice(0,700)"));
-assert(g("__v39ag.indexOf('<details class=\"fold\"')<0 && __v39ag.includes('代理人事務所規則') && __v39ag.includes('談成→交情↑／談崩→交情↓')"), "v39⑥ 經紀人事務所規則常駐可見，不再以摺疊隱藏");
+if (!g("__v39ag.indexOf('<details class=\"fold\"')<0 && __v39ag.includes('代理人事務所規則') && __v39ag.includes('談成 <b>交情↑</b>')")) console.log("[v60-r092 agency diagnostic]", g("__v39ag.slice(0,700)"));
+assert(g("__v39ag.indexOf('<details class=\"fold\"')<0 && __v39ag.includes('代理人事務所規則') && __v39ag.includes('談成 <b>交情↑</b>')"), "v39/r092 經紀人事務所規則常駐可見、短標籤代替長句而非摺疊");
 g("var __r043OldRel=JSON.stringify(S.agency.rel); S.agency.rel={hardline:10,friendly:-10}; UI.agencyPage=0; UI.screen='agency'; render(); var __r043Agency1=app.innerHTML; UI.agencyPage=1; render(); var __r043Agency2=app.innerHTML; S.agency.rel=JSON.parse(__r043OldRel); UI.agencyPage=0; UI.screen='dashboard'; render();");
 assert(g("(__r043Agency1.match(/class=\"agencyrel-row\"/g)||[]).length===4 && (__r043Agency2.match(/class=\"agencyrel-row\"/g)||[]).length===3 && (__r043Agency1.match(/class=\"btn-outline wine-btn\"/g)||[]).length+(__r043Agency2.match(/class=\"btn-outline wine-btn\"/g)||[]).length===AGENT_KEYS.length"), "r043 七類經紀人分兩頁且七個應酬入口完整保留");
-assert(g("__r043Agency1.includes('門檻 %</span><span>談成 ×') && __r043Agency1.includes('談約門檻-12%；談成倍率×1.40') && __r043Agency1.includes('談約門檻+8%；談成倍率×0.70') && __r043Agency1.includes('交好≥4情報') && __r043Agency2.includes('第 2/2 頁')"), "r043 共用欄名、正負交情效果、人脈規則與分頁皆可讀");
+assert(g("__r043Agency1.includes('門檻 %</span><span>談成 ×') && __r043Agency1.includes('談約門檻-12%；談成倍率×1.40') && __r043Agency1.includes('談約門檻+8%；談成倍率×0.70') && __r043Agency1.includes('交好≥4</b>情報') && __r043Agency2.includes('第 2/2 頁')"), "r043/r092 共用欄名、正負交情效果、人脈門檻與分頁皆可讀");
+g(`var __r092SavedS=JSON.stringify(S);ensureAgency();
+var __r092Player=Object.values(S.freeAgents||{})[0]||S.players[S.teams[S.userTeamId].roster1[0]];
+S.freeAgents=S.freeAgents||{};S.freeAgents[__r092Player.id]=__r092Player;
+S.agency.referrals=[{year:S.seasonYear,playerId:__r092Player.id,type:AGENT_KEYS[0],kind:'domestic'}];
+var __r092SummaryPerk=renderAgencyPerkCards(false),__r092AgencyPerk=renderAgencyPerkCards(true);
+S=JSON.parse(__r092SavedS);`);
+assert(g("__r092SummaryPerk.includes('詳情可到')&&!__r092AgencyPerk.includes('詳情可到')&&__r092AgencyPerk.includes('事務所人脈紅利')"), "r092 事務所內的人脈紅利不再叫玩家前往同一頁，摘要入口仍保留指引");
 
 console.log("\n--- v39.1 測試 ---");
 /* 真機回報修正：第1季休賽季選秀被「開幕選秀殘骸」吞掉（畫面秀出開幕選秀舊成果後直接結束） */
@@ -4440,6 +4447,7 @@ assert(g("__r088Advanced"), "r088 已完成的選秀重入時自動銜接談約�
 assert(g("__r088SummaryLabel&&__r088NoReplay"), "r088 從年度摘要返回目前待辦不重辦選秀、不跳過開季準備");
 assert(v60PrepDash.includes('if (missing) { UI.flash = "開季準備尚未完成') && v60PrepDash.includes('if (missing) return v60PreseasonOpenStep(missing)'), "r041 春訓出發與主控台入口不能繞過漏項");
 assert(v60PrepDash.includes('if (v60PreseasonMandatoryStage()) return v60PreseasonGoNext();'), "r078 主控台春訓入口也須先回未完成的裁員、續約或選秀決策");
+assert(v60PrepDash.includes('!v60PreseasonSpringReady() || v60PreseasonMandatoryStage() || v60PreseasonMissingStep()') && v60PrepDash.includes('if (v60PreseasonMandatoryStage()) { UI.flash = "休賽季必要決策尚未完成。"; v60PreseasonGoNext(); return; }'), "r092 快捷列與春訓出發鍵均不得繞過必要決策");
 g(`var __r041ReviewSaved=JSON.stringify(S.preseasonReview), __r041DaySaved=S.currentDay, __r041SpringDoneSaved=S.springCampDoneYear;
 S.preseasonReview=null; S.currentDay=0; S.springCampDoneYear=S.seasonYear-1; ensureV60();
 var __r041OldPending=JSON.stringify(S.preseasonReview); ensureV60(); var __r041Idempotent=JSON.stringify(S.preseasonReview)===__r041OldPending;
@@ -4507,7 +4515,7 @@ assert(v60CopyIntlMarket.includes('nationByName(p.nationality).grade') && v60Cop
 assert(v60CopyScouts.includes("國內：選秀／育成") && v60CopyScouts.includes("國際：海外／獨家") && v60CopyScouts.includes("交易：對手估值") && v60CopyScouts.includes("空缺：盲評") && v60CopyScouts.includes("辦公室全員準度"), "v60-012 球探頁以掃讀狀態列保留三職評估出口、獨家人選與空缺後果");
 assert(v60CopyScouts.includes("發掘15–20歲 · 休賽季1次 · 準度↑→品質↑") && v60CopyScouts.includes("${devCount}/25"), "v60-012 育成候選短列保留年齡、頻率、品質關係與名額");
 assert(v60CopyFreeAgents.includes("本土未續→入市") && v60CopyFreeAgents.includes("能力公開") && v60CopyFreeAgents.includes("生涯＝球探預測") && v60CopyFreeAgents.includes("簽約金≈年薪30%"), "v60-012 自由球員狀態列保留入市條件、公開數據、預測與成本");
-assert(v60CopyAgency.includes("代理人事務所規則") && v60CopyAgency.includes("談成→交情↑／談崩→交情↓") && v60CopyAgency.includes("應酬每類型每季1次") && v60CopyAgency.includes("成功70%好感+1") && v60CopyAgency.includes("大失敗10%好感-1") && v60CopyAgency.includes("交好≥4情報") && v60CopyAgency.includes("莫逆10引薦") && !v60CopyAgency.includes("foldNote("), "v60-r036 代理人規則常駐可見且保留各項門檻");
+assert(v60CopyAgency.includes("代理人事務所規則") && v60CopyAgency.includes("談成 <b>交情↑</b>") && v60CopyAgency.includes("談崩 <b>交情↓</b>") && v60CopyAgency.includes("70%</b>好感+1") && v60CopyAgency.includes("10%</b>好感-1") && v60CopyAgency.includes("交好≥4</b>情報") && v60CopyAgency.includes("莫逆≥10</b>引薦") && !v60CopyAgency.includes("foldNote("), "v60-r036/r092 代理人規則以可見分組保留概率與門檻");
 assert(v60CopyAgency.includes("尚無情蒐 · 談判→委託（查性格／底線）"), "v60-r036 情蒐空狀態保留明確入口與查詢內容");
 assert(v60CopyIntlMarket.includes("未簽留存・休賽更新") && v60CopyIntlMarket.includes("本隊獨家") && v60CopyIntlMarket.includes("評估準度") && v60CopyIntlMarket.includes("1軍 ${team.roster1.length}/28") && v60CopyIntlMarket.includes("2軍 ${team.roster2.length}/32") && v60CopyIntlMarket.includes("${v60IntlComparisonHtml(visibleInternational)}${pager}"), "r087 短狀態列保留市場刷新與容量，獨家規則落在卡片，完整比較後可翻下一頁");
 g(`var __r087SavedS=JSON.stringify(S),__r087SavedUI=JSON.stringify(UI);
