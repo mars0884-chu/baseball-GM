@@ -2597,6 +2597,8 @@ function proceedFromDirectorRenewal() {
 }
 
 function proceedToDraft() {
+  // 從年度摘要回到流程，不能重新建立進行中的選秀並清掉玩家已選順位。
+  if (S.draft && S.draft.active) { UI.screen = "draft"; render(); return; }
   // v35：本年度已辦過選秀（重載後重走休賽季流程）→ 直接顯示選秀結束摘要，不重辦
   if (S.draftDoneYear === S.seasonYear && S.draft && !S.draft.active) {
     UI.screen = "draft";

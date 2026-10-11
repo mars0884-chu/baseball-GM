@@ -418,7 +418,7 @@ function v60PreseasonGoNext() {
   render();
 }
 function v60MountOffseasonReviewLink() {
-  if (!S || !S.offseasonSummary || S.offseasonEnteredYear !== S.seasonYear ||
+  if (!S || !S.offseasonSummary || (S.gameStarted && S.offseasonEnteredYear !== S.seasonYear) ||
     !["financeCuts", "contractRenewals", "staffRenewal", "directorRenewal", "draft", "negotiation"].includes(UI.screen)) return;
   const root = document.getElementById("app");
   const wrap = root && root.querySelector && root.querySelector(".wrap");

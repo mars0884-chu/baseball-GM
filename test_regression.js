@@ -197,10 +197,10 @@ g("pickTeam('T0')");    // v491：從20隊選T0
 assert(g("S && S.userTeamId==='T0'"), "開局成功");
 assert(g("Array.isArray(S.newsFeed) && S.springCampDoneYear===0"), "v25狀態初始化");
 assert(g("UI.screen==='gameModePick'"), "v41① 開局先選身分模式");
-g("pickGameMode('gm_coach')");
-assert(g("UI.screen==='offseasonSummary'"), "進入初始休賽季");
-g("proceedFromOffseasonSummary()");
-assert(g("UI.screen==='draft' && S.draft.active"), "進入選秀");
+g("document.getElementById('btn-mode-gmcoach').onclick()");
+assert(g("UI.screen==='draft' && S.draft.active && !!S.offseasonSummary"), "選擇身分後自動進選秀，年度結算保留供回看");
+g("var __initialDraftPool=S.draft.pool.map(p=>p.id).join(','); proceedFromOffseasonSummary()");
+assert(g("S.draft.active && S.draft.pool.map(p=>p.id).join(',')===__initialDraftPool"), "返回選秀不重建進行中的選秀池");
 /* 選秀池潛力校準檢查 */
 assert(g("S.draft.pool.every(p=>p.potential >= trueOverall(p)-1)"), "新秀潛力≥現況（校準）");
 assert(g("S.draft.pool.every(p=>typeof p.scouted.bunting==='number' || p.isPitcher)"), "選秀觸擊評估");
@@ -4643,6 +4643,15 @@ __v60ListingTable=app.innerHTML.slice(__v60ListingTableStart,__v60ListingTableEn
 var __v60ListingPageTwoName=(__v60ListingTable.match(/<tr>\\s*<td>([\\s\\S]*?)<\\/td>/)||[])[1]||'';
 S=JSON.parse(__v60ListingSavedS);UI=JSON.parse(__v60ListingSavedUI);app.innerHTML=__v60ListingSavedHtml;`);
 assert(g("__v60ListingTotal > 8 && __v60ListingRows===8 && __v60ListingPageTwoRows===Math.min(8,__v60ListingTotal-8) && __v60ListingFirstName!==__v60ListingPageTwoName && __v60ListingNavVisible && __v60ListingActionCount===8 && __v60ListingMobileCards===8"), "v60-016 renderer 實際輸出每頁8人、翻頁換人、桌面操作與手機卡片資料均完整");
+g(`var __r084SavedS=JSON.stringify(S),__r084SavedUI=JSON.stringify(UI);
+ensureV43State();var __r084Buyer=Object.values(S.teams).find(t=>t.id!==S.userTeamId),__r084Target=S.teams[S.userTeamId].roster1[0];
+S.v43.offers.push({id:'r084-offer',buyerId:__r084Buyer.id,targetId:__r084Target,playerIds:[],cash:1000000,expiresDay:(S.currentDay||0)+3,status:'open'});
+UI.screen='listing';renderListingScreen();var __r084Html=app.innerHTML;
+var __r084Alert=__r084Html.includes('待回覆 1 份報價')&&__r084Html.includes('id="btn-listing-offers"')&&!__r084Html.includes('前往郵件或待辦接受／拒絕。');
+document.getElementById('btn-listing-offers').onclick();
+var __r084Reachable=UI.screen==='dashboard'&&UI.tabs.dash==='todo'&&app.innerHTML.includes('data-offerid="r084-offer"')&&S.v43.offers.find(o=>o.id==='r084-offer').status==='open';
+S=JSON.parse(__r084SavedS);UI=JSON.parse(__r084SavedUI);`);
+assert(g("__r084Alert&&__r084Reachable"), "r084 待回覆報價不重複提示，直達待辦可見該筆報價與接受／婉拒，導覽不改報價狀態");
 
 /* v60-017：財務赤字裁員名單分頁；精簡必要說明並以薪資比較條呈現候選差異。 */
 console.log("\n--- v60-017 財務裁員頁分頁與手機視覺化 ---");

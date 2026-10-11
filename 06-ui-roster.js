@@ -2669,8 +2669,9 @@ function renderGameModePick() {
       </div>
       <p class="v60-mode-pick-cost">放權：教練信任 +10；純 GM 接管：信任 -30，留下愛管現場的名聲。</p>
     </div>`;
-  document.getElementById("btn-mode-pure").onclick = () => pickGameMode("pure_gm");
-  document.getElementById("btn-mode-gmcoach").onclick = () => pickGameMode("gm_coach");
+  const startSelectedMode = mode => { pickGameMode(mode); proceedFromOffseasonSummary(); };
+  document.getElementById("btn-mode-pure").onclick = () => startSelectedMode("pure_gm");
+  document.getElementById("btn-mode-gmcoach").onclick = () => startSelectedMode("gm_coach");
 }
 
 // v41③：需求單卡（掛既有📋待辦分頁；郵件中樞完全體排 v43+）。open 卡帶 issuecard class → 紅點逐卡精確計數。
@@ -3127,8 +3128,8 @@ function renderListingScreen() {
       <div class="topbar"><div class="eyebrow">${team.name}</div><h1>掛牌交易市場</h1></div>
       ${renderRosterNav("listing")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      <p class="v60-state-line">可能收到現金、球員或混合報價（多換一／一換多）；到郵件或待辦決定接受或拒絕。掛牌不等於成交。</p>
-      ${openOffers.length > 0 ? `<div class="card issuecard"><div class="eyebrow">待回覆 ${openOffers.length} 份報價</div><p class="sub dark">前往郵件或待辦接受／拒絕。</p></div>` : ""}
+      <p class="v60-state-line">報價可含現金、球員或混合（多換一／一換多）；郵件或待辦回覆。掛牌不等於成交。</p>
+      ${openOffers.length > 0 ? `<div class="card issuecard v60-listing-offer-alert"><strong>待回覆 ${openOffers.length} 份報價</strong><button id="btn-listing-offers" class="btn-secondary" type="button">處理報價</button></div>` : ""}
       ${posFilterBarHtml(all, "listingPosFilter")}
       ${v60RosterPagerHtml(listingPage, "listingPage", "掛牌交易", listFiltered.length)}
       <table class="stattable v60-listing-table">
@@ -3142,6 +3143,8 @@ function renderListingScreen() {
     app.querySelectorAll(".v43-unlist-btn").forEach(b => { b.onclick = () => { const r = v43UnlistPlayer(b.dataset.id); UI.flash = r.msg; render(); }; });
     wirePosFilterButtons();
     wireV60RosterPager();
+    const offersButton = document.getElementById("btn-listing-offers");
+    if (offersButton) offersButton.onclick = () => { UI.tabs = UI.tabs || {}; UI.tabs.dash = "todo"; UI.screen = "dashboard"; render(); };
     document.getElementById("btn-back").onclick = () => { UI.screen = "dashboard"; render(); };
     if (typeof wireRosterNav === "function") wireRosterNav();
   } catch (e) {
