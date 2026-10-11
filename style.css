@@ -1837,5 +1837,8 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-want-player-metrics b{font-size:14px;}
 .v60-want-detail{min-height:44px;}
 .v60-want-market .v60-roster-pager button{min-height:44px}
+.v60-want-market .v60-want-pager{grid-template-columns:74px minmax(0,1fr) 74px;gap:6px;margin:6px 0 10px;padding:4px 6px;}
+.v60-want-market .v60-want-pager span{font-size:14px;color:#17385E;}
+.v60-want-market .v60-want-pager button{font-size:14px;padding:6px;}
 @media(max-width:720px){.v60-want-rule-strip{gap:4px;margin:6px 0;}.v60-want-rule-strip span{padding:6px;font-size:14px;line-height:1.2;}.v60-want-compare{grid-template-columns:1fr}}
 @media(max-width:360px){.v60-want-player-preview{grid-template-columns:1fr;}.v60-want-player-visual{justify-content:center;}.v60-want-player-visual .v48radar{width:84px;height:84px;flex-basis:84px;}.v60-want-player-info{display:flex;align-items:baseline;gap:4px 8px;flex-wrap:wrap;}}

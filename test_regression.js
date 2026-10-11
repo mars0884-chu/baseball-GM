@@ -5243,7 +5243,9 @@ var __r077Demand={id:'AUDIT_WANT',coachId:__r077WantCoach?__r077WantCoach.id:'au
 S.demands.push(__r077Demand);var __r077Post=v45PostWant(__r077Demand.id);
 UI.screen='wantMarket';renderWantMarket();
 var __r077WantValid=__r077Post.ok&&S.v45Wants[0]?.responses?.length>0&&UI.screen==='wantMarket'&&
- app.innerHTML.includes('<h1>求購市場</h1>')&&app.innerHTML.includes('v45-want-accept');
+ app.innerHTML.includes('<h1>求購市場</h1>')&&app.innerHTML.includes('v45-want-accept')&&
+ app.innerHTML.includes('教練需求 1／1')&&app.innerHTML.includes('球團報價 1／')&&
+ !app.innerHTML.includes('v60-want-rule-strip');
 var __r077WantInitial=__r077WantValid,__r077WantPerPage=true;
 var __r077WantOpen=S.v45Wants[0].responses.filter(r=>r.status==='open'),__r077WantBefore=JSON.stringify(S),__r077WantSeen=[];
 for(var __r077WantPage=0;__r077WantPage<__r077WantOpen.length;__r077WantPage++){

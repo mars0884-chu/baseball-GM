@@ -3241,6 +3241,13 @@ function v60WantPlayerPreview(p, scouted) {
     <div class="v60-want-player-metrics">${metrics.map(([label, value]) => `<span><small>${label}</small><b>${value}</b></span>`).join("")}</div>
   </article>`;
 }
+function v60WantPagerHtml(page, key, label) {
+  return `<nav class="v60-roster-pager v60-want-pager" role="group" aria-label="${label}分頁">
+    <button type="button" class="btn-outline roster-page-btn" data-page-key="${key}" data-page-step="-1" data-page-count="${page.pageCount}" aria-label="${label}上一頁" ${page.page === 0 ? "disabled" : ""}>上一頁</button>
+    <span>${label} ${page.page + 1}／${page.pageCount}</span>
+    <button type="button" class="btn-outline roster-page-btn" data-page-key="${key}" data-page-step="1" data-page-count="${page.pageCount}" aria-label="${label}下一頁" ${page.page === page.pageCount - 1 ? "disabled" : ""}>下一頁</button>
+  </nav>`;
+}
 function renderWantMarket() {
   try {
     if (typeof ensureV45WantState === "function") ensureV45WantState();
@@ -3251,10 +3258,10 @@ function renderWantMarket() {
       const openResp = (w.responses || []).filter(r => r.status === "open");
       const responsePage = v60RosterPageSlice(openResp, "wantResponsePage", 1);
       const body = w.status === "fulfilled"
-        ? `<p class="sub dark">${icon('check')} 已透過求購成交，補進了球員。</p>`
+        ? `<p class="sub dark">${icon('check')} 已成交・球員入隊</p>`
         : (openResp.length === 0
-          ? `<p class="draftnote muted">目前沒有球團願意割愛合適人選——這也向教練證明了你確實去找過人（若最終仍補不到，教練過期只會小幅扣信任）。</p>`
-          : `${v60RosterPagerHtml(responsePage, "wantResponsePage", "球團報價", openResp.length, "筆")}
+          ? `<p class="draftnote muted">暫無合適回覆；已提出求購，到期仍無人選僅小幅扣信任。</p>`
+          : `${v60WantPagerHtml(responsePage, "wantResponsePage", "球團報價")}
             ${responsePage.items.map(r => {
               const gp = S.players[r.aiPlayerId];
               const detail = UI.wantDetailRid === r.id;
@@ -3274,7 +3281,7 @@ function renderWantMarket() {
                 <div class="btnrow"><button class="btn-primary v45-want-accept" data-wid="${w.id}" data-rid="${r.id}">接受這筆求購</button></div>
               </div>`;
             }).join("")}
-            ${v60RosterPagerHtml(responsePage, "wantResponsePage", "球團報價", openResp.length, "筆")}`);
+            ${v60WantPagerHtml(responsePage, "wantResponsePage", "球團報價")}`);
       return `<div class="card">
         <div class="eyebrow">${icon('search')} 求購：${w.title}</div>
         ${body}
@@ -3285,8 +3292,7 @@ function renderWantMarket() {
       <div class="topbar"><div class="eyebrow">${S.leagueName}</div><h1>求購市場</h1></div>
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
       <div class="btnrow v60-want-back-row"><button id="btn-want-back" class="btn-outline">返回名單</button></div>
-      <div class="v60-want-rule-strip" aria-label="求購規則"><span><b>需求</b> 教練補強</span><span><b>報價</b> 球員／現金／混合／多換一</span><span><b>無回覆</b> 過期少扣信任</span></div>
-      ${wants.length === 0 ? `<div class="card"><p class="sub dark">目前沒有進行中的求購。到球員名單頁的教練需求卡，點「${icon('search')} 求購市場找人」即可張貼。</p></div>` : `${v60RosterPagerHtml(wantPage, "wantMarketPage", "教練需求", wants.length, "筆")}${wantPage.items.map(wantCard).join("")}${v60RosterPagerHtml(wantPage, "wantMarketPage", "教練需求", wants.length, "筆")}`}
+      ${wants.length === 0 ? `<div class="card"><p class="sub dark">目前沒有求購；到名單的教練需求卡張貼。</p></div>` : `${v60WantPagerHtml(wantPage, "wantMarketPage", "教練需求")}${wantPage.items.map(wantCard).join("")}${v60WantPagerHtml(wantPage, "wantMarketPage", "教練需求")}`}
     </div>`;
     UI.flash = null;
     wireV60RosterPager();
