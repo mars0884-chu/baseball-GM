@@ -1916,10 +1916,9 @@ function renderSpringCamp() {
           </optgroup>`).join("")}
         </select>
         ${v60VisualMetricRail([
-          ["費用", cost === 0 ? "免費" : formatMoney(cost)],
-          ["預算", formatMoney(team.finance.budget)],
           ["等級", `${nation.grade}級`],
-          ["專長", specLabels]
+          ["專長", specLabels],
+          ...(v60PreseasonWindow() ? [] : [["預算", formatMoney(team.finance.budget)]])
         ], "春訓地點摘要")}
       </div>
       <div class="tabrow">

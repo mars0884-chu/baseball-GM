@@ -4492,6 +4492,16 @@ assert(g("__v60NoMoveNote && __v60MoveNote"), "v60-r024 守備移防短註只在
 assert(v60CopyRotation.includes("依序輪值 · 至少1人 · 少人耗體快／多人間隔長") && v60CopyRotation.includes("第1順位優先救援") && !v60CopyRotation.includes("下一場比賽由輪值中的下一位投手登板"), "v60-011 輪值以短狀態列保留順位、至少一人與消耗取捨");
 assert(v60CopyCoaches.includes("專精→能力加成") && v60CopyCoaches.includes("總教練→全隊小幅加成") && v60CopyCoaches.includes("空缺／逾期未續→0加成") && !v60CopyCoaches.includes("約20%機率教練會帶有特殊能力"), "v60-011 教練頁以短狀態列保留效果與續約後果，移除版本沿革及機率冗述");
 assert(v60CopySpring.includes("現況／上限") && v60CopySpring.includes("aria-label=\"綜合能力 ${ovr}／天花板") && v60CopySpring.includes("單項上限") && !v60CopySpring.includes("成果報告可查"), "v60-011 春訓數值改用一次圖例、短標與可讀輔助標籤");
+g(`var __r098SavedS=JSON.stringify(S),__r098SavedUI=JSON.stringify(UI);
+newGame('春訓費用去重');pickTeam('T0');pickGameMode('gm_coach');S.gameStarted=true;prepareSpringCamp();UI.screen='springCamp';
+var __r098Foreign=NATIONS.find(n=>n.name!==HOME_NATION_NAME&&['S','A','B'].includes(n.grade)&&springCostForNation(n)>0);
+S.springCamp.nation=__r098Foreign.name;renderSpringCamp();
+var __r098Spring=!app.innerHTML.includes('>費用<')&&!app.innerHTML.includes('>預算<')&&
+  app.innerHTML.includes('確認出發春訓（支付 '+formatMoney(springCostForNation(__r098Foreign)*10000)+'）')&&
+  app.innerHTML.includes('>等級<')&&app.innerHTML.includes('>專長<');
+S.currentDay=1;renderSpringCamp();var __r098Later=app.innerHTML.includes('>預算<');
+S=JSON.parse(__r098SavedS);UI=JSON.parse(__r098SavedUI);`);
+assert(g("__r098Spring&&__r098Later"), "r098 春訓費用在海外出發鍵保留，春訓頁首已有預算時地點卡不重複；非開季窗口仍顯示預算");
 assert(v60CopyMarketing.includes("春訓可多選") && v60CopyMarketing.includes("年度活動") && !v60CopyMarketing.includes("點擊活動卡即可投入或取消") && !v60CopyMarketing.includes("（已投入）"), "v60-011 行銷頁移除按鈕已表達的重複操作文案");
 assert(v60PrepFinance.includes("預估虧損：調票價或重談轉播／贊助") && v60PrepFinance.includes("春訓限調1次") && v60PrepFinance.includes("漲價→進場率降") && v60PrepFinance.includes("春訓可簽；未簽採預設"), "v60-011 財務保留預估風險與下一步，以短狀態列呈現票價規則");
 assert(v60CopyFinanceOverview.includes("球迷壓力摘要") && v60CopyFinanceOverview.includes("認同・票贊／FA／主場") && v60CopyFinanceOverview.includes("素養${(S.fanDataLiteracy||8)>=50 ? \"・進階\""), "v60-011 財務以單一可視指標列呈現球迷數值與關鍵門檻");
