@@ -4738,6 +4738,7 @@ var __v60SpringCards=(app.innerHTML.match(/<article class="v60-spring-report-pla
 var __v60SpringFirstName=(__v60SpringTable.match(/<tr><td><b>([^<]+)/)||[])[1]||'';
 var __v60SpringFirstHasAllGains=app.innerHTML.includes('主練 球速 增加 4')&&app.innerHTML.includes('連動 球威 增加 2')&&app.innerHTML.includes('特性 抗壓 增加 1')&&app.innerHTML.includes('維持');
 var __v60SpringPager=app.innerHTML.includes('第 1/3 頁・共 11 人'),__v60SpringNoSave=JSON.stringify(S)===__v60SpringBefore;
+var __v60SpringCompact=app.innerHTML.includes('1軍・11人')&&app.innerHTML.includes('2軍・3人')&&app.innerHTML.includes('主練：主要提升・連動：相關能力・特性：額外提升')&&!app.innerHTML.includes('春訓成果判定')&&app.innerHTML.includes('btn-spring-report-back')&&app.innerHTML.includes('btn-spring-done');
 UI.springReportPage=1;renderSpringReport();__v60SpringTableStart=app.innerHTML.indexOf('<table class="stattable v60-spring-report-table">');__v60SpringTableEnd=app.innerHTML.indexOf('</table>',__v60SpringTableStart)+8;
 __v60SpringTable=app.innerHTML.slice(__v60SpringTableStart,__v60SpringTableEnd);var __v60SpringPageTwoRows=(__v60SpringTable.match(/<tr>/g)||[]).length-1;
 var __v60SpringPageTwoName=(__v60SpringTable.match(/<tr><td><b>([^<]+)/)||[])[1]||'';
@@ -4746,8 +4747,11 @@ __v60SpringTable=app.innerHTML.slice(__v60SpringTableStart,__v60SpringTableEnd);
 UI.springReportTab='2軍';UI.springReportPage=0;renderSpringReport();__v60SpringTableStart=app.innerHTML.indexOf('<table class="stattable v60-spring-report-table">');__v60SpringTableEnd=app.innerHTML.indexOf('</table>',__v60SpringTableStart)+8;
 __v60SpringTable=app.innerHTML.slice(__v60SpringTableStart,__v60SpringTableEnd);var __v60SpringSecondTeamRows=(__v60SpringTable.match(/<tr>/g)||[]).length-1;
 var __v60SpringSecondTeamCards=(app.innerHTML.match(/<article class="v60-spring-report-player">/g)||[]).length;
+S.springCamp.report.events=[{type:'homesick',text:'春訓事件測試'}];renderSpringReport();
+var __v60SpringEventKept=app.innerHTML.includes('春訓特殊事件・1件')&&app.innerHTML.includes('春訓事件測試');
 S=JSON.parse(__v60SpringSavedS);UI=JSON.parse(__v60SpringSavedUI);app.innerHTML=__v60SpringSavedHtml;`);
 assert(g("__v60SpringRows===4 && __v60SpringCards===4 && __v60SpringPager && __v60SpringFirstHasAllGains && __v60SpringNoSave && __v60SpringPageTwoRows===4 && __v60SpringPageThreeRows===3 && __v60SpringFirstName!==__v60SpringPageTwoName && __v60SpringSecondTeamRows===3 && __v60SpringSecondTeamCards===3"), "r057 renderer 保留主練／連動／特性精確成長、四人分頁、翻頁更換與軍別切換，且不改 S");
+assert(g("__v60SpringCompact && __v60SpringEventKept") && v60DashboardSource.includes('"springCamp", "springReport"') && v60StyleSource.includes('.v60-spring-report-screen .topbar #btn-spring-report-back'), "r094 春訓人數併入軍別分頁、特殊事件與分類圖例保留，返回鍵不浮蓋球員成果");
 assert(v60SpringReportSource.includes('v60-spring-report-facts') && v60SpringReportSource.includes('v60CompatArtDataUrl("spring_training_base_v58")') && v60StyleSource.includes('.v60-spring-report-gain{') && v60StyleSource.includes('font-size:14px;'), "r057 核准場景與地點費用並列，增幅文字至少 14px，不以裁切圖片或隱藏數據減量");
 
 /* v60-019／022：行銷比較矩陣保留；增設三案分頁，減少手機長捲動。 */
@@ -5061,11 +5065,11 @@ S=JSON.parse(__r063SavedS);UI=JSON.parse(__r063SavedUI);`);
 assert(g("__r063First&&__r063Retired&&__r063Stable"), "r063 年度結算與退休球員分區，兩人分頁及留任／指派教練操作保留，重畫不改存檔");
 const r063Dash = fs.readFileSync("05-ui-dashboard.js", "utf8");
 const r063Css = fs.readFileSync("style.css", "utf8");
-assert(r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp"].includes(UI.screen)') && r063Css.includes('.v60-offseason-summary-tabs .uitab-btn{min-width:0;min-height:48px;'), "r063 休賽季長頁的固定前進鈕不遮蓋結算，兩頁籤保留手機觸控尺寸");
+assert(r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp", "springReport"].includes(UI.screen)') && r063Css.includes('.v60-offseason-summary-tabs .uitab-btn{min-width:0;min-height:48px;'), "r063/r094 休賽季與春訓成果的返回鈕不遮蓋內容，兩頁籤保留手機觸控尺寸");
 
 console.log("\n--- r064 球場建造每頁兩項與返回鈕不遮擋 ---");
 assert(fs.readFileSync("02-finance.js", "utf8").includes('v60RosterPageSlice(STADIUM_FACILITY_TYPES, "facilityBuildPage", 2)') &&
-  r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp"].includes(UI.screen)'),
+  r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp", "springReport"].includes(UI.screen)'),
   "r064 球場建造候選仍完整分頁，硬體頁返回鈕不浮在設施效果與費用上方");
 
 console.log("\n--- r065 選秀兩人共通評估去重 ---");
@@ -5084,7 +5088,7 @@ assert((v60FinanceCutsSource.match(/v60RosterPagerHtml\(page, "financeCutsPage"/
   v60FinanceCutsSource.indexOf('class="v60-finance-cut-actions"') < v60FinanceCutsSource.indexOf('posFilterBarHtml(list, "financeCutsPosFilter")') &&
   v60FinanceCutsSource.includes('id="btn-cuts-override"') && !v60FinanceCutsSource.includes('id="btn-cuts-continue"') &&
   v60FinanceSource.includes('if (team.finance.payroll <= avgPayroll * 1.15) { proceedFromFinanceCuts(); return; }') &&
-  r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp"].includes(UI.screen)') &&
+  r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp", "springReport"].includes(UI.screen)') &&
   v60StyleSource.includes('.v60-finance-cut-actions button{min-height:48px;'),
   "r066 四人分頁上下皆可翻；薪資達標自動銜接，另保留一個明確承擔風險決策且不遮球員卡");
 
@@ -5096,7 +5100,7 @@ for(var __r067Page=0;__r067Page<__r067Pages;__r067Page++){UI.springPage=__r067Pa
 var __r067Stable=JSON.stringify(S)===__r067Before,__r067All=__r067Ids.length===S.teams[S.userTeamId].roster1.length&&new Set(__r067Ids).size===__r067Ids.length;
 UI.springPage=0;renderSpringCamp();var __r067Controls=(app.innerHTML.match(/class="v60-choice-pager"/g)||[]).length===2&&(app.innerHTML.match(/class="sortselect spring-menu-select"/g)||[]).length===4&&!!document.getElementById('btn-spring-go').onclick&&app.innerHTML.indexOf('id="btn-spring-go"')<app.innerHTML.indexOf('<table class="stattable">');
 S=JSON.parse(__r067SavedS);UI=JSON.parse(__r067SavedUI);`);
-assert(g("__r067Stable&&__r067All&&__r067Controls") && r063Dash.includes('"financeCuts", "springCamp"].includes(UI.screen)'), "r067 春訓一軍四人短頁可完整翻完，名單前出發操作可用且渲染不改存檔");
+assert(g("__r067Stable&&__r067All&&__r067Controls") && r063Dash.includes('"financeCuts", "springCamp", "springReport"].includes(UI.screen)'), "r067 春訓一軍四人短頁可完整翻完，名單前出發操作可用且渲染不改存檔");
 
 console.log("\n--- r069 選秀雙人逐項能力共享比較 ---");
 g(`var __r069Before=JSON.stringify(S),__r069OldUi=JSON.stringify(UI);

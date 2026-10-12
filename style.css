@@ -1684,6 +1684,11 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 
 /* v60-r028 春訓成果：手機以逐人變化卡與增幅條替代表格窄欄；桌面保留表格。 */
 .v60-spring-report-cards{display:none;}
+.v60-spring-report-screen .topbar{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.v60-spring-report-screen .topbar>div{min-width:0;flex:1 1 auto}
+.v60-spring-report-screen .topbar h1{font-size:clamp(20px,5.8vw,30px);line-height:1.25}
+.v60-spring-report-screen .topbar #btn-spring-report-back{flex:0 0 auto;width:auto;min-width:88px;min-height:44px;padding:8px 10px}
+.v60-spring-report-legend{margin:7px 0;color:#36577F;font-size:14px;line-height:1.45}
 .v60-spring-report-scene.v60-visual-scene{grid-template-columns:160px minmax(0,1fr);align-items:center;gap:12px;padding:8px;}
 .v60-spring-report-scene .v60-visual-scene-art{min-height:0;height:154px;}
 .v60-spring-report-scene .v60-visual-scene-art img{height:150px;max-height:150px;object-fit:contain;padding:3px;}

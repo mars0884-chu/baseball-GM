@@ -238,7 +238,7 @@ function v60MarkStickyScreenAction() {
   // 解職頁有多重決策；休賽季與硬體頁已有頁首導覽，避免頁末操作浮在內容上方。
   if (UI.screen === "agency") return; // 人脈卡與情蒐資訊須完整可見，返回鍵維持頁尾。
   if (UI.screen === "listing") return; // 四人短頁的返回鍵在頁尾，不覆蓋下方球員卡。
-  if (["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp"].includes(UI.screen)
+  if (["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp", "springReport"].includes(UI.screen)
     || ["wantMarket", "draftRecap"].includes(UI.screen)) return;
   const appRoot = document.getElementById("app");
   if (!appRoot || !appRoot.querySelector) return;
@@ -2007,22 +2007,22 @@ function renderSpringReport() {
   const pager = v60RosterPagerHtml(page, "springReportPage", "春訓成果", lines.length);
   const springArtSrc = v60CompatArtDataUrl("spring_training_base_v58");
   app.innerHTML = `
-    <div class="wrap">
-      <div class="topbar"><div class="eyebrow">${S.leagueName} ・ 第${S.seasonYear}年</div><h1>春訓成果報告</h1></div>
+    <div class="wrap v60-spring-report-screen">
+      <div class="topbar"><div><div class="eyebrow">${S.leagueName} ・ 第${S.seasonYear}年</div><h1>春訓成果報告</h1></div><button id="btn-spring-report-back" class="btn-outline">回主控台</button></div>
       <section class="v60-visual-scene v60-spring-report-scene" aria-label="春訓地點與花費">
         ${springArtSrc ? `<div class="v60-visual-scene-art"><img src="${springArtSrc}" alt="春訓基地場景" ${v60CompatArtImageAttrs("spring_training_base_v58", "eager", false)}></div>` : ""}
         <div class="v60-spring-report-facts"><span>春訓地點</span><strong>${r.nation}（${r.grade}級）</strong><span>花費</span><strong>${r.cost === 0 ? "免費（母國）" : formatMoney(r.cost)}</strong></div>
       </section>
-      <div class="v60-spring-report-metrics">${v60VisualMetricRail([["1軍", `${allLines.filter(l => l.level === "1軍").length} 人`], ["2軍", `${allLines.filter(l => l.level === "2軍").length} 人`], ["事件", `${(r.events || []).length} 件`]], "春訓成果摘要")}</div>
       ${r.events && r.events.length > 0 ? `
       <div class="card">
-        <div class="eyebrow">春訓特殊事件</div>
+        <div class="eyebrow">春訓特殊事件・${r.events.length}件</div>
         ${r.events.map(ev => `<p class="sub dark" style="margin:6px 0;">${["homesick", "overtrain"].includes(ev.type) ? ""+icon('warn')+"" : ""+icon('sparkle')+""} ${ev.text}</p>`).join("")}
       </div>` : ""}
       <div class="tabrow">
-        <button class="tab ${UI.springReportTab === "1軍" ? "active" : ""}" data-tab="1軍">1軍成果</button>
-        <button class="tab ${UI.springReportTab === "2軍" ? "active" : ""}" data-tab="2軍">2軍成果</button>
+        <button class="tab ${UI.springReportTab === "1軍" ? "active" : ""}" data-tab="1軍">1軍・${allLines.filter(l => l.level === "1軍").length}人</button>
+        <button class="tab ${UI.springReportTab === "2軍" ? "active" : ""}" data-tab="2軍">2軍・${allLines.filter(l => l.level === "2軍").length}人</button>
       </div>
+      <p class="v60-spring-report-legend" aria-label="春訓成效分類：主練為主要提升；連動為相關能力；特性為額外提升">主練：主要提升・連動：相關能力・特性：額外提升</p>
       ${pager}
       <table class="stattable v60-spring-report-table">
         <thead><tr><th>球員</th><th>春訓項目</th><th>成效</th></tr></thead>
@@ -2032,16 +2032,17 @@ function renderSpringReport() {
         ${mobileCards || `<div class="spring-empty-state">目前沒有成果</div>`}
       </div>
       ${pager}
-      <div class="v60-spring-report-metrics">${v60VisualMetricRail([["主練", "主要提升"], ["連動", "相關能力"], ["特性", "額外提升"]], "春訓成果判定")}</div>
       <div class="btnrow"><button id="btn-spring-done" class="btn-secondary">回主控台</button></div>
     </div>`;
   app.querySelectorAll(".tab").forEach(btn => { btn.onclick = () => { UI.springReportPage = 0; UI.springReportTab = btn.dataset.tab; render(); }; });
   wireV60RosterPager();
-  document.getElementById("btn-spring-done").onclick = () => {
+  const leaveReport = () => {
     UI.screen = "dashboard";
     persist();
     render();
   };
+  document.getElementById("btn-spring-report-back").onclick = leaveReport;
+  document.getElementById("btn-spring-done").onclick = leaveReport;
 }
 
 /* ---------- v31-B 季後自主訓練/傳承報告畫面 ---------- */
