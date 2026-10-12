@@ -620,8 +620,8 @@ function renderFacilities() {
       <p class="v60-state-line">年度維護 ${formatMoney(eff.maintenance)}${eff.aged > 0 ? `・${icon('warn')} ${eff.aged} 座老舊` : ""}</p>
       ${eff.aged > 0 ? `<p class="v60-state-line">${icon('warn')} 老舊效果減半；可重建恢復，每休賽季限 1 座。</p>` : ""}
       ${stadiumPanel === "build" ? `
-      <div class="divlabel">已建設施${canUpgrade ? "" : "・春訓可改建"}</div>
-      ${built.length === 0 ? `<p class="v60-state-line">尚無設施</p>` : `
+      <div class="divlabel">已建設施${built.length === 0 ? "・尚無" : canUpgrade ? "" : "・春訓可改建"}</div>
+      ${built.length === 0 ? "" : `
       <table class="stattable">
         <thead><tr><th>設施</th><th>屋齡</th><th>效果</th><th>年維護費</th><th></th></tr></thead>
         <tbody>${built.map((k, i) => {
@@ -636,7 +636,7 @@ function renderFacilities() {
         }).join("")}</tbody>
       </table>
       <p class="v60-state-line">拆除退回 ${Math.round(STADIUM_DEMOLISH_REFUND * 100)}%；重建費為建設費 ${Math.round(STADIUM_REBUILD_COST * 100)}%。</p>`}
-      <div class="divlabel">建造設施・效果可疊加</div>
+      <div class="divlabel">建造・效果可疊加</div>
       ${built.length >= slotMax ? `<p class="sub dark">格位已滿：升級球場等級可獲得更多格位。</p>` : ""}
       ${(() => {
         const page = v60RosterPageSlice(STADIUM_FACILITY_TYPES, "facilityBuildPage", 2);
@@ -775,7 +775,7 @@ function renderFacilities() {
         <button type="button" class="tab stadium-subtab ${stadiumPanel === "levels" ? "active" : ""}" role="tab" aria-selected="${stadiumPanel === "levels"}" data-stadium-panel="levels">球場等級</button>
       </div>` : ""}
       ${v57Visual}
-      <p class="v60-state-line">${canUpgrade ? "春訓可操作" : "球季鎖定"}・預算 ${formatMoney(team.finance.budget)}</p>
+      ${typeof v60PreseasonWindow === "function" && v60PreseasonWindow() ? "" : `<p class="v60-state-line">${canUpgrade ? "春訓可操作" : "球季鎖定"}・預算 ${formatMoney(team.finance.budget)}</p>`}
       ${body}
       ${typeof v60PreseasonMissingStep === "function" && v60PreseasonMissingStep() === "facilities" ? '<div class="btnrow"><button id="btn-facilities-finish" class="btn-primary">完成硬體檢查，前往名單</button></div>' : ""}
       <div class="btnrow"><button id="btn-back" class="btn-secondary">返回主控台</button></div>

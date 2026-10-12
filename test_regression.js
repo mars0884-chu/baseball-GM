@@ -5071,6 +5071,13 @@ console.log("\n--- r064 球場建造每頁兩項與返回鈕不遮擋 ---");
 assert(fs.readFileSync("02-finance.js", "utf8").includes('v60RosterPageSlice(STADIUM_FACILITY_TYPES, "facilityBuildPage", 2)') &&
   r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp", "springReport"].includes(UI.screen)'),
   "r064 球場建造候選仍完整分頁，硬體頁返回鈕不浮在設施效果與費用上方");
+g(`var __r096SavedS=JSON.stringify(S),__r096SavedUI=JSON.stringify(UI);
+newGame('硬體摘要去重');pickTeam('T0');pickGameMode('gm_coach');S.gameStarted=true;prepareSpringCamp();
+UI.screen='facilities';UI.facilityTab='球場';UI.facilityStadiumPanel='build';render();
+var __r096Preseason=!app.innerHTML.includes('春訓可操作・預算')&&app.innerHTML.includes('已建設施・尚無')&&app.innerHTML.includes('建造・效果可疊加')&&app.innerHTML.includes('年度維護');
+S.currentDay=1;render();var __r096InSeason=app.innerHTML.includes('球季鎖定・預算')&&app.innerHTML.includes('已建設施・尚無');
+S=JSON.parse(__r096SavedS);UI=JSON.parse(__r096SavedUI);`);
+assert(g("__r096Preseason&&__r096InSeason"), "r096 春訓頁預算與操作窗口不重複；球季中仍顯示鎖定與預算，設施效果與建造保留");
 
 console.log("\n--- r065 選秀兩人共通評估去重 ---");
 g(`var __r065SavedS=JSON.stringify(S),__r065SavedUI=JSON.stringify(UI);
