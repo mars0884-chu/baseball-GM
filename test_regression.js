@@ -4496,7 +4496,14 @@ assert(v60CopyMarketing.includes("春訓可多選") && v60CopyMarketing.includes
 assert(v60PrepFinance.includes("預估虧損：調票價或重談轉播／贊助") && v60PrepFinance.includes("春訓限調1次") && v60PrepFinance.includes("漲價→進場率降") && v60PrepFinance.includes("春訓可簽；未簽採預設"), "v60-011 財務保留預估風險與下一步，以短狀態列呈現票價規則");
 assert(v60CopyFinanceOverview.includes("球迷壓力摘要") && v60CopyFinanceOverview.includes("認同・票贊／FA／主場") && v60CopyFinanceOverview.includes("素養${(S.fanDataLiteracy||8)>=50 ? \"・進階\""), "v60-011 財務以單一可視指標列呈現球迷數值與關鍵門檻");
 assert(!v60CopyFinanceOverview.includes("老闆耐心乘數") && !v60CopyFinanceOverview.includes("球迷三維度（他們不下令，但他們施壓）") && v60CopyFinanceOverview.includes("球迷記憶"), "v60-011 財務移除同值重複列表、保留獨有交易記憶");
-assert(v60CopyDashboardHero.includes("<span>目前 Lv.${currentLevel}</span>") && !v60CopyDashboardHero.includes("HOME STADIUM") && v60CopyDashboardHero.includes("<strong>${labels[currentLevel] || \"主場球場\"}</strong>"), "v60-011 主畫面球場主視覺移除重複場名，保留等級與球場名稱");
+assert(v60CopyDashboardHero.includes("<h2>主場球場・Lv.${currentLevel}</h2>") && !v60CopyDashboardHero.includes("STADIUM VISUAL・DASHBOARD") && v60CopyDashboardHero.includes("<strong>${labels[currentLevel] || \"主場球場\"}</strong>"), "r097 主畫面球場主視覺移除英文裝飾字並合併等級，保留球場名稱");
+g(`var __r097SavedDay=S.currentDay,__r097SavedScreen=UI.screen;
+S.currentDay=0;UI.screen='dashboard';var __r097SpringHero=v57DashboardHero(S.teams[S.userTeamId]);
+S.currentDay=1;var __r097SeasonHero=v57DashboardHero(S.teams[S.userTeamId]);
+var __r097Safe=!__r097SpringHero.includes('預算')&&__r097SpringHero.includes('容量')&&__r097SpringHero.includes('格位')&&
+  __r097SpringHero.includes('已達成')&&__r097SpringHero.includes('未解鎖')&&__r097SeasonHero.includes('預算');
+S.currentDay=__r097SavedDay;UI.screen=__r097SavedScreen;`);
+assert(g("__r097Safe"), "r097 春訓主視覺不重複頁首預算；球季中仍有預算，容量格位及升級狀態皆保留");
 const v60ScenarioHtml = g("dealScenarioTable({label:'標準',base:50000,winBonusPer10:1000,playoffBonus:3000})");
 assert(v60ScenarioHtml.includes("勝率45%・無季後賽") && v60ScenarioHtml.includes("勝率55%・無季後賽") && v60ScenarioHtml.includes("勝率65%・含季後賽") && v60ScenarioHtml.includes('role="list"') && (v60ScenarioHtml.match(/role="listitem" aria-label=/g) || []).length === 3, "v60-011 合約情境以共用欄名搭配三筆有完整輔助標籤的金額");
 assert(v60PrepFinance.includes("v60-deal-scenario-key") && v60PrepFinance.includes("45%・無季後") && v60PrepFinance.includes("55%・無季後") && v60PrepFinance.includes("65%・含季後"), "v60-011 合約頁只顯示一次三種試算情境定義");

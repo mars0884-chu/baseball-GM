@@ -185,16 +185,16 @@ function v57DashboardHero(team) {
   const anchors = [1, 3, 5, 7];
   const stageRail = anchors.map(function (level) {
     const reached = currentLevel >= level;
-    return `<span class="v60-stadium-stage ${reached ? "reached" : "locked"}"><b>Lv${level}</b>${labels[level]}</span>`;
+    return `<span class="v60-stadium-stage ${reached ? "reached" : "locked"}" aria-label="Lv${level} ${labels[level]}・${reached ? "已達成" : "未解鎖"}"><b>Lv${level}</b>${labels[level]}</span>`;
   }).join("");
   return `<section class="v57-dashboard-hero" data-v57-dashboard-hero="true" aria-label="球場升級計畫">
-    <div class="v57-dashboard-hero-heading"><span class="v57-facility-kicker">STADIUM VISUAL・DASHBOARD</span><h2>主場球場</h2><span>目前 Lv.${currentLevel}</span></div>
+    <div class="v57-dashboard-hero-heading"><h2>主場球場・Lv.${currentLevel}</h2></div>
     <div class="v60-dashboard-featured">
     <div class="v60-dashboard-featured-art">${src ? `<img src="${src}" alt="Lv${currentLevel} ${labels[currentLevel] || "主場球場"}" data-v60-art-source="approved-stadium-png" ${v60CompatArtImageAttrs(profile.artKey, "eager", true)}>` : `<div class="v57-dashboard-art-missing">素材未載入</div>`}</div>
       <div class="v60-dashboard-featured-copy"><strong>${labels[currentLevel] || "主場球場"}</strong>${v60VisualMetricRail([
         ["容量", facility ? `${facility.capacity.toLocaleString()} 人` : "—"],
         ["格位", slots != null && built != null ? `${built}/${slots}` : "—"],
-        ["預算", team.finance ? formatMoney(team.finance.budget) : "—"]
+        ...(typeof v60PreseasonWindow === "function" && v60PreseasonWindow() ? [] : [["預算", team.finance ? formatMoney(team.finance.budget) : "—"]])
       ], "主場關鍵資訊")}<button id="btn-dashboard-facilities" class="btn-secondary" type="button">查看球場硬體建設</button></div>
     </div>
     <div class="v60-stadium-rail" aria-label="球場升級階段">${stageRail}</div>
