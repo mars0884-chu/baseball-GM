@@ -1511,7 +1511,7 @@ function renderDraft() {
         <div class="v60-draft-context-main"><strong>第 ${round} 輪・第 ${pickNo} 順位</strong><button id="btn-skip-pick" class="btn-outline" type="button">放棄順位</button></div>
         <div class="v60-draft-context-meta"><span>${S.teams[S.userTeamId].name}</span><span>球探 ${scout ? scout.name : "空缺・盲評"}・準度 ${draftEffAcc}</span></div>
       </section>
-      <p class="v60-state-line">球探估值有誤差・獨家新秀僅你可選</p>
+      <p class="v60-state-line">估值有誤差・獨家僅你可選</p>
       ${posFilterBarHtml(d.pool, "draftPosFilter")}
       <select id="sort-draft" class="sortselect">
         <option value="default" ${sortKey === "default" ? "selected" : ""}>依現在能力評等排序</option>
@@ -1519,7 +1519,7 @@ function renderDraft() {
         <option value="ceiling" ${sortKey === "ceiling" ? "selected" : ""}>依天花板評等排序</option>
       </select>
       ${pager}
-      ${sharedDraftConfidence ? `<p class="v60-state-line" aria-label="本頁共通球探信心">兩人共通・${v60DraftConfidenceShort(sharedDraftConfidence)}</p>` : ""}
+      ${sharedDraftConfidence ? `<p class="v60-state-line" aria-label="本頁共通球探信心">共通：${v60DraftConfidenceShort(sharedDraftConfidence)}</p>` : ""}
       ${visibleDraft.length ? "" : '<p class="draftnote">此分類沒有待選球員。</p>'}
       ${visibleDraft.map(p => `
         <div class="card draftcard">
@@ -1528,6 +1528,7 @@ function renderDraft() {
             <div>
               <div class="draftname">${p.name}${p.exclusive ? `<span class="exclusivetag">獨家情報</span>` : ""}</div>
               <div class="draftmeta">${p.isPitcher ? "投手" : "野手"} ・ ${p.age}歲 ・ ${p.isPitcher ? p.throws + "投" : p.bats + "打／" + p.throws + "投"}</div>
+              <div class="draftmeta v60-draft-profile">${p.isPitcher ? `${p.role}・${p.archetype}・${p.pitches ? p.pitches.length : "?"}球路` : `${POS_LABEL[p.positions[0].pos]}・${p.archetype}`}</div>
             </div>
             <button class="pickbtn" data-id="${p.id}">選他</button>
           </div>
@@ -1538,13 +1539,9 @@ function renderDraft() {
               <div class="v60-draft-evaluation ceiling"><span>未來天花板</span><strong><span class="gradebadge grade-${p.scoutedCeiling}">${p.scoutedCeiling}</span> ${p.scoutedCeilingVal != null ? `約 ${p.scoutedCeilingVal}` : "—"}</strong>${v60DraftDevelopmentNote(p, "future")}</div>
             </div>
           </div>
-          <div class="draftmeta" style="margin-bottom:6px;">
-            ${p.isPitcher ? `角色傾向：${p.role}` : `主守位：${POS_LABEL[p.positions[0].pos]}`}　球風：${p.archetype}
-          </div>
-          ${p.isPitcher ? `<div class="draftnote muted">${p.pitches ? p.pitches.length : "?"} 種球路</div>` : ""}
           ${sharedDraftConfidence ? "" : `<div class="draftnote muted">${v60DraftConfidenceShort(p.scoutConfidence)}</div>`}
         </div>`).join("")}
-      ${visibleDraft.length ? `<div class="card v60-draft-shared-compare"><div class="eyebrow">逐項能力・雙人對照</div><div class="v60-radar-legend" aria-label="雷達色彩說明"><span class="v60-radar-key current">現況</span><span class="v60-radar-key ceiling">預估天花板</span></div>${v60DraftComparisonHtml(visibleDraft, draftEffAcc)}</div>` : ""}
+      ${visibleDraft.length ? `<div class="card v60-draft-shared-compare"><div class="eyebrow">雙人能力對照</div><div class="v60-radar-legend" aria-label="雷達色彩說明"><span class="v60-radar-key current">現況</span><span class="v60-radar-key ceiling">預估天花板</span></div>${v60DraftComparisonHtml(visibleDraft, draftEffAcc)}</div>` : ""}
       ${pager}
     </div>`;
   app.querySelectorAll("[data-draft-page]").forEach(btn => {

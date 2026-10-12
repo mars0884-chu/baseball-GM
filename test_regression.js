@@ -5077,11 +5077,17 @@ g(`var __r065SavedS=JSON.stringify(S),__r065SavedUI=JSON.stringify(UI);
 S.draft=null;UI.screen='draft';UI.draftSort='default';UI.draftPosFilter='all';UI.draftPage=0;UI.draftPageKey=null;
 startDraft();var __r065Sorted=S.draft.pool.slice().sort(DRAFT_SORTS.default);
 __r065Sorted[0].scoutConfidence='共通信心測試';__r065Sorted[1].scoutConfidence='共通信心測試';renderDraft();
-var __r065Common=app.innerHTML.includes('兩人共通・共通信心測試')&&(app.innerHTML.match(/共通信心測試/g)||[]).length===1;
+var __r065Common=app.innerHTML.includes('共通：共通信心測試')&&(app.innerHTML.match(/共通信心測試/g)||[]).length===1;
 __r065Sorted[1].scoutConfidence='不同信心測試';renderDraft();
-var __r065Distinct=!app.innerHTML.includes('兩人共通・')&&(app.innerHTML.match(/共通信心測試/g)||[]).length===1&&(app.innerHTML.match(/不同信心測試/g)||[]).length===1;
+var __r065Distinct=!app.innerHTML.includes('共通：')&&(app.innerHTML.match(/共通信心測試/g)||[]).length===1&&(app.innerHTML.match(/不同信心測試/g)||[]).length===1;
 S=JSON.parse(__r065SavedS);UI=JSON.parse(__r065SavedUI);`);
 assert(g("__r065Common&&__r065Distinct"), "r065 選秀雙人同評估只顯示一次，評估不同仍各自完整顯示");
+assert(v60RosterSource.includes('class="draftmeta v60-draft-profile"') &&
+  v60RosterSource.includes('${p.role}・${p.archetype}・${p.pitches ? p.pitches.length : "?"}球路') &&
+  v60RosterSource.includes('${POS_LABEL[p.positions[0].pos]}・${p.archetype}') &&
+  !v60RosterSource.includes('角色傾向：${p.role}') &&
+  v60RosterSource.includes('雙人能力對照'),
+  "r095 選秀候選保留角色、球風、球路與守位，合併至肖像摘要且保留雙人比較");
 
 console.log("\n--- r066 財務裁員短頁與決策鈕位置 ---");
 assert((v60FinanceCutsSource.match(/v60RosterPagerHtml\(page, "financeCutsPage"/g) || []).length === 2 &&
