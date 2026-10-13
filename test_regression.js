@@ -4921,6 +4921,7 @@ assert(v60PrepRoster.includes('else v60AdvanceAfterDraftAction();') && !v60PrepR
 console.log("\n--- r052 交易規則集中與選秀權雙側分頁 ---");
 g(`var __r052SavedS=JSON.stringify(S),__r052SavedUI=JSON.stringify(UI);
 newGame('交易閱讀測試');pickTeam('T0');pickGameMode('gm_coach');S.gameStarted=true;openTradeBuilder('T1');
+UI.tradeStage='give';render();var __r052MineHtml=app.innerHTML;
 UI.tradeStage='picks';UI.tradePicksSide='give';render();var __r052GiveHtml=app.innerHTML;
 UI.tradePicksSide='get';render();var __r052GetHtml=app.innerHTML;
 UI.tradeStage='get';render();var __r052ScoutHtml=app.innerHTML;
@@ -4929,6 +4930,7 @@ S=JSON.parse(__r052SavedS);UI=JSON.parse(__r052SavedUI);`);
 assert(g("(__r052GiveHtml.match(/class=\"give-pick-check\"/g)||[]).length===6 && !__r052GiveHtml.includes('class=\"get-pick-check\"') && (__r052GetHtml.match(/class=\"get-pick-check\"/g)||[]).length===6 && !__r052GetHtml.includes('class=\"give-pick-check\"')"), "r052 選秀權分頁每次僅呈現一側六筆，兩側皆可到達");
 assert(g("__r052GiveHtml.includes('本屆＋後2年・各6輪') && __r052GiveHtml.includes('原隊戰績差→順位前、估值高') && __r052GetHtml.includes('持有者選人') && __r052ScoutHtml.includes('守位') && __r052ScoutHtml.includes('球探估值') && __r052TermsHtml.includes('現金計入估值') && __r052TermsHtml.includes('v43-cash-give') && __r052TermsHtml.includes('btn-submit-trade')"), "r052 精簡後仍保留選秀權、球探估值、現金與交易提交規則及操作");
 assert(g("__r052GiveHtml.includes('v60-trade-opponent-summary')&&__r052GetHtml.includes('v60-trade-opponent-summary')&&__r052ScoutHtml.includes('v60-trade-opponent-summary')&&!__r052ScoutHtml.includes('v60-trade-opponent-review')&&__r052TermsHtml.includes('v60-trade-opponent-review')&&__r052TermsHtml.includes('他們記得：')===__r052ScoutHtml.includes('有過往互動')"), "r090 選人時保留對手風格與交情摘要，完整背景與互動在送出前確認頁呈現");
+assert(g("__r052MineHtml.includes('自家能力為真值')&&__r052MineHtml.includes('可交易球員')&&!__r052MineHtml.includes('真實完整資料）')&&__r052ScoutHtml.includes('守位</b>公開真值')&&__r052ScoutHtml.includes('能力／潛力</b>為球探估值・準度隨球探提升')&&!__r052ScoutHtml.includes('交易球探評估完整資料）')&&__r052ScoutHtml.includes('可交易球員')&&__r052GetHtml.includes('持有者選人')&&__r052TermsHtml.includes('現金條件・可留 0')"), "r101 交易四步保留真值／估值、選秀權與現金規則；重複頁籤標題不再占手機高度");
 
 console.log("\n--- r053 開季逐站守門與首頁更新 ---");
 g(`var __r053SavedS=JSON.stringify(S),__r053SavedUI=JSON.stringify(UI);

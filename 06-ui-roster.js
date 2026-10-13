@@ -2971,27 +2971,26 @@ function renderTradeBuilderV43() {
         ["picks", `選秀權・${givePicks.length + getPicks.length}`], ["terms", "現金／確認"]
       ].map(([key, label]) => `<button type="button" class="tab v60-trade-stage ${tradeStage === key ? "active" : ""}" data-trade-stage="${key}" aria-current="${tradeStage === key ? "step" : "false"}">${label}</button>`).join("")}</nav>
 
-      ${tradeStage === "give" ? `<div class="divlabel">你提供（${teamA.name}・真實完整資料）</div>
+      ${tradeStage === "give" ? `<p class="v60-trade-guidance">自家能力為真值</p>
       ${posFilterBarHtml(myPlayers, "tradeGivePosFilter")}
       ${v60RosterPagerHtml(myPage, "tradeGivePage", "我方球員", myFiltered.length, "人")}
-      <table class="stattable v43tradetable">
+      <table class="stattable v43tradetable" aria-label="${teamA.name}可交易球員">
         <thead><tr><th></th><th>姓名</th><th>層級</th><th>型</th><th>守位</th><th>年齡</th><th>年薪</th><th>合約</th></tr></thead>
         <tbody>${myPage.items.map(rowMine).join("")}</tbody>
       </table>
       ${selectedMineCards ? `<div class="divlabel small">已選送出（完整資料）</div>${selectedMineCards}` : ""}` : ""}
 
-      ${tradeStage === "get" ? `<div class="divlabel">你想要（${teamB.name}・交易球探評估完整資料）</div>
-      <p class="v60-trade-guidance"><b>守位</b>：公開真值　｜　<b>能力／潛力</b>：球探估值（準確度越高越準）</p>
+      ${tradeStage === "get" ? `<p class="v60-trade-guidance"><b>守位</b>公開真值｜<b>能力／潛力</b>為球探估值・準度隨球探提升</p>
       ${posFilterBarHtml(theirPlayers, "tradeGetPosFilter")}
       ${v60RosterPagerHtml(theirPage, "tradeGetPage", "對方球員", theirFiltered.length, "人")}
-      <table class="stattable v43tradetable">
+      <table class="stattable v43tradetable" aria-label="${teamB.name}可交易球員">
         <thead><tr><th></th><th>姓名</th><th>層級</th><th>型</th><th>守位</th><th>年齡</th><th>年薪</th><th>合約</th></tr></thead>
         <tbody>${theirPage.items.map(rowTheir).join("")}</tbody>
       </table>
       ${selectedTheirCards ? `<div class="divlabel small">已選取得（球探評估完整資料）</div>${selectedTheirCards}` : ""}` : ""}
 
       ${tradeStage === "terms" ? `<div class="card v43cashcard">
-        <div class="eyebrow">${icon('money')} 現金條件（可自由填，也可留 0）</div>
+        <div class="eyebrow">${icon('money')} 現金條件・可留 0</div>
         <div class="v43cashinputrow">
           <label>你附帶送出現金：</label>
           <input type="number" id="v43-cash-give" min="0" step="100000" value="${UI.tradeCashGive}" class="v43cashinput">
@@ -3005,12 +3004,12 @@ function renderTradeBuilderV43() {
         <p class="v60-trade-guidance">現金計入估值；球員、選秀權與現金可混搭。</p>
       </div>` : ""}
 
-      ${tradeStage === "picks" ? `<div class="divlabel v60-trade-pick-rules">選秀權 <span>本屆＋後2年・各6輪｜原隊戰績差→順位前、估值高｜持有者選人</span></div>
+      ${tradeStage === "picks" ? `<div class="divlabel v60-trade-pick-rules" aria-label="選秀權規則"><span>本屆＋後2年・各6輪｜原隊戰績差→順位前、估值高｜持有者選人</span></div>
       <div class="v60-trade-pick-sides" role="tablist" aria-label="選秀權所屬球隊">
         <button type="button" class="tab ${pickSide === "give" ? "active" : ""}" data-trade-pick-side="give" role="tab" aria-selected="${pickSide === "give"}">我方・${myPicks.length}</button>
         <button type="button" class="tab ${pickSide === "get" ? "active" : ""}" data-trade-pick-side="get" role="tab" aria-selected="${pickSide === "get"}">對方・${theirPicks.length}</button>
       </div>
-      ${pickSide === "give" ? `<div class="divlabel small">${teamA.name}</div>${v60RosterPagerHtml(myPickPage, "tradeGivePickPage", "我方選秀權", myPicks.length, "筆")}${pickTableHtml(myPicks, "give", myPickPage)}` : `<div class="divlabel small">${teamB.name}</div>${v60RosterPagerHtml(theirPickPage, "tradeGetPickPage", "對方選秀權", theirPicks.length, "筆")}${pickTableHtml(theirPicks, "get", theirPickPage)}`}` : ""}
+      ${pickSide === "give" ? `${v60RosterPagerHtml(myPickPage, "tradeGivePickPage", "我方選秀權", myPicks.length, "筆")}${pickTableHtml(myPicks, "give", myPickPage)}` : `${v60RosterPagerHtml(theirPickPage, "tradeGetPickPage", "對方選秀權", theirPicks.length, "筆")}${pickTableHtml(theirPicks, "get", theirPickPage)}`}` : ""}
 
       ${tradeStage === "terms" ? `<div class="card v60-trade-review" aria-label="交易組合確認">
         <div class="eyebrow">送出前核對</div>
