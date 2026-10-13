@@ -19,7 +19,7 @@ const chk = (c, n) => { if (!c) { fails++; console.log("✗", n); } };
 g("newGame('純GM')"); g("pickTeam('T0')"); // v491：只傳 GM 名，再選隊
 chk(g("UI.screen==='gameModePick'"), "開局進入身分模式選擇");
 g("pickGameMode('pure_gm')");
-chk(g("S.gameMode==='pure_gm' && UI.screen==='offseasonSummary'"), "選定純GM模式後回到休賽季摘要");
+chk(g("S.gameMode==='pure_gm' && UI.screen==='draft' && S.draft.active"), "選定純GM模式後自動進入選秀，無須再按下一步");
 g("proceedFromOffseasonSummary(); confirmSkipAllRemaining(); beginFirstSeason(); V60_PRESEASON_STEPS.forEach(k=>v60PreseasonCompleteStep(k)); setSpringNation(HOME_NATION_NAME); executeSpringCamp(); UI.screen='dashboard';");
 
 let takeoverDrilled = false;

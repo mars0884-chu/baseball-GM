@@ -1451,6 +1451,8 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .spring-empty-state{padding:24px 10px!important;text-align:center!important;color:#4A6386!important;}
 .v60-sticky-actions{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom));z-index:30;margin:12px -8px 0;padding:8px 8px calc(8px + env(safe-area-inset-bottom));border:1px solid #B7D3F5;border-radius:12px;background:rgba(234,245,255,.95);box-shadow:0 -5px 18px rgba(20,60,255,.12);backdrop-filter:blur(7px);}
 .v60-sticky-actions button{min-height:48px;}
+.v60-finance-topbar{align-items:center;gap:8px;}
+.v60-finance-topbar #btn-finance-top-back{width:auto;min-width:68px;min-height:44px;padding:8px 10px;flex:0 0 auto;white-space:nowrap;}
 .v60-renewal-screen{padding-bottom:calc(126px + env(safe-area-inset-bottom));}
 .v60-director-renewal{padding:12px;}
 .v60-director-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;color:#36577F;font-size:14px;}

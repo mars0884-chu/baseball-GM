@@ -1767,7 +1767,7 @@ function canManualLineup() {
   if (S.gameMode === undefined) return true; // 舊檔尚未遷移前不擋（開機防護）
   return S.gameMode === "gm_coach" || !!S.takeover;
 }
-// 開局模式選擇（gameModePick 畫面按鈕呼叫）：選完回到休賽季摘要，流程與 v40 完全相同
+// 開局模式選擇完成後直接進入第一個未完成關卡；年度摘要可從關卡返回查看。
 function pickGameMode(mode) {
   ensureV41();
   S.gameMode = mode === "pure_gm" ? "pure_gm" : "gm_coach";
@@ -1777,9 +1777,8 @@ function pickGameMode(mode) {
     if (S.gameMode === "pure_gm") team.lineupMode = "coach"; // 純GM：排線鐵定在教練手上
   }
   chronicle("mode", S.gameMode === "pure_gm" ? "以「純GM」身分接掌兵符：現場全權交給總教練" : "以「GM兼教練」身分接掌兵符：親自盯場");
-  UI.screen = "offseasonSummary";
   persist();
-  render();
+  v60PreseasonGoNext();
 }
 // 放權（不對稱切換的正面方向）：免費、正面事件，GM兼教練 → 純GM
 function delegateLineup() {

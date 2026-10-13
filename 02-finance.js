@@ -2791,8 +2791,7 @@ function renderFinance() {
     const curKey = cur && typeof cur === "object" ? cur.key : null;
     const label = kind === "broadcast" ? "轉播" : "贊助";
     return `
-      <div class="divlabel">${label}合約</div>
-      <p class="v60-state-line">${canChangeTicket ? "春訓可簽；未簽採預設。" : `本季${label}已鎖定。`}</p>
+      ${canChangeTicket && typeof v60PreseasonMissingStep === "function" && v60PreseasonMissingStep() === "deals" ? "" : `<p class="v60-state-line">${canChangeTicket ? "春訓可簽；未簽採預設。" : `本季${label}已鎖定。`}</p>`}
       <div class="v60-deal-terms-key" role="group" aria-label="合約條款欄位"><span>保證金</span><span>戰績分潤</span><span>季後賽</span></div>
       ${offers.map(o => `
         <div class="card dealcard v60-deal-compact ${curKey === o.key ? "dealchosen" : ""}">
@@ -2839,7 +2838,7 @@ function renderFinance() {
       `;
   app.innerHTML = `
     <div class="wrap">
-      <div class="topbar"><div class="eyebrow">${team.name} ・ ${cal.dateLabel}</div><h1>財務</h1></div>
+      <div class="topbar v60-finance-topbar"><div><div class="eyebrow">${team.name} ・ ${cal.dateLabel}</div><h1>財務</h1></div><button id="btn-finance-top-back" class="btn-outline" type="button">返回</button></div>
       ${renderRosterNav("finance")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
       ${uiTabs("finance", [
@@ -2858,7 +2857,9 @@ function renderFinance() {
   app.querySelectorAll(".deal-btn").forEach(btn => {
     btn.onclick = () => chooseDeal(btn.dataset.kind, Number(btn.dataset.id));
   });
-  document.getElementById("btn-back").onclick = () => { UI.screen = "dashboard"; render(); };
+  const returnToDashboard = () => { UI.screen = "dashboard"; render(); };
+  document.getElementById("btn-finance-top-back").onclick = returnToDashboard;
+  document.getElementById("btn-back").onclick = returnToDashboard;
   wireRosterNav();
 }
 

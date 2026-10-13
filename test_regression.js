@@ -4585,6 +4585,14 @@ assert(v60FinanceSource.includes("const renderDealGroup = kind =>") && v60Financ
 assert(v60FinanceDealsSource.includes('key: "broadcast", label: "轉播合約"') && v60FinanceDealsSource.includes('key: "sponsor", label: "贊助合約"'), "v60-013 兩種合約入口均可辨識");
 assert(v60FinanceDealsSource.includes("team.finance.broadcastOffers") && v60FinanceDealsSource.includes("team.finance.sponsorOffers") && v60FinanceDealsSource.includes("dealScenarioTable(o)"), "v60-013 六種方案、條款與三情境試算仍完整輸出");
 assert(v60FinanceDealsSource.includes('class="btn-secondary deal-btn v60-deal-sign"') && v60FinanceDealsSource.includes('aria-label="${curKey === o.key ? `本季已簽${o.label}` : `簽下${o.label}`}"') && v60FinanceDealsSource.includes('>${curKey === o.key ? "已簽" : "簽約"}</button>') && v60FinanceSource.includes("chooseDeal(btn.dataset.kind"), "v60-013 簽約按鈕文字精簡但仍有方案專屬無障礙名稱並沿用原交易流程");
+assert(!v60FinanceDealsSource.includes('<div class="divlabel">${label}合約</div>') &&
+  v60FinanceDealsSource.includes('v60PreseasonMissingStep() === "deals"') &&
+  v60FinanceSource.includes('id="btn-finance-top-back"') &&
+  v60FinanceSource.includes('document.getElementById("btn-finance-top-back").onclick = returnToDashboard') &&
+  v60FinanceSource.includes('document.getElementById("btn-back").onclick = returnToDashboard') &&
+  v60StyleSource.includes('.v60-finance-topbar #btn-finance-top-back{width:auto;min-width:68px;min-height:44px') &&
+  v60PrepDash.includes('"facilities", "finance", "financeCuts"'),
+  "r099 財務合約去除頁籤重複標題，開季預設收入不重複；頁首與頁尾返回均可用且不浮在方案上");
 assert(v60StyleSource.includes(".v60-deal-terms-key") && v60StyleSource.includes(".v60-deal-sign{flex:0 0 auto;width:auto") && v60StyleSource.includes("min-height:44px;margin:0"), "v60-013 條款欄名共用且手機簽約按鈕不滿版並保留觸控高度");
 const v60StandingsSource = v60RosterSource.slice(v60RosterSource.indexOf("function renderStandings"), v60RosterSource.indexOf("// v25排序全面升級"));
 assert(v60StandingsSource.includes('label: "分組戰績"') && v60StandingsSource.includes('label: "打者排行"') && v60StandingsSource.includes('label: "投手排行"') && !v60StandingsSource.includes("先選聯盟，再選分組戰績"), "v60-013 戰績榜保留明確分頁並移除重複操作說明");
@@ -4904,7 +4912,7 @@ newGame('裁員未達標測試');pickTeam('T0');pickGameMode('gm_coach');__r057T
 S.forcedCutRequired=true;S.pendingContractRenewals=[];UI.screen='financeCuts';
 __r057Team.roster1.concat(__r057Team.roster2).forEach(function(id){S.players[id].salary=100000000;});refreshPayroll(__r057Team,S.players);
 cutPlayerForFinance(__r057Team.roster1[0]);
-var __r057StillBlocked=S.forcedCutRequired&&UI.screen==='financeCuts'&&!S.draft;
+var __r057StillBlocked=S.forcedCutRequired&&UI.screen==='financeCuts'&&S.draft&&S.draft.active;
 S=JSON.parse(__r057SavedS);UI=JSON.parse(__r057SavedUI);`);
 assert(g("__r057HealthyAdvanced"), "r057 裁員後薪資達標即自動進選秀，無需再按下一步");
 assert(g("__r057StillBlocked"), "r057 薪資未達標時仍留在裁員關卡，不可自動跳到選秀或春訓");
@@ -4924,7 +4932,7 @@ assert(g("__r052GiveHtml.includes('v60-trade-opponent-summary')&&__r052GetHtml.i
 
 console.log("\n--- r053 開季逐站守門與首頁更新 ---");
 g(`var __r053SavedS=JSON.stringify(S),__r053SavedUI=JSON.stringify(UI);
-newGame('逐站守門測試');pickTeam('T0');pickGameMode('gm_coach');
+newGame('逐站守門測試');pickTeam('T0');pickGameMode('gm_coach');S.draft=null;
 S.gameStarted=true;S.currentDay=0;prepareSpringCamp();
 S.preseasonReview={year:S.seasonYear,teamId:S.userTeamId,steps:{}};
 var __r053Blocked=[];var __r053Transitions=[];
@@ -4992,7 +5000,7 @@ assert(r056Offseason.includes('UI.offseasonRetiredYear !== S.seasonYear') && r05
 
 console.log("\n--- r058 分析主管報價定案與現約新約比較 ---");
 g(`var __r058SavedS=JSON.stringify(S),__r058SavedUI=JSON.stringify(UI),__r058OldRandom=Math.random;
-newGame('主管續約測試');pickTeam('T0');pickGameMode('gm_coach');S.gameStarted=true;
+newGame('主管續約測試');pickTeam('T0');pickGameMode('gm_coach');S.draft=null;S.gameStarted=true;
 var __r058Team=S.teams[S.userTeamId];__r058Team.analysisDirector=v55GenerateAnalysisDirector(__r058Team.id);
 __r058Team.analysisDirector.contractYears=1;v55ProcessAnalysisDirectorContract(__r058Team);
 var __r058Offer=JSON.stringify(__r058Team.analysisDirector.renewalOffer),__r058OfferValid=S.v55PendingDirectorRenewal&&
@@ -5020,7 +5028,7 @@ assert(r058Director.includes('v60-director-terms') && r058Director.includes('現
 
 console.log("\n--- r059 未完成開季準備不可從賽程入口跳至開季 ---");
 g(`var __r059SavedS=JSON.stringify(S),__r059SavedUI=JSON.stringify(UI);
-newGame('開季入口守門測試');pickTeam('T0');pickGameMode('gm_coach');S.gameStarted=true;S.currentDay=0;prepareSpringCamp();
+newGame('開季入口守門測試');pickTeam('T0');pickGameMode('gm_coach');S.draft=null;S.gameStarted=true;S.currentDay=0;prepareSpringCamp();
 S.preseasonReview={year:S.seasonYear,teamId:S.userTeamId,steps:{}};
 var __r059Budget=S.teams[S.userTeamId].finance.budget,__r059Results=S.resultsLog.length;
 doSimulateDay();var __r059DayBlocked=S.currentDay===0&&S.resultsLog.length===__r059Results&&S.teams[S.userTeamId].finance.budget===__r059Budget&&UI.screen==='finance'&&UI.tabs.finance==='deals';
@@ -5082,11 +5090,11 @@ S=JSON.parse(__r063SavedS);UI=JSON.parse(__r063SavedUI);`);
 assert(g("__r063First&&__r063Retired&&__r063Stable"), "r063 年度結算與退休球員分區，兩人分頁及留任／指派教練操作保留，重畫不改存檔");
 const r063Dash = fs.readFileSync("05-ui-dashboard.js", "utf8");
 const r063Css = fs.readFileSync("style.css", "utf8");
-assert(r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp", "springReport"].includes(UI.screen)') && r063Css.includes('.v60-offseason-summary-tabs .uitab-btn{min-width:0;min-height:48px;'), "r063/r094 休賽季與春訓成果的返回鈕不遮蓋內容，兩頁籤保留手機觸控尺寸");
+assert(r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "finance", "financeCuts", "springCamp", "springReport"].includes(UI.screen)') && r063Css.includes('.v60-offseason-summary-tabs .uitab-btn{min-width:0;min-height:48px;'), "r063/r099 休賽季、財務與春訓成果的返回鈕不遮蓋內容，兩頁籤保留手機觸控尺寸");
 
 console.log("\n--- r064 球場建造每頁兩項與返回鈕不遮擋 ---");
 assert(fs.readFileSync("02-finance.js", "utf8").includes('v60RosterPageSlice(STADIUM_FACILITY_TYPES, "facilityBuildPage", 2)') &&
-  r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp", "springReport"].includes(UI.screen)'),
+  r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "finance", "financeCuts", "springCamp", "springReport"].includes(UI.screen)'),
   "r064 球場建造候選仍完整分頁，硬體頁返回鈕不浮在設施效果與費用上方");
 g(`var __r096SavedS=JSON.stringify(S),__r096SavedUI=JSON.stringify(UI);
 newGame('硬體摘要去重');pickTeam('T0');pickGameMode('gm_coach');S.gameStarted=true;prepareSpringCamp();
@@ -5118,7 +5126,7 @@ assert((v60FinanceCutsSource.match(/v60RosterPagerHtml\(page, "financeCutsPage"/
   v60FinanceCutsSource.indexOf('class="v60-finance-cut-actions"') < v60FinanceCutsSource.indexOf('posFilterBarHtml(list, "financeCutsPosFilter")') &&
   v60FinanceCutsSource.includes('id="btn-cuts-override"') && !v60FinanceCutsSource.includes('id="btn-cuts-continue"') &&
   v60FinanceSource.includes('if (team.finance.payroll <= avgPayroll * 1.15) { proceedFromFinanceCuts(); return; }') &&
-  r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "financeCuts", "springCamp", "springReport"].includes(UI.screen)') &&
+  r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "finance", "financeCuts", "springCamp", "springReport"].includes(UI.screen)') &&
   v60StyleSource.includes('.v60-finance-cut-actions button{min-height:48px;'),
   "r066 四人分頁上下皆可翻；薪資達標自動銜接，另保留一個明確承擔風險決策且不遮球員卡");
 
