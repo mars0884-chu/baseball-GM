@@ -81,7 +81,7 @@ if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
   assert(v59SingleFileSource.includes("function v59TextDisclosure") && v59SingleFileSource.includes("function v59VisualScene"), "v59 single-file embeds text-density renderer");
 } else {
   assert((v59SingleFileSource.match(/<script defer src="0[0-6]-[^\"]+\.js\?v=/g) || []).length === 7, "v59 public shell loads the seven ordered modular scripts");
-  assert(/style\.css\?v=v60-r0\d+-[a-z-]+/.test(v59SingleFileSource) && !v59SingleFileSource.includes("BULLPEN_TABS"), "公開殼層使用修訂版快取鍵且不重複內嵌模組來源");
+  assert(/style\.css\?v=v60-r\d{3,}-[a-z-]+/.test(v59SingleFileSource) && !v59SingleFileSource.includes("BULLPEN_TABS"), "公開殼層使用修訂版快取鍵且不重複內嵌模組來源");
 }
 
 /* ---------- v60-001 視覺恢復候選 ---------- */
@@ -121,7 +121,7 @@ assert(v60FinanceSource.indexOf("renderCdActivitiesCard()") >= 0 && (v60FinanceS
 const v60NewsRendererSource = v60DashboardSource.slice(v60DashboardSource.indexOf("function renderNewsCard"), v60DashboardSource.indexOf("function renderSponsorMissionCard"));
 assert((v60NewsRendererSource.indexOf('v60VisualScene("newsroom_v58"') >= 0 || v60NewsRendererSource.indexOf('v60CompatVisualScene("newsroom_v58"') >= 0) && v60DashboardSource.indexOf('!app.querySelector(".v58-news-scene")') < 0 && v60NewsRendererSource.indexOf('v56ContentSummary("news"') < 0 && v60NewsRendererSource.indexOf("icon('news')") < 0, "v60 新聞 renderer 僅保留完整 PNG，不再輸出新聞 SVG");
 assert(v60DashboardSource.indexOf('__v60PublicArtPaths') >= 0 && v60DashboardSource.indexOf('v60CompatArtFallbackUrl') >= 0 && v60DashboardSource.indexOf('safeLoading') >= 0 && v60DashboardSource.indexOf('fetchpriority="high"') >= 0, "v60 公開版外部核准圖片路徑、PNG fallback 與 lazy loading 已接入");
-const v60PublicCacheKey = (v59SingleFileSource.match(/style\.css\?v=(v60-r0\d+-[a-z-]+)/) || [])[1];
+const v60PublicCacheKey = (v59SingleFileSource.match(/style\.css\?v=(v60-r\d{3,}-[a-z-]+)/) || [])[1];
 assert(!!v60PublicCacheKey && v60SwSource.includes('baseballgm-' + v60PublicCacheKey) && v60SwSource.includes('?v=' + v60PublicCacheKey) && (v59SingleFileSource.match(new RegExp('\\?v=' + v60PublicCacheKey, 'g')) || []).length >= 10, "公開殼層與 Service Worker 使用同一修訂版快取鍵");
 assert(v60DashboardSource.includes('v60CompatArtImageAttrs(key, "eager", false)') && v60DashboardSource.includes('window.requestAnimationFrame(kick)') && v60DashboardSource.includes('img.loading = "lazy";\n        img.loading = "eager";') && v60DashboardSource.includes('v60KickRenderedSceneImages(); return r;'), "動態插入場景圖後下一幀觸發載入，確保瀏覽器啟動請求");
 assert(v60DashboardSource.includes('__v60CurrentScreen !== v60LastRenderedScreen') && v60DashboardSource.includes('window.scrollTo(0, 0)'), "切換新畫面先回到頁首，避免沿用舊長頁捲動位置");
@@ -4619,14 +4619,14 @@ for(var i=0;i<11;i++){
   if(__v60RosterBatterSeed){var bid='__v60_roster_b_'+i;S.players[bid]={...__v60RosterBatterSeed,id:bid,name:'分頁測試野手'+i,injury:null};__v60RosterSyntheticIds.push(bid);}
 }
 __v60RosterTeam.roster1=__v60RosterSyntheticIds; UI.rosterTab='1軍';UI.rosterPosFilter='all';UI.pitcherSort='default';UI.batterSort='default';UI.rosterPitcherPage=0;UI.rosterBatterPage=0;
-renderRoster();var __v60RosterTableStart=app.innerHTML.indexOf('<table class="stattable">'),__v60RosterTableEnd=app.innerHTML.indexOf('</table>',__v60RosterTableStart)+8;
+renderRoster();var __v60RosterTableStart=app.innerHTML.indexOf('<table class="stattable" aria-label="投手名單">'),__v60RosterTableEnd=app.innerHTML.indexOf('</table>',__v60RosterTableStart)+8;
 var __v60RosterFirstTable=app.innerHTML.slice(__v60RosterTableStart,__v60RosterTableEnd),__v60RosterPageOneIds=__v60RosterFirstTable.split('<tr data-id="').slice(1).map(x=>x.split('"')[0]);
 var __v60RosterHasPageNav=app.innerHTML.includes('data-page-total="2"')&&app.innerHTML.includes('第 1/2 頁・共 11 人')&&app.innerHTML.includes('投手 <span>11</span>')&&app.innerHTML.includes('野手 <span>11</span>')&&!app.innerHTML.includes('data-id="__v60_roster_b_');
-UI.rosterPitcherPage=1;renderRoster();__v60RosterTableStart=app.innerHTML.indexOf('<table class="stattable">');__v60RosterTableEnd=app.innerHTML.indexOf('</table>',__v60RosterTableStart)+8;
+UI.rosterPitcherPage=1;renderRoster();__v60RosterTableStart=app.innerHTML.indexOf('<table class="stattable" aria-label="投手名單">');__v60RosterTableEnd=app.innerHTML.indexOf('</table>',__v60RosterTableStart)+8;
 __v60RosterFirstTable=app.innerHTML.slice(__v60RosterTableStart,__v60RosterTableEnd);var __v60RosterPageTwoIds=__v60RosterFirstTable.split('<tr data-id="').slice(1).map(x=>x.split('"')[0]);
 var __v60RosterPaginationWorks=__v60RosterPageOneIds.length===8&&__v60RosterPageTwoIds.length===3&&__v60RosterPageOneIds[0]!==__v60RosterPageTwoIds[0]&&app.innerHTML.includes('第 2/2 頁・共 11 人');
 UI.rosterGroup='batters';UI.rosterBatterPage=0;UI.rosterPosFilter='all';renderRoster();var __v60RosterBatterHtml=app.innerHTML;
-var __v60RosterBatterTableStart=__v60RosterBatterHtml.indexOf('<table class="stattable">'),__v60RosterBatterTableEnd=__v60RosterBatterHtml.indexOf('</table>',__v60RosterBatterTableStart)+8;
+var __v60RosterBatterTableStart=__v60RosterBatterHtml.indexOf('<table class="stattable" aria-label="野手名單">'),__v60RosterBatterTableEnd=__v60RosterBatterHtml.indexOf('</table>',__v60RosterBatterTableStart)+8;
 var __v60RosterBatterRows=(__v60RosterBatterHtml.slice(__v60RosterBatterTableStart,__v60RosterBatterTableEnd).match(/<tr data-id=/g)||[]).length;
 var __v60RosterBatterSide=__v60RosterBatterHtml.includes('aria-selected="true" data-roster-group="batters"')&&__v60RosterBatterHtml.includes('全部<span class="pos-count">11</span>')&&!__v60RosterBatterHtml.includes('data-filterval="P"')&&!__v60RosterBatterHtml.includes('data-id="__v60_roster_p_');
 UI.rosterBatterPage=1;renderRoster();var __v60RosterBatterPageTwo=app.innerHTML.includes('第 2/2 頁・共 11 人')&&((app.innerHTML.match(/<tr data-id=/g)||[]).length===3);
@@ -5164,13 +5164,18 @@ UI.screen='roster';UI.rosterTab='育成';UI.rosterGroup='pitchers';
 var __r071Team=S.teams[S.userTeamId];__r071Team.devPolicyPitcher='balanced';__r071Team.devPolicyBatter='balanced';
 renderRoster();var __r071Same=app.innerHTML;
 var __r071Nav=__r071Same.includes('育成（')||__r071Same.includes('育成 (');
-var __r071Once=__r071Same.split('全屬性同步成長').length===2;
+var __r071Visual=__r071Same.includes('全項 ×0.8')&&__r071Same.includes('主項 ×1.0–1.2')&&!__r071Same.includes('全屬性同步成長')&&
+  !__r071Same.includes('<div class="divlabel">投手（')&&__r071Same.includes('aria-label="投手名單"');
 var __r071Controls=!!document.getElementById('v54-dev-policy-pitcher').onchange&&!!document.getElementById('v54-dev-policy-batter').onchange&&!!document.getElementById('btn-back').onclick;
 __r071Team.devPolicyBatter='power';renderRoster();var __r071Different=app.innerHTML;
 var __r071Descriptions=__r071Different.includes(V54_DEV_POLICIES.balanced.desc)&&__r071Different.includes(V54_DEV_POLICIES.power.desc);
+__r071Team.devPolicyPitcher='mental';__r071Team.devPolicyBatter='mental';renderRoster();var __r071Special=app.innerHTML;
+var __r071SpecialOnce=__r071Special.split(V54_DEV_POLICIES.mental.desc).length===2;
+UI.rosterGroup='batters';renderRoster();var __r071Batters=app.innerHTML;
+var __r071BatterNav=__r071Batters.includes('data-roster-group="batters"')&&!__r071Batters.includes('<div class="divlabel">野手（')&&__r071Batters.includes('aria-label="野手名單"');
 document.getElementById('btn-back').onclick();var __r071Back=UI.screen==='dashboard';
 S=JSON.parse(__r071SavedS);UI=JSON.parse(__r071SavedUI);`);
-assert(g("__r071Nav&&__r071Once&&__r071Controls&&__r071Descriptions&&__r071Back") && fs.readFileSync('style.css','utf8').includes('.v60-dev-policy-selects{'), "r071 育成導覽正確、同方針描述只顯示一次、不同方針說明與雙下拉及返回保留");
+assert(g("__r071Nav&&__r071Visual&&__r071Controls&&__r071Descriptions&&__r071SpecialOnce&&__r071BatterNav&&__r071Back") && fs.readFileSync('style.css','utf8').includes('.v60-dev-policy-selects{'), "r100 育成預設規則由倍率比較卡承載，投打標題不重複；非預設說明、雙方針操作與返回均保留");
 
 console.log("\n--- r072 選秀跳過順位的兩種後果 ---");
 g(`var __r072SavedS=JSON.stringify(S),__r072SavedUI=JSON.stringify(UI);

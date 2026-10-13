@@ -1850,7 +1850,6 @@ function renderRoster() {
           return keys.map(function(k) {
             var pol = policyOpts[k];
             var lbl = (pol && pol.label) ? pol.label : k;
-            var desc = (pol && pol.desc) ? " — " + pol.desc : "";
             var mulNote = k === "balanced" ? "（×0.8）" : "";
             return '<option value="' + k + '"' + (k === cur ? ' selected' : '') + '>' + lbl + mulNote + '</option>';
           }).join("");
@@ -1868,14 +1867,14 @@ function renderRoster() {
               ${!sharedPolicyDesc && curPolBObj.desc ? `<span class="v60-dev-policy-desc">${curPolBObj.desc}</span>` : ""}
             </label>
           </div>
-          ${sharedPolicyDesc && curPolPObj.desc ? `<p class="draftnote muted v60-dev-policy-desc">投手／野手共通・${curPolPObj.desc}</p>` : ""}
+          ${sharedPolicyDesc && curPolicyP !== "balanced" && curPolPObj.desc ? `<p class="draftnote muted v60-dev-policy-desc">投手／野手共通・${curPolPObj.desc}</p>` : ""}
           <div class="v60-dev-policy-compare" role="group" aria-label="育成方針成長倍率比較">
             <div><span>均衡・非保底</span><strong>全項 ×0.8</strong></div>
             <div><span>專項</span><strong>主項 ×1.0–1.2<br>副項 ×0.5–0.7</strong></div>
           </div>
         </div>`;
       })() : ""}
-      ${showPitchers ? `<div class="divlabel">投手（${pitchers.length}）</div>
+      ${showPitchers ? `
       <div class="btnrow" style="align-items:center;">
         <select id="sort-pitcher" class="sortselect" style="flex:1;">
           <option value="default" ${(!UI.pitcherSort || UI.pitcherSort === "default") ? "selected" : ""}>預設排序</option>
@@ -1890,14 +1889,14 @@ function renderRoster() {
         ${sortDirButtonHtml("pitcherSortDir")}
       </div>
       ${v60RosterPagerHtml(pitcherPage, "rosterPitcherPage", "投手", pitchers.length)}
-      <div class="v60-roster-table-wrap"><table class="stattable">
+      <div class="v60-roster-table-wrap"><table class="stattable" aria-label="投手名單">
         <thead><tr><th>姓名</th><th>狀況</th><th>年齡</th><th>角色</th><th>先發位置</th><th>球速(km/h)</th><th>控球</th><th>體力</th><th>疲勞</th><th>抗壓</th><th></th></tr></thead>
         <tbody>
           ${pitcherPage.items.map(p => `<tr data-id="${p.id}"><td class="rowlink" data-id="${p.id}">${nameWithDutyTag(p)}</td><td>${conditionTagHtml(p)}</td><td>${p.age}</td><td>${p.role}</td><td>${UI.rosterTab === "1軍" ? pitcherRoleTag(team, p) : "－"}</td><td>${velocityKmh(p.velocity)}</td><td>${p.control}</td><td>${p.stamina}</td><td>${fatigueOf(p) > 70 ? `<b style="color:#c0392b;">${fatigueOf(p)}</b>` : fatigueOf(p)}</td><td>${p.composure}</td><td><button class="movebtn" data-id="${p.id}">${actionLabel}</button></td></tr>`).join("")}
         </tbody>
       </table></div><div class="v60-roster-mobile-cards" aria-label="投手名單">${pitcherPage.items.map(rosterCard).join("")}</div>
       <div class="v60-roster-bottom-pager">${v60RosterPagerHtml(pitcherPage, "rosterPitcherPage", "投手", pitchers.length)}</div>` : ""}
-      ${showBatters ? `<div class="divlabel">野手（${filteredBatters.length}）</div>
+      ${showBatters ? `
       <div class="btnrow" style="align-items:center;">
         <select id="sort-batter" class="sortselect" style="flex:1;">
           <option value="default" ${(!UI.batterSort || UI.batterSort === "default") ? "selected" : ""}>預設排序</option>
@@ -1914,7 +1913,7 @@ function renderRoster() {
         ${sortDirButtonHtml("batterSortDir")}
       </div>
       ${v60RosterPagerHtml(batterPage, "rosterBatterPage", "野手", filteredBatters.length)}
-      <div class="v60-roster-table-wrap"><table class="stattable">
+      <div class="v60-roster-table-wrap"><table class="stattable" aria-label="野手名單">
         <thead><tr><th>姓名</th><th>狀況</th><th>年齡</th><th>守位</th><th>先發</th><th>接觸</th><th>長打</th><th>選球</th><th>觸擊</th><th>速度</th><th>守備%</th><th></th></tr></thead>
         <tbody>
           ${batterPage.items.map(p => `<tr data-id="${p.id}"><td class="rowlink" data-id="${p.id}">${nameWithDutyTag(p)}</td><td>${conditionTagHtml(p)}</td><td>${p.age}</td><td>${p.positions.map(x => POS_LABEL[x.pos]).join("/")}</td><td>${UI.rosterTab === "1軍" ? batterLineupTag(team, p) : "－"}</td><td>${p.contact}</td><td>${p.power}</td><td>${p.eye}</td><td>${p.bunting || "-"}</td><td>${p.speed}</td><td>${p.fielding}</td><td><button class="movebtn" data-id="${p.id}">${actionLabel}</button></td></tr>`).join("")}
