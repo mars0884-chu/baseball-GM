@@ -4949,6 +4949,18 @@ V60_PRESEASON_STEPS.forEach(function(key){
 var __r053Arrived=UI.screen==='springCamp'&&!S.springCamp.executed;
 S=JSON.parse(__r053SavedS);UI=JSON.parse(__r053SavedUI);`);
 assert(g("__r053Blocked.every(Boolean)&&__r053Transitions.every(Boolean)&&__r053Arrived"), "r053 每項完成後直接進下一站；漏掉任一項不能執行春訓或扣款");
+g(`var __r102SavedS=JSON.stringify(S),__r102SavedUI=JSON.stringify(UI);
+newGame('春訓完成但準備漏項測試');pickTeam('T0');pickGameMode('gm_coach');
+S.draft=null;S.gameStarted=true;S.currentDay=0;prepareSpringCamp();
+S.springCamp.executed=true;S.springCampDoneYear=S.seasonYear;
+S.preseasonReview={year:S.seasonYear,teamId:S.userTeamId,steps:{deals:true,ticket:true,marketing:false,facilities:true,roster:true}};
+var __r102Missing=v60PreseasonMissingStep()==='marketing'&&v60PreseasonNextStage().screen==='marketing';
+v60PreseasonGoNext();var __r102Routed=UI.screen==='marketing'&&S.currentDay===0;
+var __r102Blocked=v60RequirePreseasonBeforeSimulation()&&UI.screen==='marketing'&&S.currentDay===0;
+v60PreseasonCompleteStep('marketing');
+var __r102AutoNext=UI.screen==='dashboard'&&S.currentDay===0&&v60PreseasonMissingStep()===null;
+S=JSON.parse(__r102SavedS);UI=JSON.parse(__r102SavedUI);`);
+assert(g("__r102Missing&&__r102Routed&&__r102Blocked&&__r102AutoNext"), "r102 春訓完成標記不能蓋過開季漏項；補完決策自動返回可開季狀態，賽日不偷跑");
 g(`var __r076GateSavedS=JSON.stringify(S),__r076GateSavedUI=JSON.stringify(UI);
 newGame('休賽季必要決策守門');pickTeam('T0');pickGameMode('gm_coach');
 S.gameStarted=true;S.currentDay=0;prepareSpringCamp();

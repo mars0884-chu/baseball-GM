@@ -346,7 +346,7 @@ function v60PreseasonReview() {
   return review && review.year === S.seasonYear && review.teamId === S.userTeamId && review.steps ? review.steps : {};
 }
 function v60PreseasonMissingStep() {
-  if (!S.gameStarted || S.currentDay !== 0 || !v60PreseasonSpringReady() || S.springCampDoneYear === S.seasonYear) return null;
+  if (!S.gameStarted || S.currentDay !== 0 || !v60PreseasonSpringReady()) return null;
   const steps = v60PreseasonReview();
   return V60_PRESEASON_STEPS.find(key => steps[key] !== true) || null;
 }
@@ -377,7 +377,7 @@ function v60PreseasonCompleteStep(key) {
   persist();
   const next = v60PreseasonMissingStep();
   if (next) v60PreseasonOpenStep(next);
-  else { UI.screen = "springCamp"; render(); }
+  else { UI.screen = S.springCampDoneYear === S.seasonYear ? "dashboard" : (S.springCamp && S.springCamp.executed ? "springReport" : "springCamp"); render(); }
   return true;
 }
 function v60PreseasonMandatoryStage() {
@@ -394,6 +394,9 @@ function v60PreseasonNextStage() {
   // 選秀的年度屬於休賽季；換季後 seasonYear 已前進，不能因此重開選秀。
   if (!v60PreseasonSpringReady() && S.draftDoneYear !== S.seasonYear) return { label: "進入選秀", short: "選秀", screen: "draft" };
   if (!S.gameStarted && S.draftDoneYear === S.seasonYear) return { label: "開始新球季", short: "開季", screen: "beginFirstSeason" };
+  // 已有春訓完成標記的舊存檔仍可能漏掉開季確認；先回到漏項，不讓導覽誤稱已開季。
+  const unreviewed = v60PreseasonMissingStep();
+  if (unreviewed) return { label: "完成目前項目", short: ({ deals: "談約", ticket: "票價", marketing: "行銷", facilities: "硬體", roster: "名單" })[unreviewed], screen: v60PreseasonScreenForStep(unreviewed) };
   if (S.springCampDoneYear === S.seasonYear) return { label: "回主控台", short: "開季", screen: "dashboard" };
   if (S.springCamp && S.springCamp.year === S.seasonYear && S.springCamp.executed) return { label: "春訓成果", short: "成果", screen: "springReport" };
   const missing = v60PreseasonMissingStep();
