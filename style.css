@@ -1397,6 +1397,11 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 @media(max-width:820px){.v60-dashboard-featured{grid-template-columns:1fr;}.v60-dashboard-featured-copy{padding:2px 4px 5px;}.v60-visual-scene{grid-template-columns:1fr;}.v60-visual-scene-art{min-height:220px;}.v60-compact-scene{grid-template-columns:1fr;}.v60-compact-scene .v60-visual-scene-art{min-height:160px;}}
 @media(max-width:520px){.v60-dashboard-featured-art{min-height:220px;}.v60-dashboard-featured-copy strong{font-size:18px;}.v60-approved-teamcard{grid-template-columns:14px 50px minmax(0,1fr);min-height:124px!important;padding:8px!important;column-gap:6px;}.v60-team-logo-frame{width:50px;height:50px;}.v60-team-logo-frame img{width:42px!important;height:42px!important;}.v60-visual-scene{gap:8px;margin-bottom:10px;padding:8px;border-radius:14px;}.v60-visual-scene-art{min-height:190px;border-radius:11px;}.v60-visual-scene-copy strong{font-size:19px;}.v60-visual-scene-copy>span:last-child{font-size:12px;}.v60-compact-scene .v60-visual-scene-art{min-height:118px;}.v60-compact-scene .v60-visual-scene-copy strong{font-size:14px;}.v60-negotiation-banner{padding:10px;gap:8px;}.v60-negotiation-banner-icon{flex-basis:40px;width:40px;height:40px;font-size:20px;}.v60-negotiation-banner strong{font-size:16px;}}
 @media(max-width:520px){.v60-app-brand-hero{grid-template-columns:1fr;gap:10px;padding:10px;}.v60-app-brand-mark{min-height:118px;}.v60-app-brand-mark img{width:112px;}.v60-app-brand-copy strong{font-size:26px;}.v60-news-scene .v60-visual-scene-art{min-height:210px;}}
+.v60-mail-scene.v60-visual-scene{grid-template-columns:clamp(104px,28vw,136px) minmax(0,1fr);gap:10px;padding:7px;margin-bottom:8px;}
+.v60-mail-scene .v60-visual-scene-art{height:132px;min-height:0;}
+.v60-mail-scene .v60-visual-scene-art img{height:128px;max-height:128px;padding:3px;}
+.v60-mail-scene .v60-visual-scene-copy{padding:2px;}
+.v60-mail-scene .v60-visual-scene-copy strong{font-size:16px;}
 
 /* ====================================================================
    v60-002 資訊架構減量

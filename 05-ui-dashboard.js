@@ -2710,20 +2710,23 @@ function dashMailPanel() {
   try {
     ensureV43State();
     const mail = S.v43.mail || [];
+    const mailScene = v60CompatVisualScene("mailroom_v58", "郵件中樞場景", "MAILROOM VISUAL", "郵件中樞", "聯盟訊息與待辦入口", "v60-mail-scene");
+    const mailHeading = mailScene || `<div class="eyebrow">${icon('mail')} 郵件中樞</div>`;
     if (mail.length === 0) {
-      return `<div class="card"><div class="eyebrow">${icon('mail')} 郵件中樞</div>
-        ${v60CompatVisualScene("mailroom_v58", "郵件中樞場景", "MAILROOM VISUAL", "郵件中樞", "聯盟訊息與待辦入口", "v60-mail-scene")}
-        ${v60VisualMetricRail([["收件匣", "0 封"], ["狀態", "已清空"]], "郵件摘要")}
-        <p class="v59-compact-line">目前沒有郵件</p>
-        <p class="v60-state-line">新提案、傷兵與聯盟通知會在這裡出現。</p></div>`;
+      return `<div class="card">${mailHeading}<p class="v60-state-line">目前沒有郵件</p></div>`;
     }
     const open = UI.v43MailOpen || null;
+    const mailPageSize = 4;
+    const mailPageCount = Math.max(1, Math.ceil(mail.length / mailPageSize));
+    const mailPage = Math.max(0, Math.min(mailPageCount - 1, Number(UI.v43MailPage) || 0));
+    UI.v43MailPage = mailPage;
+    const visibleMail = mail.slice(mailPage * mailPageSize, (mailPage + 1) * mailPageSize);
     return `<div class="card">
-      <div class="eyebrow">${icon('mail')} 郵件中樞（${mail.filter(m => m.unread).length} 封未讀 / 共 ${mail.length} 封）</div>
-      ${v60CompatVisualScene("mailroom_v58", "郵件中樞場景", "MAILROOM VISUAL", "郵件中樞", "聯盟訊息與待辦入口", "v60-mail-scene")}
-      ${v60VisualMetricRail([["未讀", `${mail.filter(m => m.unread).length} 封`], ["全部", `${mail.length} 封`], ["操作", "逐封處理"]], "郵件摘要")}
+      ${mailHeading}
+      ${v60VisualMetricRail([["未讀", `${mail.filter(m => m.unread).length} 封`], ["全部", `${mail.length} 封`]], "郵件摘要")}
+      ${mailPageCount > 1 ? `<nav class="v60-roster-pager v60-mail-pager" aria-label="郵件分頁"><button type="button" class="btn-outline v60-mail-page-btn" data-mail-page="${mailPage - 1}" ${mailPage === 0 ? "disabled" : ""}>上一頁</button><span aria-live="polite">${mailPage + 1}／${mailPageCount} 頁</span><button type="button" class="btn-outline v60-mail-page-btn" data-mail-page="${mailPage + 1}" ${mailPage === mailPageCount - 1 ? "disabled" : ""}>下一頁</button></nav>` : ""}
       <div class="v43maillist">
-        ${mail.map(m => {
+        ${visibleMail.map(m => {
           const isOpen = open === m.id;
           const metaBtn = v43MailActionButton(m);
           return `<div class="v43mailitem ${m.unread ? "unread" : ""} ${isOpen ? "open" : ""}">
@@ -2949,6 +2952,12 @@ function renderAiProposalCardV43() {
 /* ---------- v43 卡片綁定（併入 wireV42Cards 尾端呼叫） ---------- */
 function wireV43Cards() {
   try {
+    app.querySelectorAll(".v60-mail-page-btn").forEach(b => { b.onclick = () => {
+      UI.v43MailPage = Number(b.dataset.mailPage);
+      render();
+      const pager = app.querySelector(".v60-mail-pager");
+      if (pager && pager.scrollIntoView) pager.scrollIntoView({ block: "start" });
+    }; });
     // 郵件展開/已讀
     app.querySelectorAll(".v43mail-toggle").forEach(b => {
       b.onclick = () => {

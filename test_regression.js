@@ -2164,6 +2164,13 @@ g("delete S.v43; ensureV43(); v43PushMail('trade','測試信','內文',{kind:'x'
 assert(g("S.v43.mail.length===1 && S.v43.mail[0].unread===true && v43UnreadMailCount()===1"), "v43 郵件：push 後未讀計數");
 assert(g("typeof dashMailPanel==='function' && dashMailPanel().indexOf('郵件中樞')>=0"), "v43 郵件面板渲染");
 assert(g("['教練團','交易市場','醫療室','聯盟公告','訊息'].indexOf(v43MailCategoryLabel('trade'))>=0"), "v43 郵件分類標籤");
+g(`var __r105MailSaved=JSON.stringify(S.v43.mail),__r105PageSaved=UI.v43MailPage;
+S.v43.mail=Array.from({length:9},(_,i)=>({id:'r105-mail-'+i,category:'system',title:'分頁測試郵件'+i,body:'測試內文'+i,year:S.seasonYear,day:i+1,unread:i<3}));
+UI.v43MailPage=0;var __r105StateBefore=JSON.stringify(S.v43.mail),__r105First=dashMailPanel();
+UI.v43MailPage=2;var __r105Last=dashMailPanel(),__r105Unchanged=JSON.stringify(S.v43.mail)===__r105StateBefore;
+S.v43.mail=JSON.parse(__r105MailSaved);UI.v43MailPage=__r105PageSaved;`);
+assert(g("__r105First.includes('分頁測試郵件0')&&!__r105First.includes('分頁測試郵件4')&&__r105First.includes('1／3 頁')&&__r105First.includes('未讀')&&__r105First.includes('全部')&&!__r105First.includes('逐封處理')&&__r105Last.includes('分頁測試郵件8')&&!__r105Last.includes('分頁測試郵件7')&&__r105Unchanged"), "r105 郵件每頁四封、摘要不重複、末頁仍可讀且翻頁不改存檔");
+assert(g("typeof wireV43Cards==='function'") && fs.readFileSync("05-ui-dashboard.js", "utf8").includes('app.querySelectorAll(".v60-mail-page-btn")'), "r105 郵件分頁按鈕有實際互動入口");
 
 /* v43 純GM 輪值教練化 */
 g("S.gameMode='pure_gm'; S.takeover=null; var __ut43=S.teams[S.userTeamId]; ensureTactics(__ut43); ensureRotation(__ut43); ensureBullpenOrder(__ut43,S.players);");
