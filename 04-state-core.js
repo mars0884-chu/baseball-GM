@@ -911,9 +911,13 @@ function v60RequirePreseasonBeforeSimulation() {
   // 舊存檔可能只有已完成年份、沒有春訓物件；既有完成記錄不可被新守門倒退。
   if (!mandatory && !missing && S.springCampDoneYear === S.seasonYear && (!camp || camp.year !== S.seasonYear || camp.executed)) return false;
   UI.flash = "開季準備尚未完成，請先處理目前項目與春訓。";
-  if (mandatory || (!camp && S.offseasonSummary && S.offseasonEnteredYear === S.seasonYear)) {
-    UI.screen = mandatory || "offseasonSummary";
+  if (mandatory) {
+    UI.screen = mandatory;
     render();
+    return true;
+  }
+  if (!camp && typeof v60PreseasonNextStage === "function" && v60PreseasonNextStage().screen === "draft") {
+    v60PreseasonGoNext();
     return true;
   }
   if (!camp || camp.year !== S.seasonYear) prepareSpringCamp();

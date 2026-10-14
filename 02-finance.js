@@ -2562,16 +2562,18 @@ function renderFinanceCuts() {
     <div class="wrap v60-finance-cut-screen">
       <div class="topbar"><div class="eyebrow">${team.name}</div><h1>財務赤字・強制裁員</h1></div>
       <div class="card issuecard">
-        <div class="eyebrow">目前預算為負：${formatMoney(team.finance.budget)}</div>
-        <p class="sub dark">釋出球員可降低薪資，不會回收轉會金；也可保留陣容、承擔風險繼續。</p>
+        <div class="eyebrow">預算赤字・${formatMoney(team.finance.budget)}</div>
+        <div class="v60-finance-cut-choices" role="group" aria-label="財務赤字處理方式">
+          <div><strong>釋出球員</strong><span>降薪資・不退轉會金</span></div>
+          <div><strong>保留陣容</strong><span>承擔財務風險</span></div>
+        </div>
       </div>
       <div class="scoreboard">
-        <div class="sb-row small"><div class="sb-label">目前薪資總額</div><div class="sb-value small">${formatMoney(team.finance.payroll)}</div></div>
+        <div class="sb-row small"><div class="sb-label">目前薪資・${payrollHealthy ? "達標" : "偏高"}</div><div class="sb-value small">${formatMoney(team.finance.payroll)}</div></div>
         <div class="sb-row small"><div class="sb-label">聯盟平均薪資</div><div class="sb-value small">${formatMoney(Math.round(avgPayroll))}</div></div>
       </div>
       <div class="v60-finance-cut-actions">
-        ${payrollHealthy ? '<p class="v60-state-line">薪資已達標；若預算仍赤字，請決定是否承擔風險。</p>' : '<p class="v60-state-line">薪資仍偏高；可繼續釋出球員，或自行承擔風險。</p>'}
-        <button id="btn-cuts-override" class="btn-danger">承擔財務風險，完成裁員決策</button>
+        <button id="btn-cuts-override" class="btn-danger">承擔風險・完成裁員</button>
       </div>
       ${posFilterBarHtml(list, "financeCutsPosFilter")}
       ${v60RosterPagerHtml(page, "financeCutsPage", "財務裁員名單", filtered.length)}

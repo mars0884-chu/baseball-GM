@@ -1861,7 +1861,7 @@ g("finishIntlTournament();");
 assert(g("(function(){ var h=uiTabs('t40',[{key:'a',label:'A',html:'<b>panelA</b>'},{key:'b',label:'B',badge:3,html:'panelB'}]); return h.indexOf('uitab-btn')>=0 && h.indexOf('uitab-panel')>=0 && h.indexOf('uitab-badge')>=0 && h.indexOf('panelA')>=0 && h.indexOf('panelB')>=0; })()"), "v40 uiTabs 產出頁籤/面板/紅點且全面板同駐DOM");
 g("UI.tabs={}; UI.screen='dashboard'; UI.negotiation=null; render();");
 assert(g("app.innerHTML.indexOf('⚾ 賽況')>=0 && app.innerHTML.indexOf('📋 待辦')>=0 && app.innerHTML.indexOf('📰 新聞')>=0 && app.innerHTML.indexOf('📂 選單')>=0"), "v40 主控台四分頁渲染");
-assert(g("app.innerHTML.indexOf('btn-standings')>=0 && (app.innerHTML.indexOf('btn-day')>=0 || app.innerHTML.indexOf('例行賽結束')>=0 || app.innerHTML.indexOf('春訓待完成')>=0 || app.innerHTML.indexOf('春季訓練')>=0)"), "v40 主控台分頁後導覽按鈕與賽況面板仍在DOM（掛線不落空；依季節顯示模擬鈕/季末面板/春訓卡）");
+assert(g("app.innerHTML.indexOf('btn-standings')>=0 && (app.innerHTML.indexOf('btn-day')>=0 || app.innerHTML.indexOf('例行賽結束')>=0 || app.innerHTML.indexOf('春訓待完成')>=0 || app.innerHTML.indexOf('開季準備待完成')>=0 || app.innerHTML.indexOf('春季訓練')>=0)"), "v40 主控台分頁後導覽按鈕與賽況面板仍在DOM（掛線不落空；依季節顯示模擬鈕/季末面板/春訓卡）");
 g("UI.screen='finance'; render();");
 assert(g("app.innerHTML.indexOf('📊 總覽')>=0 && app.innerHTML.indexOf('🎟️ 票價')>=0 && app.innerHTML.indexOf('📺 合約')>=0 && app.innerHTML.indexOf('📜 上季報告')>=0"), "v40 財務四分頁渲染");
 g("var __p40Nego=Object.values(S.players).find(p=>p&&!p.retired&&p.team===S.userTeamId&&p.agent); if(!__p40Nego) throw new Error('v40談判測試缺少有效在役球員'); UI.negotiation={kind:'renewal', playerId:__p40Nego.id, teamId:S.userTeamId, attemptsLeft:5, marketSalary:5000000, desiredSalary:6000000, desiredYears:3, offerSalary:5000000, offerYears:3, log:[]}; UI.screen='negotiation'; render();");
@@ -4718,7 +4718,7 @@ const v60FinanceCutsStart = v60FinanceSource.indexOf("function renderFinanceCuts
 const v60FinanceCutsEnd = v60FinanceSource.indexOf("/* ---------- 合約續約談判", v60FinanceCutsStart);
 const v60FinanceCutsSource = v60FinanceSource.slice(v60FinanceCutsStart, v60FinanceCutsEnd);
 assert(v60FinanceCutsSource.includes('applyPosFilter(list, "financeCutsPosFilter")') && v60FinanceCutsSource.includes('v60RosterPageSlice(filtered, "financeCutsPage", 4)') && v60FinanceCutsSource.includes("page.items.map(row)") && v60FinanceCutsSource.includes("page.items.map(mobileCard)") && v60FinanceCutsSource.includes("wireV60RosterPager()") && !v60FinanceCutsSource.includes("list.map(p => `<tr>"), "v60-017 裁員候選依守位篩選並分頁，桌面操作與手機卡片共用同一候選頁");
-assert(v60FinanceCutsSource.includes("v60-finance-cut-salary-rail") && v60FinanceCutsSource.includes("不會回收轉會金") && !v60FinanceCutsSource.includes("才能繼續下個球季") && v60RosterSource.includes('if (btn.dataset.filterkey === "financeCutsPosFilter") UI.financeCutsPage = 0'), "v60-017 薪資比較視覺與短說明保留裁員代價，篩選回到第一頁");
+assert(v60FinanceCutsSource.includes("v60-finance-cut-salary-rail") && v60FinanceCutsSource.includes("不退轉會金") && v60FinanceCutsSource.includes("承擔財務風險") && !v60FinanceCutsSource.includes("才能繼續下個球季") && v60RosterSource.includes('if (btn.dataset.filterkey === "financeCutsPosFilter") UI.financeCutsPage = 0'), "v60-017 薪資比較與雙後果選項保留裁員代價，篩選回到第一頁");
 assert(v60StyleSource.includes(".v60-finance-cut-cards{display:grid") && v60StyleSource.includes(".v60-finance-cut-card>.cut-btn{width:68px;min-height:48px"), "v60-017 手機候選卡改為薪資比較條，釋出觸控目標至少68×48px");
 g(`var __v60CutsSavedS=JSON.stringify(S),__v60CutsSavedUI=JSON.stringify(UI),__v60CutsSavedHtml=app.innerHTML;
 var __v60CutsTeam=S.teams[S.userTeamId],__v60CutsOldR1=__v60CutsTeam.roster1.slice(),__v60CutsOldR2=__v60CutsTeam.roster2.slice(),__v60CutsOldPlayers=S.players;
@@ -4951,6 +4951,16 @@ V60_PRESEASON_STEPS.forEach(function(key){
 var __r053Arrived=UI.screen==='springCamp'&&!S.springCamp.executed;
 S=JSON.parse(__r053SavedS);UI=JSON.parse(__r053SavedUI);`);
 assert(g("__r053Blocked.every(Boolean)&&__r053Transitions.every(Boolean)&&__r053Arrived"), "r053 每項完成後直接進下一站；漏掉任一項不能執行春訓或扣款");
+g(`var __r104SavedS=JSON.stringify(S),__r104SavedUI=JSON.stringify(UI);
+newGame('無春訓物件仍逐站');pickTeam('T0');pickGameMode('gm_coach');
+S.gameStarted=true;S.currentDay=0;S.draft=null;S.draftDoneYear=0;S.offseasonEnteredYear=S.seasonYear-1;
+S.springCamp=null;S.springCampDoneYear=0;S.preseasonReview={year:S.seasonYear,teamId:S.userTeamId,steps:{}};
+var __r104First=v60PreseasonNextStage().screen==='financeDeals'&&v60PreseasonMissingStep()==='deals';
+var __r104Blocked=v60RequirePreseasonBeforeSimulation()&&UI.screen==='finance'&&UI.tabs.finance==='deals'&&S.currentDay===0;
+V60_PRESEASON_STEPS.forEach(k=>v60PreseasonCompleteStep(k));
+var __r104Spring=!!S.springCamp&&S.springCamp.year===S.seasonYear&&UI.screen==='springCamp'&&S.currentDay===0;
+S=JSON.parse(__r104SavedS);UI=JSON.parse(__r104SavedUI);`);
+assert(g("__r104First&&__r104Blocked&&__r104Spring"), "r104 舊存檔缺春訓物件仍自動逐站；不能重辦選秀或直接開季，完成五站才進春訓");
 g(`var __r102SavedS=JSON.stringify(S),__r102SavedUI=JSON.stringify(UI);
 newGame('春訓完成但準備漏項測試');pickTeam('T0');pickGameMode('gm_coach');
 S.draft=null;S.gameStarted=true;S.currentDay=0;prepareSpringCamp();
@@ -5146,6 +5156,10 @@ assert((v60FinanceCutsSource.match(/v60RosterPagerHtml\(page, "financeCutsPage"/
   r063NonStickyScreens.includes('"financeCuts"') &&
   v60StyleSource.includes('.v60-finance-cut-actions button{min-height:48px;'),
   "r066 四人分頁上下皆可翻；薪資達標自動銜接，另保留一個明確承擔風險決策且不遮球員卡");
+assert(v60FinanceCutsSource.includes('class="v60-finance-cut-choices"') && v60FinanceCutsSource.includes('降薪資・不退轉會金') &&
+  v60FinanceCutsSource.includes('保留陣容') && v60FinanceCutsSource.includes('目前薪資・${payrollHealthy ? "達標" : "偏高"}') &&
+  v60FinanceCutsSource.includes('id="btn-cuts-override"') && !v60FinanceCutsSource.includes('薪資仍偏高；可繼續釋出球員'),
+  "r104 赤字頁以兩種後果分組保留規則、薪資狀態與風險操作，不重複長句");
 
 console.log("\n--- r067 春訓短頁與出發操作 ---");
 g(`var __r067SavedS=JSON.stringify(S),__r067SavedUI=JSON.stringify(UI);

@@ -2632,6 +2632,7 @@ function hydrateLoadedState(saved) {
   try {
     if (saved) hydrateLoadedState(saved);
     if (saved) advancedDraft = v60ResumeCompletedDraft();
+    if (saved && !advancedDraft && S.gameStarted && S.currentDay === 0 && UI.screen === "offseasonSummary") v60PreseasonGoNext();
     else UI.screen = "setup";
   } catch (e) {
     // v35.1：還原存檔拋錯——不再靜默吃掉存檔，改進安全模式（保留存檔可匯出）
