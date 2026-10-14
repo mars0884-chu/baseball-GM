@@ -2902,8 +2902,9 @@ function renderTradeBuilderV43() {
     UI.tradeStage = tradeStage;
     const myFiltered = applyPosFilter(myPlayers, "tradeGivePosFilter");
     const theirFiltered = applyPosFilter(theirPlayers, "tradeGetPosFilter");
-    const myPage = v60RosterPageSlice(myFiltered, "tradeGivePage", 6);
-    const theirPage = v60RosterPageSlice(theirFiltered, "tradeGetPage", 6);
+    const tradePageSize = typeof window !== "undefined" && Number(window.innerWidth) <= 700 ? 3 : 6;
+    const myPage = v60RosterPageSlice(myFiltered, "tradeGivePage", tradePageSize);
+    const theirPage = v60RosterPageSlice(theirFiltered, "tradeGetPage", tradePageSize);
     const val = p => (typeof personaTradeValue === "function") ? personaTradeValue(teamB, p) : tradeValue(p);
     const giveValue = UI.tradeGive.reduce((s, id) => s + tradeValue(S.players[id]), 0);
     const getValue = UI.tradeGet.reduce((s, id) => s + tradeValue(S.players[id]), 0);
@@ -2931,26 +2932,36 @@ function renderTradeBuilderV43() {
     // 對方球員的球探評估完整卡快取
     const scoutIds = [...new Set(theirPage.items.map(p => p.id).concat(UI.tradeGet))];
     const scoutCache = (typeof v43BuildScoutCache === "function") ? v43BuildScoutCache(scoutIds) : {};
-    // 一覽勾選列（保留精簡表，展開看完整卡）：野手/投手分兩張表；每列一個勾選框＋姓名＋守位＋年齡＋薪資
-    const rowMine = p => `<tr>
-      <td><input type="checkbox" class="give-check" data-id="${p.id}" ${UI.tradeGive.includes(p.id) ? "checked" : ""}></td>
+    // 桌面保留欄位表；手機使用同一批球員與勾選狀態的短頁卡片。
+    const tradeRow = (p, side) => `<tr>
+      <td><input type="checkbox" class="${side}-check" data-id="${p.id}" aria-label="${side === "give" ? "送出" : "取得"}${v60UiEscape(p.name)}" ${(side === "give" ? UI.tradeGive : UI.tradeGet).includes(p.id) ? "checked" : ""}></td>
       <td>${p.name}${isInjured(p) ? ` <span class="injurytag">傷</span>` : ""}</td>
       <td>${p.level}</td><td>${p.isPitcher ? "投" : "野"}</td>
       <td>${p.isPitcher ? (p.role || "投手") : p.positions.map(x => POS_LABEL[x.pos]).join("/")}</td>
       <td>${p.age}</td><td>${v43SalaryLabel(p)}</td><td>${v43ContractLabel(p)}</td>
     </tr>`;
-    const rowTheir = p => `<tr>
-      <td><input type="checkbox" class="get-check" data-id="${p.id}" ${UI.tradeGet.includes(p.id) ? "checked" : ""}></td>
-      <td>${p.name}${isInjured(p) ? ` <span class="injurytag">傷</span>` : ""}</td>
-      <td>${p.level}</td><td>${p.isPitcher ? "投" : "野"}</td>
-      <td>${p.isPitcher ? (p.role || "投手") : p.positions.map(x => POS_LABEL[x.pos]).join("/")}</td>
-      <td>${p.age}</td><td>${v43SalaryLabel(p)}</td><td>${v43ContractLabel(p)}</td>
-    </tr>`;
+    const tradeCard = (p, side) => {
+      let portrait = "";
+      if (typeof compositePortrait === "function") {
+        try { portrait = compositePortrait(p.id, { player: p, teamId: p.team, isAway: false }, 48) || ""; }
+        catch (e) { console.error("交易球員肖像顯示失敗：", e); }
+      }
+      const action = side === "give" ? "送出" : "取得";
+      const selected = (side === "give" ? UI.tradeGive : UI.tradeGet).includes(p.id);
+      const position = p.isPitcher ? (p.role || "投手") : p.positions.map(x => POS_LABEL[x.pos]).join("/");
+      return `<label class="v60-trade-player-card ${selected ? "is-selected" : ""}" data-trade-id="${p.id}">
+        ${portrait ? `<span class="v60-trade-player-portrait" aria-hidden="true">${portrait}</span>` : ""}
+        <span class="v60-trade-player-info"><strong>${p.name}${isInjured(p) ? ` <span class="injurytag">傷</span>` : ""}</strong>
+          <span class="v60-trade-player-meta">${p.level}・${p.isPitcher ? "投" : "野"}・${position}・${p.age}歲</span>
+          <span class="v60-trade-player-contract"><span>年薪 <b>${v43SalaryLabel(p)}</b></span><span>合約 <b>${v43ContractLabel(p)}</b></span></span>
+        </span><span class="v60-trade-player-choice"><input type="checkbox" class="${side}-check" data-id="${p.id}" aria-label="${action}${v60UiEscape(p.name)}" ${selected ? "checked" : ""}><small>${action}</small></span>
+      </label>`;
+    };
     // 已勾選者展開完整卡（讓玩家看清楚要換的人；比照選秀/外籍完整度）
     const selectedMineCards = UI.tradeGive.map(id => S.players[id]).filter(Boolean).map(p => v43PlayerFullCardHtml(p, null)).join("");
     const selectedTheirCards = UI.tradeGet.map(id => S.players[id]).filter(Boolean).map(p => v43PlayerFullCardHtml(p, { scoutView: scoutCache[p.id] || {} })).join("");
     app.innerHTML = `
-    <div class="wrap">
+    <div class="wrap v60-trade-builder">
       <div class="topbar"><div class="eyebrow">${S.leagueName}</div><h1>交易：${teamB.name}</h1></div>
       ${UI.tradeResult ? `<div class="flash">${UI.tradeResult.reason}</div>` : ""}
       ${(() => {
@@ -2976,8 +2987,10 @@ function renderTradeBuilderV43() {
       ${v60RosterPagerHtml(myPage, "tradeGivePage", "我方球員", myFiltered.length, "人")}
       <table class="stattable v43tradetable" aria-label="${teamA.name}可交易球員">
         <thead><tr><th></th><th>姓名</th><th>層級</th><th>型</th><th>守位</th><th>年齡</th><th>年薪</th><th>合約</th></tr></thead>
-        <tbody>${myPage.items.map(rowMine).join("")}</tbody>
+        <tbody>${myPage.items.map(p => tradeRow(p, "give")).join("")}</tbody>
       </table>
+      <div class="v60-trade-mobile-cards" aria-label="${teamA.name}可交易球員">${myPage.items.map(p => tradeCard(p, "give")).join("")}</div>
+      <div class="v60-trade-mobile-bottom-pager">${v60RosterPagerHtml(myPage, "tradeGivePage", "我方球員", myFiltered.length, "人")}</div>
       ${selectedMineCards ? `<div class="divlabel small">已選送出（完整資料）</div>${selectedMineCards}` : ""}` : ""}
 
       ${tradeStage === "get" ? `<p class="v60-trade-guidance"><b>守位</b>公開真值｜<b>能力／潛力</b>為球探估值・準度隨球探提升</p>
@@ -2985,8 +2998,10 @@ function renderTradeBuilderV43() {
       ${v60RosterPagerHtml(theirPage, "tradeGetPage", "對方球員", theirFiltered.length, "人")}
       <table class="stattable v43tradetable" aria-label="${teamB.name}可交易球員">
         <thead><tr><th></th><th>姓名</th><th>層級</th><th>型</th><th>守位</th><th>年齡</th><th>年薪</th><th>合約</th></tr></thead>
-        <tbody>${theirPage.items.map(rowTheir).join("")}</tbody>
+        <tbody>${theirPage.items.map(p => tradeRow(p, "get")).join("")}</tbody>
       </table>
+      <div class="v60-trade-mobile-cards" aria-label="${teamB.name}可交易球員">${theirPage.items.map(p => tradeCard(p, "get")).join("")}</div>
+      <div class="v60-trade-mobile-bottom-pager">${v60RosterPagerHtml(theirPage, "tradeGetPage", "對方球員", theirFiltered.length, "人")}</div>
       ${selectedTheirCards ? `<div class="divlabel small">已選取得（球探評估完整資料）</div>${selectedTheirCards}` : ""}` : ""}
 
       ${tradeStage === "terms" ? `<div class="card v43cashcard">

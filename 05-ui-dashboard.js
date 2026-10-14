@@ -238,7 +238,7 @@ function v60MarkStickyScreenAction() {
   // 解職頁有多重決策；休賽季與硬體頁已有頁首導覽，避免頁末操作浮在內容上方。
   if (UI.screen === "agency") return; // 人脈卡與情蒐資訊須完整可見，返回鍵維持頁尾。
   if (UI.screen === "listing") return; // 四人短頁的返回鍵在頁尾，不覆蓋下方球員卡。
-  if (["gameOver", "offseasonSummary", "facilities", "finance", "financeCuts", "springCamp", "springReport"].includes(UI.screen)
+  if (["gameOver", "offseasonSummary", "facilities", "finance", "financeCuts", "springCamp", "springReport", "tradeBuilder"].includes(UI.screen)
     || ["wantMarket", "draftRecap"].includes(UI.screen)) return;
   const appRoot = document.getElementById("app");
   if (!appRoot || !appRoot.querySelector) return;

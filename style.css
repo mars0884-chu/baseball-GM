@@ -1817,12 +1817,31 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-trade-opponent-summary{padding:9px 12px;border:1px solid #bad4f1;border-radius:10px;background:#f5faff;color:#153d70;font-size:14px;line-height:1.45}
 .v60-trade-stages .tab{min-height:44px;white-space:normal;line-height:1.25}
 .v60-trade-guidance{margin:8px 0;color:#254A78;font-size:14px;line-height:1.45}
+.v60-trade-mobile-cards,.v60-trade-mobile-bottom-pager{display:none}
 .v60-trade-pick-rules{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline}
 .v60-trade-pick-rules span{color:#254A78;font-size:14px;font-weight:600;line-height:1.4}
 .v60-trade-pick-sides{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:8px 0}
 .v60-trade-pick-sides .tab{min-height:44px}
 .v60-trade-pick-sides .tab:focus-visible{outline:3px solid #21C9D6;outline-offset:2px}
 @media(max-width:700px){.v60-trade-stages{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){
+  .v60-trade-builder .v43tradetable{display:none}
+  .v60-trade-mobile-cards{display:grid;gap:8px;margin:8px 0}
+  .v60-trade-mobile-bottom-pager{display:block}
+  .v60-trade-player-card{display:flex;align-items:center;gap:8px;min-width:0;min-height:84px;padding:8px;border:1px solid #B7D3F5;border-radius:11px;background:#FFFFFF;color:#17233B;cursor:pointer}
+  .v60-trade-player-card.is-selected{border:2px solid #143CFF;background:#F3F8FF}
+  .v60-trade-player-card:focus-within{outline:3px solid #21C9D6;outline-offset:2px}
+  .v60-trade-player-portrait{flex:0 0 48px;width:48px;height:48px;overflow:hidden;border-radius:9px;background:#EAF5FF}
+  .v60-trade-player-portrait>*{max-width:100%;max-height:100%}
+  .v60-trade-player-info{display:grid;gap:2px;min-width:0;flex:1}
+  .v60-trade-player-info>strong{font-size:16px;line-height:1.25;overflow-wrap:anywhere}
+  .v60-trade-player-meta{color:#36577F;font-size:14px;line-height:1.25;overflow-wrap:anywhere}
+  .v60-trade-player-contract{display:flex;flex-wrap:wrap;gap:2px 8px;color:#36577F;font-size:14px;line-height:1.25}
+  .v60-trade-player-contract b{color:#17233B}
+  .v60-trade-player-choice{display:flex;flex:0 0 44px;flex-direction:column;align-items:center;justify-content:center;min-height:48px;color:#1459B8}
+  .v60-trade-player-choice input{width:20px;height:20px;accent-color:#143CFF}
+  .v60-trade-player-choice small{font-size:14px;font-weight:800}
+}
 /* 開局身分用相同欄位比較權責，不以長段落或收合文字解釋。 */
 .v60-mode-pick-heading{padding-bottom:10px}
 .v60-mode-pick-heading .sub{margin:4px 0 0;font-size:16px}

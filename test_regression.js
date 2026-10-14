@@ -4931,6 +4931,8 @@ assert(g("(__r052GiveHtml.match(/class=\"give-pick-check\"/g)||[]).length===6 &&
 assert(g("__r052GiveHtml.includes('本屆＋後2年・各6輪') && __r052GiveHtml.includes('原隊戰績差→順位前、估值高') && __r052GetHtml.includes('持有者選人') && __r052ScoutHtml.includes('守位') && __r052ScoutHtml.includes('球探估值') && __r052TermsHtml.includes('現金計入估值') && __r052TermsHtml.includes('v43-cash-give') && __r052TermsHtml.includes('btn-submit-trade')"), "r052 精簡後仍保留選秀權、球探估值、現金與交易提交規則及操作");
 assert(g("__r052GiveHtml.includes('v60-trade-opponent-summary')&&__r052GetHtml.includes('v60-trade-opponent-summary')&&__r052ScoutHtml.includes('v60-trade-opponent-summary')&&!__r052ScoutHtml.includes('v60-trade-opponent-review')&&__r052TermsHtml.includes('v60-trade-opponent-review')&&__r052TermsHtml.includes('他們記得：')===__r052ScoutHtml.includes('有過往互動')"), "r090 選人時保留對手風格與交情摘要，完整背景與互動在送出前確認頁呈現");
 assert(g("__r052MineHtml.includes('自家能力為真值')&&__r052MineHtml.includes('可交易球員')&&!__r052MineHtml.includes('真實完整資料）')&&__r052ScoutHtml.includes('守位</b>公開真值')&&__r052ScoutHtml.includes('能力／潛力</b>為球探估值・準度隨球探提升')&&!__r052ScoutHtml.includes('交易球探評估完整資料）')&&__r052ScoutHtml.includes('可交易球員')&&__r052GetHtml.includes('持有者選人')&&__r052TermsHtml.includes('現金條件・可留 0')"), "r101 交易四步保留真值／估值、選秀權與現金規則；重複頁籤標題不再占手機高度");
+assert(g("__r052MineHtml.includes('v60-trade-mobile-cards')&&__r052ScoutHtml.includes('v60-trade-mobile-cards')&&__r052MineHtml.includes('年薪 <b>')&&__r052ScoutHtml.includes('合約 <b>')&&(__r052MineHtml.match(/class=\"give-check\"/g)||[]).length===12&&(__r052ScoutHtml.match(/class=\"get-check\"/g)||[]).length===12"), "r103 交易兩側提供含年薪、合約與勾選的手機肖像卡，保留桌面表格");
+assert(fs.readFileSync("05-ui-dashboard.js", "utf8").includes('"springReport", "tradeBuilder"].includes(UI.screen)'), "r103 交易頁返回鈕維持正常頁尾，不得用浮動列遮住第三張手機球員卡");
 
 console.log("\n--- r053 開季逐站守門與首頁更新 ---");
 g(`var __r053SavedS=JSON.stringify(S),__r053SavedUI=JSON.stringify(UI);
@@ -5104,11 +5106,12 @@ S=JSON.parse(__r063SavedS);UI=JSON.parse(__r063SavedUI);`);
 assert(g("__r063First&&__r063Retired&&__r063Stable"), "r063 年度結算與退休球員分區，兩人分頁及留任／指派教練操作保留，重畫不改存檔");
 const r063Dash = fs.readFileSync("05-ui-dashboard.js", "utf8");
 const r063Css = fs.readFileSync("style.css", "utf8");
-assert(r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "finance", "financeCuts", "springCamp", "springReport"].includes(UI.screen)') && r063Css.includes('.v60-offseason-summary-tabs .uitab-btn{min-width:0;min-height:48px;'), "r063/r099 休賽季、財務與春訓成果的返回鈕不遮蓋內容，兩頁籤保留手機觸控尺寸");
+const r063NonStickyScreens = (r063Dash.match(/if \(\[([^\]]+)\]\.includes\(UI\.screen\)/) || [])[1] || "";
+assert(["gameOver", "offseasonSummary", "facilities", "finance", "financeCuts", "springCamp", "springReport"].every(screen => r063NonStickyScreens.includes(`"${screen}"`)) && r063Css.includes('.v60-offseason-summary-tabs .uitab-btn{min-width:0;min-height:48px;'), "r063/r099 休賽季、財務與春訓成果的返回鈕不遮蓋內容，兩頁籤保留手機觸控尺寸");
 
 console.log("\n--- r064 球場建造每頁兩項與返回鈕不遮擋 ---");
 assert(fs.readFileSync("02-finance.js", "utf8").includes('v60RosterPageSlice(STADIUM_FACILITY_TYPES, "facilityBuildPage", 2)') &&
-  r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "finance", "financeCuts", "springCamp", "springReport"].includes(UI.screen)'),
+  r063NonStickyScreens.includes('"facilities"'),
   "r064 球場建造候選仍完整分頁，硬體頁返回鈕不浮在設施效果與費用上方");
 g(`var __r096SavedS=JSON.stringify(S),__r096SavedUI=JSON.stringify(UI);
 newGame('硬體摘要去重');pickTeam('T0');pickGameMode('gm_coach');S.gameStarted=true;prepareSpringCamp();
@@ -5140,7 +5143,7 @@ assert((v60FinanceCutsSource.match(/v60RosterPagerHtml\(page, "financeCutsPage"/
   v60FinanceCutsSource.indexOf('class="v60-finance-cut-actions"') < v60FinanceCutsSource.indexOf('posFilterBarHtml(list, "financeCutsPosFilter")') &&
   v60FinanceCutsSource.includes('id="btn-cuts-override"') && !v60FinanceCutsSource.includes('id="btn-cuts-continue"') &&
   v60FinanceSource.includes('if (team.finance.payroll <= avgPayroll * 1.15) { proceedFromFinanceCuts(); return; }') &&
-  r063Dash.includes('["gameOver", "offseasonSummary", "facilities", "finance", "financeCuts", "springCamp", "springReport"].includes(UI.screen)') &&
+  r063NonStickyScreens.includes('"financeCuts"') &&
   v60StyleSource.includes('.v60-finance-cut-actions button{min-height:48px;'),
   "r066 四人分頁上下皆可翻；薪資達標自動銜接，另保留一個明確承擔風險決策且不遮球員卡");
 
@@ -5152,7 +5155,7 @@ for(var __r067Page=0;__r067Page<__r067Pages;__r067Page++){UI.springPage=__r067Pa
 var __r067Stable=JSON.stringify(S)===__r067Before,__r067All=__r067Ids.length===S.teams[S.userTeamId].roster1.length&&new Set(__r067Ids).size===__r067Ids.length;
 UI.springPage=0;renderSpringCamp();var __r067Controls=(app.innerHTML.match(/class="v60-choice-pager"/g)||[]).length===2&&(app.innerHTML.match(/class="sortselect spring-menu-select"/g)||[]).length===4&&!!document.getElementById('btn-spring-go').onclick&&app.innerHTML.indexOf('id="btn-spring-go"')<app.innerHTML.indexOf('<table class="stattable">');
 S=JSON.parse(__r067SavedS);UI=JSON.parse(__r067SavedUI);`);
-assert(g("__r067Stable&&__r067All&&__r067Controls") && r063Dash.includes('"financeCuts", "springCamp", "springReport"].includes(UI.screen)'), "r067 春訓一軍四人短頁可完整翻完，名單前出發操作可用且渲染不改存檔");
+assert(g("__r067Stable&&__r067All&&__r067Controls") && r063NonStickyScreens.includes('"springCamp"') && r063NonStickyScreens.includes('"springReport"'), "r067 春訓一軍四人短頁可完整翻完，名單前出發操作可用且渲染不改存檔");
 
 console.log("\n--- r069 選秀雙人逐項能力共享比較 ---");
 g(`var __r069Before=JSON.stringify(S),__r069OldUi=JSON.stringify(UI);
