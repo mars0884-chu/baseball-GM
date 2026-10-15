@@ -4452,6 +4452,14 @@ var __r088NoReplay=UI.screen==='finance'&&UI.tabs.finance==='deals'&&S.draft===n
 S=JSON.parse(__r088SavedS); UI=JSON.parse(__r088SavedUI);`);
 assert(g("__r088Advanced"), "r088 已完成的選秀重入時自動銜接談約，不需再按下一步且不跳春訓");
 assert(g("__r088SummaryLabel&&__r088NoReplay"), "r088 從年度摘要返回目前待辦不重辦選秀、不跳過開季準備");
+g(`var __r108OpeningSavedS=JSON.stringify(S), __r108OpeningSavedUI=JSON.stringify(UI);
+newGame('開幕流程自動銜接'); pickTeam('T0'); pickGameMode('gm_coach');
+UI.screen='offseasonSummary';
+var __r108OpeningPending=S.currentDay===0&&!S.gameStarted&&v60PreseasonNextStage().screen==='draft';
+v60PreseasonGoNext();
+var __r108OpeningDraft=UI.screen==='draft'&&S.draft&&S.draft.active&&S.currentDay===0;
+S=JSON.parse(__r108OpeningSavedS); UI=JSON.parse(__r108OpeningSavedUI);`);
+assert(g("__r108OpeningPending&&__r108OpeningDraft") && v60PrepRoster.includes('saved && !advancedDraft && S.currentDay === 0 && UI.screen === "offseasonSummary"'), "r108 開幕休賽季舊存檔重載即自動進選秀，不要求按下一步，也不提前開季");
 assert(v60PrepDash.includes('if (missing) { UI.flash = "開季準備尚未完成') && v60PrepDash.includes('if (missing) return v60PreseasonOpenStep(missing)'), "r041 春訓出發與主控台入口不能繞過漏項");
 assert(v60PrepDash.includes('if (v60PreseasonMandatoryStage()) return v60PreseasonGoNext();'), "r078 主控台春訓入口也須先回未完成的裁員、續約或選秀決策");
 assert(v60PrepDash.includes('!v60PreseasonSpringReady() || v60PreseasonMandatoryStage() || v60PreseasonMissingStep()') && v60PrepDash.includes('if (v60PreseasonMandatoryStage()) { UI.flash = "休賽季必要決策尚未完成。"; v60PreseasonGoNext(); return; }'), "r092 快捷列與春訓出發鍵均不得繞過必要決策");
