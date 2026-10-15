@@ -2633,7 +2633,7 @@ function hydrateLoadedState(saved) {
     if (saved) hydrateLoadedState(saved);
     if (saved) advancedDraft = v60ResumeCompletedDraft();
     if (saved && !advancedDraft && S.gameStarted && S.currentDay === 0 && UI.screen === "offseasonSummary") v60PreseasonGoNext();
-    else UI.screen = "setup";
+    else if (!saved) UI.screen = "setup";
   } catch (e) {
     // v35.1：還原存檔拋錯——不再靜默吃掉存檔，改進安全模式（保留存檔可匯出）
     UI.__bootError = "還原存檔時發生錯誤：" + ((e && e.message) || e);
@@ -3288,6 +3288,7 @@ function renderWantMarket() {
             ${responsePage.items.map(r => {
               const gp = S.players[r.aiPlayerId];
               const detail = UI.wantDetailRid === r.id;
+              const hasOutgoingPlayers = (r.askPlayerIds || []).length > 0;
               // 他們願給：對方球員 → 球探評估完整卡（全欄位）
               const giveCard = gp ? (detail ? v46FullPlayerCard(gp, { scoutView: {} }) : v60WantPlayerPreview(gp, true)) : "（球員）";
               // 他們要你付出：球員 → 你自家真實完整卡；現金另列
@@ -3295,13 +3296,12 @@ function renderWantMarket() {
               const cashLine = (r.askCash > 0) ? `<div class="v43cashrow">${icon('money')} 另需付出現金 <b>${(typeof formatMoney === "function") ? formatMoney(r.askCash) : r.askCash}</b></div>` : "";
               return `<div class="card issuecard v60-want-offer" style="margin:8px 0;">
                 <div class="eyebrow">${ai(r.aiTeamId)}・${v45WantKindLabel(r.kind)}</div>
-                <div class="v60-want-compare">
+                <div class="v60-want-compare ${hasOutgoingPlayers ? "" : "is-cash-only"}">
                   <section aria-label="換入球員的球探評估"><div class="divlabel small">換入・球探評估</div>${giveCard}</section>
-                  <section aria-label="換出球員的真實能力與現金"><div class="divlabel small">換出・真實能力</div>${payCards || `<p class="draftnote muted">不換出球員</p>`}${cashLine}</section>
+                  ${hasOutgoingPlayers ? `<section aria-label="換出球員的真實能力與現金"><div class="divlabel small">換出・真實能力</div>${payCards || `<p class="draftnote muted">不換出球員</p>`}${cashLine}</section>` : `<div class="v60-want-cash-summary" role="group" aria-label="換出代價"><b>換出</b><span>不換球員</span><span>${r.askCash > 0 ? `現金 <strong>${formatMoney(r.askCash)}</strong>` : "無現金"}</span></div>`}
                 </div>
                 ${detail ? '<p class="v60-state-line">換入能力與潛力為球探估值；簽入後可查看真實能力。</p>' : ""}
-                <div class="btnrow"><button class="btn-outline v60-want-detail" data-rid="${r.id}" type="button">${detail ? "返回交易比較" : "查看完整估值"}</button></div>
-                <div class="btnrow"><button class="btn-primary v45-want-accept" data-wid="${w.id}" data-rid="${r.id}">接受這筆求購</button></div>
+                <div class="btnrow v60-want-actions"><button class="btn-outline v60-want-detail" data-rid="${r.id}" type="button">${detail ? "返回交易比較" : "查看完整估值"}</button><button class="btn-primary v45-want-accept" data-wid="${w.id}" data-rid="${r.id}">接受這筆求購</button></div>
               </div>`;
             }).join("")}
             ${v60WantPagerHtml(responsePage, "wantResponsePage", "球團報價")}`);

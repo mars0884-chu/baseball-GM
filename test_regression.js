@@ -4467,6 +4467,7 @@ assert(v60PrepDash.includes('review.teamId === S.userTeamId') && v60PrepDash.inc
 assert(v60PrepFinance.includes('S.pendingContractRenewals.length === 0 && typeof proceedFromContractRenewals') && v60PrepFinance.includes('neg.kind === "renewal" && (S.pendingContractRenewals || []).length === 0'), "r044 最後一位球員談約或不續約完成後自動接下一關");
 assert(v60PrepDash.includes('data-v60-prep="current"') && !v60PrepDash.includes('data-v60-prep="next"') && v60PrepDash.includes('return v60PreseasonCompleteStep(button.dataset.step)'), "r047 頁首只提供返回目前待辦，完成項目後直接進下一站，不要求另按下一步");
 assert(v60PrepRoster.includes('&& !(S.springCamp && S.springCamp.year === S.seasonYear)) UI.screen = "offseasonSummary"') && v60PrepRoster.includes('UI.screen = missing || (S.springCamp.executed ? "springReport" : "springCamp")'), "r068 重載已有春訓的休賽季存檔，回到當前準備項目，不退回摘要或跳開季");
+assert(v60PrepRoster.includes('else if (!saved) UI.screen = "setup";') && !v60PrepRoster.includes('else UI.screen = "setup";'), "r106 開機有存檔且已還原到未完成關卡時，不得被初始化分支覆寫成開局畫面");
 assert(v60RosterSource.includes('完成選秀，進入開季準備') && !v60RosterSource.includes('<button id="btn-start-season" class="btn-primary">開始新球季</button>'), "r047 選秀完成按鈕不得誤稱準備尚未完成的球季已開季");
 assert(v60DashboardSource.includes('visual_assets/v60/offseason_planning_r040.jpg') && v60DashboardSource.includes('loading="lazy" decoding="async"'), "r040 休賽季場景圖按需載入並取代流程長文");
 
@@ -5403,10 +5404,22 @@ for(var __r078Idx=0;__r078Idx<__r077WantOpen.length;__r078Idx++){
  __r078DetailsSafe=__r078DetailsSafe&&(app.innerHTML.match(/class="v60-want-player-preview"/g)||[]).length===__r078PreviewCount;
 }
 __r078DetailsSafe=__r078DetailsSafe&&JSON.stringify(S)===__r078WantBefore;
+UI.wantMarketPage=1;UI.wantResponsePage=0;UI.wantDetailRid=null;
+var __r106Offer=__r077WantOpen[0],__r106OriginalPlayers=__r106Offer.askPlayerIds,__r106OriginalCash=__r106Offer.askCash;
+__r106Offer.askPlayerIds=[];__r106Offer.askCash=1230000;
+var __r106CashBefore=JSON.stringify(S);renderWantMarket();
+var __r106CashSafe=app.innerHTML.includes('v60-want-cash-summary')&&app.innerHTML.includes('不換球員')&&app.innerHTML.includes(formatMoney(1230000))&&
+ !app.innerHTML.includes('換出・真實能力')&&app.innerHTML.includes('v60-want-actions')&&
+ app.innerHTML.includes('查看完整估值')&&app.innerHTML.includes('接受這筆求購')&&JSON.stringify(S)===__r106CashBefore;
+__r106Offer.askPlayerIds=[__r077WantTeam.roster1[0]];__r106Offer.askCash=1230000;renderWantMarket();
+var __r106PlayerSafe=app.innerHTML.includes('換出・真實能力')&&app.innerHTML.includes('另需付出現金')&&
+ !app.innerHTML.includes('v60-want-cash-summary')&&(app.innerHTML.match(/class="v60-want-player-preview"/g)||[]).length===2;
+__r106Offer.askPlayerIds=__r106OriginalPlayers;__r106Offer.askCash=__r106OriginalCash;
 S=JSON.parse(__r077WantSavedS);UI=JSON.parse(__r077WantSavedUI);`);
 assert(g("__r077WantValid"), "r077 求購市場有教練需求與 AI 報價時逐筆顯示，所有報價可達且翻頁不改正式狀態");
 assert(g("__r077WantOuterSafe"), "r077 多筆教練需求可分頁回看，切換需求不改正式狀態");
 assert(g("__r078DetailsSafe"), "r078 求購市場每筆交易比較保留完整球探報告與全部換出球員，切換畫面不改正式狀態");
+assert(g("__r106CashSafe&&__r106PlayerSafe"), "r106 純現金報價用短摘要取代空球員框；換球員報價保留完整卡、現金及接受操作，瀏覽不改狀態");
 
 g(`var __r077RecapSavedS=JSON.stringify(S),__r077RecapSavedUI=JSON.stringify(UI);
 newGame('選秀成果稽核');pickTeam('T0');pickGameMode('gm_coach');

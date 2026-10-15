@@ -1906,4 +1906,8 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-want-market .v60-want-pager span{font-size:14px;color:#17385E;}
 .v60-want-market .v60-want-pager button{font-size:14px;padding:6px;}
 @media(max-width:720px){.v60-want-rule-strip{gap:4px;margin:6px 0;}.v60-want-rule-strip span{padding:6px;font-size:14px;line-height:1.2;}.v60-want-compare{grid-template-columns:1fr}}
+.v60-want-cash-summary{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap;min-height:44px;margin:8px 0;padding:7px 10px;border:1px solid #B7D4FF;border-radius:8px;background:#F4F9FF;color:#17385E;font-size:14px}
+.v60-want-cash-summary strong{font-size:16px;color:#1434A8}
+.v60-want-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.v60-want-actions button{min-width:0;min-height:48px;white-space:normal}
 @media(max-width:360px){.v60-want-player-preview{grid-template-columns:1fr;}.v60-want-player-visual{justify-content:center;}.v60-want-player-visual .v48radar{width:84px;height:84px;flex-basis:84px;}.v60-want-player-info{display:flex;align-items:baseline;gap:4px 8px;flex-wrap:wrap;}}
