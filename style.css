@@ -1459,6 +1459,15 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-finance-topbar{align-items:center;gap:8px;}
 .v60-finance-topbar #btn-finance-top-back{width:auto;min-width:68px;min-height:44px;padding:8px 10px;flex:0 0 auto;white-space:nowrap;}
 .v60-renewal-screen{padding-bottom:calc(126px + env(safe-area-inset-bottom));}
+.v60-renewal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0;}
+.v60-renewal-card{min-width:0;margin:0;padding:10px;display:grid;gap:8px;}
+.v60-renewal-card-main{display:flex;align-items:center;gap:10px;min-width:0;}
+.v60-renewal-card-main img{width:56px;height:56px;object-fit:contain;flex:none;}
+.v60-renewal-card-main>div:last-child{min-width:0;display:grid;gap:2px;color:#17385E;font-size:14px;}
+.v60-renewal-card-main strong{color:#17233B;font-size:18px;overflow-wrap:anywhere;}
+.v60-renewal-card-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+.v60-renewal-card-actions button{min-width:0;min-height:48px;}
+@media(max-width:620px){.v60-renewal-grid{grid-template-columns:1fr;}}
 .v60-director-renewal{padding:12px;}
 .v60-director-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;color:#36577F;font-size:14px;}
 .v60-director-head strong{color:#17233B;font-size:20px;}

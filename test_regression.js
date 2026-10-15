@@ -4678,15 +4678,31 @@ assert(g("__v60CoachPanelVisible && __v60CoachPanelFocused && __v60LineupWorkTab
 /* v60-015：續約決策常駐可見，長名單時主要流程按鈕固定可操作。 */
 console.log("\n--- v60-015 續約決策文字與常駐操作列 ---");
 const v60RenewalSource = v60FinanceSource.slice(v60FinanceSource.indexOf("function renderContractRenewals()"), v60FinanceSource.indexOf("function renderMarketing()"));
-assert(v60RenewalSource.includes("待處理 ${list.length} 人・每人談約最多 5 次・不續約即釋出") && !v60RenewalSource.includes("foldNote(") && v60RenewalSource.includes("v60-renewal-actions") && v60RenewalSource.includes("全部按行情續約") && v60RenewalSource.includes("處理完續約再選秀"), "v60-015 續約規則直接可見、移除摺疊說明並保留全員續約／前往選秀操作");
+assert(v60RenewalSource.includes("待處理 ${list.length} 人・每人談約最多 5 次・不續約即釋出") && !v60RenewalSource.includes("foldNote(") && v60RenewalSource.includes("v60-renewal-actions") && v60RenewalSource.includes("全部按行情續約") && v60RenewalSource.includes("前往選秀會"), "v60-015 續約規則直接可見、移除摺疊說明並保留全員續約／空名單續行入口");
 assert(v60StyleSource.includes(".v60-renewal-actions{position:fixed") && v60StyleSource.includes(".v60-renewal-screen{padding-bottom") && v60StyleSource.includes("env(safe-area-inset-bottom)") && v60StyleSource.includes(".v60-renewal-actions button{min-width:0;min-height:48px;}"), "v60-015 續約主要操作固定在可視範圍、底部內容保留安全間距與觸控高度");
 g(`var __v60RenewalSavedUI=JSON.stringify(UI),__v60RenewalSavedPending=JSON.stringify(S.pendingContractRenewals||[]),__v60RenewalSavedHtml=app.innerHTML,__v60RenewalTeam=S.teams[S.userTeamId];
 S.pendingContractRenewals=__v60RenewalTeam.roster1.slice(0,2);renderContractRenewals();
-var __v60RenewalPendingDom=app.innerHTML.includes('待處理 2 人・每人談約最多 5 次・不續約即釋出')&&app.innerHTML.includes('全部按行情續約')&&app.innerHTML.includes('disabled')&&app.innerHTML.includes('處理完續約再選秀')&&!app.innerHTML.includes('<details');
+var __v60RenewalPendingDom=app.innerHTML.includes('待處理 2 人・每人談約最多 5 次・不續約即釋出')&&app.innerHTML.includes('全部按行情續約')&&!app.innerHTML.includes('處理完續約再選秀')&&app.innerHTML.includes('v60-renewal-card')&&!app.innerHTML.includes('<details');
 S.pendingContractRenewals=[];renderContractRenewals();
 var __v60RenewalDoneDom=app.innerHTML.includes('待續約名單已清空。')&&app.innerHTML.includes('前往選秀會')&&app.innerHTML.includes('v60-renewal-actions single')&&!app.innerHTML.includes('btn-auto-renew-all');
 S.pendingContractRenewals=JSON.parse(__v60RenewalSavedPending);UI=JSON.parse(__v60RenewalSavedUI);app.innerHTML=__v60RenewalSavedHtml;`);
 assert(g("__v60RenewalPendingDom && __v60RenewalDoneDom"), "v60-015 續約 renderer 實際呈現待辦／完成兩種狀態及正確主要操作");
+g(`var __r107SavedS=JSON.stringify(S),__r107SavedUI=JSON.stringify(UI);
+var __r107Team=S.teams[S.userTeamId];S.pendingContractRenewals=__r107Team.roster1.slice(0,7);UI.contractRenewalPage=0;
+var __r107Before=JSON.stringify(S),__r107Seen=[],__r107Counts=[],__r107Actions=true;
+for(var __r107Page=0;__r107Page<4;__r107Page++){
+ UI.contractRenewalPage=__r107Page;renderContractRenewals();
+ var __r107Ids=Array.from(app.innerHTML.matchAll(/class="btn-primary renew-btn" data-id="([^"]+)"/g),m=>m[1]);
+ __r107Seen.push(...__r107Ids);__r107Counts.push(__r107Ids.length);
+ __r107Actions=__r107Actions&&(app.innerHTML.match(/class="btn-outline decline-btn"/g)||[]).length===__r107Ids.length&&
+   app.innerHTML.includes('id="btn-auto-renew-all"')&&!app.innerHTML.includes('id="btn-renewals-continue"');
+}
+var __r107Valid=__r107Counts.join(',')==='2,2,2,1'&&__r107Seen.join(',')===S.pendingContractRenewals.join(',')&&
+ new Set(__r107Seen).size===7&&__r107Actions&&JSON.stringify(S)===__r107Before;
+S.pendingContractRenewals=__r107Team.roster1.slice(0,3);UI.contractRenewalPage=3;renderContractRenewals();
+__r107Valid=__r107Valid&&UI.contractRenewalPage===1&&app.innerHTML.includes('data-id="'+S.pendingContractRenewals[2]+'"');
+S=JSON.parse(__r107SavedS);UI=JSON.parse(__r107SavedUI);`);
+assert(g("__r107Valid") && v60RenewalSource.includes('app.querySelectorAll(".renew-btn")') && v60RenewalSource.includes('app.querySelectorAll(".decline-btn")') && v60RenewalSource.includes('wireV60RosterPager()'), "r107 七位待續約球員每頁兩人且全員可達；每人談約／不續約及全員續約保留，翻頁不改存檔");
 
 /* v60-016：掛牌市場依人員分頁，保留每頁原掛牌／撤牌操作。 */
 console.log("\n--- v60-016 掛牌市場分頁與文字精簡 ---");
