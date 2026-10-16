@@ -1885,6 +1885,7 @@ S.agency.scouted[__p40Nego.id]={year:S.seasonYear};renderNegotiation();
 var __r115Scouted=app.innerHTML.includes('期望年薪</b><strong>'+__r115Desired)&&app.innerHTML.includes('偏好年限');
 S.agency=JSON.parse(__r115SavedAgency);`);
 assert(g("__r115Unscouted&&__r115Scouted"), "r115 談判桌移除重複行情與次數說明；未情蒐不洩漏心理期望，已情蒐仍能看到薪資與年限");
+assert(g("__r115Unscouted&&__r115Scouted&&app.innerHTML.includes('visual_assets/v60/scouting_contracts_r038.jpg')&&!app.innerHTML.includes('NEGOTIATION DESK')")&&v60StyleSource.includes('.v60-negotiation-banner-art{')&&v60StyleSource.includes('object-fit:contain;'), "r116 談薪頁改用既有同風格談判室圖片完整縮放；移除英文裝飾標題並保留報價流程");
 g("UI.negotiation=null; UI.screen='dashboard'; render();");
 /* 選前資訊完整化 */
 g("UI.screen='freeAgents'; render();");

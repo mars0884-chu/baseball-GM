@@ -2371,7 +2371,7 @@ function renderNegotiation() {
   app.innerHTML = `
     <div class="wrap v60-negotiation-screen draft-negotiation-screen">
       <div class="topbar"><div class="eyebrow">${kindLabel}・${p.isPitcher ? "投手" : "野手"}・${p.age}歲</div><div class="teamname">${p.name}</div></div>
-      <div class="v60-negotiation-banner" aria-label="談薪流程"><div class="v60-negotiation-banner-icon">${icon('money')}</div><div><span>NEGOTIATION DESK</span><strong>把薪資與年限談成合約</strong><div class="v60-negotiation-steps"><b>1 報價</b><b>2 評估</b><b>3 簽約</b></div></div></div>
+      <div class="v60-negotiation-banner" aria-label="談薪流程"><img class="v60-negotiation-banner-art" src="visual_assets/v60/scouting_contracts_r038.jpg" alt="球探與合約談判室場景" width="1254" height="1254" loading="lazy" decoding="async"><div><strong>談薪桌</strong><div class="v60-negotiation-steps"><b>報價</b><b>回應</b><b>簽約</b></div></div></div>
       ${uiTabs("nego", [
         { key: "deal", label: ""+icon('money')+" 談判桌", html: negoDealPanel },
         { key: "report", label: ""+icon('clipboard')+" 球探報告", html: negoReportPanel },
