@@ -2643,7 +2643,10 @@ function renderAgency() {
   // 本季已情蒐的球員
   const scoutedIds = Object.keys(S.agency.scouted).filter(id => S.agency.scouted[id] && S.agency.scouted[id].year === S.seasonYear);
   const scoutedPlayers = scoutedIds.map(id => S.players[id] || (S.freeAgents || {})[id] || (S.internationalFreeAgents || {})[id]).filter(Boolean);
+  // 舊存檔若缺經紀人資料，維持原本全名單的補值順序；分頁不可改變補值結果。
+  scoutedPlayers.forEach(ensureAgent);
   const agencyPage = v60RosterPageSlice(AGENT_KEYS, "agencyPage", 4);
+  const scoutedPage = v60RosterPageSlice(scoutedPlayers, "agencyScoutedPage", 4);
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar"><div class="eyebrow">${team.name}</div><h1>${icon('scout')} 代理人事務所</h1></div>
@@ -2679,8 +2682,8 @@ function renderAgency() {
       ${renderAgencyPerkCards(true)}
       <div class="card">
         <div class="eyebrow">${icon('clipboard')} 本季已情蒐（${scoutedPlayers.length}）</div>
-        ${scoutedPlayers.length > 0 ? scoutedPlayers.map(p => {
-          ensureAgent(p);
+        ${v60RosterPagerHtml(scoutedPage, "agencyScoutedPage", "本季情蒐", scoutedPlayers.length)}
+        ${scoutedPlayers.length > 0 ? scoutedPage.items.map(p => {
           const a = AGENT_TYPES[p.agent.type];
           return `<p class="sub dark">${p.name}｜經紀人 ${p.agent.name}（${a.name}）｜期望 ${p.negoDesired ? formatMoney(p.negoDesired.salary) + "／" + p.negoDesired.years + "年" : "談判時揭露"}</p>`;
         }).join("") : `<p class="v60-state-line" aria-label="本季情蒐狀態">尚無情蒐 · 談判→委託（查性格／底線）</p>`}

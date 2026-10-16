@@ -5586,5 +5586,22 @@ S=JSON.parse(__r109SavedS);UI=JSON.parse(__r109SavedUI);`);
 assert(g("__r109Safe"), "r109 自由球員七人可逐頁到達；排序與守位篩選重置頁碼，資料與簽約操作保留，瀏覽不改正式狀態");
 assert(g("__r109Returned"), "r109 開季準備期間從自由球員市場返回目前未完成關卡，不會只回主控台而失去流程進度");
 
+console.log("\n--- r112 代理人本季情蒐非空分頁 ---");
+g(`var __r112SavedS=JSON.stringify(S),__r112SavedUI=JSON.stringify(UI);
+ensureAgency();var __r112Ids=Object.keys(S.players).slice(0,9);
+__r112Ids.forEach(function(id,i){S.players[id].name='情蒐測試'+i;ensureAgent(S.players[id]);S.agency.scouted[id]={year:S.seasonYear};});
+UI.screen='agency';UI.agencyScoutedPage=0;renderAgency();var __r112Before=JSON.stringify(S),__r112Counts=[],__r112Seen=[];
+for(var __r112Page=0;__r112Page<3;__r112Page++){
+ UI.agencyScoutedPage=__r112Page;renderAgency();
+ var __r112Section=app.innerHTML.split('本季已情蒐（')[1]||'';
+ var __r112Current=__r112Ids.filter(function(id){return __r112Section.includes(S.players[id].name);});
+ __r112Counts.push((__r112Section.match(/<p class="sub dark">/g)||[]).length);
+ __r112Seen.push(...__r112Current);
+}
+var __r112Pass=__r112Counts.join(',')==='4,4,1'&&new Set(__r112Seen).size===9&&
+ app.innerHTML.includes('第 3/3 頁')&&app.innerHTML.includes('經紀人')&&app.innerHTML.includes('期望')&&JSON.stringify(S)===__r112Before;
+S=JSON.parse(__r112SavedS);UI=JSON.parse(__r112SavedUI);`);
+assert(g("__r112Pass"), "r112 九名本季情蒐球員分三頁且全可到達；經紀人與談薪資訊保留，翻頁不改正式狀態");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);
