@@ -900,7 +900,7 @@ function consumeSimInterrupts() {
 /* r059：所有玩家賽程推進入口共用開季守門；漏項時回到待辦，不讓模擬先改動世界。 */
 function v60RequirePreseasonBeforeSimulation() {
   if (!S || !S.gameStarted || S.currentDay !== 0 || !S.userTeamId) return false;
-  const mandatory = S.forcedCutRequired ? "financeCuts"
+  const mandatory = typeof v60PreseasonMandatoryStage === "function" ? v60PreseasonMandatoryStage() : S.forcedCutRequired ? "financeCuts"
     : (S.pendingContractRenewals || []).length ? "contractRenewals"
     : (S.pendingStaffRenewals || []).length ? "staffRenewal"
     : S.v55PendingDirectorRenewal ? "directorRenewal"
@@ -911,6 +911,10 @@ function v60RequirePreseasonBeforeSimulation() {
   // 舊存檔可能只有已完成年份、沒有春訓物件；既有完成記錄不可被新守門倒退。
   if (!mandatory && !missing && S.springCampDoneYear === S.seasonYear && (!camp || camp.year !== S.seasonYear || camp.executed)) return false;
   UI.flash = "開季準備尚未完成，請先處理目前項目與春訓。";
+  if (mandatory === "draft" && typeof v60PreseasonGoNext === "function") {
+    v60PreseasonGoNext();
+    return true;
+  }
   if (mandatory) {
     UI.screen = mandatory;
     render();

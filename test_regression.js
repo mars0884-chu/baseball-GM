@@ -4413,7 +4413,7 @@ var __v60CutStage=v60PreseasonNextStage().screen; S.forcedCutRequired=false; var
 S.forcedCutRequired=__v60CutBefore; S.pendingContractRenewals=__v60RenewBefore;`);
 assert(g('__v60CutStage==="financeCuts" && __v60RenewStage==="contractRenewals"'), "v60-010 下一步優先保留赤字裁員與球員續約入口");
 g(`var __r040SavedState=JSON.stringify(S), __r040SavedUi=JSON.stringify(UI);
-S.currentDay=0; S.gameStarted=true; S.seasonYear=5; S.draftDoneYear=4; S.draft=null;
+S.currentDay=0; S.gameStarted=true; S.seasonYear=5; S.offseasonEnteredYear=4; S.draftDoneYear=4; S.draft=null;
 S.springCamp={year:5,executed:false}; S.springCampDoneYear=4;
 S.forcedCutRequired=false; S.pendingContractRenewals=[]; S.pendingStaffRenewals=[]; S.v55PendingDirectorRenewal=false;
 S.preseasonReview={year:4,steps:{deals:true,ticket:true,marketing:true,facilities:true,roster:true}};
@@ -4421,7 +4421,7 @@ UI.screen='selfTraining';`);
 assert(g("v60PreseasonNextStage().screen==='financeDeals'"), "r040 換季後 draftDoneYear 屬上個休賽季，不得把開季準備誤判為重辦選秀");
 g("v60PreseasonGoNext(); v60PreseasonGoNext();");
 assert(g("UI.screen==='finance' && UI.tabs.finance==='deals' && v60PreseasonMissingStep()==='deals'"), "r041 重複點目前項目不得跳過談約");
-g("S.offseasonEnteredYear=S.seasonYear; S.offseasonSummary=S.offseasonSummary||{retiredCount:0,coachesReplaced:0,myRetiredIds:[]}; S.idSeq=ID_SEQ; hydrateLoadedState(JSON.parse(JSON.stringify(S)));");
+g("S.offseasonSummary=S.offseasonSummary||{retiredCount:0,coachesReplaced:0,myRetiredIds:[]}; S.idSeq=ID_SEQ; hydrateLoadedState(JSON.parse(JSON.stringify(S)));");
 assert(g("UI.screen==='finance' && UI.tabs.finance==='deals' && v60PreseasonMissingStep()==='deals'"), "r068 已進開季準備的休賽季存檔重載後，仍回第一個未完成項目而非退回摘要");
 g(`var __r044BudgetBefore=S.teams[S.userTeamId].finance.budget; executeSpringCamp();`);
 assert(g("!S.springCamp.executed && S.springCampDoneYear!==S.seasonYear && S.teams[S.userTeamId].finance.budget===__r044BudgetBefore && v60PreseasonMissingStep()==='deals'"), "r044 直接呼叫春訓執行入口也不可略過開季準備或扣款");
@@ -4436,6 +4436,20 @@ assert(g("UI.screen==='springCamp' && v60PreseasonMissingStep()===null && S.draf
 g("S.springCamp.executed=true; S.springCampDoneYear=S.seasonYear; UI.screen='springReport';");
 assert(g("v60PreseasonNextStage().screen==='dashboard'"), "r040 春訓成果後下一步返回開季主控台");
 g("S=JSON.parse(__r040SavedState); UI=JSON.parse(__r040SavedUi);");
+g(`var __r111SavedS=JSON.stringify(S), __r111SavedUI=JSON.stringify(UI);
+S.gameStarted=true; S.currentDay=0; S.offseasonEnteredYear=S.seasonYear;
+S.draftDoneYear=S.seasonYear-1; S.draft=null; S.forcedCutRequired=false;
+S.pendingContractRenewals=[]; S.pendingStaffRenewals=[]; S.v55PendingDirectorRenewal=false;
+S.springCamp={year:S.seasonYear,executed:false,nation:HOME_NATION_NAME,assignments:{}};
+S.springCampDoneYear=S.seasonYear-1;
+S.preseasonReview={year:S.seasonYear,teamId:S.userTeamId,steps:Object.fromEntries(V60_PRESEASON_STEPS.map(k=>[k,true]))};
+var __r111Year=S.seasonYear, __r111Budget=S.teams[S.userTeamId].finance.budget;
+var __r111Stage=v60PreseasonMandatoryStage();
+executeSpringCamp();
+var __r111CampBlocked=!S.springCamp.executed&&S.springCampDoneYear!==__r111Year&&S.currentDay===0&&S.teams[S.userTeamId].finance.budget===__r111Budget&&UI.screen==='draft'&&S.draft&&S.draft.active;
+var __r111SimBlocked=v60RequirePreseasonBeforeSimulation()&&UI.screen==='draft'&&S.currentDay===0;
+S=JSON.parse(__r111SavedS); UI=JSON.parse(__r111SavedUI);`);
+assert(g("__r111Stage==='draft'&&__r111CampBlocked&&__r111SimBlocked"), "r111 當年選秀尚未開始，即使已有春訓物件與準備勾選，也不能跳過選秀直接春訓或開季");
 g(`var __r088SavedS=JSON.stringify(S), __r088SavedUI=JSON.stringify(UI);
 newGame('完成關卡自動前進'); pickTeam('T0'); pickGameMode('gm_coach'); proceedFromOffseasonSummary();
 confirmSkipAllRemaining();
@@ -4627,6 +4641,17 @@ UI.selectedPlayerId=__v60PlayerDetailPlayer.id;UI.tabs={};renderPlayerDetail();v
 var __v60PlayerDetailRuntimeOK=__v60PlayerDetailRuntime.includes('data-tab="profile"')&&__v60PlayerDetailRuntime.includes('data-tab="stats"')&&__v60PlayerDetailRuntime.includes('data-tab="rosterManagement"')&&__v60PlayerDetailRuntime.includes('data-tab="personnel"')&&__v60PlayerDetailRuntime.includes('球速')&&__v60PlayerDetailRuntime.includes('成績一覽')&&__v60PlayerDetailRuntime.includes('role-suggest-select')&&__v60PlayerDetailRuntime.includes('btn-suggest-role')&&__v60PlayerDetailRuntime.includes('btn-v54-major-to-minor')&&JSON.stringify(S)===__v60PlayerDetailSavedS;
 UI=JSON.parse(__v60PlayerDetailSavedUI);app.innerHTML=__v60PlayerDetailSavedHTML;`);
 assert(g("__v60PlayerDetailRuntimeOK"), "v60-025 實際球員 renderer 三區資料完整且純顯示不改遊戲狀態");
+const r110PlayerDetailNormal = v60PlayerDetailSource.split("const team = S.teams[p.team];")[1];
+assert(r110PlayerDetailNormal.includes('class="topbar v60-player-detail-topbar"') &&
+  r110PlayerDetailNormal.includes('class="v60-player-detail-headside"') &&
+  !r110PlayerDetailNormal.includes('<div class="btnrow"><button id="btn-back" class="btn-outline">返回名單</button></div>') &&
+  v60StyleSource.includes('.v60-player-detail-headside #btn-back{width:auto;min-height:44px') &&
+  v60PlayerDetailSource.includes('UI.screen = UI.playerDetailReturn || "roster"'),
+  "r110 球員詳情返回入口移到頁首且不遮擋能力表，仍返回原名單與原分頁");
+assert(v60PlayerDetailSource.includes('中重傷史↑ → 再傷／同部位復發↑（復健中心可減）') &&
+  v60PlayerDetailSource.includes('h.recur ? ""+icon(\'refresh\')') &&
+  v60PlayerDetailSource.includes('h.downgraded') && v60PlayerDetailSource.includes('h.method === "surgery"'),
+  "r110 傷病史說明改為風險因果短列，復健減風險、復發標記、治療與後遺症資料均保留");
 g(`var __v60RosterSavedUI=JSON.stringify(UI), __v60RosterTeam=S.teams[S.userTeamId], __v60RosterSavedIds=__v60RosterTeam.roster1.slice(), __v60RosterSavedLineup=(__v60RosterTeam.lineup||[]).map(s=>({...s})), __v60RosterSavedRotation=(__v60RosterTeam.rotation||[]).slice(), __v60RosterSavedBullpen=JSON.stringify(__v60RosterTeam.bullpenOrder||{}), __v60RosterSavedPlayers=S.players, __v60RosterSavedHtml=app.innerHTML;
 var __v60RosterPitcherSeed=__v60RosterSavedIds.map(id=>S.players[id]).find(p=>p&&p.isPitcher), __v60RosterBatterSeed=__v60RosterSavedIds.map(id=>S.players[id]).find(p=>p&&!p.isPitcher);
 S.players=Object.assign({},S.players); var __v60RosterSyntheticIds=[];

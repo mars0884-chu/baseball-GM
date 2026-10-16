@@ -390,6 +390,9 @@ function v60PreseasonMandatoryStage() {
   if ((S.pendingStaffRenewals || []).length) return "staffRenewal";
   if (S.v55PendingDirectorRenewal) return "directorRenewal";
   if (S.draft && S.draft.active) return "draft";
+  // 只看 active 會漏掉「選秀尚未開始」的舊檔；即使春訓物件已建立，也不能略過本屆選秀。
+  if ((!S.gameStarted || S.offseasonEnteredYear === S.seasonYear)
+    && S.draftDoneYear !== S.seasonYear) return "draft";
   return null;
 }
 function v60PreseasonNextStage() {

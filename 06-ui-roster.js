@@ -2389,7 +2389,7 @@ function renderPlayerDetail() {
           <td>${h.method === "surgery" ? "手術" : (h.method === "conservative" ? "保守" : "－")}${h.downgraded ? `・後遺症（${h.downgraded}）` : ""}</td>
         </tr>`).join("")}</tbody>
       </table>
-      <p class="draftnote muted">中重度傷病史越多，日後受傷與同部位復發的風險越高（復健中心可削減）；${icon('refresh')}＝舊傷復發。</p>` : "";
+      <p class="draftnote muted">中重傷史↑ → 再傷／同部位復發↑（復健中心可減）；${icon('refresh')} 舊傷復發</p>` : "";
   const rosterManagementHtml = isOwnActivePlayer ? `
       ${renderCaptainSection(p, team)}
       ${renderMidTrainingSection(p, team)}
@@ -2415,13 +2415,13 @@ function renderPlayerDetail() {
         </div>` : `<div class="btnrow"><button id="btn-release-player" class="btn-danger">釋出至自由球員市場</button></div>`}
       </div>` : "";
   app.innerHTML = `
-    <div class="wrap">
-      <div class="topbar">
+    <div class="wrap v60-player-detail-screen">
+      <div class="topbar v60-player-detail-topbar">
         <div>
           <div class="eyebrow">${team.name} ・ ${p.level}</div>
           <div class="teamname">${p.name}</div>
         </div>
-        <div class="gmtag">${p.age}歲／${p.isPitcher ? (p.throws + "投") : (p.bats + "打・" + p.throws + "投")}</div>
+        <div class="v60-player-detail-headside"><div class="gmtag">${p.age}歲／${p.isPitcher ? (p.throws + "投") : (p.bats + "打・" + p.throws + "投")}</div><button id="btn-back" class="btn-outline">返回名單</button></div>
       </div>
       ${(() => { try { return (typeof themePlayerPhoto === "function") ? themePlayerPhoto(p.id, { player: p, teamId: p.team, isAway: false }) : ""; } catch(_){ return ""; } })()}
       <div style="margin-bottom:8px;">
@@ -2453,7 +2453,6 @@ function renderPlayerDetail() {
           { key: "personnel", label: "人事", html: personnelHtml }
         ] : [])
       ])}</div>
-      <div class="btnrow"><button id="btn-back" class="btn-outline">返回名單</button></div>
     </div>`;
   document.getElementById("btn-back").onclick = () => { if (UI.prevRosterTab) { UI.rosterTab = UI.prevRosterTab; } UI.screen = UI.playerDetailReturn || "roster"; UI.playerDetailReturn = null; render(); };
   wireCoachRefusalCard();
