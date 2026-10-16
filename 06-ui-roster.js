@@ -2616,6 +2616,8 @@ function hydrateLoadedState(saved) {
       else if ((S.pendingContractRenewals || []).length > 0) UI.screen = "contractRenewals";
       else if ((S.pendingStaffRenewals || []).length > 0) UI.screen = "staffRenewal"; // v31
       else if (S.v55PendingDirectorRenewal && S.teams[S.userTeamId] && S.teams[S.userTeamId].analysisDirector) UI.screen = "directorRenewal";
+      else if (S.gameStarted && S.currentDay === 0 && S.offseasonEnteredYear === S.seasonYear
+        && S.draftDoneYear !== S.seasonYear) UI.screen = "offseasonSummary"; // 讀檔後由現有自動銜接入口進入未完成選秀；春訓物件不能遮蔽此關。
       else if (S.gameStarted && S.offseasonEnteredYear === S.seasonYear && S.offseasonSummary
         && !(S.springCamp && S.springCamp.year === S.seasonYear)) UI.screen = "offseasonSummary"; // 尚未建立本季春訓時才回摘要；已進入開季準備須還原當前關卡。
       else if (!S.gameStarted) UI.screen = "offseasonSummary";
