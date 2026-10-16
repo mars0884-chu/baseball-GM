@@ -5212,11 +5212,12 @@ S.v48.hallOfFame=__r060Ids.map(function(id,i){var p=S.players[id];return {id:id,
  role:p.role||'',nationality:p.nationality,inductedYear:i+1,yearsOnTeam:8,retiredNumber:null,careerStats:{W:80,H:900},abilities:p};});
 UI.screen='hallOfFame';renderHallOfFame();
 var __r060First=(app.innerHTML.match(/class="card v48hof-member"/g)||[]).length===2&&app.innerHTML.includes('第 1/3 頁')&&
- (app.innerHTML.match(/class="btn-outline v48retire-num-btn"/g)||[]).length===2;
+ (app.innerHTML.match(/class="btn-outline v48retire-num-btn"/g)||[]).length===2&&
+ !app.innerHTML.includes('<div class="divlabel">殿堂成員</div>');
 UI.hofMemberPage=1;renderHallOfFame();var __r060Second=(app.innerHTML.match(/class="card v48hof-member"/g)||[]).length===2&&app.innerHTML.includes('第 2/3 頁');
 UI.hofMemberPage=2;renderHallOfFame();var __r060Third=(app.innerHTML.match(/class="card v48hof-member"/g)||[]).length===1&&app.innerHTML.includes('第 3/3 頁');
 S=JSON.parse(__r060SavedS);UI=JSON.parse(__r060SavedUI);`);
-assert(g("__r060First&&__r060Second&&__r060Third"), "r060 五位殿堂成員每頁兩位，三頁皆可到達並保留退休背號操作");
+assert(g("__r060First&&__r060Second&&__r060Third"), "r060 五位殿堂成員每頁兩位，三頁皆可到達、保留退休背號操作且不重複分頁標題");
 const r060Hof = fs.readFileSync("06-ui-roster.js", "utf8").split("function renderHallOfFame()")[1].split("function wireHallOfFame()")[0];
 const r060Css = fs.readFileSync("style.css", "utf8");
 assert(r060Hof.includes('v60RosterPageSlice(hof, "hofMemberPage", 2)') && r060Hof.includes('wireV60RosterPager()') && r060Hof.includes('v60RosterPagerHtml(memberPage') && r060Css.includes('.v48hof-member .v48radar text{fill:#173B70') && r060Css.includes('overflow:visible'), "r060 殿堂頁使用共用分頁並提高現有雷達標籤可讀性，不更動能力值");

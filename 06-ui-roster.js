@@ -3433,7 +3433,6 @@ function renderHallOfFame() {
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["殿堂", `${hof.length} 位`], ["退休背號", `${retNums.length} 個`], ["待審核", `${pending.length} 位`]], "名人堂摘要") : ""}
       ${pendingNote}
       ${retNumsHtml}
-      <div class="divlabel">殿堂成員</div>
       ${v60RosterPagerHtml(memberPage, "hofMemberPage", "殿堂成員", hof.length)}
       ${membersHtml}
       ${v60RosterPagerHtml(memberPage, "hofMemberPage", "殿堂成員", hof.length)}
