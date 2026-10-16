@@ -2325,7 +2325,6 @@ function renderNegotiation() {
      所有面板同時存在DOM、CSS切換，表單狀態不因換頁遺失。 */
   const negoDealPanel = `
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["剩餘機會", `${neg.attemptsLeft} 次`], ["市場行情", `${formatMoney(neg.marketSalary)}/年`], ["評估方向", "越接近期望越穩"], ["失敗結果", failNote]], "談判桌決策摘要") : ""}
-      <p class="v60-state-line">填入年薪與年限後送出；${5 - neg.attemptsLeft === 0 ? "本輪共有 5 次機會" : `本輪已使用 ${5 - neg.attemptsLeft} 次機會`}。</p>
       <label class="field">
         <span>提出年薪（萬元）${neg.kind === "rookie" && neg.rookieCap ? `・上限 ${Math.round(neg.rookieCap / 10000)}萬` : ""}</span>
         <input id="in-neg-salary" type="number" step="1" min="0" ${neg.kind === "rookie" && neg.rookieCap ? `max="${Math.round(neg.rookieCap / 10000)}"` : ""} value="${Math.round(neg.offerSalary / 10000)}" />
@@ -2371,9 +2370,8 @@ function renderNegotiation() {
       })()}`;
   app.innerHTML = `
     <div class="wrap v60-negotiation-screen draft-negotiation-screen">
-      <div class="topbar"><div class="eyebrow">${kindLabel}</div><div class="teamname">${p.name}</div></div>
+      <div class="topbar"><div class="eyebrow">${kindLabel}・${p.isPitcher ? "投手" : "野手"}・${p.age}歲</div><div class="teamname">${p.name}</div></div>
       <div class="v60-negotiation-banner" aria-label="談薪流程"><div class="v60-negotiation-banner-icon">${icon('money')}</div><div><span>NEGOTIATION DESK</span><strong>把薪資與年限談成合約</strong><div class="v60-negotiation-steps"><b>1 報價</b><b>2 評估</b><b>3 簽約</b></div></div></div>
-       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["類型", `${p.isPitcher ? "投手" : "野手"}・${p.age}歲`], ["剩餘", `${neg.attemptsLeft} 次`], ["市場行情", `${formatMoney(neg.marketSalary)}/年`], ["心理期望", `${formatMoney(neg.desiredSalary)}/年・${neg.desiredYears}年`], ["經紀人", `${p.agent.name}・${agInfo.name}`]], "球員談判摘要") : ""}
       ${uiTabs("nego", [
         { key: "deal", label: ""+icon('money')+" 談判桌", html: negoDealPanel },
         { key: "report", label: ""+icon('clipboard')+" 球探報告", html: negoReportPanel },

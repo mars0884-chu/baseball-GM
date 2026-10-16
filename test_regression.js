@@ -1876,6 +1876,15 @@ assert(g("app.innerHTML.indexOf('📊 總覽')>=0 && app.innerHTML.indexOf('🎟
 g("var __p40Nego=Object.values(S.players).find(p=>p&&!p.retired&&p.team===S.userTeamId&&p.agent); if(!__p40Nego) throw new Error('v40談判測試缺少有效在役球員'); UI.negotiation={kind:'renewal', playerId:__p40Nego.id, teamId:S.userTeamId, attemptsLeft:5, marketSalary:5000000, desiredSalary:6000000, desiredYears:3, offerSalary:5000000, offerYears:3, log:[]}; UI.screen='negotiation'; render();");
 assert(g("app.innerHTML.indexOf('💰 談判桌')>=0 && app.innerHTML.indexOf('📋 球探報告')>=0 && app.innerHTML.indexOf('🕵️ 情報')>=0"), "v40 談判三分頁渲染");
 assert(g("app.innerHTML.indexOf('in-neg-salary')>=0 && app.innerHTML.indexOf('球探完整報告')>=0"), "v40 談判分頁後出價欄與球探報告仍在DOM");
+g(`var __r115SavedAgency=JSON.stringify(S.agency),__r115Desired=formatMoney(UI.negotiation.desiredSalary);
+ensureAgency();delete S.agency.scouted[__p40Nego.id];renderNegotiation();
+var __r115Unscouted=!app.innerHTML.includes('心理期望')&&!app.innerHTML.includes('期望年薪</b><strong>'+__r115Desired)&&
+ (app.innerHTML.match(/市場行情/g)||[]).length===1&&(app.innerHTML.match(/剩餘機會/g)||[]).length===1&&
+ !app.innerHTML.includes('本輪共有 5 次機會')&&app.innerHTML.includes('in-neg-salary')&&app.innerHTML.includes('in-neg-years');
+S.agency.scouted[__p40Nego.id]={year:S.seasonYear};renderNegotiation();
+var __r115Scouted=app.innerHTML.includes('期望年薪</b><strong>'+__r115Desired)&&app.innerHTML.includes('偏好年限');
+S.agency=JSON.parse(__r115SavedAgency);`);
+assert(g("__r115Unscouted&&__r115Scouted"), "r115 談判桌移除重複行情與次數說明；未情蒐不洩漏心理期望，已情蒐仍能看到薪資與年限");
 g("UI.negotiation=null; UI.screen='dashboard'; render();");
 /* 選前資訊完整化 */
 g("UI.screen='freeAgents'; render();");
