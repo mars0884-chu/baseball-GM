@@ -5478,5 +5478,35 @@ assert(g("__r081Html.includes('data-draft-compare-tab=\"core\"')&&__r081Html.inc
 assert(g("__r081Visual.includes('v60-draft-radar')&&!__r081Visual.includes('v60-radar-values')&&__r081Full.includes('v60-radar-values')"), "r081 候選卡用圖形判讀，原雷達完整數值元件仍可用");
 assert(v60Roster003.includes('v60-draft-card-visuals')&&v60Style003.includes('.v60-draft-card-visuals')&&v60Roster003.includes('雷達色彩說明'), "r081 雙人卡圖像化與共享色彩圖例保留");
 
+console.log("\n--- r109 自由球員市場非空短頁 ---");
+g(`var __r109SavedS=JSON.stringify(S),__r109SavedUI=JSON.stringify(UI);
+newGame('自由球員短頁稽核');pickTeam('T0');pickGameMode('gm_coach');
+S.freeAgents={};
+for(var __r109i=0;__r109i<7;__r109i++){
+  var __r109p=__r109i%2?generatePitcher(null,'1軍'):generateBatter(null,'1軍');
+  __r109p.name='自由球員測試'+__r109i;__r109p.team=null;S.freeAgents[__r109p.id]=__r109p;
+}
+UI.screen='freeAgents';UI.faPosFilter='all';UI.faSort='default';UI.faSortDir=1;UI.freeAgentPage=0;
+var __r109Before=JSON.stringify(S),__r109Pages=[],__r109Seen=[];
+for(var __r109page=0;__r109page<4;__r109page++){
+  UI.freeAgentPage=__r109page;renderFreeAgents();
+  var __r109Current=Object.values(S.freeAgents).filter(p=>app.innerHTML.includes(p.name));
+  __r109Pages.push(__r109Current.length);
+  __r109Seen.push(...__r109Current.map(p=>p.id));
+}
+var __r109AllReached=__r109Pages.join(',')==='2,2,2,1'&&new Set(__r109Seen).size===7;
+UI.faSort='age';renderFreeAgents();var __r109SortReset=UI.freeAgentPage===0;
+UI.freeAgentPage=2;UI.faPosFilter='P';renderFreeAgents();var __r109FilterReset=UI.freeAgentPage===0;
+var __r109Safe=__r109AllReached&&__r109SortReset&&__r109FilterReset&&JSON.stringify(S)===__r109Before&&
+ app.innerHTML.includes('簽下')&&app.innerHTML.includes('預估年薪')&&app.innerHTML.includes('天花板');
+S.gameStarted=true;S.springCamp={year:S.seasonYear,executed:false};S.currentDay=0;
+S.draft=null;S.forcedCutRequired=false;S.pendingContractRenewals=[];S.pendingStaffRenewals=[];S.v55PendingDirectorRenewal=false;
+S.preseasonReview={year:S.seasonYear,teamId:S.userTeamId,steps:{deals:false,ticket:false,marketing:false,facilities:false,roster:false}};
+UI.screen='freeAgents';renderFreeAgents();document.getElementById('btn-back').onclick();
+var __r109Returned=UI.screen==='finance'&&UI.tabs.finance==='deals'&&v60PreseasonMissingStep()==='deals';
+S=JSON.parse(__r109SavedS);UI=JSON.parse(__r109SavedUI);`);
+assert(g("__r109Safe"), "r109 自由球員七人可逐頁到達；排序與守位篩選重置頁碼，資料與簽約操作保留，瀏覽不改正式狀態");
+assert(g("__r109Returned"), "r109 開季準備期間從自由球員市場返回目前未完成關卡，不會只回主控台而失去流程進度");
+
 console.log(`\n=== 回歸測試結果：${passed} 通過 / ${failed} 失敗 ===`);
 process.exit(failed > 0 ? 1 : 0);

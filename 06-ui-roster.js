@@ -945,9 +945,13 @@ function renderFreeAgents() {
   agents = applySort(agents, FA_SORTS, UI.faSort || "default", UI.faSortDir);
   const faAllAgents = agents; // 篩選前保留全量（用於計數）
   const faFiltered = applyPosFilter(agents, "faPosFilter");
+  const pageKey = [S.seasonYear, UI.faSort || "default", UI.faSortDir === -1 ? -1 : 1, UI.faPosFilter || "all"].join(":");
+  if (UI.freeAgentPageKey !== pageKey) { UI.freeAgentPageKey = pageKey; UI.freeAgentPage = 0; }
+  const faPage = v60RosterPageSlice(faFiltered, "freeAgentPage", 2);
+  const faPager = v60RosterPagerHtml(faPage, "freeAgentPage", "自由球員", faFiltered.length);
   app.innerHTML = `
-    <div class="wrap">
-      <div class="topbar"><div class="eyebrow">${team.name}</div><h1>自由球員市場</h1></div>
+    <div class="wrap v60-fa-market">
+      <div class="topbar"><div><div class="eyebrow">${team.name}</div><h1>自由球員市場</h1></div><button id="btn-back" class="btn-outline">返回</button></div>
       ${renderRosterNav("freeAgents")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
       <div class="scoreboard">
@@ -967,7 +971,7 @@ function renderFreeAgents() {
         </select>
         ${sortDirButtonHtml("faSortDir")}
       </div>
-      ${faFiltered.length === 0 ? `<p class="sub dark">目前沒有自由球員。</p>` : faFiltered.map(p => {
+      ${faFiltered.length === 0 ? `<p class="sub dark">目前沒有自由球員。</p>` : `${faPager}${faPage.items.map(p => {
         const trend = faTrendReport(p, team);
         const lastLine = negoStatLine(p, p.lastSeasonStats);
         return `
@@ -984,7 +988,7 @@ function renderFreeAgents() {
           <span class="gradebadge grade-${gradeFromValue(trueOverall(p))}">現況 ${gradeFromValue(trueOverall(p))}</span>
           <span class="gradebadge grade-${gradeFromValue(Math.max(trueOverall(p), p.potential))}">天花板 ${gradeFromValue(Math.max(trueOverall(p), p.potential))}</span>
         </div>
-        ${(() => { const ph = growthPhaseLabel(p); return `<div class="draftnote">${icon('chart-up')} 生涯階段：<b class="${ph.cls}">${ph.text}</b>——${ph.desc}</div>`; })()}
+        ${(() => { const ph = growthPhaseLabel(p); return `<div class="draftnote">生涯階段：<b class="${ph.cls}">${ph.text}</b>・${ph.desc}</div>`; })()}
         <div class="attrgrid">
           ${p.isPitcher ? `
             <div class="attr"><span>球速</span><b>${velocityKmh(p.velocity)} km/h</b></div>
@@ -1005,20 +1009,24 @@ function renderFreeAgents() {
           `}
         </div>
         <div class="draftnote trend-${trend.cls}">${trend.text}</div>
-        ${lastLine ? `<div class="draftnote muted">${icon('chart')} 上季成績：${lastLine}</div>` : `<div class="draftnote muted">${icon('chart')} 上季無出賽紀錄</div>`}
+        ${lastLine ? `<div class="draftnote muted">上季：${lastLine}</div>` : `<div class="draftnote muted">上季無出賽</div>`}
         <div class="draftnote muted">預估年薪 ${formatMoney(computePlayerSalary(p))}・簽約金約 ${formatMoney(Math.round(computePlayerSalary(p) * 0.3))}</div>
       </div>`;
-      }).join("")}
-      <div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>
+      }).join("")}${faPager}`}
     </div>`;
   const sortSel = document.getElementById("sort-fa");
   if (sortSel) sortSel.onchange = e => { UI.faSort = e.target.value; render(); };
   wirePosFilterButtons();
   wireSortDirButtons();
+  wireV60RosterPager();
   app.querySelectorAll(".sign-fa-btn").forEach(btn => {
     btn.onclick = () => signFreeAgent(btn.dataset.id);
   });
-  document.getElementById("btn-back").onclick = () => { UI.screen = "dashboard"; render(); };
+  document.getElementById("btn-back").onclick = () => {
+    if (typeof v60PreseasonWindow === "function" && v60PreseasonWindow() &&
+      (v60PreseasonMandatoryStage() || v60PreseasonMissingStep())) return v60PreseasonGoNext();
+    UI.screen = "dashboard"; render();
+  };
   wireRosterNav();
 }
 
@@ -1787,6 +1795,7 @@ function wireV60RosterPager() {
       const maxPage = Math.max(0, Number(btn.dataset.pageCount) - 1);
       UI[pageKey] = Math.max(0, Math.min(maxPage, (Number(UI[pageKey]) || 0) + Number(btn.dataset.pageStep || 0)));
       render();
+      if (pageKey === "freeAgentPage") app.querySelector(".v60-fa-market .v60-roster-pager")?.scrollIntoView({ block: "start" });
     };
   });
 }
