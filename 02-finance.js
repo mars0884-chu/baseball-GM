@@ -2726,17 +2726,17 @@ function renderFinance() {
         ["認同・票贊／FA／主場", `${Math.round(S.fanIdentify||55)}/100`],
         [`素養${(S.fanDataLiteracy||8)>=50 ? "・進階" : (S.fanDataLiteracy||8)>=25 ? "・OPS+" : ""}`, `${Math.round(S.fanDataLiteracy||8)}/100`]
       ], "球迷壓力摘要") : `<div class="scoreboard"><div class="sb-row"><span class="sb-label">期待・耐心・認同・素養</span><span class="sb-value small">${Math.round(S.fanExpect||50)}／${Math.round(S.fanPatience||60)}／${Math.round(S.fanIdentify||55)}／${Math.round(S.fanDataLiteracy||8)}</span></div></div>`}
-      <p class="v60-state-line">期待低於目標→不滿；認同影響票贊／FA／主場；素養隨年成長。</p>
+      <p class="v60-state-line">期待低於目標→不滿 · 素養逐年成長</p>
       ${Array.isArray(S.fanTradeMemory)&&S.fanTradeMemory.length>0?`<div class="sb-row"><span class="sb-label">球迷記憶</span><span class="sb-value small">${S.fanTradeMemory.slice(0,3).map(m=>m.name+"（"+m.yearsLeft+"年）").join("、")}</span></div>`:""}
 
-      <div class="divlabel">球隊文化（你十年行為的沉澱）</div>
+      <div class="divlabel">球隊文化・長期行為</div>
       <div class="scoreboard">
         <div class="sb-row"><span class="sb-label">${icon('leaf')} 文化標籤</span><span class="sb-value small">${(typeof v55CultureLabelHtml === "function") ? v55CultureLabelHtml((S.culture && S.culture.labels) || []) : "中庸"}</span></div>
         ${(S.culture && S.culture.history && S.culture.history.length >= 3) ? `
         <div class="sb-row"><span class="sb-label">${icon('users')} 自家子弟兵比例</span><span class="sb-value small">${Math.round((S.culture.scores.rookieDev || 0) * 100)}%</span></div>
         <div class="sb-row"><span class="sb-label">${icon('coin')} FA支出占薪資帽</span><span class="sb-value small">${Math.round((S.culture.scores.faBigSpend || 0) * 100)}%</span></div>
         <div class="sb-row"><span class="sb-label">${icon('shield-check')} 教練需求兌現率</span><span class="sb-value small">${Math.round((S.culture.scores.trust || 0) * 100)}%</span></div>
-        ` : '<div class="sb-row"><span class="sb-label muted">需累積至少3年行為紀錄才會顯示文化傾向</span></div>'}
+        ` : '<div class="sb-row"><span class="sb-label muted">滿3年顯示文化傾向</span></div>'}
       </div>
 
       <div class="divlabel">城市（${team.city || "—"}）</div>
@@ -2747,7 +2747,7 @@ function renderFinance() {
         <div class="sb-row"><span class="sb-label">${icon('heart-handshake')} 球迷世代（耐心根基）</span><span class="sb-value small">${Math.round(S.cityState[S.userTeamId].fanGen)} / 100</span></div>
         ` : '<div class="sb-row"><span class="sb-label muted">城市資料載入中</span></div>'}
       </div>
-       <p class="v60-state-line">城市資料每年緩慢演化，影響票房、贊助與球迷根基。</p>
+       <p class="v60-state-line">城市指標逐年緩變</p>
 
       `;
   const finProjectionPanel = `

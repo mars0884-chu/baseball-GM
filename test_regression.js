@@ -4402,6 +4402,19 @@ assert(v60PrepStyle.includes(".v60-preseason-dock{position:sticky;top:0") && v60
 assert(v60PrepRoster.includes("v60-roster-table-wrap") && v60PrepStyle.includes(".v60-roster-table-wrap{max-width:100%;overflow-x:auto"), "v60-010 球員寬表限制在內部捲動框，不撐開手機頁面");
 const v60TicketPanel = v60PrepFinance.slice(v60PrepFinance.indexOf("const finTicketPanel"), v60PrepFinance.indexOf("const finDealsPanel"));
 assert(v60TicketPanel.includes("票價策略摘要") && !v60TicketPanel.includes("目前票價上限</div>") && !v60TicketPanel.includes("預估進場成數</div>"), "v60-010 票價頁移除與視覺指標重複的明細列");
+g(`var __r113SavedS=JSON.stringify(S), __r113SavedUI=JSON.stringify(UI);
+UI.screen='finance'; UI.tabs=UI.tabs||{}; UI.tabs.finance='overview'; UI.tabs.financeOverview='community';
+renderFinance();
+var __r113Community=app.innerHTML.includes('期待低於目標→不滿 · 素養逐年成長')
+  &&app.innerHTML.includes('認同・票贊／FA／主場')
+  &&app.innerHTML.includes('滿3年顯示文化傾向')
+  &&app.innerHTML.includes('人口規模（票房基底）')
+  &&app.innerHTML.includes('經濟活力（贊助上限）')
+  &&app.innerHTML.includes('球迷世代（耐心根基）')
+  &&app.innerHTML.includes('城市指標逐年緩變')
+  &&!app.innerHTML.includes('城市資料每年緩慢演化，影響票房、贊助與球迷根基');
+S=JSON.parse(__r113SavedS); UI=JSON.parse(__r113SavedUI);`);
+assert(g("__r113Community"), "r113 財務球迷與城市分頁刪除重複解說，保留期待、素養、文化年限及各城市指標作用");
 g(`var __v60PreseasonSaved=JSON.stringify(S), __v60PreseasonOldRandom=Math.random, __v60PreseasonForecast=null, __v60PreseasonForecastError=null;
 try { Math.random=function(){throw new Error("預估不應抽亂數")}; __v60PreseasonForecast=v60PreseasonFinanceForecast(S.teams[S.userTeamId]); }
 catch(e) { __v60PreseasonForecastError=String(e); }
