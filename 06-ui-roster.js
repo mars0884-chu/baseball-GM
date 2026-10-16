@@ -3536,7 +3536,7 @@ function renderDataCenter() {
     }
 
     app.innerHTML = `<div class="wrap">
-      <div class="topbar"><div><div class="eyebrow">數據中心・分析室 Lv.${tier}</div><div class="teamname">${icon('chart')} 進階數據分析</div></div></div>
+      <div class="topbar"><div><div class="eyebrow">數據中心・資料可見 Lv.${tier}</div><div class="teamname">${icon('chart')} 進階數據分析</div></div></div>
       ${(typeof v55DirectorPanelHtml === "function") ? v55DirectorPanelHtml(ownTeam) : ""}
       <div class="tabrow">
         <button class="tab ${tab === "batters" ? "active" : ""}" data-dctab="batters">打者排行</button>

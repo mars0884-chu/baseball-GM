@@ -4943,6 +4943,14 @@ UI=JSON.parse(__r045SavedUI);`);
 assert(g("(__r045BatFirst.match(/class=\"v55dc-row\"/g)||[]).length===8 && (__r045BatLast.match(/class=\"v55dc-row\"/g)||[]).length===8 && __r045BatLast.includes('<td>33</td>') && __r045BatLast.includes('<td>40</td>') && __r045BatLast.includes('第 5/5 頁') && __r045BatLast.includes('資料可信度：高')"), "r045 打者榜前40名分5頁，原順位、可信度與數值欄保留");
 assert(g("(__r045PitFirst.match(/class=\"v55dc-row\"/g)||[]).length===8 && (__r045PitLast.match(/class=\"v55dc-row\"/g)||[]).length===8 && __r045PitLast.includes('<td>33</td>') && __r045PitLast.includes('<td>40</td>') && __r045PitLast.includes('資料可信度：中')"), "r045 投手榜前40名分5頁且原順位完整");
 assert(g("(__r045LuckBat.match(/class=\"v55dc-row\"/g)||[]).length===1 && __r045LuckBat.includes('打者・25') && (__r045LuckPit.match(/class=\"v55dc-row\"/g)||[]).length===2 && __r045LuckPit.includes('投手・10') && __r045Pure"), "r045 運氣校正25名打者及10名投手分類分頁，純呈現不修改存檔");
+g(`var __r114SavedS=JSON.stringify(S),__r114SavedUI=JSON.stringify(UI);
+var __r114Team=S.teams[S.userTeamId];ensureFacilities(__r114Team);
+__r114Team.facilities.analysisRoom=0;__r114Team.analysisDirector=null;
+UI.screen='dataCenter';var __r114Before=JSON.stringify(S);renderDataCenter();
+var __r114Level=v51VisibleTier(__r114Team,true),__r114Html=app.innerHTML;
+var __r114Safe=JSON.stringify(S)===__r114Before;
+S=JSON.parse(__r114SavedS);UI=JSON.parse(__r114SavedUI);`);
+assert(g("__r114Level===1&&__r114Html.includes('資料可見 Lv.1')&&!__r114Html.includes('分析室 Lv.1')&&__r114Safe"), "r114 分析室 Lv.0 時自家資料保底 Lv.1；頁首不得誤稱設施已升級，純檢視不改存檔");
 
 console.log("\n--- r047 國際市場共享能力比較 ---");
 g(`var __r047SavedUI=JSON.stringify(UI);
