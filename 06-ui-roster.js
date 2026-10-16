@@ -1109,6 +1109,8 @@ function v60MaturityShort(label) {
 }
 function renderInternationalMarket() {
   const team = S.teams[S.userTeamId];
+  const returnToPrep = typeof v60PreseasonWindow === "function" && v60PreseasonWindow()
+    && (v60PreseasonMandatoryStage() || v60PreseasonMissingStep() || S.springCampDoneYear !== S.seasonYear);
   ensureFacilities(team);
   const scout = team.scouts.international;
   const effAcc = effectiveScoutAccuracy(team, scout);
@@ -1141,7 +1143,7 @@ function renderInternationalMarket() {
   const pager = `<nav class="v60-draft-pager" aria-label="國際球員分頁"><button data-intl-page="${page - 1}" ${page === 0 ? "disabled" : ""}>上一頁</button><span>${page + 1}／${pageCount} 頁・${intlFiltered.length} 人</span><button data-intl-page="${page + 1}" ${page === pageCount - 1 ? "disabled" : ""}>下一頁</button></nav>`;
   app.innerHTML = `
     <div class="wrap v60-intl-market">
-      <div class="topbar"><div><div class="eyebrow">${team.name}</div><h1>國際球員市場</h1></div><button id="btn-back" class="btn-outline">返回</button></div>
+      <div class="topbar"><div><div class="eyebrow">${team.name}</div><h1>國際球員市場</h1></div><button id="btn-back" class="btn-outline">${returnToPrep ? "返回目前待辦" : "返回主控台"}</button></div>
       ${renderRosterNav("internationalMarket")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
       <div class="v60-intl-status" role="group" aria-label="國際市場球探與名額摘要">
@@ -1190,7 +1192,10 @@ function renderInternationalMarket() {
   app.querySelectorAll(".sign-intl-btn").forEach(btn => {
     btn.onclick = () => signInternationalPlayer(btn.dataset.id);
   });
-  document.getElementById("btn-back").onclick = () => { UI.screen = "dashboard"; render(); };
+  document.getElementById("btn-back").onclick = () => {
+    if (returnToPrep) return v60PreseasonGoNext();
+    UI.screen = "dashboard"; render();
+  };
   wireRosterNav();
 }
 
