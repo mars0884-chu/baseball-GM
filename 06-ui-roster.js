@@ -1421,8 +1421,9 @@ function renderCoaches() {
 }
 
 // 選秀最後一個操作完成後自動銜接；選秀核心仍先完成名單、薪資與選秀結果收尾。
-function v60AdvanceAfterDraftAction() {
-  if (!S.draft || S.draft.active || UI.negotiation || UI.screen !== "draft") return false;
+function v60AdvanceAfterDraftAction(fromRookieNegotiation = false) {
+  // 新秀談薪的成交／破局會先回到自由球員頁；僅該收尾入口可從此頁銜接。
+  if (!S.draft || S.draft.active || UI.negotiation || (UI.screen !== "draft" && !(fromRookieNegotiation && UI.screen === "freeAgents"))) return false;
   UI.completedDraft = { active: false, picks: S.draft.picks.slice(), skippedByUser: S.draft.skippedByUser || 0 };
   if (S.gameStarted) {
     finalizeNewSeason();

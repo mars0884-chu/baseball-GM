@@ -4976,7 +4976,14 @@ var __r050AnnualAdvanced=v60AdvanceAfterDraftAction(),__r050AnnualPrep=UI.screen
 S=JSON.parse(__r050SavedS);UI=JSON.parse(__r050SavedUI);`);
 assert(g("__r050Finished && __r050NoPrematureMove && __r050Advanced && __r050Prep && __r050NoDouble"), "r050 選秀操作完成後自動進入談約檢查，尚未完成準備不可直接春訓，重入不重複換季");
 assert(g("__r050AnnualFinished && __r050AnnualAdvanced && __r050AnnualPrep"), "r050 後續球季選秀完成也自動換季進開季準備，自主訓練成果保留供回看");
-assert(v60PrepRoster.includes('confirmSkipOnce(); v60AdvanceAfterDraftAction()') && v60PrepFinance.includes('neg.kind === "rookie"') && v60PrepFinance.includes('v60AdvanceAfterDraftAction()'), "r050 放棄順位與新秀談薪結束皆接到自動銜接入口");
+assert(v60PrepRoster.includes('confirmSkipOnce(); v60AdvanceAfterDraftAction()') && v60PrepFinance.includes('neg.kind === "rookie"') && v60PrepFinance.includes('v60AdvanceAfterDraftAction(true)'), "r050 放棄順位與新秀談薪結束皆接到自動銜接入口");
+g(`var __r111SavedS=JSON.stringify(S),__r111SavedUI=JSON.stringify(UI);
+newGame('新秀談薪銜接');pickTeam('T0');pickGameMode('gm_coach');proceedFromOffseasonSummary();confirmSkipAllRemaining();
+UI.screen='freeAgents';var __r111NoUnscopedAdvance=!v60AdvanceAfterDraftAction()&&!S.gameStarted;
+var __r111RookieAdvance=v60AdvanceAfterDraftAction(true)&&S.gameStarted&&UI.screen==='finance'&&UI.tabs.finance==='deals'&&S.currentDay===0;
+var __r111NoRepeat=!v60AdvanceAfterDraftAction(true)&&S.currentDay===0;
+S=JSON.parse(__r111SavedS);UI=JSON.parse(__r111SavedUI);`);
+assert(g("__r111NoUnscopedAdvance&&__r111RookieAdvance&&__r111NoRepeat"), "r111 新秀談薪收尾自動進談約；其他自由球員操作不得觸發換季，且不重複開季");
 
 console.log("\n--- r051 已完成選秀的舊存檔自動恢復 ---");
 g(`var __r051SavedS=JSON.stringify(S),__r051SavedUI=JSON.stringify(UI);
