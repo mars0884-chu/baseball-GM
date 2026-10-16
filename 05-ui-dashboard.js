@@ -1231,6 +1231,10 @@ function renderAwards() {
   function leagueAwardsHtml(region) {
     const la = a[region];
     if (!la) return `<p>無資料</p>`;
+    const bestNinePageKey = `awardsBestNine${region}Page`;
+    const goldenGlovePageKey = `awardsGoldenGlove${region}Page`;
+    const bestNinePage = v60RosterPageSlice(BESTNINE_GROUPS, bestNinePageKey, 3);
+    const goldenGlovePage = v60RosterPageSlice(GOLDGLOVE_GROUPS, goldenGlovePageKey, 3);
     const awardCards = keys => AWARD_LABELS.filter(([key]) => keys.includes(key)).map(([key, label]) => {
         const pid = la[key];
         const p = pid ? S.players[pid] : null;
@@ -1261,7 +1265,7 @@ function renderAwards() {
           '<div class="awardteam">' + (p && tm ? tm.name + (mine ? "（你的球隊！）" : "") : "") + '</div>' +
           '<div class="awardstat">' + (p ? awardStatLine("winsTitle", p) + "、防禦率" + era(p.seasonStats).toFixed(2) : "") + '</div></div>';
       })();
-    const bestNineCards = BESTNINE_GROUPS.map(g => {
+    const bestNineCards = bestNinePage.items.map(g => {
         const p = la.bestNine[g] ? S.players[la.bestNine[g]] : null;
         const tm = p ? S.teams[p.team] : null; const mine = p && p.team === S.userTeamId;
         return '<div class="card awardcard ' + (mine ? "me" : "") + '">' +
@@ -1270,7 +1274,7 @@ function renderAwards() {
           '<div class="awardteam">' + (p && tm ? tm.name + (mine ? "（你的球隊！）" : "") : "") + '</div>' +
           '<div class="awardstat">' + (p ? awardStatLine("battingTitle", p) + (g === "指定打擊" ? "" : "、守備成功率" + p.fielding + "%") : "") + '</div></div>';
       }).join("");
-    const goldenGloveCards = GOLDGLOVE_GROUPS.map(g => {
+    const goldenGloveCards = goldenGlovePage.items.map(g => {
         const p = la.goldenGlove[g] ? S.players[la.goldenGlove[g]] : null;
         const tm = p ? S.teams[p.team] : null; const mine = p && p.team === S.userTeamId;
         return '<div class="card awardcard ' + (mine ? "me" : "") + '">' +
@@ -1283,8 +1287,8 @@ function renderAwards() {
       { key: "headline", label: "年度大獎", html: awardCards(["mvp", "rookieOfYear"]) },
       { key: "batting", label: "打擊", html: awardCards(["battingTitle", "homeRunTitle", "hitsTitle", "rbiTitle", "stolenBaseTitle"]) + goldenBat },
       { key: "pitching", label: "投手", html: awardCards(["eraTitle", "winsTitle", "strikeoutTitle", "saveTitle", "holdTitle"]) + goldenArm },
-      { key: "bestNine", label: "最佳九人", html: `<p class="sub dark">含指定打擊，共 9 席</p>${bestNineCards}` },
-      { key: "goldenGlove", label: "金手套", html: goldenGloveCards }
+      { key: "bestNine", label: "最佳九人", html: `${v60RosterPagerHtml(bestNinePage, bestNinePageKey, `${region}聯盟最佳九人`, BESTNINE_GROUPS.length, "席")}${bestNineCards}` },
+      { key: "goldenGlove", label: "金手套", html: `${v60RosterPagerHtml(goldenGlovePage, goldenGlovePageKey, `${region}聯盟金手套`, GOLDGLOVE_GROUPS.length, "席")}${goldenGloveCards}` }
     ])}</div>`;
   }
   app.innerHTML = `
@@ -1297,6 +1301,7 @@ function renderAwards() {
       <div class="btnrow"><button id="btn-to-offseason" class="btn-primary">${isIntlYear(S.seasonYear) && !(S.intlTournament && S.intlTournament.year === S.seasonYear && S.intlTournament.done) ? "前往世界棒球錦標賽" : "查看休賽季異動"}</button></div>
     </div>`;
   wireUiTabs();
+  wireV60RosterPager();
   document.getElementById("btn-to-offseason").onclick = () => {
     // v25：4年一度國際賽年（首屆第5年），頒獎後先舉辦世界賽再進休賽季
     if (isIntlYear(S.seasonYear) && !(S.intlTournament && S.intlTournament.year === S.seasonYear && S.intlTournament.done)) {
