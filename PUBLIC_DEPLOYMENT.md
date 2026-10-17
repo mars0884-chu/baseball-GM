@@ -1,3 +1,10 @@
+# 2026-10-17 GitHub Pages 推送與公開驗證
+
+- Mars 明確回覆「驗證通過，可以推送」；這是 Mars 親自操作候選版後的接受回報，Codex 未取得 `file://` 分頁讀取權限，因此不冒稱已由 Codex 重做桌面／手機瀏覽器驗證，也不把這次接受擴大為全遊戲文字減半。
+- 推送前本機 `node test_regression.js` 為 **1,985 通過／0 失敗**；一般與純 GM 15 年煙霧測試均通過。`main` 由 `08caa9f` 推送至 `d426977`（含 22 筆提交），未把原有未提交的 `manifest.webmanifest` 納入。
+- [Pages 建置 39039060088](https://github.com/mars0884-chu/baseball-GM/actions/runs/39039060088) 對 `d426977` 顯示 `completed/success`。公開 `index.html`、`02-finance.js`、`04-state-core.js`、`05-ui-dashboard.js`、`06-ui-roster.js`、`sw.js` 以 `no-cache` 查詢均為 HTTP 200，並各自核對本批標記；談薪美術 `visual_assets/v60/scouting_contracts_r038.jpg` HEAD 為 HTTP 200。公開入口：[決勝 GM](https://mars0884-chu.github.io/baseball-GM/)；已安裝 PWA 可能需重新開啟才取到新快取。
+- 本批僅證明已推送及公開資源切換；不同存檔與全部路由的可見文字／頁高、320／390／1280px 全面量測，以及「全遊戲減少 50%」仍未完成，後續繼續逐頁驗證與改善。正式 `current/`、Delivery ZIP、SHA、`CURRENT_PACKAGE.json` 未動。
+
 # 2026-10-17 全路由字數口徑更正（未推送）
 
 - 重新讀取 `../v60-010-preseason-flow-candidate/browser-proof/v60-r110-full-final-390-route-inventory.json` 的 56 個路由：`chars` 包含尚未展開的 `<select>` 選項，應使用 `estimatedVisibleChars` 排優先順序。該舊版固定情境的主內容可見字合計 12,548；共用開季列另外累計 2,934 字次，不能與主內容重複加總後稱為實際閱讀量。
