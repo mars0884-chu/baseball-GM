@@ -1896,6 +1896,7 @@ g("UI.negotiation=null; UI.screen='dashboard'; render();");
 /* 選前資訊完整化 */
 g("UI.screen='freeAgents'; render();");
 assert(g("(app.innerHTML.includes('球探評估')&&!app.innerHTML.includes('生涯階段：')) || Object.keys(S.freeAgents||{}).length===0"), "v40/r117 自由球員選前仍可見球探生涯預測，不重複揭露實際顛峰階段");
+assert(g("var __faNegoReport=negotiationScoutBlock(__p40Nego,{kind:'freeAgent',teamId:S.userTeamId}); __faNegoReport.includes(faTrendReport(__p40Nego,S.teams[S.userTeamId]).text)&&!__faNegoReport.includes('生涯階段：')&&__faNegoReport.includes('球探完整報告')"), "r118 自由球員談薪沿用市場球探預測，不重新顯示真實顛峰階段；完整球探報告保留");
 g("UI.lineupPanel='coach'; UI.screen='lineup'; render();");
 assert(g("app.innerHTML.indexOf('排線權責')>=0 && app.innerHTML.indexOf('戰術方針')>=0 && app.innerHTML.indexOf('輪休策略')>=0"), "v40⑤ 打線頁教練排線卡（方針＋輪休選項）");
 assert(g("app.innerHTML.indexOf('教練提名')>=0"), "v40⑤ 打線頁隊長教練提名卡");

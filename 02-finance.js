@@ -2267,7 +2267,10 @@ function scoutedAttrRows(p) {
 }
 function negotiationScoutBlock(p, neg) {
   const team = S.teams[neg.teamId || S.userTeamId];
-  const phase = growthPhaseLabel(p);
+  const phase = neg.kind === "freeAgent" ? null : growthPhaseLabel(p);
+  // 自由球員市場已提供本土球探的生涯預測；談薪沿用同一評估，不再顯示真實顛峰階段。
+  const careerLine = neg.kind === "freeAgent" ? faTrendReport(p, team).text
+    : `${icon('chart-up')} 生涯階段：<b class="${phase.cls}">${phase.text}</b> — ${phase.desc}${neg.kind === "rookie" ? `；${p.maturity}` : ""}`;
   const seasonOver = !S.schedule || S.currentDay >= S.schedule.length;
   const curLine = negoStatLine(p, p.seasonStats);
   const lastLine = negoStatLine(p, p.lastSeasonStats);
@@ -2305,7 +2308,7 @@ function negotiationScoutBlock(p, neg) {
     <div class="draftgrades" style="margin:6px 0;flex-wrap:wrap;">${ceilingRow}</div>
     ${neg.kind === "rookie" ? `<div class="draftnote muted" style="margin:2px 0;">逐項能力：現在(評估) → 該項預估天花板（v38：每項能力各有自己的天花板，成長空間不一樣；準確度越高越可信）</div>` : ""}
     <div class="attrgrid">${abilityRows}</div>
-    <p class="sub dark" style="margin:6px 0;">${icon('chart-up')} 生涯階段：<b class="${phase.cls}">${phase.text}</b> — ${phase.desc}${neg.kind === "rookie" ? `；${p.maturity}` : ""}</p>
+    <p class="sub dark" style="margin:6px 0;">${careerLine}</p>
     ${curLine ? `<p class="sub dark" style="margin:4px 0;">${icon('chart')} ${seasonOver ? "上季成績（剛結束的球季）" : "本季至今"}：${curLine}</p>` : ""}
     ${lastLine && p.lastSeasonStats ? `<p class="sub dark" style="margin:4px 0;">${icon('chart')} 第${p.lastSeasonStats.year}年成績：${lastLine}</p>` : ""}
     ${!curLine && !lastLine ? `<p class="draftnote muted">尚無一軍出賽成績紀錄${neg.kind === "rookie" ? "（新秀）" : ""}。</p>` : ""}
