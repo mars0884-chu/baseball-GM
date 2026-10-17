@@ -1237,7 +1237,8 @@ function renderScouts() {
       ${renderRosterNav("scouts")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
       ${picking ? "" : `
-      <p class="v60-state-line" aria-label="球探職務與效果">國內：選秀／育成 · 國際：海外／獨家 · 交易：對手估值 · 空缺：盲評 · ${scoutAccuracyBonus(team) > 0 ? `辦公室全員準度+${scoutAccuracyBonus(team)}` : "辦公室升級可增準度"}</p>
+      <div class="v60-scout-roles" role="group" aria-label="球探職務"><span><b>國內</b>選秀／育成</span><span><b>國際</b>海外／獨家</span><span><b>交易</b>對手估值</span></div>
+      <p class="v60-state-line" aria-label="球探辦公室效果">${scoutAccuracyBonus(team) > 0 ? `辦公室全員準度+${scoutAccuracyBonus(team)}` : "辦公室升級可增準度"}</p>
       <table class="stattable v60-scout-staff-table">
         <thead><tr><th>類別</th><th>姓名</th><th>準確度</th><th>專精</th><th>合約</th><th>年薪</th><th></th></tr></thead>
         <tbody>

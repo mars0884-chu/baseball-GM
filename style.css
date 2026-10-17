@@ -525,6 +525,9 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 .v60-fa-compare-value b{font-size:14px;white-space:nowrap;}
 .v60-fa-compare-value i{display:block;width:100%;height:5px;margin-top:3px;border-radius:5px;background:#D3E4F6;overflow:hidden;}
 .v60-fa-compare-value em{display:block;height:100%;border-radius:5px;background:#1673C9;}
+.v60-scout-roles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:8px 0 4px;}
+.v60-scout-roles span{display:flex;flex-direction:column;min-width:0;min-height:44px;justify-content:center;padding:5px 7px;border:1px solid #B7D3F5;border-radius:8px;background:#F4F9FF;color:#17233B;font-size:14px;line-height:1.25;overflow-wrap:anywhere;}
+.v60-scout-roles b{color:#1459B8;}
 .v60-player-detail-topbar{align-items:center;gap:8px;}
 .v60-player-detail-topbar>div:first-child{min-width:0;flex:1 1 auto;}
 .v60-player-detail-headside{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:0 0 auto;}
