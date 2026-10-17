@@ -1895,7 +1895,7 @@ assert(g("__r115Unscouted&&__r115Scouted&&app.innerHTML.includes('visual_assets/
 g("UI.negotiation=null; UI.screen='dashboard'; render();");
 /* 選前資訊完整化 */
 g("UI.screen='freeAgents'; render();");
-assert(g("app.innerHTML.indexOf('生涯階段')>=0 || Object.keys(S.freeAgents||{}).length===0"), "v40 自由球員卡含生涯階段（選前可見）");
+assert(g("(app.innerHTML.includes('球探評估')&&!app.innerHTML.includes('生涯階段：')) || Object.keys(S.freeAgents||{}).length===0"), "v40/r117 自由球員選前仍可見球探生涯預測，不重複揭露實際顛峰階段");
 g("UI.lineupPanel='coach'; UI.screen='lineup'; render();");
 assert(g("app.innerHTML.indexOf('排線權責')>=0 && app.innerHTML.indexOf('戰術方針')>=0 && app.innerHTML.indexOf('輪休策略')>=0"), "v40⑤ 打線頁教練排線卡（方針＋輪休選項）");
 assert(g("app.innerHTML.indexOf('教練提名')>=0"), "v40⑤ 打線頁隊長教練提名卡");
@@ -5610,14 +5610,15 @@ var __r109AllReached=__r109Pages.join(',')==='2,2,2,1'&&new Set(__r109Seen).size
 UI.faSort='age';renderFreeAgents();var __r109SortReset=UI.freeAgentPage===0;
 UI.freeAgentPage=2;UI.faPosFilter='P';renderFreeAgents();var __r109FilterReset=UI.freeAgentPage===0;
 var __r109Safe=__r109AllReached&&__r109SortReset&&__r109FilterReset&&JSON.stringify(S)===__r109Before&&
- app.innerHTML.includes('簽下')&&app.innerHTML.includes('預估年薪')&&app.innerHTML.includes('天花板');
+ app.innerHTML.includes('簽下')&&app.innerHTML.includes('預估年薪')&&app.innerHTML.includes('天花板')&&
+ app.innerHTML.includes('球探評估')&&!app.innerHTML.includes('生涯階段：')&&!app.innerHTML.includes('預估顛峰約');
 S.gameStarted=true;S.springCamp={year:S.seasonYear,executed:false};S.currentDay=0;
 S.draft=null;S.forcedCutRequired=false;S.pendingContractRenewals=[];S.pendingStaffRenewals=[];S.v55PendingDirectorRenewal=false;
 S.preseasonReview={year:S.seasonYear,teamId:S.userTeamId,steps:{deals:false,ticket:false,marketing:false,facilities:false,roster:false}};
 UI.screen='freeAgents';renderFreeAgents();document.getElementById('btn-back').onclick();
 var __r109Returned=UI.screen==='finance'&&UI.tabs.finance==='deals'&&v60PreseasonMissingStep()==='deals';
 S=JSON.parse(__r109SavedS);UI=JSON.parse(__r109SavedUI);`);
-assert(g("__r109Safe"), "r109 自由球員七人可逐頁到達；排序與守位篩選重置頁碼，資料與簽約操作保留，瀏覽不改正式狀態");
+assert(g("__r109Safe"), "r109 自由球員七人可逐頁到達；球探趨勢保留、不重複揭露真值生涯階段，資料與簽約操作保留，瀏覽不改正式狀態");
 assert(g("__r109Returned"), "r109 開季準備期間從自由球員市場返回目前未完成關卡，不會只回主控台而失去流程進度");
 
 console.log("\n--- r112 代理人本季情蒐非空分頁 ---");

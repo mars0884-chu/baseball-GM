@@ -988,7 +988,6 @@ function renderFreeAgents() {
           <span class="gradebadge grade-${gradeFromValue(trueOverall(p))}">現況 ${gradeFromValue(trueOverall(p))}</span>
           <span class="gradebadge grade-${gradeFromValue(Math.max(trueOverall(p), p.potential))}">天花板 ${gradeFromValue(Math.max(trueOverall(p), p.potential))}</span>
         </div>
-        ${(() => { const ph = growthPhaseLabel(p); return `<div class="draftnote">生涯階段：<b class="${ph.cls}">${ph.text}</b>・${ph.desc}</div>`; })()}
         <div class="attrgrid">
           ${p.isPitcher ? `
             <div class="attr"><span>球速</span><b>${velocityKmh(p.velocity)} km/h</b></div>
