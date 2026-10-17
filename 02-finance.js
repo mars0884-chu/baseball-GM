@@ -597,6 +597,10 @@ function renderV57FacilityVisual(team, cur, next, canUpgrade, ftab) {
     <div class="v57-facility-hero-scene">${v57FacilityTabArtVisual(ftab, profile, view, { agedCount, upgradeReady, locked })}</div>
   </section>`;
 }
+/* 單項設施的等級與費用直接貼近升級操作，避免另佔一段重複說明。 */
+function v60FacilityUpgradeAction(id, label, level, cost, enabled) {
+  return `<div class="v60-facility-upgrade-action"><span>Lv.${level} → ${level + 1}・${formatMoney(cost)}</span><button id="${id}" class="btn-primary" ${enabled ? "" : "disabled"}>升級${label}</button></div>`;
+}
 function renderFacilities() {
   const team = S.teams[S.userTeamId];
   ensureFinance(team); ensureFacility(team); ensureFacilities(team);
@@ -700,65 +704,50 @@ function renderFacilities() {
     const cost = maxed ? 0 : MEDICAL_UPGRADE_COSTS[lv] * 10000;
     body = `
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["等級", `Lv.${lv}${maxed ? " MAX" : ""}`], ["受傷", `-${lv * 8}%`], ["恢復", `-${lv * 6}%`]], "醫療室摘要") : ""}
-      <div class="card">
-        <div class="eyebrow">醫療室</div>
-        ${maxed ? '' : v60UpgradeComparison([['受傷機率', `-${lv * 8}%`, `-${(lv + 1) * 8}%`], ['恢復天數', `-${lv * 6}%`, `-${(lv + 1) * 6}%`]])}
-        ${maxed ? `<p class="sub dark">已達最高等級。</p>` : `
-        <p class="sub dark">升級至 Lv.${lv + 1} 費用：<b>${formatMoney(cost)}</b></p>
-        <div class="btnrow"><button id="btn-upgrade-medical" class="btn-primary" ${canUpgrade && team.finance.budget >= cost ? "" : "disabled"}>升級醫療室</button></div>`}
-      </div>`;
+      ${maxed ? '' : `<section class="card v60-facility-detail" aria-label="醫療室升級">
+        ${v60UpgradeComparison([['受傷機率', `-${lv * 8}%`, `-${(lv + 1) * 8}%`], ['恢復天數', `-${lv * 6}%`, `-${(lv + 1) * 6}%`]])}
+        ${v60FacilityUpgradeAction("btn-upgrade-medical", "醫療室", lv, cost, canUpgrade && team.finance.budget >= cost)}
+      </section>`}`;
   } else if (ftab === "宿舍") {
     const lv = dormLevel(team);
     const maxed = lv >= DORM_MAX_LEVEL;
     const cost = maxed ? 0 : DORM_UPGRADE_COSTS[lv] * 10000;
     body = `
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["等級", `Lv.${lv}${maxed ? " MAX" : ""}`], ["疲勞", `+${lv * 2}/日`], ["狀況", `+${lv * 2}%`], ["年輕", `+${lv * 2}%`]], "選手宿舍摘要") : ""}
-      <div class="card">
-        <div class="eyebrow">選手宿舍</div>
-        ${maxed ? '' : v60UpgradeComparison([['疲勞恢復/日', `+${lv * 2}`, `+${(lv + 1) * 2}`], ['狀況／年輕成長', `+${lv * 2}%`, `+${(lv + 1) * 2}%`]])}
-        ${maxed ? `<p class="sub dark">已達最高等級。</p>` : `
-        <p class="sub dark">升級至 Lv.${lv + 1} 費用：<b>${formatMoney(cost)}</b></p>
-        <div class="btnrow"><button id="btn-upgrade-dorm" class="btn-primary" ${canUpgrade && team.finance.budget >= cost ? "" : "disabled"}>升級選手宿舍</button></div>`}
-      </div>`;
+      ${maxed ? '' : `<section class="card v60-facility-detail" aria-label="選手宿舍升級">
+        ${v60UpgradeComparison([['疲勞恢復/日', `+${lv * 2}`, `+${(lv + 1) * 2}`], ['狀況／年輕成長', `+${lv * 2}%`, `+${(lv + 1) * 2}%`]])}
+        ${v60FacilityUpgradeAction("btn-upgrade-dorm", "選手宿舍", lv, cost, canUpgrade && team.finance.budget >= cost)}
+      </section>`}`;
   } else if (ftab === "情蒐分析室") {
     const lv = analysisRoomLevel(team);
     const maxed = lv >= ANALYSIS_MAX_LEVEL;
     const cost = maxed ? 0 : ANALYSIS_UPGRADE_COSTS[lv] * 10000;
     body = `
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["等級", `Lv.${lv}${maxed ? " MAX" : ""}`], ["評估", `+${lv}`], ["比賽", `+${(lv * 0.05).toFixed(2)}`]], "情蒐分析室摘要") : ""}
-      <div class="card">
-        <div class="eyebrow">情蒐分析室</div>
+      <section class="card v60-facility-detail" aria-label="情蒐分析室升級">
         <p class="v60-state-line">提升評估精準度，並在主控台解鎖對手情報。</p>
-        ${maxed ? `<p class="sub dark">已達最高等級。</p>` : `
-        <p class="sub dark">升級至 Lv.${lv + 1} 費用：<b>${formatMoney(cost)}</b></p>
-        <div class="btnrow"><button id="btn-upgrade-analysis" class="btn-primary" ${canUpgrade && team.finance.budget >= cost ? "" : "disabled"}>升級情蒐分析室</button></div>`}
-      </div>`;
+        ${maxed ? '' : v60FacilityUpgradeAction("btn-upgrade-analysis", "情蒐分析室", lv, cost, canUpgrade && team.finance.budget >= cost)}
+      </section>`;
   } else if (ftab === "復健中心") {
     const lv = rehabCenterLevel(team);
     const maxed = lv >= REHAB_MAX_LEVEL;
     const cost = maxed ? 0 : REHAB_UPGRADE_COSTS[lv] * 10000;
     body = `
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["等級", `Lv.${lv}${maxed ? " MAX" : ""}`], ["恢復", `-${lv * 8}%`], ["降評", `-${lv * 3}%`], ["復發", `-${lv * 8}%`]], "復健中心摘要") : ""}
-      <div class="card">
-        <div class="eyebrow">復健中心</div>
-        ${maxed ? '' : v60UpgradeComparison([['恢復天數／復發風險', `-${lv * 8}%`, `-${(lv + 1) * 8}%`], ['降評風險', `-${lv * 3}%`, `-${(lv + 1) * 3}%`]])}
-        ${maxed ? `<p class="sub dark">已達最高等級。</p>` : `
-        <p class="sub dark">升級至 Lv.${lv + 1} 費用：<b>${formatMoney(cost)}</b></p>
-        <div class="btnrow"><button id="btn-upgrade-rehab" class="btn-primary" ${canUpgrade && team.finance.budget >= cost ? "" : "disabled"}>升級復健中心</button></div>`}
-      </div>`;
+      ${maxed ? '' : `<section class="card v60-facility-detail" aria-label="復健中心升級">
+        ${v60UpgradeComparison([['恢復天數／復發風險', `-${lv * 8}%`, `-${(lv + 1) * 8}%`], ['降評風險', `-${lv * 3}%`, `-${(lv + 1) * 3}%`]])}
+        ${v60FacilityUpgradeAction("btn-upgrade-rehab", "復健中心", lv, cost, canUpgrade && team.finance.budget >= cost)}
+      </section>`}`;
   } else {
     const lv = scoutOfficeLevel(team);
     const maxed = lv >= SCOUT_OFFICE_MAX_LEVEL;
     const cost = maxed ? 0 : SCOUT_OFFICE_UPGRADE_COSTS[lv] * 10000;
     body = `
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["等級", `Lv.${lv}${maxed ? " MAX" : ""}`], ["精準", `+${lv * 2}`], ["國際名額", `${exclusiveIntlSlots(team)}/年`], ["選秀名額", `${exclusiveDraftSlots(team)}/屆`]], "球探辦公室摘要") : ""}
-      <div class="card">
-        <div class="eyebrow">球探辦公室</div>
+      <section class="card v60-facility-detail" aria-label="球探辦公室升級">
         <p class="v60-state-line">提升三位球探精準度，擴大國際與選秀獨家人脈。</p>
-        ${maxed ? `<p class="sub dark">已達最高等級。</p>` : `
-        <p class="sub dark">升級至 Lv.${lv + 1} 費用：<b>${formatMoney(cost)}</b></p>
-        <div class="btnrow"><button id="btn-upgrade-scoutoffice" class="btn-primary" ${canUpgrade && team.finance.budget >= cost ? "" : "disabled"}>升級球探辦公室</button></div>`}
-      </div>`;
+        ${maxed ? '' : v60FacilityUpgradeAction("btn-upgrade-scoutoffice", "球探辦公室", lv, cost, canUpgrade && team.finance.budget >= cost)}
+      </section>`;
   }
   if (ftab === "球場") ensureStadiumSlots(team);
   const v57Visual = renderV57FacilityVisual(team, cur, next, canUpgrade, ftab);

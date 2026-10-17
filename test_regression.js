@@ -4681,6 +4681,26 @@ var __v60FacilityRuntimeOk=__v60FacilityPages.join(',')==='2,2,2,2,2,2'&&__v60Fa
 S=JSON.parse(__v60FacilitySavedS);UI=JSON.parse(__v60FacilitySavedUI);app.innerHTML=__v60FacilitySavedHtml;`);
 assert(g("__v60FacilityRuntimeOk"), "v60-021 實際renderer逐頁完整呈現12種設施、全部訓練項目與原效果，渲染不改 Save");
 
+console.log("\n--- r123 單項設施升級資訊貼近操作 ---");
+g(`var __r123SavedS=JSON.stringify(S),__r123SavedUI=JSON.stringify(UI),__r123Team=S.teams[S.userTeamId];
+ensureFinance(__r123Team);ensureFacilities(__r123Team);
+var __r123Cases=[
+ ['醫療室','medical',MEDICAL_MAX_LEVEL,MEDICAL_UPGRADE_COSTS,'btn-upgrade-medical'],
+ ['宿舍','dorm',DORM_MAX_LEVEL,DORM_UPGRADE_COSTS,'btn-upgrade-dorm'],
+ ['情蒐分析室','analysisRoom',ANALYSIS_MAX_LEVEL,ANALYSIS_UPGRADE_COSTS,'btn-upgrade-analysis'],
+ ['復健中心','rehabCenter',REHAB_MAX_LEVEL,REHAB_UPGRADE_COSTS,'btn-upgrade-rehab'],
+ ['球探辦公室','scoutOffice',SCOUT_OFFICE_MAX_LEVEL,SCOUT_OFFICE_UPGRADE_COSTS,'btn-upgrade-scoutoffice']
+];var __r123Regular=true,__r123Max=true;
+UI.screen='facilities';
+__r123Cases.forEach(function(c){
+ UI.facilityTab=c[0];__r123Team.facilities[c[1]]=0;renderFacilities();var h=app.innerHTML;
+ __r123Regular=__r123Regular&&h.includes('class="v60-facility-upgrade-action"')&&h.includes('Lv.0 → 1・'+formatMoney(c[3][0]*10000))&&h.includes('id="'+c[4]+'"')&&!h.includes('升級至 Lv.')&&!h.includes('已達最高等級');
+ __r123Team.facilities[c[1]]=c[2];renderFacilities();h=app.innerHTML;
+ __r123Max=__r123Max&&h.includes('MAX')&&!h.includes('v60-facility-upgrade-action')&&!h.includes('id="'+c[4]+'"')&&!h.includes('已達最高等級');
+});S=JSON.parse(__r123SavedS);UI=JSON.parse(__r123SavedUI);`);
+assert(g("__r123Regular"), "r123 五種單項設施保留下一級、完整費用與原升級入口，移除重複費用段落");
+assert(g("__r123Max"), "r123 五種單項設施滿級仍顯示 MAX，不再顯示無操作的升級卡與重複滿級句");
+
 /* v60-013：財務合約按決策類型分頁，縮短同屏比較長度。 */
 console.log("\n--- v60-013 財務合約比較文字減量 ---");
 const v60FinanceDealsSource = v60FinanceSource.slice(v60FinanceSource.indexOf("const renderDealGroup = kind =>"), v60FinanceSource.indexOf("const finReportPanel"));
