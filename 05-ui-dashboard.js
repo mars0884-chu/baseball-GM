@@ -1761,19 +1761,20 @@ function renderAgencyPerkCards(inAgency = false) {
     const p = (S.freeAgents || {})[r.playerId] || (S.internationalFreeAgents || {})[r.playerId];
     if (!p) return "";
     const at = AGENT_TYPES[r.type];
-    return `<p class="sub dark">${icon('handshake')} ${at ? at.name : ""}經紀人引薦：<b>${p.name}</b>（${p.isPitcher ? "投手" : "野手"}・${p.age}歲・${r.kind === "international" ? "國際自由球員" : "自由球員"}）——本休賽季獨家談判、門檻95折。</p>`;
+    return `<p class="sub dark">${at ? at.name : ""}・<b>${p.name}</b>・${p.isPitcher ? "投手" : "野手"}・${p.age}歲・${r.kind === "international" ? "國際自由球員" : "自由球員"}</p>`;
   }).join("");
   const intelHtml = intel.map(r => {
     const p = S.players[r.playerId];
     const t = S.teams[r.teamId];
     if (!p || !t || p.team !== r.teamId) return "";
     const at = AGENT_TYPES[r.type];
-    return `<p class="sub dark">${icon('sake')} ${at ? at.name : ""}經紀人透露：<b>${p.name}</b>（${t.name}）想換環境——談交易時不妨把他當目標。</p>`;
+    return `<p class="sub dark">${at ? at.name : ""}・<b>${p.name}</b>・${t.name}</p>`;
   }).join("");
   if (!refHtml && !intelHtml) return "";
   return `<div class="card">
     <div class="eyebrow">${icon('scout')} 事務所人脈紅利</div>
-    ${refHtml}${intelHtml}
+    ${refHtml ? `<div class="divlabel">引薦・本季獨家／談約門檻95折</div>${refHtml}` : ""}
+    ${intelHtml ? `<div class="divlabel">動向・想換環境，可洽談交易</div>${intelHtml}` : ""}
     ${inAgency ? "" : '<p class="draftnote muted">詳情可到「代理人事務所」畫面查看。</p>'}
   </div>`;
 }

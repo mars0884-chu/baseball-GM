@@ -1782,8 +1782,14 @@ var __r092Player=Object.values(S.freeAgents||{})[0]||S.players[S.teams[S.userTea
 S.freeAgents=S.freeAgents||{};S.freeAgents[__r092Player.id]=__r092Player;
 S.agency.referrals=[{year:S.seasonYear,playerId:__r092Player.id,type:AGENT_KEYS[0],kind:'domestic'}];
 var __r092SummaryPerk=renderAgencyPerkCards(false),__r092AgencyPerk=renderAgencyPerkCards(true);
+var __r115Ids=S.teams[S.userTeamId].roster1.slice(0,4),__r115Names=__r115Ids.map(id=>S.players[id].name);
+__r115Ids.slice(0,3).forEach(id=>{S.freeAgents[id]=S.players[id];});
+S.agency.referrals=__r115Ids.slice(0,3).map((id,i)=>({year:S.seasonYear,playerId:id,type:AGENT_KEYS[i],kind:i===1?'international':'domestic'}));
+S.agency.intel=[{year:S.seasonYear,playerId:__r115Ids[3],teamId:S.userTeamId,type:AGENT_KEYS[3]}];
+var __r115Perk=renderAgencyPerkCards(true);
 S=JSON.parse(__r092SavedS);`);
 assert(g("__r092SummaryPerk.includes('詳情可到')&&!__r092AgencyPerk.includes('詳情可到')&&__r092AgencyPerk.includes('事務所人脈紅利')"), "r092 事務所內的人脈紅利不再叫玩家前往同一頁，摘要入口仍保留指引");
+assert(g("(__r115Perk.match(/門檻95折/g)||[]).length===1&&(__r115Perk.match(/想換環境/g)||[]).length===1&&__r115Names.every(name=>__r115Perk.includes(name))&&__r115Perk.includes('國際自由球員')&&__r115Perk.includes(S.teams[S.userTeamId].name)"), "r115 多筆引薦與動向共用一次規則，逐筆球員、經紀類型、國際來源及所屬球隊仍可見");
 
 console.log("\n--- v39.1 測試 ---");
 /* 真機回報修正：第1季休賽季選秀被「開幕選秀殘骸」吞掉（畫面秀出開幕選秀舊成果後直接結束） */
