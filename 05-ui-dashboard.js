@@ -2389,11 +2389,15 @@ function renderCdActivitiesCard() {
   // 已建立交情的國家一覽＋已解鎖好處
   const bonds = (typeof ensureNationBonds === "function") ? ensureNationBonds() : {};
   const bondNames = Object.keys(bonds).filter(n => bonds[n] > 0).sort((a, b) => bonds[b] - bonds[a]);
-  const bondRows = bondNames.length ? bondNames.map(n => {
+  const bondPageCount = Math.max(1, Math.ceil(bondNames.length / 3));
+  const bondPage = Math.min(bondPageCount - 1, Math.max(0, Number(UI.cdBondPage) || 0));
+  UI.cdBondPage = bondPage;
+  const bondRows = bondNames.slice(bondPage * 3, bondPage * 3 + 3).map(n => {
     const lv = nationBondLevel(n);
     const perks = nationBondPerks(lv);
     return `<p class="sub dark" style="margin:2px 0;">${icon('handshake')} <b>${n}</b> 友好度 ${lv}／${NATION_BOND_MAX}（${nationBondLabel(lv)}）${perks.length ? `<span class="muted"> — ${perks.join("、")}</span>` : ""}</p>`;
-  }).join("") : `<p class="sub muted" style="margin:2px 0;">尚未與任何國家建立交情。友好度 3／5／7／10 各有解鎖。</p>`;
+  }).join("");
+  const bondPager = bondPageCount > 1 ? `<nav class="v60-choice-pager" aria-label="國家友好分頁"><button type="button" data-cd-bond-step="-1" ${bondPage === 0 ? "disabled" : ""}>上一頁</button><span aria-live="polite">${bondPage + 1}/${bondPageCount}・共${bondNames.length}國</span><button type="button" data-cd-bond-step="1" ${bondPage === bondPageCount - 1 ? "disabled" : ""}>下一頁</button></nav>` : "";
   return `<div class="card cdact-card">
     <div class="eyebrow">${canRun ? "開幕前・各一次" : "球季中・已鎖定"}・預算 ${formatMoney(team.finance.budget)}</div>
     <div class="v60-marketing-actions" aria-label="國際活動操作">
@@ -2412,12 +2416,15 @@ function renderCdActivitiesCard() {
         <div class="btnrow"><button id="btn-cd-marketing" class="btn-secondary" ${st.marketingDone || !canRun ? "disabled" : ""}>${st.marketingDone ? "本季完成" : "執行行銷"}</button></div>
       </div>
     </div>
-    <div style="margin:6px 0;">${bondNames.length ? bondRows : `<p class="v59-compact-line">交情：尚未建立</p>`}</div>
+    <div class="v60-nation-bonds" role="group" aria-label="國家友好與已解鎖效果">${bondNames.length ? bondRows + bondPager : `<p class="v59-compact-line">交情：尚未建立</p>`}</div>
   </div>`;
 }
 
 // 主控台和行銷頁共用相同操作接線，避免移動場景後按鈕只剩外觀。
 function wireCdActivitiesActions() {
+  app.querySelectorAll("[data-cd-bond-step]").forEach(button => {
+    button.onclick = () => { UI.cdBondPage += Number(button.dataset.cdBondStep); render(); };
+  });
   ['exchange', 'marketing'].forEach(kind => {
     const select = document.getElementById(`cd-${kind}-nation`), label = document.getElementById(`cd-${kind}-cost`);
     if (!select || !label) return;

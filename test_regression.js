@@ -5244,6 +5244,18 @@ assert(r062Marketing.includes('uiTabs("marketing"') && r062Marketing.includes('k
 assert(r062International.includes('international_exchange_v58') && r062International.includes('overseas_marketing_v58') && r062International.includes('id="cd-exchange-nation"') && r062International.includes('id="cd-marketing-nation"') && r062International.includes('id="btn-cd-exchange"') && r062International.includes('id="btn-cd-marketing"') && !r062International.includes('btnrow v60-sticky-actions'), "r062 兩張核准場景、國家選擇及操作保留，活動按鍵不再蓋住下拉選單");
 assert(r062Marketing.includes('<button id="btn-back" class="btn-outline">返回</button></div>') && !r062Marketing.includes('<div class="btnrow"><button id="btn-back"'), "r062 返回入口移至頁首，不再遮擋行銷卡片");
 assert(fs.readFileSync("style.css", "utf8").includes('.cdact-card .v60-marketing-action-column .sortselect{min-height:44px;font-size:14px;}') && fs.readFileSync("style.css", "utf8").includes('.v60-marketing-screen .v60-marketing-actions{grid-template-columns:minmax(0,1fr);'), "r062 窄手機國際活動改單欄，國家選單維持可讀觸控尺寸");
+g(`var __r120SavedS=JSON.stringify(S),__r120SavedUI=JSON.stringify(UI);
+newGame('多國友好分頁');pickTeam('T0');pickGameMode('gm_coach');S.gameStarted=true;S.currentDay=0;
+var __r120Names=NATIONS.slice(0,7).map(n=>n.name);S.nationBonds=Object.fromEntries(__r120Names.map((name,i)=>[name,i+1]));
+UI.cdBondPage=0;var __r120FirstHtml=renderCdActivitiesCard();var __r120State=JSON.stringify(S);
+UI.cdBondPage=1;var __r120SecondHtml=renderCdActivitiesCard();
+UI.cdBondPage=2;var __r120ThirdHtml=renderCdActivitiesCard();
+var __r120Count=html=>(html.match(/友好度 [0-9]+／10/g)||[]).length;
+var __r120First=__r120Count(__r120FirstHtml)===3&&__r120FirstHtml.includes('35%→55%')&&__r120FirstHtml.includes('data-cd-bond-step="1"')&&__r120FirstHtml.includes('id="btn-cd-exchange"')&&__r120FirstHtml.includes('id="btn-cd-marketing"');
+var __r120Second=__r120Count(__r120SecondHtml)===3&&__r120SecondHtml.includes('2/3・共7國')&&JSON.stringify(S)===__r120State;
+var __r120Third=__r120Count(__r120ThirdHtml)===1&&__r120ThirdHtml.includes(__r120Names[0])&&__r120ThirdHtml.includes('3/3・共7國')&&__r120ThirdHtml.includes('id="btn-cd-exchange"');
+S=JSON.parse(__r120SavedS);UI=JSON.parse(__r120SavedUI);`);
+assert(g("__r120First&&__r120Second&&__r120Third") && v60DashboardSource.includes('${renderCdActivitiesCard()}') && r062Marketing.includes('renderCdActivitiesCard()') && v60DashboardSource.includes('button.onclick = () => { UI.cdBondPage += Number(button.dataset.cdBondStep); render(); };'), "r120 主控台與行銷共用多國友好每頁三國；三頁資料、解鎖效果與活動操作保留，切頁輸出不改正式狀態");
 
 console.log("\n--- r063 休賽季結算與退休決策分區 ---");
 g(`var __r063SavedS=JSON.stringify(S),__r063SavedUI=JSON.stringify(UI);
