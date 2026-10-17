@@ -2197,7 +2197,7 @@ function scoutAgentInNegotiation() {
   render();
 }
 
-/* v29談約資訊完整化：談約前把「目前數據＋球探完整報告（含預測天花板）＋成長階段＋上季成績」全部攤在談判桌上。
+/* v29談約資訊完整化：談約前把「目前數據＋球探完整報告（含預測天花板）＋養成預測＋上季成績」提供給玩家。
    - 自家在役球員（續約）：能力欄顯示真實數值（自家人不需要球探霧化）
    - 自由球員／國際球員：顯示球探評估天花板（依有效精準度霧化，同季內固定不重擲）
    - 新秀：沿用選秀既有的球探評估報告（scouted值＋現況/天花板評等＋熟成度） */
@@ -2267,10 +2267,11 @@ function scoutedAttrRows(p) {
 }
 function negotiationScoutBlock(p, neg) {
   const team = S.teams[neg.teamId || S.userTeamId];
-  const phase = neg.kind === "freeAgent" ? null : growthPhaseLabel(p);
-  // 自由球員市場已提供本土球探的生涯預測；談薪沿用同一評估，不再顯示真實顛峰階段。
+  const phase = neg.kind === "renewal" ? growthPhaseLabel(p) : null;
+  // 市場與選秀談薪只呈現球探預測；真實顛峰階段限自家球員續約使用。
   const careerLine = neg.kind === "freeAgent" ? faTrendReport(p, team).text
-    : `${icon('chart-up')} 生涯階段：<b class="${phase.cls}">${phase.text}</b> — ${phase.desc}${neg.kind === "rookie" ? `；${p.maturity}` : ""}`;
+    : neg.kind === "rookie" || neg.kind === "international" ? `${icon('chart-up')} 養成預測：${v60MaturityShort(p.maturity || maturityLabel(p.age))}`
+    : `${icon('chart-up')} 生涯階段：<b class="${phase.cls}">${phase.text}</b> — ${phase.desc}`;
   const seasonOver = !S.schedule || S.currentDay >= S.schedule.length;
   const curLine = negoStatLine(p, p.seasonStats);
   const lastLine = negoStatLine(p, p.lastSeasonStats);

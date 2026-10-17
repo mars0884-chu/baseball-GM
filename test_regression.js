@@ -1897,6 +1897,7 @@ g("UI.negotiation=null; UI.screen='dashboard'; render();");
 g("UI.screen='freeAgents'; render();");
 assert(g("(app.innerHTML.includes('球探評估')&&!app.innerHTML.includes('生涯階段：')) || Object.keys(S.freeAgents||{}).length===0"), "v40/r117 自由球員選前仍可見球探生涯預測，不重複揭露實際顛峰階段");
 assert(g("var __faNegoReport=negotiationScoutBlock(__p40Nego,{kind:'freeAgent',teamId:S.userTeamId}); __faNegoReport.includes(faTrendReport(__p40Nego,S.teams[S.userTeamId]).text)&&!__faNegoReport.includes('生涯階段：')&&__faNegoReport.includes('球探完整報告')"), "r118 自由球員談薪沿用市場球探預測，不重新顯示真實顛峰階段；完整球探報告保留");
+assert(g("var __externalNego=Object.assign({},__p40Nego,{maturity:'長期養成型（預估至少4~6年才可能接近天花板評等）'}); ['rookie','international'].every(function(kind){var report=negotiationScoutBlock(__externalNego,{kind:kind,teamId:S.userTeamId});return report.includes('養成預測')&&report.includes('4–6年近頂')&&!report.includes('生涯階段：')&&!report.includes(growthPhaseLabel(__externalNego).desc)&&report.includes('球探完整報告')})"), "r119 新秀與國際球員談薪保留養成預測和完整球探資料，不揭露真實顛峰階段");
 g("UI.lineupPanel='coach'; UI.screen='lineup'; render();");
 assert(g("app.innerHTML.indexOf('排線權責')>=0 && app.innerHTML.indexOf('戰術方針')>=0 && app.innerHTML.indexOf('輪休策略')>=0"), "v40⑤ 打線頁教練排線卡（方針＋輪休選項）");
 assert(g("app.innerHTML.indexOf('教練提名')>=0"), "v40⑤ 打線頁隊長教練提名卡");
@@ -5325,14 +5326,13 @@ assert(g("__r069AllValues&&__r069Unchanged&&__r069Html.includes('比較甲')&&__
 assert(r061Draft.includes('v60DraftComparisonHtml(visibleDraft, draftEffAcc)') && r061Draft.includes('data-draft-compare-tab') && !r061Draft.includes('scoutedAttrRows(p)') && r061Draft.includes('v60DraftRadarCardHtml(p, draftEffAcc, true)') && r061Draft.includes('data-draft-page'), "r069 選秀原肖像雷達與雙人分頁保留，重複逐卡能力網格由共享比較取代");
 
 console.log("\n--- r070 選秀養成階段資訊圖像化 ---");
-g(`var __r070Before=JSON.stringify(S),__r070Young=v60DraftDevelopmentNote({age:18,peakAge:29,maturity:maturityLabel(18)},'future'),
-__r070Phase=v60DraftDevelopmentNote({age:18,peakAge:29,maturity:maturityLabel(18)},'current'),
-__r070Middle=v60DraftDevelopmentNote({age:21,peakAge:27,maturity:maturityLabel(21)},'future'),
-__r070Ready=v60DraftDevelopmentNote({age:23,peakAge:27,maturity:maturityLabel(23)},'future'),
-__r070Custom=v60DraftDevelopmentNote({age:18,peakAge:29,maturity:'原有特殊養成資訊'},'future'),
+g(`var __r070Before=JSON.stringify(S),__r070Young=v60DraftDevelopmentNote({age:18,peakAge:29,maturity:maturityLabel(18)}),
+__r070Middle=v60DraftDevelopmentNote({age:21,peakAge:27,maturity:maturityLabel(21)}),
+__r070Ready=v60DraftDevelopmentNote({age:23,peakAge:27,maturity:maturityLabel(23)}),
+__r070Custom=v60DraftDevelopmentNote({age:18,peakAge:29,maturity:'原有特殊養成資訊'}),
 __r070Stable=JSON.stringify(S)===__r070Before;`);
-assert(g("__r070Young.includes('4–6年近頂')&&__r070Phase.includes('顛峰約29歲')&&__r070Middle.includes('3–5年近頂')&&__r070Ready.includes('較快一軍')&&__r070Ready.includes('成長有限')&&__r070Custom.includes('原有特殊養成資訊')&&__r070Stable"), "r086 精簡後仍保留三種養成時程、顛峰年齡、即戰力與成長上限，舊存檔特殊文字不被覆蓋");
-assert(r061Draft.includes('v60DraftDevelopmentNote(p, "current")') && r061Draft.includes('v60DraftDevelopmentNote(p, "future")') && !r061Draft.includes('phase.desc') && fs.readFileSync('style.css','utf8').includes('.v60-draft-evaluation .v60-draft-development-note{'), "r070 養成／生涯階段直接併入現況及天花板視覺卡，不增加第三排卡片");
+assert(g("__r070Young.includes('4–6年近頂')&&!__r070Young.includes('顛峰約29歲')&&__r070Middle.includes('3–5年近頂')&&__r070Ready.includes('較快一軍')&&__r070Ready.includes('成長有限')&&__r070Custom.includes('原有特殊養成資訊')&&__r070Stable"), "r086/r119 精簡後保留三種養成時程、即戰力與成長上限，不揭露真實顛峰年齡，也不覆蓋舊檔特殊文字");
+assert(r061Draft.includes('v60DraftDevelopmentNote(p)') && !r061Draft.includes('v60DraftDevelopmentNote(p, "current")') && r061Draft.includes('目前數據') && r061Draft.includes('未來天花板') && !r061Draft.includes('phase.desc') && fs.readFileSync('style.css','utf8').includes('.v60-draft-evaluation .v60-draft-development-note{'), "r070/r119 選秀現況與天花板評等保留，養成預測併入天花板卡，不增加真值生涯階段");
 
 console.log("\n--- r071 育成名單方針緊湊比較 ---");
 g(`var __r071SavedS=JSON.stringify(S),__r071SavedUI=JSON.stringify(UI);
