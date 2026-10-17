@@ -929,6 +929,35 @@ function faTrendReport(p, team) {
   const gap = p.age - perceivedPeak;
   return { key: 2, cls: "down", text: `${icon('chart-down')} ${gap >= 3 ? "明顯衰退中" : "已開始衰退"}：顛峰已過約${gap}年（球探評估・${conf}）` };
 }
+/* 同類雙人共用能力欄名；數值與圖條並列，不以圖形取代決策需要的精確值。 */
+function v60FaAbilityComparisonHtml(players) {
+  if (players.length !== 2 || players[0].isPitcher !== players[1].isPitcher) return "";
+  const rows = players[0].isPitcher ? [
+    ["球速", p => `${velocityKmh(p.velocity)} km/h`, p => p.velocity],
+    ["控球", p => p.control, p => p.control],
+    ["體力", p => p.stamina, p => p.stamina],
+    ["耐久度", p => p.durability, p => p.durability],
+    ["抗壓", p => p.composure, p => p.composure],
+    ["球路數", p => `${p.pitches.length} 種`, null]
+  ] : [
+    ["接觸", p => p.contact, p => p.contact],
+    ["長打", p => p.power, p => p.power],
+    ["選球", p => p.eye, p => p.eye],
+    ["速度", p => p.speed, p => p.speed],
+    ["盜壘", p => p.steal, p => p.steal],
+    ["守備", p => `${p.fielding}%`, p => p.fielding],
+    ["臂力", p => p.arm, p => p.arm],
+    ["耐久度", p => p.durability, p => p.durability]
+  ];
+  return `<section class="card v60-fa-compare" role="table" aria-label="${players[0].name}與${players[1].name}能力對照">
+    <div class="v60-fa-compare-row v60-fa-compare-head" role="row"><span role="columnheader">能力</span>${players.map(p => `<span role="columnheader">${p.name}</span>`).join("")}</div>
+    ${rows.map(([label, value, bar]) => `<div class="v60-fa-compare-row" role="row"><span role="rowheader">${label}</span>${players.map(p => {
+      const current = value(p);
+      const width = bar ? Math.max(0, Math.min(100, Number(bar(p)) || 0)) : null;
+      return `<span class="v60-fa-compare-value" role="cell"><b>${current}</b>${width === null ? "" : `<i aria-hidden="true"><em style="width:${width}%"></em></i>`}</span>`;
+    }).join("")}</div>`).join("")}
+  </section>`;
+}
 function renderFreeAgents() {
   const team = S.teams[S.userTeamId];
   const scout = team.scouts.domestic;
@@ -949,6 +978,7 @@ function renderFreeAgents() {
   if (UI.freeAgentPageKey !== pageKey) { UI.freeAgentPageKey = pageKey; UI.freeAgentPage = 0; }
   const faPage = v60RosterPageSlice(faFiltered, "freeAgentPage", 2);
   const faPager = v60RosterPagerHtml(faPage, "freeAgentPage", "自由球員", faFiltered.length);
+  const sharedAbilities = faPage.items.length === 2 && faPage.items[0].isPitcher === faPage.items[1].isPitcher;
   app.innerHTML = `
     <div class="wrap v60-fa-market">
       <div class="topbar"><div><div class="eyebrow">${team.name}</div><h1>自由球員市場</h1></div><button id="btn-back" class="btn-outline">返回</button></div>
@@ -988,7 +1018,7 @@ function renderFreeAgents() {
           <span class="gradebadge grade-${gradeFromValue(trueOverall(p))}">現況 ${gradeFromValue(trueOverall(p))}</span>
           <span class="gradebadge grade-${gradeFromValue(Math.max(trueOverall(p), p.potential))}">天花板 ${gradeFromValue(Math.max(trueOverall(p), p.potential))}</span>
         </div>
-        <div class="attrgrid">
+        ${sharedAbilities ? "" : `<div class="attrgrid">
           ${p.isPitcher ? `
             <div class="attr"><span>球速</span><b>${velocityKmh(p.velocity)} km/h</b></div>
             <div class="attr"><span>控球</span><b>${p.control}</b></div>
@@ -1006,12 +1036,12 @@ function renderFreeAgents() {
             <div class="attr"><span>臂力</span><b>${p.arm}</b></div>
             <div class="attr"><span>耐久度</span><b>${p.durability}</b></div>
           `}
-        </div>
+        </div>`}
         <div class="draftnote trend-${trend.cls}">${trend.text}</div>
         ${lastLine ? `<div class="draftnote muted">上季：${lastLine}</div>` : `<div class="draftnote muted">上季無出賽</div>`}
         <div class="draftnote muted">預估年薪 ${formatMoney(computePlayerSalary(p))}・簽約金約 ${formatMoney(Math.round(computePlayerSalary(p) * 0.3))}</div>
       </div>`;
-      }).join("")}${faPager}`}
+      }).join("")}${sharedAbilities ? v60FaAbilityComparisonHtml(faPage.items) : ""}${faPager}`}
     </div>`;
   const sortSel = document.getElementById("sort-fa");
   if (sortSel) sortSel.onchange = e => { UI.faSort = e.target.value; render(); };

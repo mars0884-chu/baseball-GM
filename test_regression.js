@@ -5634,6 +5634,35 @@ S=JSON.parse(__r109SavedS);UI=JSON.parse(__r109SavedUI);`);
 assert(g("__r109Safe"), "r109 自由球員七人可逐頁到達；球探趨勢保留、不重複揭露真值生涯階段，資料與簽約操作保留，瀏覽不改正式狀態");
 assert(g("__r109Returned"), "r109 開季準備期間從自由球員市場返回目前未完成關卡，不會只回主控台而失去流程進度");
 
+console.log("\n--- r121 自由球員同類雙人能力圖表 ---");
+g(`var __r121SavedS=JSON.stringify(S),__r121SavedUI=JSON.stringify(UI);
+newGame('自由球員能力比較');pickTeam('T0');pickGameMode('gm_coach');
+var __r121Team=S.teams[S.userTeamId];S.freeAgents={};
+var __r121Pitchers=[generatePitcher(null,'1軍'),generatePitcher(null,'1軍')];
+__r121Pitchers.forEach(function(p,i){p.name='對照投手'+i;p.team=null;S.freeAgents[p.id]=p;});
+UI.screen='freeAgents';UI.faPosFilter='all';UI.faSort='default';UI.freeAgentPage=0;
+var __r121Before=JSON.stringify(S);renderFreeAgents();var __r121PitchHtml=app.innerHTML;
+var __r121PitchOk=__r121PitchHtml.includes('v60-fa-compare')&&
+ (__r121PitchHtml.match(/role="rowheader"/g)||[]).length===6&&
+ (__r121PitchHtml.match(/class="attrgrid"/g)||[]).length===0&&
+ (__r121PitchHtml.match(/class="pickbtn sign-fa-btn"/g)||[]).length===2&&
+ __r121Pitchers.every(function(p){return __r121PitchHtml.includes(p.name)&&__r121PitchHtml.includes(velocityKmh(p.velocity)+' km/h')&&__r121PitchHtml.includes(p.pitches.length+' 種');})&&
+ __r121PitchHtml.includes('預估年薪')&&JSON.stringify(S)===__r121Before;
+S.freeAgents={};var __r121Batters=[generateBatter(null,'1軍'),generateBatter(null,'1軍')];
+__r121Batters.forEach(function(p,i){p.name='對照野手'+i;p.team=null;S.freeAgents[p.id]=p;});
+__r121Before=JSON.stringify(S);renderFreeAgents();var __r121BatHtml=app.innerHTML;
+var __r121BatOk=__r121BatHtml.includes('v60-fa-compare')&&
+ (__r121BatHtml.match(/role="rowheader"/g)||[]).length===8&&
+ __r121Batters.every(function(p){return __r121BatHtml.includes(p.name)&&__r121BatHtml.includes(p.fielding+'%')&&__r121BatHtml.includes('width:'+p.contact+'%');})&&
+ JSON.stringify(S)===__r121Before;
+S.freeAgents={};S.freeAgents[__r121Pitchers[0].id]=__r121Pitchers[0];S.freeAgents[__r121Batters[0].id]=__r121Batters[0];
+renderFreeAgents();var __r121MixedOk=!app.innerHTML.includes('v60-fa-compare')&&(app.innerHTML.match(/class="attrgrid"/g)||[]).length===2;
+S.freeAgents={};S.freeAgents[__r121Pitchers[0].id]=__r121Pitchers[0];renderFreeAgents();
+var __r121SingleOk=!app.innerHTML.includes('v60-fa-compare')&&(app.innerHTML.match(/class="attrgrid"/g)||[]).length===1;
+S=JSON.parse(__r121SavedS);UI=JSON.parse(__r121SavedUI);`);
+assert(g("__r121PitchOk&&__r121BatOk"), "r121 同類雙人共用一次能力欄名、各自精確數值與圖條；肖像卡、薪資及簽約入口保留且渲染不改 Save");
+assert(g("__r121MixedOk&&__r121SingleOk"), "r121 投野混合或單人時保留各卡原能力欄位，不產生不適用的空比較欄");
+
 console.log("\n--- r112 代理人本季情蒐非空分頁 ---");
 g(`var __r112SavedS=JSON.stringify(S),__r112SavedUI=JSON.stringify(UI);
 ensureAgency();var __r112Ids=Object.keys(S.players).slice(0,9);
