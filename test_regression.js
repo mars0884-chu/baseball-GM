@@ -5502,6 +5502,16 @@ var __r077Safe=JSON.stringify(S)===__r077Before;
 S=JSON.parse(__r077SavedS);UI=JSON.parse(__r077SavedUI);delete window;`);
 assert(g("__r077AllReached&&__r077Safe&&(__r077First.match(/class=\"v60-roster-mobile-card\"/g)||[]).length<=3&&__r077First.includes('v60-roster-mobile-metrics')&&__r077First.includes('v60-roster-card-name')&&__r077First.includes('rosterPitcherPage')") && fs.readFileSync('style.css','utf8').includes('.v60-roster-mobile-cards{display:grid'), "r077 育成投手與野手手機每頁三人，全員可達，肖像卡保留數值與詳細操作，翻頁不改存檔");
 
+g(`var __r124SavedS=JSON.stringify(S),__r124SavedUI=JSON.stringify(UI);
+window={innerWidth:320};newGame('編制提醒測試');pickTeam('T0');pickGameMode('gm_coach');
+UI.rosterTab='1軍';UI.rosterGroup='pitchers';
+S.teams[S.userTeamId].roster1.pop();
+ensureLineup(S.teams[S.userTeamId]);ensureRotation(S.teams[S.userTeamId]);ensureBullpenOrder(S.teams[S.userTeamId],S.players);
+var __r124Before=JSON.stringify(S),__r124One=S.teams[S.userTeamId].roster1.length,__r124Two=S.teams[S.userTeamId].roster2.length;
+renderRoster();var __r124Html=app.innerHTML,__r124Safe=JSON.stringify(S)===__r124Before;
+S=JSON.parse(__r124SavedS);UI=JSON.parse(__r124SavedUI);delete window;`);
+assert(g("__r124Safe&&__r124Html.includes('v60-roster-count-status')&&__r124Html.includes('1軍 '+__r124One+'/28')&&__r124Html.includes('2軍 '+__r124Two+'/32')&&__r124Html.includes('比賽照常・選秀後整編')&&__r124Html.includes('目前不影響比賽，下次選秀後自動整編')") && fs.readFileSync('style.css','utf8').includes('.v60-roster-count-status{'), "r124 編制偏離改為人數對照與簡短後果列，完整規則可讀且渲染不改存檔");
+
 g(`var __r077SavedS=JSON.stringify(S),__r077SavedUI=JSON.stringify(UI),__r077AllTabs=true;
 window={innerWidth:390};newGame('三層名單測試');pickTeam('T0');pickGameMode('gm_coach');
 for(var __r077Tab of ['1軍','2軍','育成']){

@@ -1879,7 +1879,7 @@ function renderRoster() {
       </div>
       ${showBatters ? posFilterBarHtml(batters, "rosterPosFilter", { excludePitchers: true }) : ""}
       ${warnings.length > 0 ? `<div class="card issuecard"><div class="eyebrow">先發陣容提醒</div><ul class="issuelist">${warnings.map(i => `<li>${i}</li>`).join("")}</ul><p class="sub dark">前往「先發打線」或「投手輪值/牛棚」分頁即可調整。</p></div>` : ""}
-      ${(team.roster1.length !== 28 || team.roster2.length !== 32) ? `<p class="sub dark" style="margin-bottom:12px;">名單人數已偏離編制（1軍限28人／2軍限32人），暫時超編或缺編都不影響比賽進行，會在下次選秀會後自動整編回正常編制。</p>` : ""}
+      ${(team.roster1.length !== 28 || team.roster2.length !== 32) ? `<div class="v60-roster-count-status" role="status" aria-label="編制提醒：一軍 ${team.roster1.length} 人，上限 28 人；二軍 ${team.roster2.length} 人，上限 32 人；目前不影響比賽，下次選秀後自動整編。"><strong>編制提醒</strong><span>1軍 ${team.roster1.length}/28</span><span>2軍 ${team.roster2.length}/32</span><small>比賽照常・選秀後整編</small></div>` : ""}
       ${UI.rosterTab === "育成" ? (() => {
         var curPolicyP = team.devPolicyPitcher || team.devPolicy || "balanced";
         var curPolicyB = team.devPolicyBatter || team.devPolicy || "balanced";

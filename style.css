@@ -1555,6 +1555,10 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-roster-side-tab span{font-size:12px;font-weight:700;opacity:.78;}
 .v60-roster-side-tab.active{border-color:#143CFF;background:#143CFF;color:#FFFFFF;}
 .v60-roster-side-tab:focus-visible{outline:3px solid #21C9D6;outline-offset:2px;}
+.v60-roster-count-status{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-bottom:12px;padding:9px 12px;border:1px solid #B7D3F5;border-radius:10px;background:#F8FBFF;color:#17233B;font-size:14px;line-height:1.35;}
+.v60-roster-count-status strong{color:#1459B8;}
+.v60-roster-count-status span{font-weight:800;white-space:nowrap;}
+.v60-roster-count-status small{color:#36577F;font-size:14px;}
 .v60-roster-table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px;border-radius:4px;}
 .v60-roster-table-wrap .stattable{margin-bottom:0;}
 .v60-roster-mobile-cards,.v60-roster-bottom-pager{display:none;}
