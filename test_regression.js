@@ -5512,6 +5512,15 @@ renderRoster();var __r124Html=app.innerHTML,__r124Safe=JSON.stringify(S)===__r12
 S=JSON.parse(__r124SavedS);UI=JSON.parse(__r124SavedUI);delete window;`);
 assert(g("__r124Safe&&__r124Html.includes('v60-roster-count-status')&&__r124Html.includes('1軍 '+__r124One+'/28')&&__r124Html.includes('2軍 '+__r124Two+'/32')&&__r124Html.includes('比賽照常・選秀後整編')&&__r124Html.includes('目前不影響比賽，下次選秀後自動整編')") && fs.readFileSync('style.css','utf8').includes('.v60-roster-count-status{'), "r124 編制偏離改為人數對照與簡短後果列，完整規則可讀且渲染不改存檔");
 
+g(`var __r125SavedS=JSON.stringify(S),__r125SavedUI=JSON.stringify(UI);
+newGame('人事規則短列測試');pickTeam('T0');pickGameMode('gm_coach');
+UI.selectedPlayerId=S.teams[S.userTeamId].roster1[0];
+S.currentDay=0;renderPlayerDetail();var __r125Off=app.innerHTML;
+S.currentDay=5;renderPlayerDetail();var __r125Mid=app.innerHTML;
+UI.releaseConfirmId=UI.selectedPlayerId;renderPlayerDetail();var __r125Release=app.innerHTML;
+S=JSON.parse(__r125SavedS);UI=JSON.parse(__r125SavedUI);`);
+assert(g("__r125Off.includes('退休轉任・單次判定・婉拒後本休賽季不再試')&&__r125Mid.includes('兼任・單次判定・球季中意願低')&&__r125Mid.includes('role-suggest-select')&&__r125Mid.includes('btn-suggest-role')&&__r125Release.includes('btn-release-confirm')&&__r125Release.includes('立即離隊')"), "r125 球員人事依季節顯示短規則，轉任與釋出入口及釋出後果保留");
+
 g(`var __r077SavedS=JSON.stringify(S),__r077SavedUI=JSON.stringify(UI),__r077AllTabs=true;
 window={innerWidth:390};newGame('三層名單測試');pickTeam('T0');pickGameMode('gm_coach');
 for(var __r077Tab of ['1軍','2軍','育成']){

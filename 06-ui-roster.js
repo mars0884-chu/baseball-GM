@@ -2429,7 +2429,7 @@ function renderPlayerDetail() {
   const personnelHtml = isOwnActivePlayer ? `
       <div class="card">
         <div class="eyebrow">球隊事務</div>
-        <p class="sub dark">${isMidSeason ? "球季進行中：仍可徵詢兼任教練／球探（現役球員在球季中意願很低），或直接釋出球員。" : "休賽季：可建議球員退休轉任教練／球探（單次判定，婉拒後本休賽季不再考慮），或直接釋出球員。"}</p>
+        <p class="v60-state-line" aria-label="${isMidSeason ? "兼任教練或球探：單次判定；球季中現役球員意願低。" : "退休轉任教練或球探：單次判定；婉拒後本休賽季不再考慮。"}">${isMidSeason ? "兼任・單次判定・球季中意願低" : "退休轉任・單次判定・婉拒後本休賽季不再試"}</p>
         <select id="role-suggest-select" class="sortselect" ${roleLocked ? "disabled" : ""}>
           ${(() => { const sel = UI.suggestRole || "coach|1軍|總教練"; const opt = v => (v === sel ? " selected" : ""); return `<optgroup label="教練（1軍）">${COACH_ROLES.map(r => `<option value="coach|1軍|${r}"${opt(`coach|1軍|${r}`)}>1軍 ${r}</option>`).join("")}</optgroup>
           <optgroup label="教練（2軍）">${COACH_ROLES.map(r => `<option value="coach|2軍|${r}"${opt(`coach|2軍|${r}`)}>2軍 ${r}</option>`).join("")}</optgroup>
