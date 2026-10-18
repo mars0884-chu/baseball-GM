@@ -984,10 +984,9 @@ function renderFreeAgents() {
       <div class="topbar"><div><div class="eyebrow">${team.name}</div><h1>自由球員市場</h1></div><button id="btn-back" class="btn-outline">返回</button></div>
       ${renderRosterNav("freeAgents")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      <div class="scoreboard">
-        <div class="sb-row small"><div class="sb-label">本土球探</div><div class="sb-value small">${scout ? scout.name : "（職位空缺・盲評）"}</div></div>
-        <div class="sb-row small"><div class="sb-label">前瞻評估精準度</div><div class="sb-value small">${effAcc}</div></div>
-        <div class="sb-row small"><div class="sb-label">名單狀態</div><div class="sb-value small">1軍 ${team.roster1.length}/28・2軍 ${team.roster2.length}/32</div></div>
+      <div class="v60-fa-brief" role="group" aria-label="球探與編制摘要">
+        <span>本土球探 <b>${scout ? scout.name : "職位空缺・盲評"}</b>・準度 <b aria-label="前瞻評估精準度 ${effAcc}">${effAcc}</b></span>
+        <span>名單 <b>1軍 ${team.roster1.length}/28・2軍 ${team.roster2.length}/32</b></span>
       </div>
       <p class="v60-state-line" aria-label="自由球員市場規則">本土未續→入市 · 能力公開 · 生涯＝球探預測 · 簽約金≈年薪30%</p>
       ${posFilterBarHtml(faAllAgents, "faPosFilter")}

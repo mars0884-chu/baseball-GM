@@ -5818,6 +5818,7 @@ var __r121SingleOk=!app.innerHTML.includes('v60-fa-compare')&&(app.innerHTML.mat
 S=JSON.parse(__r121SavedS);UI=JSON.parse(__r121SavedUI);`);
 assert(g("__r121PitchOk&&__r121BatOk"), "r121 同類雙人共用一次能力欄名、各自精確數值與圖條；肖像卡、薪資及簽約入口保留且渲染不改 Save");
 assert(g("__r121MixedOk&&__r121SingleOk"), "r121 投野混合或單人時保留各卡原能力欄位，不產生不適用的空比較欄");
+assert(g("__r121PitchHtml.includes('v60-fa-brief')&&__r121PitchHtml.includes('本土球探')&&__r121PitchHtml.includes('前瞻評估精準度')&&__r121PitchHtml.includes('名單 <b>1軍')&&__r121PitchHtml.includes('2軍 ')&&!__r121PitchHtml.includes('class=\"scoreboard\"')&&(__r121PitchHtml.match(/class=\"pickbtn sign-fa-btn\"/g)||[]).length===2") && r060Css.includes('.v60-fa-brief{display:grid;') && r060Css.includes('font-size:14px;'), "r136 自由球員球探準度與一二軍編制改為緊湊摘要，兩人簽約與能力比較保留");
 
 console.log("\n--- r112 代理人本季情蒐非空分頁 ---");
 g(`var __r112SavedS=JSON.stringify(S),__r112SavedUI=JSON.stringify(UI);
