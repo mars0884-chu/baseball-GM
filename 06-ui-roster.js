@@ -1843,7 +1843,7 @@ function renderRoster() {
   const showPitchers = rosterGroup === "pitchers";
   const showBatters = rosterGroup === "batters";
   const filteredBatters = rosterPosF === "all" || rosterPosF === "P" ? batters : batters.filter(p => posFilterGroup(p) === rosterPosF);
-  const rosterPageSize = typeof window !== "undefined" && Number(window.innerWidth) <= 520 ? 3 : V60_ROSTER_PAGE_SIZE;
+  const rosterPageSize = typeof window !== "undefined" && Number(window.innerWidth) <= 700 ? 3 : V60_ROSTER_PAGE_SIZE;
   const pitcherPage = v60RosterPageSlice(pitchers, "rosterPitcherPage", rosterPageSize);
   const batterPage = v60RosterPageSlice(filteredBatters, "rosterBatterPage", rosterPageSize);
   const actionLabel = UI.rosterTab === "1軍" ? "下放2軍" : (UI.rosterTab === "育成" ? "詳細" : "升上1軍");

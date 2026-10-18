@@ -1578,17 +1578,7 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-finance-cut-actions{display:grid;grid-template-columns:1fr;gap:8px;margin:12px 0;}
 .v60-finance-cut-actions button{min-height:48px;min-width:0;white-space:normal;line-height:1.35;}
 @media(max-width:620px){.v60-finance-cut-actions{grid-template-columns:1fr;}}
-@media(max-width:520px){
-  .v60-preseason-dock{padding:5px 6px 6px;}
-  .v60-preseason-finance{gap:2px;padding:5px 3px;}
-  .v60-preseason-finance>span{display:flex;flex-direction:column;align-items:center;gap:0;line-height:1.15;}
-  .v60-preseason-finance small{font-size:10px;}
-  .v60-preseason-finance b{max-width:100%;font-size:12px;}
-  .v60-preseason-finance .v60-preseason-current{padding-left:0;border-left:0;}
-  .v60-preseason-links{gap:4px;}
-  .v60-preseason-links button{min-height:42px;padding:4px 1px;font-size:11px;}
-  .v60-preseason-links button:first-child small{font-size:9px;}
-  .v60-roster-table-wrap .stattable{min-width:680px;}
+@media(max-width:700px){
   .v60-roster-table-wrap{display:none;}
   .v60-roster-mobile-cards{display:grid;gap:8px;margin:8px 0 4px;}
   .v60-roster-bottom-pager{display:block;}
@@ -1608,6 +1598,20 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
   .v60-roster-pager{gap:4px;padding:5px 3px;}
   .v60-roster-pager button{padding:6px 3px;font-size:12px;}
   .v60-roster-pager span{font-size:11px;}
+}
+@media(max-width:360px){
+  .v60-roster-mobile-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:520px){
+  .v60-preseason-dock{padding:5px 6px 6px;}
+  .v60-preseason-finance{gap:2px;padding:5px 3px;}
+  .v60-preseason-finance>span{display:flex;flex-direction:column;align-items:center;gap:0;line-height:1.15;}
+  .v60-preseason-finance small{font-size:10px;}
+  .v60-preseason-finance b{max-width:100%;font-size:12px;}
+  .v60-preseason-finance .v60-preseason-current{padding-left:0;border-left:0;}
+  .v60-preseason-links{gap:4px;}
+  .v60-preseason-links button{min-height:42px;padding:4px 1px;font-size:11px;}
+  .v60-preseason-links button:first-child small{font-size:9px;}
   .v60-listing-table{display:none;}
   .v60-listing-cards{display:grid;gap:8px;margin:8px 0 16px;}
   .v60-listing-card{display:grid;grid-template-columns:minmax(0,1fr) 76px;align-items:center;gap:8px;min-width:0;padding:10px 9px;border:1px solid #B7D3F5;border-radius:12px;background:#F8FBFF;box-shadow:0 2px 6px rgba(20,60,120,.06);}

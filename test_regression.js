@@ -5512,6 +5512,17 @@ renderRoster();var __r124Html=app.innerHTML,__r124Safe=JSON.stringify(S)===__r12
 S=JSON.parse(__r124SavedS);UI=JSON.parse(__r124SavedUI);delete window;`);
 assert(g("__r124Safe&&__r124Html.includes('v60-roster-count-status')&&__r124Html.includes('1軍 '+__r124One+'/28')&&__r124Html.includes('2軍 '+__r124Two+'/32')&&__r124Html.includes('比賽照常・選秀後整編')&&__r124Html.includes('目前不影響比賽，下次選秀後自動整編')") && fs.readFileSync('style.css','utf8').includes('.v60-roster-count-status{'), "r124 編制偏離改為人數對照與簡短後果列，完整規則可讀且渲染不改存檔");
 
+g(`var __r126SavedS=JSON.stringify(S),__r126SavedUI=JSON.stringify(UI);
+window={innerWidth:640};newGame('窄桌面名單測試');pickTeam('T0');pickGameMode('gm_coach');
+UI.rosterTab='1軍';UI.rosterGroup='pitchers';UI.rosterPitcherPage=0;
+renderRoster();var __r126First=app.innerHTML,__r126Before=JSON.stringify(S);
+var __r126Pitchers=S.teams[S.userTeamId].roster1.filter(id=>S.players[id]&&S.players[id].isPitcher).length;
+var __r126Seen=[];
+for(var __r126Page=0;__r126Page<Math.ceil(__r126Pitchers/3);__r126Page++){UI.rosterPitcherPage=__r126Page;renderRoster();__r126Seen.push(...Array.from(app.innerHTML.matchAll(/data-roster-id="([^"]+)"/g),m=>m[1]));}
+var __r126Safe=JSON.stringify(S)===__r126Before;
+S=JSON.parse(__r126SavedS);UI=JSON.parse(__r126SavedUI);delete window;`);
+assert(g("__r126Safe&&(__r126First.match(/data-roster-id=/g)||[]).length<=3&&__r126Seen.length===__r126Pitchers&&new Set(__r126Seen).size===__r126Pitchers&&__r126First.includes('v60-roster-mobile-cards')") && fs.readFileSync('style.css','utf8').includes('@media(max-width:700px){\n  .v60-roster-table-wrap{display:none;}') && fs.readFileSync('style.css','utf8').includes('@media(max-width:360px){\n  .v60-roster-mobile-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}'), "r126 640px 窄視窗使用三人可讀卡片，320px 能力值改兩欄，全員可翻到且切頁不改存檔");
+
 g(`var __r125SavedS=JSON.stringify(S),__r125SavedUI=JSON.stringify(UI);
 newGame('人事規則短列測試');pickTeam('T0');pickGameMode('gm_coach');
 UI.selectedPlayerId=S.teams[S.userTeamId].roster1[0];
