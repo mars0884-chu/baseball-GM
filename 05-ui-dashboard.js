@@ -1233,6 +1233,12 @@ function renderAwards() {
     if (!la) return `<p>無資料</p>`;
     const bestNinePageKey = `awardsBestNine${region}Page`;
     const goldenGlovePageKey = `awardsGoldenGlove${region}Page`;
+    const battingPageKey = `awardsBatting${region}Page`;
+    const pitchingPageKey = `awardsPitching${region}Page`;
+    const battingAwards = AWARD_LABELS.filter(([key]) => ["battingTitle", "homeRunTitle", "hitsTitle", "rbiTitle", "stolenBaseTitle"].includes(key)).map(([key]) => key).concat("goldenBat");
+    const pitchingAwards = AWARD_LABELS.filter(([key]) => ["eraTitle", "winsTitle", "strikeoutTitle", "saveTitle", "holdTitle"].includes(key)).map(([key]) => key).concat("goldenArm");
+    const battingPage = v60RosterPageSlice(battingAwards, battingPageKey, 2);
+    const pitchingPage = v60RosterPageSlice(pitchingAwards, pitchingPageKey, 2);
     const bestNinePage = v60RosterPageSlice(BESTNINE_GROUPS, bestNinePageKey, 3);
     const goldenGlovePage = v60RosterPageSlice(GOLDGLOVE_GROUPS, goldenGlovePageKey, 3);
     const awardCards = keys => AWARD_LABELS.filter(([key]) => keys.includes(key)).map(([key, label]) => {
@@ -1285,8 +1291,8 @@ function renderAwards() {
       }).join("");
     return `<div class="v60-awards-categories">${uiTabs(`awards-${region}`, [
       { key: "headline", label: "年度大獎", html: awardCards(["mvp", "rookieOfYear"]) },
-      { key: "batting", label: "打擊", html: awardCards(["battingTitle", "homeRunTitle", "hitsTitle", "rbiTitle", "stolenBaseTitle"]) + goldenBat },
-      { key: "pitching", label: "投手", html: awardCards(["eraTitle", "winsTitle", "strikeoutTitle", "saveTitle", "holdTitle"]) + goldenArm },
+      { key: "batting", label: "打擊", html: `${v60RosterPagerHtml(battingPage, battingPageKey, `${region}聯盟打擊獎項`, battingAwards.length, "項")}${awardCards(battingPage.items)}${battingPage.items.includes("goldenBat") ? goldenBat : ""}` },
+      { key: "pitching", label: "投手", html: `${v60RosterPagerHtml(pitchingPage, pitchingPageKey, `${region}聯盟投手獎項`, pitchingAwards.length, "項")}${awardCards(pitchingPage.items)}${pitchingPage.items.includes("goldenArm") ? goldenArm : ""}` },
       { key: "bestNine", label: "最佳九人", html: `${v60RosterPagerHtml(bestNinePage, bestNinePageKey, `${region}聯盟最佳九人`, BESTNINE_GROUPS.length, "席")}${bestNineCards}` },
       { key: "goldenGlove", label: "金手套", html: `${v60RosterPagerHtml(goldenGlovePage, goldenGlovePageKey, `${region}聯盟金手套`, GOLDGLOVE_GROUPS.length, "席")}${goldenGloveCards}` }
     ])}</div>`;

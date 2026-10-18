@@ -1610,16 +1610,17 @@ g("(function(){ UI.screen='awards'; renderAwards(); globalThis.__awHtml=app.inne
 assert(g("(__awHtml.match(/awardteam/g)||[]).length >= 4"), "v37⑨ 頒獎畫面含多個球隊名欄位(含金棒/金臂/最佳9人/金手套)");
 assert(g("__awHtml.indexOf('uitab-btn')>=0 && __awHtml.indexOf('A聯盟')>=0 && __awHtml.indexOf('B聯盟')>=0"), "v56 頒獎典禮具備A/B聯盟分頁");
 assert(g("['headline','batting','pitching','bestNine','goldenGlove'].every(k=>__awHtml.includes('data-tabgroup=\"awards-A\" data-tab=\"'+k+'\"'))"), "r046 頒獎每個聯盟都有五類直接可見的獎項頁籤");
-assert(g("AWARD_LABELS.every(([key,label])=>__awHtml.includes(label))"), "r046 頒獎分組未遺漏年度大獎與打投獎項");
+assert(g("AWARD_LABELS.filter(([key])=>['mvp','rookieOfYear'].includes(key)).every(([key,label])=>__awHtml.includes(label))"), "r046 頒獎年度大獎首屏保留得獎類別");
 g(`var __r113AwardState=JSON.stringify(S),__r113AwardUi=JSON.stringify(UI),__r113AwardPages=[];
 for(var __r113Page=0;__r113Page<3;__r113Page++){
- ['A','B'].forEach(function(region){UI['awardsBestNine'+region+'Page']=__r113Page;UI['awardsGoldenGlove'+region+'Page']=__r113Page;});
+ ['A','B'].forEach(function(region){UI['awardsBestNine'+region+'Page']=__r113Page;UI['awardsGoldenGlove'+region+'Page']=__r113Page;UI['awardsBatting'+region+'Page']=__r113Page;UI['awardsPitching'+region+'Page']=__r113Page;});
  renderAwards();__r113AwardPages.push(app.innerHTML);
 }
 var __r113AwardAll=__r113AwardPages.join('');
 var __r113AwardSafe=JSON.stringify(S)===__r113AwardState;
 UI=JSON.parse(__r113AwardUi);`);
 assert(g("BESTNINE_GROUPS.every(label=>__r113AwardAll.includes(label))&&GOLDGLOVE_GROUPS.every(label=>__r113AwardAll.includes(label))&&__r113AwardPages[2].includes('第 3/3 頁')&&__r113AwardPages.every(html=>html.includes('btn-to-offseason'))&&__r113AwardSafe"), "r113 最佳九人與金手套各守位逐頁可見；休賽季入口與正式狀態保持不變");
+assert(g("AWARD_LABELS.every(([key,label])=>__r113AwardAll.includes(label))&&__r113AwardAll.includes('金棒獎・最佳打者')&&__r113AwardAll.includes('金臂獎・最佳投手')&&__r113AwardPages.every(html=>html.includes('共 6 項'))&&__r113AwardSafe"), "r131 A／B 聯盟打擊與投手六項各分三頁，得獎者類別、金棒金臂與正式狀態保留");
 
 /* ==================== v38 測試 ==================== */
 console.log("\n--- v38 測試 ---");
