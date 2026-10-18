@@ -3533,23 +3533,30 @@ function renderDataCenter() {
     /* v55 Phase 3：聘任候選人畫面 */
     if (UI.v55DirHiring && UI.v55DirCandidates) {
       var cands = UI.v55DirCandidates;
-      var candsHtml = cands.map(function(c, i) {
-        return '<div class="card" style="margin:8px 0;">' +
-          '<div class="eyebrow">候選人 ' + (i + 1) + '</div>' +
-          '<div class="attrgrid">' +
-            '<div class="attr"><span>姓名</span><b>' + c.name + '</b></div>' +
-            '<div class="attr"><span>洞察力</span><b>' + c.insight + '</b></div>' +
-            '<div class="attr"><span>校正力</span><b>' + c.correction + '</b></div>' +
-            '<div class="attr"><span>警覺度</span><b>' + c.alertness + '</b></div>' +
-            '<div class="attr"><span>合約</span><b>' + c.contractYears + '年</b></div>' +
-            '<div class="attr"><span>年薪</span><b>' + (typeof formatMoney === "function" ? formatMoney(c.salary) : c.salary) + '</b></div>' +
-          '</div>' +
-          '<div class="btnrow"><button class="btn-secondary v55hire-btn" data-idx="' + i + '">聘任</button></div>' +
-          '</div>';
-      }).join("");
+      var rows = [
+        ["洞察", "資料層級", "insight"],
+        ["校正", "運氣準度", "correction"],
+        ["警覺", "警訊品質", "alertness"],
+        ["合約", "", "contractYears"],
+        ["年薪", "", "salary"]
+      ];
+      var compareRow = function(label, note, cells, extraClass) {
+        return '<div class="v60-director-row ' + (extraClass || '') + '"><span class="v60-director-label"><strong>' + label + '</strong>' +
+          (note ? '<small>' + note + '</small>' : '') + '</span>' + cells.map(function(cell) {
+            return '<span class="v60-director-value">' + cell + '</span>';
+          }).join('') + '</div>';
+      };
+      var candsHtml = '<section class="card v60-director-compare" aria-label="分析主管三人比較">' +
+        compareRow('候選人', '', cands.map(function(c) { return '<strong>' + c.name + '</strong>'; }), 'v60-director-head') +
+        rows.map(function(row) { return compareRow(row[0], row[1], cands.map(function(c) {
+          return row[2] === 'salary' ? (typeof formatMoney === 'function' ? formatMoney(c.salary) : c.salary) :
+            row[2] === 'contractYears' ? c.contractYears + '年' : String(c[row[2]]);
+        })); }).join('') +
+        compareRow('選擇', '', cands.map(function(_, i) {
+          return '<button class="btn-secondary v55hire-btn" data-idx="' + i + '" aria-label="聘任' + cands[i].name + '">聘任</button>';
+        }), 'v60-director-actions') + '</section>';
       app.innerHTML = '<div class="wrap">' +
         '<div class="topbar"><div><div class="eyebrow">數據中心</div><div class="teamname">' + icon('chart') + ' 聘任分析主管</div></div></div>' +
-        '<p class="sub dark">選擇一位分析主管。洞察力影響可見數據層級，校正力影響運氣校正準度，警覺度影響主動警訊品質。</p>' +
         candsHtml +
         '<div class="btnrow"><button id="v55hire-cancel" class="btn-outline">取消</button></div></div>';
       document.querySelectorAll(".v55hire-btn").forEach(function(b) {

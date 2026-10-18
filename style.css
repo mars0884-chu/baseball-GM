@@ -1087,6 +1087,14 @@ body[data-screen="mail"]      #app{ background-image: var(--pack-screen-mail,non
 .v55dc-sortable:hover { text-decoration: underline; }
 .v55dc-row { cursor: pointer; }
 .v55dc-row:hover { background: var(--hover, rgba(0,0,0,0.04)); }
+.v60-director-compare{display:grid;gap:4px;padding:10px;}
+.v60-director-row{display:grid;grid-template-columns:minmax(66px,22%) repeat(3,minmax(0,1fr));gap:4px;min-width:0;}
+.v60-director-row>span{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;min-height:42px;padding:5px 3px;border:1px solid #B7D3F5;border-radius:7px;background:#F4F9FF;color:#17233B;font-size:14px;text-align:center;overflow-wrap:anywhere;}
+.v60-director-row .v60-director-label{align-items:flex-start;padding-left:7px;color:#1459B8;text-align:left;}
+.v60-director-label small{font-size:14px;line-height:1.2;color:#36577F;}
+.v60-director-head>span{background:#E5F1FF;font-weight:800;}
+.v60-director-actions .v55hire-btn{width:100%;min-height:44px;padding:4px;font-size:14px;}
+@media(max-width:360px){.v60-director-compare{padding:6px;}.v60-director-row{grid-template-columns:minmax(60px,22%) repeat(3,minmax(0,1fr));gap:3px;}}
 .v55dc-scope.active { font-weight: 700; border-color: var(--accent, #0366d6); color: var(--accent, #0366d6); }
 
 /* v55 L3 Phase 3：分析主管警訊 */

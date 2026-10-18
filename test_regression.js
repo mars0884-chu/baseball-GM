@@ -5000,6 +5000,14 @@ UI.dcBatPage=1;renderDataCenter();var __r127Second=app.innerHTML;
 var __r127Pure=JSON.stringify(S)===__r127Before;
 v55DataCenterStats=__r127OldStats;S=JSON.parse(__r127SavedS);UI=JSON.parse(__r127SavedUI);`);
 assert(g("(__r127First.match(/class=\"v55dc-row\"/g)||[]).length===8&&__r127First.includes('基準打者0')&&__r127First.includes('資料可信度：高')&&__r127First.includes('data-sortkey=\"OPS\"')&&(__r127Second.match(/class=\"v55dc-row\"/g)||[]).length===1&&__r127Second.includes('基準打者8')&&__r127Pure"), "r127 非空數據中心完整渲染兩頁可達、排序與可信度保留，檢視不改存檔");
+g(`var __r127HireSavedUI=JSON.stringify(UI),__r127HireBefore=JSON.stringify(S);
+UI.v55DirHiring=true;UI.v55DirCandidates=[
+{name:'甲主管',insight:51,correction:62,alertness:73,contractYears:2,salary:1200000},
+{name:'乙主管',insight:64,correction:55,alertness:68,contractYears:3,salary:1300000},
+{name:'丙主管',insight:70,correction:71,alertness:59,contractYears:1,salary:1400000}];
+renderDataCenter();var __r127HireHtml=app.innerHTML;var __r127HirePure=JSON.stringify(S)===__r127HireBefore;
+UI=JSON.parse(__r127HireSavedUI);`);
+assert(g("(__r127HireHtml.match(/class=\"v60-director-label\"/g)||[]).length===7&&(__r127HireHtml.match(/class=\"btn-secondary v55hire-btn\"/g)||[]).length===3&&['甲主管','乙主管','丙主管','51','62','73','64','55','68','70','71','59','2年','3年','1年'].every(function(v){return __r127HireHtml.includes(v);})&&__r127HireHtml.includes('data-idx=\"2\"')&&__r127HirePure"), "r127 分析主管三人共用欄名比較，能力、合約、薪資與各自聘任操作完整且純渲染");
 
 console.log("\n--- r047 國際市場共享能力比較 ---");
 g(`var __r047SavedUI=JSON.stringify(UI);
