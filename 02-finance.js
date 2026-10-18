@@ -2828,7 +2828,13 @@ function renderFinance() {
           <tr class="me"><td>淨損益</td><td>${report.net >= 0 ? "+" : ""}${formatMoney(report.net)}</td></tr>
         </tbody>
       </table>
-      <p class="draftnote muted">結算後預算：${formatMoney(report.budgetAfter)}；人氣變化後：${report.popularityAfter}；當季票價：${report.ticketPrice}元${report.capRaised ? `（因上座踴躍，票價上限已調高至${report.ticketPriceCapAfter}元！）` : ""}${report.homeRecord ? `；上季主場 ${report.homeRecord.w}勝${report.homeRecord.l}敗／客場 ${report.awayRecord.w}勝${report.awayRecord.l}敗` : ""}</p>
+      ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([
+        ["結算預算", formatMoney(report.budgetAfter)],
+        ["人氣", `${report.popularityAfter}/100`],
+        ["票價", `${report.ticketPrice}元`],
+        ...(report.capRaised ? [["票價上限・上座提升", `${report.ticketPriceCapAfter}元`]] : []),
+        ...(report.homeRecord ? [["主場", `${report.homeRecord.w}勝${report.homeRecord.l}敗`], ["客場", `${report.awayRecord.w}勝${report.awayRecord.l}敗`]] : [])
+      ], "上季結算與戰績摘要") : `<p class="draftnote muted">結算預算 ${formatMoney(report.budgetAfter)}・人氣 ${report.popularityAfter}・票價 ${report.ticketPrice}元${report.capRaised ? `・票價上限 ${report.ticketPriceCapAfter}元` : ""}${report.homeRecord ? `・主場 ${report.homeRecord.w}勝${report.homeRecord.l}敗・客場 ${report.awayRecord.w}勝${report.awayRecord.l}敗` : ""}</p>`}
       ` : `<p class="sub dark">尚無歷史收支報告，完成第一個球季後會在這裡顯示。</p>`}
 
       `;

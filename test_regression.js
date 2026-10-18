@@ -4963,6 +4963,12 @@ var __v60FinanceRendered=app.innerHTML,__v60FinanceTabbed=__v60FinanceRendered.i
 var __v60FinanceAllSections=__v60FinanceRendered.includes("薪資分層明細")&&__v60FinanceRendered.includes("球迷壓力")&&__v60FinanceRendered.includes("球隊文化")&&__v60FinanceRendered.includes("城市（")&&__v60FinanceRendered.includes("本季預估損益")&&__v60FinanceRendered.includes("淨損益");
 S=JSON.parse(__v60FinanceSavedS);UI=JSON.parse(__v60FinanceSavedUI);app.innerHTML=__v60FinanceSavedHtml;`);
 assert(g("__v60FinanceTabbed && __v60FinanceAllSections"), "v60-023 renderer 保留三類完整內容與頁籤導航，不刪財務資料");
+g(`var __r128SavedS=JSON.stringify(S),__r128SavedUI=JSON.stringify(UI),__r128SavedHtml=app.innerHTML;
+var __r128Team=S.teams[S.userTeamId];ensureFinance(__r128Team);
+__r128Team.finance.lastSeasonReport={year:7,homeGames:60,avgAttendance:18000,homeVisitors:1080000,ticketRevenue:1000000,broadcastRevenue:2000000,sponsorRevenue:3000000,merchRevenue:4000000,gateShareIncome:500000,totalRevenue:10500000,payroll:5000000,maintenanceCost:500000,gateSharePaid:300000,signingBonusSpent:200000,taxThreshold:7000000,luxuryTax:100000,net:4400000,budgetAfter:12000000,popularityAfter:71,ticketPrice:480,capRaised:true,ticketPriceCapAfter:520,homeRecord:{w:38,l:22},awayRecord:{w:30,l:30}};
+UI.tabs=UI.tabs||{};UI.tabs.finance='report';renderFinance();var __r128Html=app.innerHTML;
+S=JSON.parse(__r128SavedS);UI=JSON.parse(__r128SavedUI);app.innerHTML=__r128SavedHtml;`);
+assert(g("__r128Html.includes('上季結算與戰績摘要')&&['結算預算','人氣','票價','票價上限・上座提升','520元','主場','38勝22敗','客場','30勝30敗','淨損益','440萬元'].every(function(v){return __r128Html.includes(v);})&&!__r128Html.includes('結算後預算：')"), "r128 上季報告長句改摘要格，票價上限與主客戰績及完整報表金額保留");
 
 /* r045：數據中心長榜單分頁，保留全部順位、指標及運氣分類。 */
 console.log("\n--- r045 數據中心分頁與可讀性 ---");
