@@ -3594,7 +3594,7 @@ function renderDataCenter() {
         <button class="btn-outline v55dc-scope ${scope === "league" ? "active" : ""}" data-scope="league">全聯盟</button>
         <button class="btn-outline v55dc-scope ${scope === "team" ? "active" : ""}" data-scope="team">本隊</button>
       </div>
-      ${tab !== "luck" ? '<p class="v60-state-line">高／中／低＝資料可信度</p>' : ""}
+      ${tab !== "luck" && Array.isArray(data[tab]) && data[tab].length ? '<p class="v60-state-line">高／中／低＝資料可信度</p>' : ""}
       ${tableHtml}
       <div class="btnrow"><button id="v55dc-back" class="btn-outline">返回主控台</button></div>
     </div>`;

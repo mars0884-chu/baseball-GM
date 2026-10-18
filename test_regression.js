@@ -5013,7 +5013,13 @@ var __r127Before=JSON.stringify(S);renderDataCenter();var __r127First=app.innerH
 UI.dcBatPage=1;renderDataCenter();var __r127Second=app.innerHTML;
 var __r127Pure=JSON.stringify(S)===__r127Before;
 v55DataCenterStats=__r127OldStats;S=JSON.parse(__r127SavedS);UI=JSON.parse(__r127SavedUI);`);
-assert(g("(__r127First.match(/class=\"v55dc-row\"/g)||[]).length===8&&__r127First.includes('基準打者0')&&__r127First.includes('資料可信度：高')&&__r127First.includes('data-sortkey=\"OPS\"')&&(__r127Second.match(/class=\"v55dc-row\"/g)||[]).length===1&&__r127Second.includes('基準打者8')&&__r127Pure"), "r127 非空數據中心完整渲染兩頁可達、排序與可信度保留，檢視不改存檔");
+assert(g("(__r127First.match(/class=\"v55dc-row\"/g)||[]).length===8&&__r127First.includes('基準打者0')&&__r127First.includes('資料可信度：高')&&__r127First.includes('高／中／低＝資料可信度')&&__r127First.includes('data-sortkey=\"OPS\"')&&(__r127Second.match(/class=\"v55dc-row\"/g)||[]).length===1&&__r127Second.includes('基準打者8')&&__r127Pure"), "r127 非空數據中心完整渲染兩頁可達、排序與可信度保留，檢視不改存檔");
+g(`var __r132SavedS=JSON.stringify(S),__r132SavedUI=JSON.stringify(UI),__r132Stats=v55DataCenterStats;
+v55DataCenterStats=function(){return {batters:[],pitchers:[]};};
+UI.screen='dataCenter';UI.dcTab='batters';renderDataCenter();var __r132Bat=app.innerHTML;
+UI.dcTab='pitchers';renderDataCenter();var __r132Pit=app.innerHTML;
+v55DataCenterStats=__r132Stats;S=JSON.parse(__r132SavedS);UI=JSON.parse(__r132SavedUI);`);
+assert(g("__r132Bat.includes('尚無足夠數據')&&__r132Pit.includes('尚無足夠數據')&&!__r132Bat.includes('高／中／低＝資料可信度')&&!__r132Pit.includes('高／中／低＝資料可信度')"), "r132 打投空樣本不顯示無對應項目的可信度圖例，非空資料仍保留圖例");
 g(`var __r127HireSavedUI=JSON.stringify(UI),__r127HireBefore=JSON.stringify(S);
 UI.v55DirHiring=true;UI.v55DirCandidates=[
 {name:'甲主管',insight:51,correction:62,alertness:73,contractYears:2,salary:1200000},
