@@ -3410,6 +3410,7 @@ function renderHallOfFame() {
     const retNums = S.v48.retiredNumbers || [];
     const pending = S.v48.hofPending || [];
     const memberPage = v60RosterPageSlice(hof, "hofMemberPage", 2);
+    const retiredPage = v60RosterPageSlice(retNums, "hofRetiredPage", 6);
 
     // 殿堂成員卡
     let membersHtml = "";
@@ -3450,7 +3451,8 @@ function renderHallOfFame() {
     let retNumsHtml = "";
     if (retNums.length > 0) {
       retNumsHtml = `<div class="card"><div class="eyebrow">${icon('jersey')} 永久退休背號</div>
-        <div class="v48retired-nums-row">${retNums.map(n => {
+        ${v60RosterPagerHtml(retiredPage, "hofRetiredPage", "退休背號", retNums.length, "號")}
+        <div class="v48retired-nums-row">${retiredPage.items.map(n => {
           const owner = hof.find(h => h.retiredNumber === n);
           return `<div class="v48retired-num-badge"><span class="num">#${n}</span><span class="nm">${owner ? owner.name : ""}</span></div>`;
         }).join("")}</div>

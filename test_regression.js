@@ -5284,6 +5284,22 @@ const r060Hof = fs.readFileSync("06-ui-roster.js", "utf8").split("function rende
 const r060Css = fs.readFileSync("style.css", "utf8");
 assert(r060Hof.includes('v60RosterPageSlice(hof, "hofMemberPage", 2)') && r060Hof.includes('wireV60RosterPager()') && r060Hof.includes('v60RosterPagerHtml(memberPage') && r060Css.includes('.v48hof-member .v48radar text{fill:#173B70') && r060Css.includes('overflow:visible'), "r060 殿堂頁使用共用分頁並提高現有雷達標籤可讀性，不更動能力值");
 
+console.log("\n--- r130 名人堂退休背號短頁 ---");
+g(`var __r130SavedS=JSON.stringify(S),__r130SavedUI=JSON.stringify(UI);
+newGame('退休背號短頁測試');pickTeam('T0');pickGameMode('gm_coach');ensureV48();
+S.v48.retiredNumbers=[1,2,3,4,5,6,7,8,9,10,11,12,13];
+UI.screen='hallOfFame';UI.hofRetiredPage=0;renderHallOfFame();
+var __r130First=(app.innerHTML.match(/class="v48retired-num-badge"/g)||[]).length===6&&app.innerHTML.includes('第 1/3 頁・共 13 號');
+UI.hofRetiredPage=1;renderHallOfFame();
+var __r130Second=(app.innerHTML.match(/class="v48retired-num-badge"/g)||[]).length===6&&app.innerHTML.includes('第 2/3 頁・共 13 號');
+UI.hofRetiredPage=2;renderHallOfFame();
+var __r130Third=(app.innerHTML.match(/class="v48retired-num-badge"/g)||[]).length===1&&app.innerHTML.includes('#13')&&app.innerHTML.includes('第 3/3 頁・共 13 號');
+S.v48.retiredNumbers=[42];renderHallOfFame();
+var __r130Clamp=UI.hofRetiredPage===0&&app.innerHTML.includes('#42')&&!app.innerHTML.includes('第 3/3 頁');
+S=JSON.parse(__r130SavedS);UI=JSON.parse(__r130SavedUI);`);
+assert(g("__r130First&&__r130Second&&__r130Third&&__r130Clamp"), "r130 退休背號每頁六號，下一頁可達且清單縮短後正確回到首頁");
+assert(r060Hof.includes('v60RosterPagerHtml(retiredPage, "hofRetiredPage"') && r060Hof.includes('retiredPage.items.map(n =>') && r060Hof.includes('wireV60RosterPager()'), "r130 退休背號分頁沿用現有導覽綁定，所有背號保持可達");
+
 console.log("\n--- r061 選秀頁重複文字減量與數值保留 ---");
 const r061Draft = fs.readFileSync("06-ui-roster.js", "utf8").split("function renderDraft()")[1].split("function renderMatchupCard")[0];
 const r061Radar = fs.readFileSync("01-data-engine.js", "utf8").split("function v60DraftRadarCardHtml")[1].split("function v46Cell")[0];
