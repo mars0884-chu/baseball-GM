@@ -728,13 +728,6 @@ button:disabled{opacity:.4;cursor:not-allowed;}
 
 /* ==================== v29 新增樣式 ==================== */
 /* 真・新聞跑馬燈：水平無縫循環捲動，觸摸/滑鼠懸停時暫停方便閱讀 */
-.tickerwrap{overflow:hidden;white-space:nowrap;border:1px solid var(--line);border-radius:8px;background:rgba(0,0,0,.18);padding:6px 0;margin:6px 0 10px;position:relative;}
-.tickertrack{display:inline-block;white-space:nowrap;animation:tickerscroll linear infinite;will-change:transform;}
-.tickerwrap:hover .tickertrack,.tickerwrap:active .tickertrack{animation-play-state:paused;}
-.tickeritem{display:inline-block;padding:0 10px;font-size:13px;color:var(--ink);}
-.tickersep{display:inline-block;color:var(--gold-2);font-size:10px;padding:0 2px;opacity:.7;}
-@keyframes tickerscroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-@media (prefers-reduced-motion: reduce){.tickertrack{animation:none;}}
 
 /* 轉播/贊助/行銷方案卡 */
 .dealcard{border-left:3px solid var(--line);}
@@ -1180,9 +1173,6 @@ body{background-image:radial-gradient(circle at 8% 0,rgba(255,255,255,.95) 0 12%
 .newscard{border-left-color:#26D9E8;}
 .newsitem{color:#17233B;}
 .newstime{background:#EAF5FF;color:#1459B8;}
-.tickerwrap{background:#FFFFFF;border-color:#B7D3F5;}
-.tickeritem{color:#17233B;}
-.tickersep{color:#FF3D4F;}
 .statusbadge{background:#1976FF;color:#FFFFFF;}
 .grade-A{background:#1976FF;}
 .grade-B{background:#26D9E8;color:#17233B;}
@@ -1431,6 +1421,8 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-visual-scene-copy strong{color:#17233B;font-size:22px;line-height:1.2;}
 .v60-visual-scene-copy>span:last-child{color:#36577F;font-size:13px;line-height:1.55;}
 .v60-hof-scene.v60-visual-scene{grid-template-columns:1fr;}
+.v60-news-kinds{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;}
+.v60-news-kinds span{padding:4px 9px;border:1px solid #B7D3F5;border-radius:999px;background:#F8FBFF;color:#173B70;font-size:13px;font-weight:700;white-space:nowrap;}
 .v60-compact-scene{grid-template-columns:1fr;margin:0;padding:8px;border-radius:14px;}
 .v60-compact-scene .v60-visual-scene-art{min-height:170px;border-radius:11px;}
 .v60-compact-scene .v60-visual-scene-art img{max-height:210px;padding:4px;}

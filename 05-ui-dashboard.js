@@ -1791,7 +1791,7 @@ function wireAgencyPerkCards() { /* 目前為純資訊卡，無需接線 */ }
 /* ---------- 陣容管理共用導覽列（整合名單／打線／輪值／教練團，介面參考OOTP風格） ---------- */
 
 
-/* ---------- v25 新聞跑馬燈卡（主控台）｜v29 升級為真・跑馬燈動畫 ---------- */
+/* ---------- 新聞卡：事件分類摘要與完整快訊清單 ---------- */
 function renderNewsCard() {
   const feed = S.newsFeed || [];
   if (feed.length === 0) {
@@ -1804,13 +1804,16 @@ function renderNewsCard() {
   }
   const show = feed.slice(0, UI.newsExpanded ? 15 : 5);
   const typeIcon = { "戰報": "⚾", "傷兵": "🩹", "里程碑": "🏅", "國際賽": "🌐", "春訓": "🌸", "贊助": "🤝", "訓練": "🧢", "高層": "🏛️" };
-  // v29真・跑馬燈：取最新8則串成一條，水平無縫循環捲動（內容複製兩份製造無限循環；長度越長捲越久）
-  const tickerItems = feed.slice(0, 8).map(n => `<span class="tickeritem">${typeIcon[n.type] || "📰"} ${n.text}</span>`).join("<span class=\"tickersep\">◆</span>");
-  const tickerDur = clamp(feed.slice(0, 8).reduce((s, n) => s + n.text.length, 0) * 0.55, 18, 90);
+  const kindCounts = new Map();
+  feed.slice(0, 8).forEach(n => {
+    const kind = n.type || "聯盟";
+    kindCounts.set(kind, (kindCounts.get(kind) || 0) + 1);
+  });
+  const kindSummary = [...kindCounts].map(([kind, count]) => `<span>${typeIcon[kind] || "📰"} ${v60UiEscape(kind)} ${count}</span>`).join("");
   return `<div class="card newscard">
      <div class="eyebrow">聯盟快訊</div>
      ${v60CompatVisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene")}
-     <div class="tickerwrap" aria-label="新聞跑馬燈"><div class="tickertrack" style="animation-duration:${tickerDur}s;">${tickerItems}<span class="tickersep">◆</span>${tickerItems}<span class="tickersep">◆</span></div></div>
+     <div class="v60-news-kinds" role="group" aria-label="最新八則新聞分類">${kindSummary}</div>
     ${show.map(n => `<p class="newsitem"><span class="newstime">${n.dateLabel}</span>${typeIcon[n.type] || "📰"} ${n.text}</p>`).join("")}
     ${feed.length > 5 ? `<button id="btn-news-toggle" class="btn-outline" style="margin-top:8px;">${UI.newsExpanded ? "收合" : `更多快訊（共${feed.length}則）`}</button>` : ""}
   </div>`;

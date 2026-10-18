@@ -74,7 +74,7 @@ assert(g("renderNewsCard.toString().includes('新聞摘要') && renderNewsCard.t
 assert(g("dashMailPanel.toString().includes('目前沒有郵件') && dashMailPanel.toString().includes('mailroom_v58')"), "v58 empty-mail state still renders mailroom scene");
 assert(g("renderMarketing.toString().includes('v60VisualMetricRail') && renderMarketing.toString().includes('春訓可多選')"), "v60-002 marketing information hierarchy uses visible metrics");
 assert(g("renderSpringCamp.toString().includes('v60VisualMetricRail') && renderCdActivitiesCard.toString().includes('international_exchange_v58') && renderCdActivitiesCard.toString().includes('overseas_marketing_v58')"), "v60-002 activity screens use visible metrics and approved scenes");
-assert(g("renderNewsCard.toString().includes('aria-label=\"新聞跑馬燈\"') && renderHallOfFame.toString().includes('v60-state-line')"), "v60-002 repeated information becomes visible state guidance");
+assert(g("renderNewsCard.toString().includes('最新八則新聞分類') && renderHallOfFame.toString().includes('v60-state-line')"), "v60-002 新聞分類與名人堂保留可見狀態引導");
 const v59SingleFileSource = fs.readFileSync("index.html", "utf8");
 if ((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1) {
   assert((v59SingleFileSource.match(/\bconst BULLPEN_TABS\b/g) || []).length === 1, "v59 single-file module embedding has one BULLPEN_TABS declaration");
@@ -5322,6 +5322,12 @@ var __r130Clicked=UI.hofRetiredPage===1&&app.innerHTML.includes('#7')&&!app.inne
 app.querySelectorAll=__r130QueryAll;S=JSON.parse(__r130ClickSavedS);UI=JSON.parse(__r130ClickSavedUI);`);
 assert(g("__r130Clicked"), "r130 退休背號實際下一頁可達且首批背號不重複顯示");
 assert(g("(function(){var hadWindow=typeof window!=='undefined',prior=globalThis.window;globalThis.window={__v60PublicArtPaths:{hall_of_fame_gallery_v58:'data:image/png;base64,TEST_HOF'}};try{var html=v60CompatVisualScene('hall_of_fame_gallery_v58','名人堂展示館場景','','','','v60-hof-scene');return html.includes('data-v60-art-key=\"hall_of_fame_gallery_v58\"')&&html.includes('alt=\"名人堂展示館場景\"')&&html.includes('data:image/png;base64,TEST_HOF')&&!html.includes('v60-visual-scene-copy');}finally{if(hadWindow)globalThis.window=prior;else delete globalThis.window;}})()")&&r060Hof.includes('"HALL OF FAME VISUAL", "", "入選紀錄與退休背號"')&&r060Css.includes('.v60-hof-scene.v60-visual-scene{grid-template-columns:1fr;}'), "r133 名人堂保留圖片載入與無障礙名稱，不在圖片下重複頁首標題");
+g(`var __r134SavedS=JSON.stringify(S),__r134SavedUI=JSON.stringify(UI);
+S.newsFeed=['戰報','戰報','高層','戰報','春訓','高層'].map(function(type,i){return {type:type,text:'唯一新聞'+i,dateLabel:'第1天'};});
+UI.newsExpanded=false;var __r134Before=JSON.stringify(S),__r134Short=renderNewsCard(),__r134Pure=JSON.stringify(S)===__r134Before;
+UI.newsExpanded=true;var __r134Full=renderNewsCard();
+S=JSON.parse(__r134SavedS);UI=JSON.parse(__r134SavedUI);`);
+assert(g("__r134Short.includes('最新八則新聞分類')&&__r134Short.includes('戰報 3')&&__r134Short.includes('高層 2')&&(__r134Short.match(/唯一新聞0/g)||[]).length===1&&!__r134Short.includes('tickertrack')&&__r134Short.includes('更多快訊（共6則）')&&(__r134Full.match(/唯一新聞5/g)||[]).length===1&&__r134Pure"), "r134 新聞類別摘要取代三次全文重複，更多快訊可讀完整內容且渲染不改存檔");
 
 console.log("\n--- r061 選秀頁重複文字減量與數值保留 ---");
 const r061Draft = fs.readFileSync("06-ui-roster.js", "utf8").split("function renderDraft()")[1].split("function renderMatchupCard")[0];
