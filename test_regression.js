@@ -5014,6 +5014,15 @@ UI.v55DirHiring=true;UI.v55DirCandidates=[
 renderDataCenter();var __r127HireHtml=app.innerHTML;var __r127HirePure=JSON.stringify(S)===__r127HireBefore;
 UI=JSON.parse(__r127HireSavedUI);`);
 assert(g("(__r127HireHtml.match(/class=\"v60-director-label\"/g)||[]).length===7&&(__r127HireHtml.match(/class=\"btn-secondary v55hire-btn\"/g)||[]).length===3&&['甲主管','乙主管','丙主管','51','62','73','64','55','68','70','71','59','2年','3年','1年'].every(function(v){return __r127HireHtml.includes(v);})&&__r127HireHtml.includes('data-idx=\"2\"')&&__r127HirePure"), "r127 分析主管三人共用欄名比較，能力、合約、薪資與各自聘任操作完整且純渲染");
+g(`var __r127ClickSavedUI=JSON.stringify(UI),__r127ClickSavedS=JSON.stringify(S),__r127DocQuery=document.querySelectorAll,__r127HireOriginal=v55ConfirmHireDirector;
+var __r127Buttons=[0,1,2].map(function(i){return {dataset:{idx:String(i)},onclick:null};}),__r127Called=null;
+document.querySelectorAll=function(sel){return sel==='.v55hire-btn'?__r127Buttons:[];};
+v55ConfirmHireDirector=function(idx){__r127Called=idx;};
+UI.v55DirHiring=true;UI.v55DirCandidates=[{name:'甲主管',insight:51,correction:62,alertness:73,contractYears:2,salary:1200000},{name:'乙主管',insight:64,correction:55,alertness:68,contractYears:3,salary:1300000},{name:'丙主管',insight:70,correction:71,alertness:59,contractYears:1,salary:1400000}];
+renderDataCenter();__r127Buttons[2].onclick();var __r127ThirdBound=__r127Called===2&&app.innerHTML.includes('丙主管');
+var __r127ClickPure=JSON.stringify(S)===__r127ClickSavedS;
+document.querySelectorAll=__r127DocQuery;v55ConfirmHireDirector=__r127HireOriginal;S=JSON.parse(__r127ClickSavedS);UI=JSON.parse(__r127ClickSavedUI);`);
+assert(g("__r127ThirdBound&&__r127ClickPure"), "r127 第三位分析主管聘任鈕實際綁定索引 2，純檢視不改遊戲資料");
 
 console.log("\n--- r047 國際市場共享能力比較 ---");
 g(`var __r047SavedUI=JSON.stringify(UI);
