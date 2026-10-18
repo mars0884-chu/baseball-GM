@@ -1797,7 +1797,7 @@ function renderNewsCard() {
   if (feed.length === 0) {
     return `<div class="card newscard">
        <div class="eyebrow">聯盟快訊</div>
-       ${v60CompatVisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene")}
+       ${v60CompatVisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene")}
        ${v60VisualMetricRail([["快訊", "0 則"], ["狀態", "等待事件"]], "新聞摘要")}
        <p class="v60-state-line">賽事、傷兵與聯盟事件發生後會在這裡出現。</p>
     </div>`;
@@ -1812,7 +1812,7 @@ function renderNewsCard() {
   const kindSummary = [...kindCounts].map(([kind, count]) => `<span>${typeIcon[kind] || "📰"} ${v60UiEscape(kind)} ${count}</span>`).join("");
   return `<div class="card newscard">
      <div class="eyebrow">聯盟快訊</div>
-     ${v60CompatVisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "新聞與賽場資訊", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene")}
+     ${v60CompatVisualScene("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "", "完整新聞內容與既有展開操作保留在下方。", "v60-news-scene")}
      <div class="v60-news-kinds" role="group" aria-label="最新八則新聞分類">${kindSummary}</div>
     ${show.map(n => `<p class="newsitem"><span class="newstime">${n.dateLabel}</span>${typeIcon[n.type] || "📰"} ${n.text}</p>`).join("")}
     ${feed.length > 5 ? `<button id="btn-news-toggle" class="btn-outline" style="margin-top:8px;">${UI.newsExpanded ? "收合" : `更多快訊（共${feed.length}則）`}</button>` : ""}

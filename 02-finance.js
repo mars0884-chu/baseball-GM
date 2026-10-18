@@ -2628,7 +2628,7 @@ function renderMarketing() {
       <div class="topbar"><div><div class="eyebrow">${team.name} ・ ${cal.dateLabel}</div><h1>行銷企劃</h1></div><button id="btn-back" class="btn-outline">返回</button></div>
       ${renderRosterNav("marketing")}
       ${UI.flash ? `<div class="flash">${UI.flash}</div>` : ""}
-      ${typeof v60CompatVisualScene === "function" ? v60CompatVisualScene("marketing_command_center_v58", "行銷企劃中心場景", "MARKETING VISUAL", "年度活動", "活動配置與投入", "v60-marketing-scene") : ""}
+      ${typeof v60CompatVisualScene === "function" ? v60CompatVisualScene("marketing_command_center_v58", "行銷企劃中心場景", "MARKETING VISUAL", "", "活動配置與投入", "v60-marketing-scene") : ""}
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["人氣", `${team.finance.popularity}/100`], ["已投", `${(team.finance.marketingCampaigns || []).length} 項`], ["周邊", `+${Math.round((team.finance.marketingMerchPct || 0) * 100)}%`], ["進場", `+${Math.round((team.finance.marketingAttPct || 0) * 100)}%`]], "行銷企劃摘要") : ""}
       <div class="v60-marketing-tabs">${uiTabs("marketing", [
         { key: "campaigns", label: "年度企劃", html: `

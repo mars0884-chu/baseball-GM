@@ -4613,7 +4613,7 @@ var __r098Spring=!app.innerHTML.includes('>費用<')&&!app.innerHTML.includes('>
 S.currentDay=1;renderSpringCamp();var __r098Later=app.innerHTML.includes('>預算<');
 S=JSON.parse(__r098SavedS);UI=JSON.parse(__r098SavedUI);`);
 assert(g("__r098Spring&&__r098Later"), "r098 春訓費用在海外出發鍵保留，春訓頁首已有預算時地點卡不重複；非開季窗口仍顯示預算");
-assert(v60CopyMarketing.includes("春訓可多選") && v60CopyMarketing.includes("年度活動") && !v60CopyMarketing.includes("點擊活動卡即可投入或取消") && !v60CopyMarketing.includes("（已投入）"), "v60-011 行銷頁移除按鈕已表達的重複操作文案");
+assert(v60CopyMarketing.includes("春訓可多選") && v60CopyMarketing.includes('key: "campaigns", label: "年度企劃"') && !v60CopyMarketing.includes("點擊活動卡即可投入或取消") && !v60CopyMarketing.includes("（已投入）"), "v60-011 行銷頁保留企劃入口與必要規則，移除按鈕已表達的重複操作文案");
 assert(v60PrepFinance.includes("預估虧損：調票價或重談轉播／贊助") && v60PrepFinance.includes("春訓限調1次") && v60PrepFinance.includes("漲價→進場率降") && v60PrepFinance.includes("春訓可簽；未簽採預設"), "v60-011 財務保留預估風險與下一步，以短狀態列呈現票價規則");
 assert(v60CopyFinanceOverview.includes("球迷壓力摘要") && v60CopyFinanceOverview.includes("認同・票贊／FA／主場") && v60CopyFinanceOverview.includes("素養${(S.fanDataLiteracy||8)>=50 ? \"・進階\""), "v60-011 財務以單一可視指標列呈現球迷數值與關鍵門檻");
 assert(!v60CopyFinanceOverview.includes("老闆耐心乘數") && !v60CopyFinanceOverview.includes("球迷三維度（他們不下令，但他們施壓）") && v60CopyFinanceOverview.includes("球迷記憶"), "v60-011 財務移除同值重複列表、保留獨有交易記憶");
@@ -5328,6 +5328,7 @@ UI.newsExpanded=false;var __r134Before=JSON.stringify(S),__r134Short=renderNewsC
 UI.newsExpanded=true;var __r134Full=renderNewsCard();
 S=JSON.parse(__r134SavedS);UI=JSON.parse(__r134SavedUI);`);
 assert(g("__r134Short.includes('最新八則新聞分類')&&__r134Short.includes('戰報 3')&&__r134Short.includes('高層 2')&&(__r134Short.match(/唯一新聞0/g)||[]).length===1&&!__r134Short.includes('tickertrack')&&__r134Short.includes('更多快訊（共6則）')&&(__r134Full.match(/唯一新聞5/g)||[]).length===1&&__r134Pure"), "r134 新聞類別摘要取代三次全文重複，更多快訊可讀完整內容且渲染不改存檔");
+assert((v60DashboardSource.match(/v60CompatVisualScene\("newsroom_v58", "新聞編輯室場景", "NEWSROOM VISUAL", "",/g) || []).length === 2 && v60FinanceSource.includes('v60CompatVisualScene("marketing_command_center_v58", "行銷企劃中心場景", "MARKETING VISUAL", "",') && r060Css.includes('.v60-news-scene.v60-visual-scene,.v60-marketing-scene.v60-visual-scene{grid-template-columns:1fr;}'), "r135 新聞空／非空與行銷頁場景保留圖片及名稱，不重複顯示頁首標題且桌面無空白欄");
 
 console.log("\n--- r061 選秀頁重複文字減量與數值保留 ---");
 const r061Draft = fs.readFileSync("06-ui-roster.js", "utf8").split("function renderDraft()")[1].split("function renderMatchupCard")[0];
