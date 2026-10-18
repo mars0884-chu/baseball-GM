@@ -5497,6 +5497,17 @@ UI.coachCandidatePage=2;renderCoaches();var __r129Third=app.innerHTML;
 var __r129Safe=JSON.stringify(S)===__r129Before;
 S=JSON.parse(__r129SavedS);UI=JSON.parse(__r129SavedUI);`);
 assert(g("(__r129First.match(/class=\"pickbtn hire-btn\"/g)||[]).length===2&&__r129First.includes('候選教練0')&&__r129First.includes('候選教練1')&&__r129First.includes('特訓')&&__r129Second.includes('候選教練2')&&__r129Second.includes('候選教練3')&&__r129Second.includes('要價+25%')&&__r129Third.includes('候選教練4')&&__r129Third.includes('data-idx=\"4\"')&&__r129Third.includes('婉拒加盟')&&__r129Third.includes('舊怨')&&__r129Third.includes('disabled>無意願')&&__r129Third.includes('3/3・共5人')&&__r129Safe"), "r129 五位教練分三頁、共享比較欄名且保留特殊能力／意願原因／費用及拒絕不可聘用");
+g(`var __r129ClickSavedUI=JSON.stringify(UI),__r129ClickSavedS=JSON.stringify(S),__r129QueryAll=app.querySelectorAll,__r129QueryOne=app.querySelector,__r129HireOriginal=hireCoachCandidate;
+var __r129Next={dataset:{step:'1'},onclick:null},__r129Hire={dataset:{idx:'4'},onclick:null},__r129Called=null;
+app.querySelectorAll=function(sel){return sel==='.v60-coach-candidate-page'?[__r129Next]:sel==='.hire-btn'?[__r129Hire]:[];};app.querySelector=function(){return null;};
+hireCoachCandidate=function(role,idx){__r129Called={role:role,idx:idx};};
+UI.screen='coaches';UI.coachTab='1軍';UI.coachPicker=COACH_ROLES[0];UI.coachCandidatePage=1;
+UI.coachCandidates=Array.from({length:5},function(_,i){return {name:'點選測試'+i,kind:'fresh',teaching:60+i,contractYears:2,salary:1000000,will:{state:'accept'}};});
+renderCoaches();__r129Next.onclick();var __r129ClickedPage=UI.coachCandidatePage===2&&app.innerHTML.includes('點選測試4');
+renderCoaches();__r129Hire.onclick();var __r129ClickedHire=__r129Called&&__r129Called.idx===4&&__r129Called.role===COACH_ROLES[0];
+var __r129ClickPure=JSON.stringify(S)===__r129ClickSavedS;
+app.querySelectorAll=__r129QueryAll;app.querySelector=__r129QueryOne;hireCoachCandidate=__r129HireOriginal;S=JSON.parse(__r129ClickSavedS);UI=JSON.parse(__r129ClickSavedUI);`);
+assert(g("__r129ClickedPage&&__r129ClickedHire&&__r129ClickPure"), "r129 實際翻至末頁後聘用按鈕傳原候選索引 4，純導覽不改遊戲資料");
 
 console.log("\n--- r075 純GM 教練調度唯讀短頁 ---");
 g(`var __r075SavedS=JSON.stringify(S),__r075SavedUI=JSON.stringify(UI);
