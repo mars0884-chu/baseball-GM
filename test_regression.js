@@ -4990,6 +4990,17 @@ var __r114Safe=JSON.stringify(S)===__r114Before;
 S=JSON.parse(__r114SavedS);UI=JSON.parse(__r114SavedUI);`);
 assert(g("__r114Level===1&&__r114Html.includes('資料可見 Lv.1')&&!__r114Html.includes('分析室 Lv.1')&&__r114Safe"), "r114 分析室 Lv.0 時自家資料保底 Lv.1；頁首不得誤稱設施已升級，純檢視不改存檔");
 
+console.log("\n--- r127 數據中心非空排行榜完整渲染基準 ---");
+g(`var __r127SavedS=JSON.stringify(S),__r127SavedUI=JSON.stringify(UI),__r127OldStats=v55DataCenterStats;
+var __r127Team=S.teams[S.userTeamId];ensureFacilities(__r127Team);__r127Team.facilities.analysisRoom=1;
+v55DataCenterStats=function(){return {batters:Array.from({length:9},function(_,i){return {id:'R127B'+i,name:'基準打者'+i,team:S.userTeamId,pa:100+i,advanced:{OBP:.31,SLG:.42,OPS:.73,confidence:i===0?'reliable':'moderate'}};}),pitchers:[]};};
+UI.screen='dataCenter';UI.dcTab='batters';UI.dcScope='league';UI.dcBatPage=0;
+var __r127Before=JSON.stringify(S);renderDataCenter();var __r127First=app.innerHTML;
+UI.dcBatPage=1;renderDataCenter();var __r127Second=app.innerHTML;
+var __r127Pure=JSON.stringify(S)===__r127Before;
+v55DataCenterStats=__r127OldStats;S=JSON.parse(__r127SavedS);UI=JSON.parse(__r127SavedUI);`);
+assert(g("(__r127First.match(/class=\"v55dc-row\"/g)||[]).length===8&&__r127First.includes('基準打者0')&&__r127First.includes('資料可信度：高')&&__r127First.includes('data-sortkey=\"OPS\"')&&(__r127Second.match(/class=\"v55dc-row\"/g)||[]).length===1&&__r127Second.includes('基準打者8')&&__r127Pure"), "r127 非空數據中心完整渲染兩頁可達、排序與可信度保留，檢視不改存檔");
+
 console.log("\n--- r047 國際市場共享能力比較 ---");
 g(`var __r047SavedUI=JSON.stringify(UI);
 var __r047A={id:'R047A',name:'比較甲',isPitcher:false,scouted:{contact:60,power:55,eye:50,speed:58,fielding:62,arm:63,stamina:55,durability:60},scoutedOverall:58,scoutedCeilingVal:78,positions:[]};
