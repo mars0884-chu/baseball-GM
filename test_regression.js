@@ -5321,6 +5321,7 @@ renderHallOfFame();__r130Next.onclick();
 var __r130Clicked=UI.hofRetiredPage===1&&app.innerHTML.includes('#7')&&!app.innerHTML.includes('#1</span>');
 app.querySelectorAll=__r130QueryAll;S=JSON.parse(__r130ClickSavedS);UI=JSON.parse(__r130ClickSavedUI);`);
 assert(g("__r130Clicked"), "r130 退休背號實際下一頁可達且首批背號不重複顯示");
+assert(g("(function(){var hadWindow=typeof window!=='undefined',prior=globalThis.window;globalThis.window={__v60PublicArtPaths:{hall_of_fame_gallery_v58:'data:image/png;base64,TEST_HOF'}};try{var html=v60CompatVisualScene('hall_of_fame_gallery_v58','名人堂展示館場景','','','','v60-hof-scene');return html.includes('data-v60-art-key=\"hall_of_fame_gallery_v58\"')&&html.includes('alt=\"名人堂展示館場景\"')&&html.includes('data:image/png;base64,TEST_HOF')&&!html.includes('v60-visual-scene-copy');}finally{if(hadWindow)globalThis.window=prior;else delete globalThis.window;}})()")&&r060Hof.includes('"HALL OF FAME VISUAL", "", "入選紀錄與退休背號"')&&r060Css.includes('.v60-hof-scene.v60-visual-scene{grid-template-columns:1fr;}'), "r133 名人堂保留圖片載入與無障礙名稱，不在圖片下重複頁首標題");
 
 console.log("\n--- r061 選秀頁重複文字減量與數值保留 ---");
 const r061Draft = fs.readFileSync("06-ui-roster.js", "utf8").split("function renderDraft()")[1].split("function renderMatchupCard")[0];

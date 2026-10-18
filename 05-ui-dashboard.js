@@ -57,7 +57,7 @@ function v60CompatVisualScene(key, alt, kicker, title, detail, extraClass) {
   const cls = extraClass ? ` ${extraClass}` : "";
   return `<section class="v60-visual-scene${cls}" data-v60-art-key="${key}" data-v60-art-source="approved-scene-png" aria-label="${alt}">
     <div class="v60-visual-scene-art"><img src="${src}" alt="${alt}" ${v60CompatArtImageAttrs(key, "eager", false)}></div>
-    <div class="v60-visual-scene-copy"><strong>${title}</strong></div>
+    ${title ? `<div class="v60-visual-scene-copy"><strong>${title}</strong></div>` : ""}
   </section>`;
 }
 function v60KickRenderedSceneImages() {

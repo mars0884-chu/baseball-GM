@@ -3470,7 +3470,7 @@ function renderHallOfFame() {
           <div class="teamname">${icon('hof')} 球隊榮譽殿堂</div>
         </div>
       </div>
-      ${typeof v60CompatVisualScene === "function" ? v60CompatVisualScene("hall_of_fame_gallery_v58", "名人堂展示館場景", "HALL OF FAME VISUAL", "球隊榮譽殿堂", "入選紀錄與退休背號", "v60-hof-scene") : ""}
+      ${typeof v60CompatVisualScene === "function" ? v60CompatVisualScene("hall_of_fame_gallery_v58", "名人堂展示館場景", "HALL OF FAME VISUAL", "", "入選紀錄與退休背號", "v60-hof-scene") : ""}
       ${typeof v60VisualMetricRail === "function" ? v60VisualMetricRail([["殿堂", `${hof.length} 位`], ["退休背號", `${retNums.length} 個`], ["待審核", `${pending.length} 位`]], "名人堂摘要") : ""}
       ${pendingNote}
       ${retNumsHtml}

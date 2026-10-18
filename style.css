@@ -1430,6 +1430,7 @@ details.fold[data-v59-text-density="1"]>p{margin:5px 0 0;color:#36577F;font-size
 .v60-visual-scene-copy{display:flex;flex-direction:column;gap:7px;min-width:0;padding:8px 6px;}
 .v60-visual-scene-copy strong{color:#17233B;font-size:22px;line-height:1.2;}
 .v60-visual-scene-copy>span:last-child{color:#36577F;font-size:13px;line-height:1.55;}
+.v60-hof-scene.v60-visual-scene{grid-template-columns:1fr;}
 .v60-compact-scene{grid-template-columns:1fr;margin:0;padding:8px;border-radius:14px;}
 .v60-compact-scene .v60-visual-scene-art{min-height:170px;border-radius:11px;}
 .v60-compact-scene .v60-visual-scene-art img{max-height:210px;padding:4px;}
