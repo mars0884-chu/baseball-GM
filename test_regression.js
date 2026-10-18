@@ -1621,6 +1621,13 @@ var __r113AwardSafe=JSON.stringify(S)===__r113AwardState;
 UI=JSON.parse(__r113AwardUi);`);
 assert(g("BESTNINE_GROUPS.every(label=>__r113AwardAll.includes(label))&&GOLDGLOVE_GROUPS.every(label=>__r113AwardAll.includes(label))&&__r113AwardPages[2].includes('第 3/3 頁')&&__r113AwardPages.every(html=>html.includes('btn-to-offseason'))&&__r113AwardSafe"), "r113 最佳九人與金手套各守位逐頁可見；休賽季入口與正式狀態保持不變");
 assert(g("AWARD_LABELS.every(([key,label])=>__r113AwardAll.includes(label))&&__r113AwardAll.includes('金棒獎・最佳打者')&&__r113AwardAll.includes('金臂獎・最佳投手')&&__r113AwardPages.every(html=>html.includes('共 6 項'))&&__r113AwardSafe"), "r131 A／B 聯盟打擊與投手六項各分三頁，得獎者類別、金棒金臂與正式狀態保留");
+g(`var __r131SavedS=JSON.stringify(S),__r131SavedUI=JSON.stringify(UI),__r131QueryAll=app.querySelectorAll;
+var __r131Next={dataset:{pageKey:'awardsBattingAPage',pageStep:'1',pageCount:'3'},onclick:null};
+app.querySelectorAll=function(sel){return sel==='.roster-page-btn'?[__r131Next]:[];};
+UI.screen='awards';UI.awardsBattingAPage=0;renderAwards();__r131Next.onclick();
+var __r131Click=UI.awardsBattingAPage===1&&app.innerHTML.includes('第 2/3 頁・共 6 項')&&JSON.stringify(S)===__r131SavedS;
+app.querySelectorAll=__r131QueryAll;UI=JSON.parse(__r131SavedUI);`);
+assert(g("__r131Click"), "r131 打擊獎項實際下一頁可達，翻頁不改遊戲狀態");
 
 /* ==================== v38 測試 ==================== */
 console.log("\n--- v38 測試 ---");
@@ -5300,6 +5307,14 @@ var __r130Clamp=UI.hofRetiredPage===0&&app.innerHTML.includes('#42')&&!app.inner
 S=JSON.parse(__r130SavedS);UI=JSON.parse(__r130SavedUI);`);
 assert(g("__r130First&&__r130Second&&__r130Third&&__r130Clamp"), "r130 退休背號每頁六號，下一頁可達且清單縮短後正確回到首頁");
 assert(r060Hof.includes('v60RosterPagerHtml(retiredPage, "hofRetiredPage"') && r060Hof.includes('retiredPage.items.map(n =>') && r060Hof.includes('wireV60RosterPager()'), "r130 退休背號分頁沿用現有導覽綁定，所有背號保持可達");
+g(`var __r130ClickSavedS=JSON.stringify(S),__r130ClickSavedUI=JSON.stringify(UI),__r130QueryAll=app.querySelectorAll;
+var __r130Next={dataset:{pageKey:'hofRetiredPage',pageStep:'1',pageCount:'3'},onclick:null};
+app.querySelectorAll=function(sel){return sel==='.roster-page-btn'?[__r130Next]:[];};
+S.v48.retiredNumbers=[1,2,3,4,5,6,7,8,9,10,11,12,13];UI.screen='hallOfFame';UI.hofRetiredPage=0;
+renderHallOfFame();__r130Next.onclick();
+var __r130Clicked=UI.hofRetiredPage===1&&app.innerHTML.includes('#7')&&!app.innerHTML.includes('#1</span>');
+app.querySelectorAll=__r130QueryAll;S=JSON.parse(__r130ClickSavedS);UI=JSON.parse(__r130ClickSavedUI);`);
+assert(g("__r130Clicked"), "r130 退休背號實際下一頁可達且首批背號不重複顯示");
 
 console.log("\n--- r061 選秀頁重複文字減量與數值保留 ---");
 const r061Draft = fs.readFileSync("06-ui-roster.js", "utf8").split("function renderDraft()")[1].split("function renderMatchupCard")[0];
