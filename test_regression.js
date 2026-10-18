@@ -5470,11 +5470,12 @@ UI.screen='coaches';UI.coachTab='1軍';UI.coachPicker=COACH_ROLES[0];
 UI.coachCandidates=[{name:'測試教練',kind:'retiree',age:39,specialty:'contact',teaching:72,contractYears:2,salary:1800000,specialAbility:null,will:{state:'ask',why:'期待加薪'}}];
 var __r074Budget=S.teams[S.userTeamId].finance.budget,__r074Staff=JSON.stringify(S.teams[S.userTeamId].coachStaff);
 renderCoaches();var __r074Html=app.innerHTML;
-var __r074Controls=!!document.getElementById('btn-back').onclick&&!!document.getElementById('btn-cancel-pick').onclick&&__r074Html.includes('hire-btn');
+var __r074Controls=!!document.getElementById('btn-back').onclick&&!!document.getElementById('btn-cancel-pick').onclick&&__r074Html.includes('hire-btn')&&!__r074Html.includes('v60-coach-staff-table');
+document.getElementById('btn-back').onclick();var __r074PickerBack=!UI.coachPicker&&UI.screen==='coaches';
 var __r074RoleNames=new Set();var __r074BeforePages=JSON.stringify(S);
 for(var __r074Page=0;__r074Page<Math.ceil(COACH_ROLES.length/2);__r074Page++){UI.coachRolePage=__r074Page;renderCoaches();COACH_ROLES.slice(__r074Page*2,__r074Page*2+2).forEach(__role=>{if(app.innerHTML.includes(__role))__r074RoleNames.add(__role);});}
 var __r074Paged=__r074RoleNames.size===COACH_ROLES.length&&JSON.stringify(S)===__r074BeforePages;
-UI.coachRolePage=0;renderCoaches();
+UI.coachRolePage=0;UI.coachPicker=COACH_ROLES[0];UI.coachCandidates=[{name:'測試教練',kind:'retiree',age:39,specialty:'contact',teaching:72,contractYears:2,salary:1800000,specialAbility:null,will:{state:'ask',why:'期待加薪'}}];renderCoaches();
 document.getElementById('btn-cancel-pick').onclick();
 var __r074Cancel=!UI.coachPicker&&!UI.coachCandidates&&S.teams[S.userTeamId].finance.budget===__r074Budget&&JSON.stringify(S.teams[S.userTeamId].coachStaff)===__r074Staff;
 var __r074Role=COACH_ROLES[0];S.teams[S.userTeamId].coachStaff['1軍'][__r074Role]=null;renderCoaches();
@@ -5484,7 +5485,18 @@ UI.screen='coaches';UI.coachTab='育成';delete S.teams[S.userTeamId].coachStaff
 var __r074BeforeEmpty=JSON.stringify(S);renderCoaches();
 var __r074Empty=app.innerHTML.includes('育成教練團')&&app.innerHTML.includes('is-vacant')&&JSON.stringify(S)===__r074BeforeEmpty;
 S=JSON.parse(__r074SavedS);UI=JSON.parse(__r074SavedUI);`);
-assert(g("__r074Controls&&__r074Paged&&__r074Cancel&&__r074Vacant&&__r074Back&&__r074Empty&&__r074Html.includes('測試教練')&&__r074Html.includes('意願保留')&&__r074Html.includes('要價+25%')&&__r074Html.includes(formatMoney(1800000))&&!__r074Html.includes('比較指導力與特殊能力後聘用')") && fs.readFileSync('style.css','utf8').includes('.v60-coach-staff-table tr{'), "r074 教練全職位分頁可到達且不改存檔，育成配置缺失仍顯示空缺，取消不扣款、返回正常");
+assert(g("__r074Controls&&__r074PickerBack&&__r074Paged&&__r074Cancel&&__r074Vacant&&__r074Back&&__r074Empty&&__r074Html.includes('測試教練')&&__r074Html.includes('意願保留')&&__r074Html.includes('要價+25%')&&__r074Html.includes(formatMoney(1800000))&&!__r074Html.includes('比較指導力與特殊能力後聘用')") && fs.readFileSync('style.css','utf8').includes('.v60-coach-staff-table tr{'), "r074 候選短頁返回原教練團、全職位可分頁到達，取消不扣款且育成空缺保留");
+
+console.log("\n--- r129 五位教練候選共用比較與三頁可達 ---");
+g(`var __r129SavedS=JSON.stringify(S),__r129SavedUI=JSON.stringify(UI);
+UI.screen='coaches';UI.coachTab='1軍';UI.coachPicker=COACH_ROLES[0];UI.coachCandidatePage=0;
+UI.coachCandidates=Array.from({length:5},function(_,i){return {name:'候選教練'+i,kind:i===0?'retiree':'fresh',age:40,teaching:60+i,specialAbility:i===1?{name:'特訓',category:'contact'}:null,contractYears:2+i,salary:1000000+i*100000,will:i===4?{state:'refuse',why:'舊怨'}:i===2?{state:'ask',why:'期待加薪'}:{state:'accept',why:''}};});
+var __r129Before=JSON.stringify(S);renderCoaches();var __r129First=app.innerHTML;
+UI.coachCandidatePage=1;renderCoaches();var __r129Second=app.innerHTML;
+UI.coachCandidatePage=2;renderCoaches();var __r129Third=app.innerHTML;
+var __r129Safe=JSON.stringify(S)===__r129Before;
+S=JSON.parse(__r129SavedS);UI=JSON.parse(__r129SavedUI);`);
+assert(g("(__r129First.match(/class=\"pickbtn hire-btn\"/g)||[]).length===2&&__r129First.includes('候選教練0')&&__r129First.includes('候選教練1')&&__r129First.includes('特訓')&&__r129Second.includes('候選教練2')&&__r129Second.includes('候選教練3')&&__r129Second.includes('要價+25%')&&__r129Third.includes('候選教練4')&&__r129Third.includes('data-idx=\"4\"')&&__r129Third.includes('婉拒加盟')&&__r129Third.includes('舊怨')&&__r129Third.includes('disabled>無意願')&&__r129Third.includes('3/3・共5人')&&__r129Safe"), "r129 五位教練分三頁、共享比較欄名且保留特殊能力／意願原因／費用及拒絕不可聘用");
 
 console.log("\n--- r075 純GM 教練調度唯讀短頁 ---");
 g(`var __r075SavedS=JSON.stringify(S),__r075SavedUI=JSON.stringify(UI);

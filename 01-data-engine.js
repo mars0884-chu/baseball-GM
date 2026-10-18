@@ -1704,6 +1704,7 @@ function generateCoachCandidates(teamId, level, role) {
 function openCoachPicker(role) {
   const team = S.teams[S.userTeamId];
   const level = UI.coachTab || "1軍";
+  UI.coachCandidatePage = 0;
   UI.coachPicker = role;
   UI.coachCandidates = (typeof generateCoachCandidatesV42 === "function") ? generateCoachCandidatesV42(team.id, level, role) : generateCoachCandidates(team.id, level, role); // v42①：從聯盟教練市場池抽人（稀缺性＋意願）
   render();

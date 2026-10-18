@@ -1347,19 +1347,55 @@ function renderCoaches() {
   const staff = team.coachStaff && team.coachStaff[level] || {};
   const picking = UI.coachPicker;
   const candidates = UI.coachCandidates || [];
+  const candidatePageCount = Math.max(1, Math.ceil(candidates.length / 2));
+  const candidatePage = Math.max(0, Math.min(candidatePageCount - 1, Number(UI.coachCandidatePage) || 0));
+  UI.coachCandidatePage = candidatePage;
+  const visibleCandidates = candidates.slice(candidatePage * 2, candidatePage * 2 + 2);
   const pending = (S.pendingCoachHires || []).filter(x => x.level === level);
   const coachPageCount = Math.max(1, Math.ceil(COACH_ROLES.length / 2));
   const coachPage = Math.max(0, Math.min(coachPageCount - 1, Number(UI.coachRolePage) || 0));
   UI.coachRolePage = coachPage;
   const visibleCoachRoles = COACH_ROLES.slice(coachPage * 2, coachPage * 2 + 2);
+  const coachCandidateCompare = picking ? (() => {
+    const current = S.coaches[staff[picking]];
+    const row = (label, values, rowClass = "") => `<div class="v60-coach-compare-row ${rowClass}"><span class="v60-coach-compare-label">${label}</span>${values.map(value => `<span class="v60-coach-compare-value">${value}</span>`).join("")}</div>`;
+    const willLabel = cand => {
+      const will = cand.will;
+      if (!will) return "—";
+      const status = will.state === "refuse" ? "婉拒加盟" : will.state === "ask" ? "意願保留（要價+25%）" : "願意加盟";
+      return `${status}${will.why ? `<small>${will.why}</small>` : ""}`;
+    };
+    const origin = cand => cand.exiled ? "前職業教練（曾與你不歡而散）" : cand.kind === "retiree" ? `退休球員轉任・退休時${cand.age}歲` : "新聘教練";
+    const diff = cand => {
+      if (!current) return "補實空缺";
+      const gap = cand.teaching - current.teaching;
+      return gap > 3 ? `優於現任 +${gap}` : gap < -3 ? `劣於現任 ${gap}` : "與現任相當";
+    };
+    const ability = cand => cand.specialAbility ? `${icon('star-solid')}${cand.specialAbility.name}<small>${SPECIALTY_LABEL[cand.specialAbility.category] || ""}加成</small>` : "無特殊能力";
+    return `<section class="card v60-coach-picker" aria-label="${picking}教練候選比較">
+      <div class="eyebrow">${level}・${picking}・${current ? `現任指導力 ${current.teaching}` : "目前空缺"}</div>
+      <nav class="v60-choice-pager" aria-label="教練候選分頁"><button type="button" class="v60-coach-candidate-page" data-step="-1" ${candidatePage === 0 ? "disabled" : ""}>上一頁</button><span>${candidatePage + 1}/${candidatePageCount}・共${candidates.length}人</span><button type="button" class="v60-coach-candidate-page" data-step="1" ${candidatePage === candidatePageCount - 1 ? "disabled" : ""}>下一頁</button></nav>
+      ${visibleCandidates.length ? `<div class="v60-coach-compare ${visibleCandidates.length === 1 ? "is-single" : ""}">
+        ${row("候選人", visibleCandidates.map(cand => `<strong>${cand.name}</strong><small>${origin(cand)}</small>`), "v60-coach-compare-head")}
+        ${row("指導力", visibleCandidates.map(cand => `<strong>${cand.teaching}</strong><small>${diff(cand)}</small>`))}
+        ${row("特殊能力", visibleCandidates.map(ability))}
+        ${row("加盟意願", visibleCandidates.map(willLabel))}
+        ${row("合約", visibleCandidates.map(cand => `${cand.contractYears}年`))}
+        ${row("年薪", visibleCandidates.map(cand => typeof formatMoney === "function" ? formatMoney(cand.salary || 0) : (cand.salary || 0)))}
+        ${row("選擇", visibleCandidates.map((cand, idx) => `<button class="pickbtn hire-btn" data-idx="${candidatePage * 2 + idx}" aria-label="聘用${cand.name}" ${cand.will && cand.will.state === "refuse" ? "disabled" : ""}>${cand.will && cand.will.state === "refuse" ? "無意願" : "聘用"}</button>`), "v60-coach-compare-actions")}
+      </div>` : '<p class="v60-state-line">目前沒有可聘用教練。</p>'}
+      <div class="btnrow"><button id="btn-cancel-pick" class="btn-secondary">返回教練團</button></div>
+    </section>`;
+  })() : "";
   app.innerHTML = `
     <div class="wrap">
       <div class="topbar v60-coach-topbar"><div><div class="eyebrow">${team.name}</div><h1>教練團</h1></div>${picking ? '<button id="btn-back" class="btn-outline" type="button">返回</button>' : ""}</div>
       ${renderRosterNav("coaches")}
       ${renderCoachRefusalCard()}
-      ${pending.length > 0 ? `<div class="card issuecard"><div class="eyebrow">合約到期・待你確認人選</div>
+      ${!picking && pending.length > 0 ? `<div class="card issuecard"><div class="eyebrow">合約到期・待你確認人選</div>
         <p class="sub dark">待確認：${pending.map(x => x.role).join("、")}；可按「更換」比較人選。</p>
       </div>` : ""}
+      ${picking ? "" : `
       <div class="tabrow">
         <button class="tab ${level === "1軍" ? "active" : ""}" data-tab="1軍">1軍教練團</button>
         <button class="tab ${level === "2軍" ? "active" : ""}" data-tab="2軍">2軍教練團</button>
@@ -1386,40 +1422,8 @@ function renderCoaches() {
         </tbody>
       </table>
       <p class="v60-state-line" aria-label="教練效果">專精→能力加成 · 總教練→全隊小幅加成 · ★特殊 · 空缺／逾期未續→0加成</p>
-      ${picking ? `
-      <div class="card">
-        <div class="eyebrow">聘僱新教練：${picking}（${level}）・${S.coaches[staff[picking]] ? `現任指導力 ${S.coaches[staff[picking]].teaching}` : "目前空缺"}</div>
-        <div class="teamgrid" style="grid-template-columns:1fr;gap:10px;">
-          ${candidates.map((cand, idx) => {
-            const curT = S.coaches[staff[picking]] ? S.coaches[staff[picking]].teaching : 0;
-            const diff = cand.teaching - curT;
-            const diffLabel = !S.coaches[staff[picking]] ? "（補實空缺）" : (diff > 3 ? `<span style="color:var(--green-text);">優於現任 +${diff}</span>` : (diff < -3 ? `<span style="color:var(--redline);">劣於現任 ${diff}</span>` : "與現任相當"));
-            const abilityLine = cand.specialAbility ? `${icon('star-solid')}${cand.specialAbility.name}（${SPECIALTY_LABEL[cand.specialAbility.category] || ""}加成）` : "無特殊能力";
-            // v42②：意願徽章——好教練會挑雇主（delegates甜頭／hands_on帳單／舊帳／戰績）
-            const will = cand.will || null;
-            const willBadge = !will ? "" : (will.state === "refuse"
-              ? `<div class="draftnote" style="color:var(--redline);">${icon('no')} 婉拒加盟${will.why ? `：「${will.why}」` : ""}</div>`
-              : (will.state === "ask"
-                ? `<div class="draftnote" style="color:var(--redline);">△ 意願保留（要價+25%）${will.why ? `：「${will.why}」` : ""}</div>`
-                : `<div class="draftnote" style="color:var(--green-text);">○ 願意加盟${will.why ? `：「${will.why}」` : ""}</div>`));
-            const refuse = !!(will && will.state === "refuse");
-            return `<div class="card" style="margin-bottom:0;padding:14px 16px;${refuse ? "opacity:.65;" : ""}">
-              <div class="draftcard-head">
-                <div>
-                  <div class="draftname">${cand.name}</div>
-                  <div class="draftmeta">${cand.exiled ? "前職業教練（曾與你不歡而散）" : (cand.kind === "retiree" ? `退休球員轉任・退休時${cand.age}歲` : "新聘教練")}</div>
-                </div>
-                <button class="pickbtn hire-btn" data-idx="${idx}" ${refuse ? "disabled" : ""}>${refuse ? "無意願" : "聘用"}</button>
-              </div>
-              <div class="draftnote">指導力 ${cand.teaching}（${diffLabel}）</div>
-              <div class="draftnote">${abilityLine}</div>
-              ${willBadge}
-              <div class="draftnote muted">合約 ${cand.contractYears} 年・年薪 ${typeof formatMoney === "function" ? formatMoney(cand.salary || 0) : (cand.salary || 0)}</div>
-            </div>`;
-          }).join("")}
-        </div>
-        <div class="btnrow" style="margin-top:10px;"><button id="btn-cancel-pick" class="btn-secondary">取消聘用</button></div>
-      </div>` : ""}
+      `}
+      ${coachCandidateCompare}
       ${picking ? "" : '<div class="btnrow"><button id="btn-back" class="btn-outline">返回</button></div>'}
     </div>`;
   wireCoachRefusalCard();
@@ -1437,11 +1441,21 @@ function renderCoaches() {
   });
   if (picking) {
     document.getElementById("btn-cancel-pick").onclick = () => { UI.coachPicker = null; UI.coachCandidates = null; render(); };
+    app.querySelectorAll(".v60-coach-candidate-page").forEach(btn => { btn.onclick = () => {
+      UI.coachCandidatePage = Math.max(0, Math.min(candidatePageCount - 1, candidatePage + Number(btn.dataset.step)));
+      render();
+      const target = app.querySelector(".v60-coach-picker");
+      if (target && target.scrollIntoView) target.scrollIntoView({ block: "start" });
+    }; });
     app.querySelectorAll(".hire-btn").forEach(btn => {
       btn.onclick = () => hireCoachCandidate(picking, Number(btn.dataset.idx));
     });
   }
-  document.getElementById("btn-back").onclick = () => { UI.screen = "dashboard"; render(); };
+  document.getElementById("btn-back").onclick = () => {
+    if (picking) { UI.coachPicker = null; UI.coachCandidates = null; }
+    else UI.screen = "dashboard";
+    render();
+  };
   wireRosterNav();
 }
 
