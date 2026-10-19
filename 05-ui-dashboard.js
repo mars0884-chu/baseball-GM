@@ -1519,7 +1519,8 @@ function renderOffseasonSummary() {
       ${sum.rehired ? `
       <div class="card rehirecard">
         <div class="eyebrow">${icon('party')} 東山再起</div>
-        <p class="sub dark">歡迎加入 <b>${sum.rehiredTeam}</b>！你帶著過往的執教履歷走馬上任，高層給予的起始信任度為 <b>${sum.startTrust}</b>。接手現有陣容，證明你寶刀未老吧。</p>
+        ${v60VisualMetricRail([["新東家", sum.rehiredTeam], ["起始信任", sum.startTrust]], "東山再起摘要")}
+        <p class="v60-state-line">保留生涯履歷・接手既有陣容</p>
       </div>` : ""}
       ${renderCoachRefusalCard()}
       ${renderChampJumpCard(sum)}
@@ -1549,9 +1550,9 @@ function renderOffseasonSummary() {
           <div class="attr"><span>淨損益</span><b>${sum.myFinanceReport.net >= 0 ? "+" : ""}${formatMoney(sum.myFinanceReport.net)}</b></div>
           <div class="attr"><span>結算後預算</span><b>${formatMoney(sum.myFinanceReport.budgetAfter)}</b></div>
         </div>
-        ${sum.myFinanceReport.luxuryTax > 0 ? `<p class="sub dark">本季薪資超過奢侈稅門檻，已被課徵 ${formatMoney(sum.myFinanceReport.luxuryTax)} 奢侈稅。</p>` : ""}
-        ${sum.myFinanceReport.balanceTaxPaid > 0 ? `<p class="sub dark">${icon('stadium')} 聯盟均衡稅：球場完備度居前段（${sum.myFinanceReport.stadiumCompleteness}%）且營運預算充裕，本季繳納均衡稅 ${formatMoney(sum.myFinanceReport.balanceTaxPaid)}（挹注聯盟弱隊球場基金）。</p>` : ""}
-        ${sum.myFinanceReport.balanceTaxReceived > 0 ? `<p class="sub dark">${icon('stadium')} 聯盟均衡稅補貼：球場完備度為聯盟後段（${sum.myFinanceReport.stadiumCompleteness}%），本季領取均衡補貼 ${formatMoney(sum.myFinanceReport.balanceTaxReceived)}（已計入營運預算）。</p>` : ""}
+        ${sum.myFinanceReport.luxuryTax > 0 ? `<p class="v60-state-line">奢侈稅・薪資超標・支出 ${formatMoney(sum.myFinanceReport.luxuryTax)}</p>` : ""}
+        ${sum.myFinanceReport.balanceTaxPaid > 0 ? `<p class="v60-state-line">均衡稅・球場完備 ${sum.myFinanceReport.stadiumCompleteness}%／預算充裕・繳 ${formatMoney(sum.myFinanceReport.balanceTaxPaid)} 至弱隊球場基金</p>` : ""}
+        ${sum.myFinanceReport.balanceTaxReceived > 0 ? `<p class="v60-state-line">均衡補貼・球場完備 ${sum.myFinanceReport.stadiumCompleteness}% 居後・領 ${formatMoney(sum.myFinanceReport.balanceTaxReceived)}（已入預算）</p>` : ""}
       </div>` : ""}
       ` },
         { key: "retired", label: "退休球員", badge: myRetired.length, html: `

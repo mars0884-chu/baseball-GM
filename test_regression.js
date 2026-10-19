@@ -5375,6 +5375,14 @@ var __r063Retired=app.innerHTML.includes('uitab-panel active" data-tabgroup="off
 var __r063Before=JSON.stringify(S);renderOffseasonSummary();var __r063Stable=__r063Before===JSON.stringify(S);
 S=JSON.parse(__r063SavedS);UI=JSON.parse(__r063SavedUI);`);
 assert(g("__r063First&&__r063Retired&&__r063Stable"), "r063 年度結算與退休球員分區，兩人分頁及留任／指派教練操作保留，重畫不改存檔");
+g(`var __r140SavedS=JSON.stringify(S),__r140SavedUI=JSON.stringify(UI);
+newGame('季末結算短列測試');pickTeam('T0');pickGameMode('gm_coach');S.gameStarted=true;
+S.offseasonSummary={retiredCount:0,coachesReplaced:0,myRetiredIds:[],rehired:true,rehiredTeam:'測試球團',startTrust:63,myFinanceReport:{totalRevenue:80000000,totalExpense:60000000,net:20000000,budgetAfter:120000000,luxuryTax:1200000,balanceTaxPaid:2400000,balanceTaxReceived:0,stadiumCompleteness:85}};
+UI.screen='offseasonSummary';UI.tabs={};var __r140PaidBefore=JSON.stringify(S);renderOffseasonSummary();var __r140Paid=app.innerHTML,__r140PaidPure=__r140PaidBefore===JSON.stringify(S);
+S.offseasonSummary.rehired=false;S.offseasonSummary.myFinanceReport.balanceTaxPaid=0;S.offseasonSummary.myFinanceReport.balanceTaxReceived=900000;S.offseasonSummary.myFinanceReport.stadiumCompleteness=25;
+var __r140ReceivedBefore=JSON.stringify(S);renderOffseasonSummary();var __r140Received=app.innerHTML,__r140ReceivedPure=__r140ReceivedBefore===JSON.stringify(S);
+S=JSON.parse(__r140SavedS);UI=JSON.parse(__r140SavedUI);`);
+assert(g("__r140Paid.includes('新東家')&&__r140Paid.includes('測試球團')&&__r140Paid.includes('起始信任')&&__r140Paid.includes('63')&&__r140Paid.includes('保留生涯履歷・接手既有陣容')&&__r140Paid.includes('奢侈稅・薪資超標・支出')&&__r140Paid.includes(formatMoney(1200000))&&__r140Paid.includes('均衡稅・球場完備 85%／預算充裕')&&__r140Paid.includes(formatMoney(2400000))&&__r140Paid.includes('弱隊球場基金')&&__r140PaidPure&&__r140Received.includes('均衡補貼・球場完備 25% 居後')&&__r140Received.includes(formatMoney(900000))&&__r140Received.includes('已入預算')&&__r140ReceivedPure"), "r140 季末跳槽及稅務短列保留球隊、信任、原因、金額、去向與預算註記，純渲染不改存檔");
 const r063Dash = fs.readFileSync("05-ui-dashboard.js", "utf8");
 const r063Css = fs.readFileSync("style.css", "utf8");
 const r063NonStickyScreens = (r063Dash.match(/if \(\[([^\]]+)\]\.includes\(UI\.screen\)/) || [])[1] || "";
