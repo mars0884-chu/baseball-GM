@@ -5,6 +5,19 @@
 - 同一公開存檔之現況抽查：390px 財務營運／球迷／收支／票價／合約約 261／257／261／264／264 字，頁高 918／957／918／873／1,050px，均無橫向溢位；空數據中心 115 字／844px，不能代表非空排行榜。代理人頁 276 字／844px。新手教學九章在原瀏覽器預設 663px 寬度各 105–215 字、無橫向溢位；此非 390px 證據。以上是狀態／分支明確的抽查，不可推算全遊戲減量率。
 - 下一個證據缺口仍是非空排行榜、多年名人堂與季末頒獎的同狀態手機畫面，以及全路由同源前後比較。Mars 個人驗證依最新指示留待全部完成後一次進行，Codex 的技術驗證仍逐批執行。
 
+## 全範圍稽核覆蓋表（2026-10-19，未結案）
+
+- r110 歷史稽核器列出 **56 個路由**，只是建立覆蓋清單，不代表 r136 的 56 頁已驗證：
+  - 開局與主循環：`setup`、`teamSelect`、`gameModePick`、`tutorial`、`dashboard`、`standings`、`playoffs`、`gameOver`、`bootRecovery`。
+  - 名單與人員：`roster`、`rosterSecond`、`rosterDevelopment`、`playerDetail`、`coaches`、`coachesSecond`、`coachesDevelopment`、`coachesPicker`、`lineup`、`rotation`、`scouts`、`scoutsPicker`、`scoutsVacant`。
+  - 選秀與交易：`draft`、`draftRecap`、`draftActive`、`draftSkipConfirm`、`listing`、`wantMarket`、`tradeTeamSelect`、`tradeBuilder`、`tradeBuilderGet`、`tradeBuilderPicks`、`tradeBuilderTerms`、`freeAgents`、`internationalMarket`、`negotiation`。
+  - 財務與球團：`finance`、`financeDeals`、`financeTicket`、`financeCuts`、`contractRenewals`、`staffRenewal`、`directorRenewal`、`marketing`、`marketingIntl`、`facilities`、`agency`、`saveManager`、`dataCenter`。
+  - 年度與歷史：`awards`、`offseasonSummary`、`selfTraining`、`hallOfFame`、`springCamp`、`springReport`、`intlTournament`。
+- r135 公開版、現有開季第 1 天存檔：已用瀏覽器看到非空 `freeAgents`、`roster`、`facilities`、`agency`、財務五個分頁、新聞與行銷；`dataCenter` 只有空資料狀態。這些是各分支的當前畫面觀察，並非同源新舊全路由比較。`tutorial` 九章另在預設 663px 寬度量測，不能充作 390px 證據。
+- 尚須補歷史清單以外的條件分支：有上季資料的財務報告、分析主管聘任、季末完整頒獎、非空排行榜、多年名人堂，以及不同球員類型／休賽季狀態。這些不能由開季第 1 天的空頁推論。
+- 每個路由或條件分支結案需要：同一情境的新舊可見字與頁高、320／390／1280px 可讀性與橫向溢位、主要按鍵可達、必要數值與規則仍可見、圖片來源正確、純渲染不改正式狀態。分頁內容仍可達不等於字數消失；全遊戲減量成效必須依覆蓋完的同源樣本計算。Mars 個人驗證留待全部完成後一次進行。
+- `r136` 目前只有本機提交 `43e2dd3`；推送請求遭平台自動核准額度限制拒絕，**未執行**。公開 Pages 仍為 r135；不可聲稱 r136 已上線或已有修正後公開瀏覽器證據。恢復後先推送，再核對 Pages run、公開版標記、同存檔 390px 前後差異與操作。
+
 # 2026-10-18 r134 新聞全文重複去除（公開發佈）
 
 - `main` 推至 `bf32957eae8258b409e660862d09b7d71b8f708e`；Pages run `39116697498` 對應該 SHA 並 `completed/success`。公開首頁 HTTP 200、含 `v60-r134-news-kind-summary`、不含 r133 舊標記。
