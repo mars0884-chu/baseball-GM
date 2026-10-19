@@ -2011,13 +2011,34 @@ function renderSpringReport() {
     return `<div class="v60-spring-report-groups">${gainKinds.map(kind => {
       const selected = changes.filter(kind.test);
       if (!selected.length) return "";
-      return `<div class="v60-spring-report-group is-${kind.key}"><b>${kind.label}</b><div>${selected.map(c => {
+      const gainValue = c => {
         const from = Number(c.from), to = Number(c.to);
-        const delta = Number.isFinite(from) && Number.isFinite(to) ? Math.max(0, Math.round(to - from)) : 0;
+        return Number.isFinite(from) && Number.isFinite(to) ? Math.max(0, Math.round(to - from)) : 0;
+      };
+      const renderGain = c => {
+        const delta = gainValue(c);
         const width = Math.min(100, delta * 20);
         const label = v60UiEscape(c.label || "能力");
         return `<span class="v60-spring-report-gain" role="img" aria-label="${kind.label} ${label} 增加 ${delta}"><span>${label}</span><i aria-hidden="true"><b style="width:${width}%"></b></i><strong>+${delta}</strong></span>`;
-      }).join("")}</div></div>`;
+      };
+      const paired = new Set();
+      const gains = selected.map((c, i) => {
+        if (paired.has(i)) return "";
+        const match = kind.key === "linked" && /^(.+?)(控球|威力)$/.exec(String(c.label || ""));
+        if (!match) return renderGain(c);
+        const other = selected.findIndex((item, j) => j > i && !paired.has(j) && item !== c && String(item.label || "") === `${match[1]}${match[2] === "控球" ? "威力" : "控球"}`);
+        if (other < 0) return renderGain(c);
+        paired.add(other);
+        const control = match[2] === "控球" ? c : selected[other];
+        const power = match[2] === "威力" ? c : selected[other];
+        const pitch = v60UiEscape(match[1]);
+        const stat = (label, item) => {
+          const delta = gainValue(item);
+          return `<span class="v60-spring-report-pitch-stat"><span>${label}</span><i aria-hidden="true"><b style="width:${Math.min(100, delta * 20)}%"></b></i><strong>+${delta}</strong></span>`;
+        };
+        return `<span class="v60-spring-report-pitch" role="group" aria-label="連動 ${pitch}控球增加 ${gainValue(control)}、威力增加 ${gainValue(power)}"><span>${pitch}</span><span>${stat("控球", control)}${stat("威力", power)}</span></span>`;
+      }).join("");
+      return `<div class="v60-spring-report-group is-${kind.key}"><b>${kind.label}</b><div>${gains}</div></div>`;
     }).join("")}</div>`;
   };
   const desktopRows = page.items.map(line => {

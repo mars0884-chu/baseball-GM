@@ -4910,7 +4910,7 @@ assert(v60SpringReportSource.includes("v60-spring-report-cards") && v60SpringRep
 assert(v60RosterSource.includes("function v60RosterPageSlice(list, uiPageKey, requestedPageSize)") && v60RosterSource.includes("Number.isInteger(requestedPageSize)") && v60StyleSource.includes(".v60-spring-report-gain>i>b") && v60StyleSource.includes(".v60-spring-report-table{display:none;"), "v60-018 可調頁數不改既有八人頁，手機改用可讀增幅條");
 g(`var __v60SpringSavedS=JSON.stringify(S),__v60SpringSavedUI=JSON.stringify(UI),__v60SpringSavedHtml=app.innerHTML;
 var __v60SpringLines=[];
-for(var si=0;si<11;si++){__v60SpringLines.push({name:'春訓測試'+si,level:'1軍',menu:'速度訓練',changes:si===0?[{label:'球速',from:140,to:144},{label:'球威',from:55,to:57,linked:true},{label:'抗壓',from:60,to:61,linked:true,traitSpill:true}]:(si===1?[]:[{label:'速度',from:50,to:52}])});}
+for(var si=0;si<11;si++){__v60SpringLines.push({name:'春訓測試'+si,level:'1軍',menu:'速度訓練',changes:si===0?[{label:'球速',from:140,to:144},{label:'球威',from:55,to:57,linked:true},{label:'四縫線速球控球',from:40,to:41,linked:true},{label:'四縫線速球威力',from:60,to:62,linked:true},{label:'滑球控球',from:50,to:51,linked:true},{label:'抗壓',from:60,to:61,linked:true,traitSpill:true}]:(si===1?[]:[{label:'速度',from:50,to:52}])});}
 for(var sj=0;sj<3;sj++){__v60SpringLines.push({name:'二軍測試'+sj,level:'2軍',menu:'守備訓練',changes:[{label:'守備',from:40,to:42}]});}
 S.springCamp={year:S.seasonYear,executed:true,report:{nation:'海嶺共和國',grade:'A',cost:0,events:[],lines:__v60SpringLines}};
 UI.screen='springReport';UI.springReportTab='1軍';UI.springReportPage=0;
@@ -4920,6 +4920,7 @@ var __v60SpringTable=app.innerHTML.slice(__v60SpringTableStart,__v60SpringTableE
 var __v60SpringCards=(app.innerHTML.match(/<article class="v60-spring-report-player">/g)||[]).length;
 var __v60SpringFirstName=(__v60SpringTable.match(/<tr><td><b>([^<]+)/)||[])[1]||'';
 var __v60SpringFirstHasAllGains=app.innerHTML.includes('主練 球速 增加 4')&&app.innerHTML.includes('連動 球威 增加 2')&&app.innerHTML.includes('特性 抗壓 增加 1')&&app.innerHTML.includes('維持');
+var __r137SpringPaired=app.innerHTML.includes('class="v60-spring-report-pitch" role="group" aria-label="連動 四縫線速球控球增加 1、威力增加 2"')&&(app.innerHTML.match(/class="v60-spring-report-pitch-stat"/g)||[]).length===2&&app.innerHTML.includes('連動 滑球控球 增加 1')&&app.innerHTML.includes('四縫線速球控球+1・四縫線速球威力+2');
 var __v60SpringPager=app.innerHTML.includes('第 1/3 頁・共 11 人'),__v60SpringNoSave=JSON.stringify(S)===__v60SpringBefore;
 var __v60SpringCompact=app.innerHTML.includes('1軍・11人')&&app.innerHTML.includes('2軍・3人')&&app.innerHTML.includes('主練：主要提升・連動：相關能力・特性：額外提升')&&!app.innerHTML.includes('春訓成果判定')&&app.innerHTML.includes('btn-spring-report-back')&&app.innerHTML.includes('btn-spring-done');
 UI.springReportPage=1;renderSpringReport();__v60SpringTableStart=app.innerHTML.indexOf('<table class="stattable v60-spring-report-table">');__v60SpringTableEnd=app.innerHTML.indexOf('</table>',__v60SpringTableStart)+8;
@@ -4935,6 +4936,7 @@ var __v60SpringEventKept=app.innerHTML.includes('春訓特殊事件・1件')&&ap
 S=JSON.parse(__v60SpringSavedS);UI=JSON.parse(__v60SpringSavedUI);app.innerHTML=__v60SpringSavedHtml;`);
 assert(g("__v60SpringRows===4 && __v60SpringCards===4 && __v60SpringPager && __v60SpringFirstHasAllGains && __v60SpringNoSave && __v60SpringPageTwoRows===4 && __v60SpringPageThreeRows===3 && __v60SpringFirstName!==__v60SpringPageTwoName && __v60SpringSecondTeamRows===3 && __v60SpringSecondTeamCards===3"), "r057 renderer 保留主練／連動／特性精確成長、四人分頁、翻頁更換與軍別切換，且不改 S");
 assert(g("__v60SpringCompact && __v60SpringEventKept") && v60DashboardSource.includes('"springCamp", "springReport"') && v60StyleSource.includes('.v60-spring-report-screen .topbar #btn-spring-report-back'), "r094 春訓人數併入軍別分頁、特殊事件與分類圖例保留，返回鍵不浮蓋球員成果");
+assert(g("__r137SpringPaired") && v60StyleSource.includes('.v60-spring-report-pitch{') && v60StyleSource.includes('@media(max-width:360px){.v60-spring-report-pitch{'), "r137 同一球路控球與威力在手機成對呈現、兩個精確增幅與未成對項目仍可見；桌面完整明細保留");
 assert(v60SpringReportSource.includes('v60-spring-report-facts') && v60SpringReportSource.includes('v60CompatArtDataUrl("spring_training_base_v58")') && v60StyleSource.includes('.v60-spring-report-gain{') && v60StyleSource.includes('font-size:14px;'), "r057 核准場景與地點費用並列，增幅文字至少 14px，不以裁切圖片或隱藏數據減量");
 
 /* v60-019／022：行銷比較矩陣保留；增設三案分頁，減少手機長捲動。 */
