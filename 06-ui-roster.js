@@ -2141,7 +2141,13 @@ function renderMidTrainingSection(p, team) {
   return `<div class="card">
     <div class="eyebrow">${icon('training')} 季中特訓指派（${used}/${slots} 名額使用中）</div>
     ${phaseLine}
-    <p class="sub dark">為球員指定一個加練項目：每個比賽日累積訓練點，滿100點提升對應能力（不超潛力、本季最多+${MID_TRAINING_SEASON_CAP}）。訓練設施與對應教練會加速累積；代價是受傷風險上升${p.isPitcher ? "與疲勞恢復變慢" : ""}${p.age >= 30 ? "，且30歲以上效率減半" : ""}。成長期年輕球員練起來最划算、衰退期老將效益有限。</p>
+    ${v60VisualMetricRail([
+      ["每比賽日", "累積訓練點"],
+      ["100 點", "能力 +1・不超潛力"],
+      ["本季上限", `+${MID_TRAINING_SEASON_CAP}`],
+      ["加速", "設施・對應教練"]
+    ], "季中特訓規則")}
+    <p class="v60-state-line">代價：受傷風險↑${p.isPitcher ? "・投手疲勞恢復↓" : ""}${p.age >= 30 ? "・30歲以上效率減半" : ""}</p>
     <select id="mid-train-select" class="sortselect">
       ${items.map(it => `<option value="${it.key}"${it.key === sel ? " selected" : ""}>${it.label}（${it.attrLabel}）</option>`).join("")}
     </select>

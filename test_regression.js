@@ -363,7 +363,8 @@ assert(g("FACILITY_TABS.length===7"), "設施分頁擴為7個");
 assert(g("MID_TRAINING_ITEMS.length===10 && MID_TRAINING_ITEMS.filter(it=>it.forPitcher).length===4"), "特訓項目10種（投4野6）");
 assert(g("midTrainingSlots(S.teams.T0)>=4"), "特訓名額=4+最高訓練設施等級");
 g("var __day0=S.currentDay; S.currentDay=1;"); // 確保在球季進行中
-g("var __tp = S.teams.T0.roster1.map(id=>S.players[id]).find(p=>p && !p.isPitcher && !isInjured(p)); assignMidTraining(__tp.id,'mContact');");
+g("var __tp = S.teams.T0.roster1.map(id=>S.players[id]).find(p=>p && !p.isPitcher && !isInjured(p)); var __trainChoiceHtml=renderMidTrainingSection(__tp,S.teams.T0); assignMidTraining(__tp.id,'mContact');");
+assert(g("['每比賽日','累積訓練點','100 點','能力 +1・不超潛力','本季上限','加速','設施・對應教練','受傷風險↑','mid-train-select','btn-start-training'].every(v=>__trainChoiceHtml.includes(v))&&!__trainChoiceHtml.includes('為球員指定一個加練項目')"), "特訓指派以規則摘要取代長段，保留進度條件、代價與操作");
 assert(g("__tp.midTraining && __tp.midTraining.key==='mContact' && __tp.midTraining.gained===0"), "指派特訓成功");
 assert(g("(function(){var it=midItemByKey('mContact');return midTrainingDailyPoints(__tp,S.teams.T0,it)>0;})()"), "每日訓練點>0");
 g("__tp.midTraining.points=99.9; var __cBefore=__tp.contact; var __pot=__tp.potential; tickMidTraining();");
