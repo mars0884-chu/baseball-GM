@@ -1,0 +1,22 @@
+{
+  "validationVersion": 1,
+  "packageVersion": "v50-codex-t0-t4-portrait-samples-v01",
+  "completedTeams": [
+    "T0",
+    "T1",
+    "T2",
+    "T3",
+    "T4"
+  ],
+  "teamAssetCount": 15,
+  "passed": true,
+  "checkCount": 80,
+  "passedCount": 80,
+  "failedCount": 0,
+  "errors": [],
+  "gameValidation": {
+    "valid": true,
+    "warningCount": 0,
+    "consoleWarningCount": 0
+  }
+}

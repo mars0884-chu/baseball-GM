@@ -1,0 +1,13 @@
+{
+  "validationVersion": 1,
+  "scope": "T0-T19 portrait layers and composite fixtures",
+  "teamCount": 20,
+  "masterAssetCount": 60,
+  "thumbnailCount": 120,
+  "compositeCaseCount": 80,
+  "checkCount": 1100,
+  "passedCount": 1100,
+  "failedCount": 0,
+  "passed": true,
+  "errors": []
+}

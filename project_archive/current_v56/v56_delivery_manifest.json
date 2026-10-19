@@ -1,0 +1,156 @@
+{
+  "manifestVersion": 3,
+  "gameVersion": "v56",
+  "packageRevision": 1,
+  "packageId": "v56-r001-codex",
+  "packageStatus": "MARS_ACCEPTED",
+  "releaseState": "active",
+  "createdBy": "Codex",
+  "createdAt": "2026-09-06T01:32:03.899Z",
+  "basedOnPackageId": "v55-r012-codex",
+  "supersedesPackageId": "v55-r012-codex",
+  "formalVersionUpgrade": true,
+  "authoritativeSummary": "v56_project_summary.md",
+  "expectedOuterFileCount": 10,
+  "outerFiles": [
+    "56_baseball_gm.html",
+    "56_baseball_gm_modular.zip",
+    "v56_art_assets.zip",
+    "v56_project_summary.md",
+    "v56_full_pending_items.md",
+    "v56_art_interface_spec.md",
+    "v56_codex_development_log.md",
+    "v56_verification_report.md",
+    "v56_delivery_manifest.json",
+    "SHA256SUMS.txt"
+  ],
+  "files": [
+    {
+      "role": "single-file-game",
+      "path": "56_baseball_gm.html",
+      "contentSha256": "D333CA7B06C2F587B47088E63CB1D5FA189C00070918ADAE59A97224C0194876",
+      "originVersion": "v55",
+      "originalAuthor": "Claude",
+      "lastModifiedBy": "Codex",
+      "changeStatus": "modified",
+      "carriedForwardFrom": "v55-r012-codex"
+    },
+    {
+      "role": "modular-game",
+      "path": "56_baseball_gm_modular.zip",
+      "contentSha256": "2DA1333BF7F0CB8AF6C24899B56434BAF949BD8FB4DC1531ADA5C647A576E972",
+      "originVersion": "v55",
+      "originalAuthor": "Claude",
+      "lastModifiedBy": "Codex",
+      "changeStatus": "modified",
+      "carriedForwardFrom": "v55-r012-codex"
+    },
+    {
+      "role": "art-assets",
+      "path": "v56_art_assets.zip",
+      "contentSha256": "E89019FCBBB9710DBF586643E00F9692D337B77809E172457731228488179F2C",
+      "originVersion": "v55",
+      "originalAuthor": "Codex",
+      "lastModifiedBy": "Codex",
+      "changeStatus": "unchanged",
+      "carriedForwardFrom": "v55-r012-codex"
+    },
+    {
+      "role": "project-summary",
+      "path": "v56_project_summary.md",
+      "contentSha256": "8E74AFC938445335A8664C46D98CF21B0DB3E45CB9C6A8964B321A0A559845C4",
+      "originVersion": "v56",
+      "originalAuthor": "Codex",
+      "lastModifiedBy": "Codex",
+      "changeStatus": "new",
+      "carriedForwardFrom": "v55-r012-codex"
+    },
+    {
+      "role": "full-pending-items",
+      "path": "v56_full_pending_items.md",
+      "contentSha256": "AF3863CF6B1B561C3150947DAF73E76967D590EB93E4F816FD418645488D6F10",
+      "originVersion": "v56",
+      "originalAuthor": "Codex",
+      "lastModifiedBy": "Codex",
+      "changeStatus": "new",
+      "carriedForwardFrom": "v55-r012-codex"
+    },
+    {
+      "role": "art-interface-spec",
+      "path": "v56_art_interface_spec.md",
+      "contentSha256": "B56E3B4277C07FFE9AB425866D7E7A982ABBB2F982AA5DA91676D89CA0FF37C1",
+      "originVersion": "v56",
+      "originalAuthor": "Claude",
+      "lastModifiedBy": "Codex",
+      "changeStatus": "modified",
+      "carriedForwardFrom": "v55-r012-codex"
+    },
+    {
+      "role": "codex-development-log",
+      "path": "v56_codex_development_log.md",
+      "contentSha256": "08FDD80F2A6067E9AC01D8D5B616A6E7F7217870C1A59D254580765F1FBD8D95",
+      "originVersion": "v56",
+      "originalAuthor": "Codex",
+      "lastModifiedBy": "Codex",
+      "changeStatus": "new",
+      "carriedForwardFrom": "v55-r012-codex"
+    },
+    {
+      "role": "verification-report",
+      "path": "v56_verification_report.md",
+      "contentSha256": "E5DFD39745A1968755C5683F970828BEF8973E52A70774500A51B8EB7CD69102",
+      "originVersion": "v56",
+      "originalAuthor": "Codex",
+      "lastModifiedBy": "Codex",
+      "changeStatus": "new",
+      "carriedForwardFrom": "v55-r012-codex"
+    },
+    {
+      "role": "delivery-manifest",
+      "path": "v56_delivery_manifest.json",
+      "contentSha256": null,
+      "originVersion": "v56",
+      "originalAuthor": "Codex",
+      "lastModifiedBy": "Codex",
+      "changeStatus": "new",
+      "carriedForwardFrom": "v55-r012-codex"
+    },
+    {
+      "role": "sha256-checksums",
+      "path": "SHA256SUMS.txt",
+      "contentSha256": null,
+      "originVersion": "v56",
+      "originalAuthor": "Codex",
+      "lastModifiedBy": "Codex",
+      "changeStatus": "new",
+      "carriedForwardFrom": "v55-r012-codex"
+    }
+  ],
+  "approval": {
+    "gate": "v56 package acceptance",
+    "approvedBy": "Mars",
+    "approvedAt": "2026-09-06",
+    "authorizationInstruction": "授權建立 v56 版本候選，範圍只包含已完成的 V56-001「內容圖像化、減少文字」；先不要加入設施／球場、頭像細修或其他方向。",
+    "acceptanceInstruction": "先以此版本當通過版繼續下一步驟",
+    "scope": "V56-001 only; package accepted"
+  },
+  "verification": {
+    "lineage": "pass",
+    "regression": "1631/0",
+    "smoke15yr": "pass",
+    "smokePureGM15yr": "pass",
+    "saveValidation": "no schema or migration change; existing candidate Save/import contracts pass",
+    "uiAutomatedDesktop": "staging evidence plus candidate contract",
+    "uiAutomatedMobile": "staging evidence plus candidate contract",
+    "outerFileCount": "10/10",
+    "modularFileCount": "20/20",
+    "artCarryForward": "r012 byte-preserved",
+    "sha256": "pass: SHA256SUMS covers 9/9 outer roles",
+    "cleanExtraction": "pass: validator clean extraction; unsafe/backslash/duplicate entries 0",
+    "marsRealDevice": "Mars accepted this package; no additional visual rework requested"
+  },
+  "remainingWork": [
+    "Do not add V56-002 or other directions in this package",
+    "A new direction requires a new explicit release scope"
+  ]
+}

@@ -38,7 +38,9 @@
 
 清理作業狀態：**尚未推送備份、尚未核對遠端、尚未刪除本機正式或歷史原件。**推送後須記錄遠端 commit、各檔 Git blob／下載雜湊、公開版版本與實際刪除範圍；不要預先把計畫寫成完成。
 
-本機根目錄的 `AGENTS.md`、`CURRENT_PACKAGE.json`、`current/`、`_audit/`、`_incoming/` 與歷史美術母版目錄原本不屬於 GitHub 追蹤。只有 ZIP 中明確包含的內容可由該 ZIP 恢復；不能假定整個工作區已備份。若未來依 Mars 指示刪除未備份項目，須保留「已刪且無遠端副本」紀錄，不能寫成可回復。
+另已準備 `project_archive/governance/`（規則、正式包指標與歷史美術記憶）、`project_archive/current_v56/`（正式 v56 解包角色，10 檔）及 `project_archive/approved_portrait_mothers_v50/`（v50 1254px 母版等，375 檔）。目前只完成本機逐檔 SHA-256 複本核對，**推送與遠端核對仍未完成**。這些目錄在 GitHub 公開可讀；重啟前仍須重新檢查正式 ZIP 內的角色、manifest、SHA 與批准範圍。
+
+本機 `_audit/`、`_incoming/`、`_staging/` 其他候選與歷史資料，以及未逐一收錄的舊美術目錄不在上述備份範圍。只有 ZIP 或明確收錄的檔案可由 GitHub 恢復；不能假定整個工作區已備份。若未來依 Mars 指示刪除未備份項目，須保留「已刪且無遠端副本」紀錄，不能寫成可回復。
 
 ## 人員與安全邊界
 
