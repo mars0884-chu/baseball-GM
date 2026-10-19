@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 2,
+  "status": "active",
+  "releaseState": "MARS_ACCEPTED",
+  "gameVersion": "v56",
+  "packageRevision": 1,
+  "packageId": "v56-r001-codex",
+  "basedOnPackageId": "v55-r012-codex",
+  "zipFile": "v56_delivery.zip",
+  "zipSha256": "53B111CC1FDC4275B73E596D2C76AD1696F4367ECA9370681C10E8B77F786F97",
+  "builtAt": "2026-09-06T01:32:03.899Z",
+  "acceptedAt": "2026-09-06T09:35:42+08:00",
+  "acceptedBy": "Mars",
+  "note": "Mars 於 2026-09-06 明確表示先以此版本當通過版繼續下一步驟。v56-r001 只包含 V56-001 內容圖像化、減少文字；保留 v55-r012 完整正式包。",
+  "previousPackagePreservedAs": "_audit/preserved-v55-r012/v55-r012-codex_delivery.zip"
+}
