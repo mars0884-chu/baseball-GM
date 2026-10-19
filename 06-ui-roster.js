@@ -2488,11 +2488,13 @@ function renderPlayerDetail() {
       ${isInjured(p) ? (p.injury.pendingSurgery ? `
       <div class="card issuecard">
         <div class="eyebrow">${icon('medical')} 重傷：等待治療方針決定</div>
-        <p class="sub dark">${p.injury.name}（${p.injury.part}），基礎恢復期約 ${p.injury.totalDays} 天。請至<b>主控台</b>選擇「手術治療」或「保守治療」，決策前恢復不會開始。</p>
+        <p class="v60-state-line">${p.injury.name}${p.injury.part ? `（${p.injury.part}）` : ""}・基礎 ${p.injury.totalDays} 天</p>
+        <p class="v60-state-line">至主控台選手術／保守；未決定前不恢復。</p>
       </div>` : `
       <div class="card injurycard">
         <div class="eyebrow">傷勢狀態：${p.injury.severityLabel}傷勢${p.injury.method === "surgery" ? "（術後復健中）" : (p.injury.method === "conservative" ? "（保守治療中）" : "")}</div>
-        <p class="sub dark">${p.injury.name}${p.injury.part ? `（${p.injury.part}）` : ""}，預計還需 ${p.injury.daysLeft} 天恢復（共 ${p.injury.totalDays} 天）・復健進度 ${Math.round((p.injury.totalDays - p.injury.daysLeft) / p.injury.totalDays * 100)}%。傷癒前無法出賽，打線與投手調度會自動跳過他。</p>
+        <p class="v60-state-line">${p.injury.name}${p.injury.part ? `（${p.injury.part}）` : ""}・剩 ${p.injury.daysLeft}/${p.injury.totalDays} 天・復健 ${Math.round((p.injury.totalDays - p.injury.daysLeft) / p.injury.totalDays * 100)}%</p>
+        <p class="v60-state-line">傷癒前無法出賽・打線／投手調度自動略過</p>
         <div class="injurybar"><div style="width:${Math.round((p.injury.totalDays - p.injury.daysLeft) / p.injury.totalDays * 100)}%"></div></div>
       </div>`) : ""}
       <div class="v60-player-detail-tabs ${isOwnActivePlayer ? "" : "is-external"}">${uiTabs("playerDetail", [

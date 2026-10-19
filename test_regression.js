@@ -5638,6 +5638,18 @@ UI.releaseConfirmId=UI.selectedPlayerId;renderPlayerDetail();var __r125Release=a
 S=JSON.parse(__r125SavedS);UI=JSON.parse(__r125SavedUI);`);
 assert(g("__r125Off.includes('退休轉任・單次判定・婉拒後本休賽季不再試')&&__r125Mid.includes('兼任・單次判定・球季中意願低')&&__r125Mid.includes('role-suggest-select')&&__r125Mid.includes('btn-suggest-role')&&__r125Release.includes('btn-release-confirm')&&__r125Release.includes('立即離隊')"), "r125 球員人事依季節顯示短規則，轉任與釋出入口及釋出後果保留");
 
+g(`var __r139SavedS=JSON.stringify(S),__r139SavedUI=JSON.stringify(UI);
+newGame('傷勢卡減量測試');pickTeam('T0');pickGameMode('gm_coach');
+UI.selectedPlayerId=S.teams[S.userTeamId].roster1[0];
+var __r139Player=S.players[UI.selectedPlayerId];
+__r139Player.injury={name:'測試拉傷',part:'左腿',severity:'light',severityLabel:'輕度',daysLeft:6,totalDays:10,pendingSurgery:false};
+var __r139Before=JSON.stringify(S);renderPlayerDetail();var __r139Healing=app.innerHTML,__r139HealingPure=__r139Before===JSON.stringify(S);
+__r139Player.injury={name:'測試重傷',part:'肩膀',severity:'severe',severityLabel:'重度',daysLeft:40,totalDays:40,pendingSurgery:true};
+var __r139PendingBefore=JSON.stringify(S);renderPlayerDetail();var __r139Pending=app.innerHTML;
+var __r139PendingPure=__r139PendingBefore===JSON.stringify(S);
+S=JSON.parse(__r139SavedS);UI=JSON.parse(__r139SavedUI);`);
+assert(g("__r139Healing.includes('測試拉傷（左腿）・剩 6/10 天・復健 40%')&&__r139Healing.includes('傷癒前無法出賽・打線／投手調度自動略過')&&__r139Healing.includes('class=\"injurybar\"')&&__r139Pending.includes('測試重傷（肩膀）・基礎 40 天')&&__r139Pending.includes('至主控台選手術／保守；未決定前不恢復。')&&__r139HealingPure&&__r139PendingPure"), "r139 傷勢短列保留恢復數值、停賽／調度後果、手術決策與進度條，純渲染不改存檔");
+
 g(`var __r077SavedS=JSON.stringify(S),__r077SavedUI=JSON.stringify(UI),__r077AllTabs=true;
 window={innerWidth:390};newGame('三層名單測試');pickTeam('T0');pickGameMode('gm_coach');
 for(var __r077Tab of ['1軍','2軍','育成']){
