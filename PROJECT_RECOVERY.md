@@ -1,11 +1,11 @@
 # 《決勝GM》GitHub 恢復與清理紀錄
 
-更新：2026-10-19。這份文件供本機工作區清理後重新接手使用；**不得把文件中的「本機測試通過」解讀成公開版或 Mars 真機驗收通過**。
+更新：2026-10-20。這份文件供本機工作區清理後重新接手使用；**不得把文件中的「本機測試通過」解讀成全路由瀏覽器或 Mars 真機驗收通過**。
 
 ## 先判斷版本
 
 - 公開遊戲：<https://mars0884-chu.github.io/baseball-GM/>；原始碼：<https://github.com/mars0884-chu/baseball-GM>。公開頁實際版本須核對 GitHub Pages 工作流程、遠端 `main` SHA、`index.html`／`sw.js` 快取標記與瀏覽器畫面，不可只看本文件或推送訊息。
-- 本機最後已知候選為 `v60-r140-offseason-ledger`。截至本文件起草，GitHub 公開版仍是 r135；r136～r140 程式及紀錄已在本機 Git commit，但**尚未完成推送與公開瀏覽器驗證**。後續若成功推送，必須更新本段和下方狀態。
+- GitHub `main` 已推送至 `ca23c8b8860d4e47fb0df466036f15269c580dda`（r136～r140 與備份）；Pages run `39404618527` 對應該 SHA 並以 `success` 結束。公開 `sw.js` 可見 `v60-r140-offseason-ledger`；公開首頁可在瀏覽器載入既有球隊主控台。**這不是 r136～r140 手機逐頁驗證，也不是 Mars 最終接受。**後續若再次修改本文件，應以最新遠端 SHA 為準。
 - 封裝體系與 GitHub 公開程式是兩條不同線：本機 `CURRENT_PACKAGE.json` 記錄最後 Mars 明確接受的正式母包為 `v56-r001-codex`，母包 `v55-r012-codex`，正式 ZIP SHA-256 為 `53B111CC1FDC4275B73E596D2C76AD1696F4367ECA9370681C10E8B77F786F97`。公開程式的 r140 不等於 v60 正式完整 ZIP，也不得自行宣稱 Mars 接受。
 
 ## 源碼與開發接續
@@ -19,7 +19,7 @@
 
 ## 正式與歷史 ZIP 備份清單
 
-下列為清理前本機根目錄的原始 ZIP SHA-256。**此表是來源清單，不是遠端備份完成證明。**預計在同一 GitHub 儲存庫的 `project_archive/` 放置可追溯副本；每一份須於推送後核對遠端檔案與下載 SHA，才能標記「已備份」。GitHub 仍是公開儲存庫。
+下列為清理前本機根目錄的原始 ZIP SHA-256；這份 SHA 表本身是原件校驗依據。GitHub `project_archive/` 內的 11 份 ZIP 已用遠端 Git blob SHA 與本機提交比對，402 檔遠端核對結果見上段。GitHub 仍是公開儲存庫。
 
 | 檔案 | MiB | SHA-256 |
 |---|---:|---|
@@ -36,13 +36,13 @@
 
 `_audit/preserved-v55-r012/v55-r012-codex_delivery.zip` 長度 7,895,839 位元組，SHA-256 `0E62B4A5E99FB07F04460CBE0C09C5B5B1D10F0E956429190C08AA325FC387C5`，與上表 `v55_delivery.zip` 逐位元組雜湊相同。備份兩個原路徑／名稱的副本以保留 lineage 線索，不能因內容相同就把名稱當成同一 package ID。
 
-清理作業狀態：**尚未推送備份、尚未核對遠端、尚未刪除本機正式或歷史原件。**推送後須記錄遠端 commit、各檔 Git blob／下載雜湊、公開版版本與實際刪除範圍；不要預先把計畫寫成完成。
+備份遠端核對：2026-10-20 GitHub `main` 回傳上述 SHA；遠端遞迴 Git tree 非截斷，`project_archive/` 下 402 個檔案的路徑與 Git blob SHA 全數等於本機提交。Git blob SHA 可證明 Git 所存的內容逐位元組一致；本機來源 ZIP 的 SHA-256 另見上表。公開儲存庫可讀取這些備份。**截至本段更新，本機原件尚未刪除**；若清理實際執行，須另記錄刪除結果，不能由此句推論已刪。
 
 本機備份完整性補查：11 份 ZIP 的所有 entry 均能完整讀取並解壓資料流，未遇壓縮檔讀取錯誤；10 份根目錄 ZIP 與原件 SHA-256 一致，`v55-r012-codex_delivery.zip` 亦與保留原件一致。這只證明本機備份可讀，**不證明 GitHub 已收到檔案**。
 
-清理順序與停止條件：先推送本機 `main` 的 r136～r140 與本備份，再核對遠端 `main` commit、GitHub 上的備份檔案及公開遊戲標記。若推送或遠端核對失敗，**停止刪除**。若成功，依明確路徑逐區清理；對未備份的 `_incoming/`、`_audit/`、`_staging/` 其他內容，以及過期候選，另列出無法由遠端還原的範圍。絕不可把工作區根目錄或不明路徑當成遞迴刪除目標。`manifest.webmanifest` 有既存未提交修改，不能在清理時誤當垃圾覆寫。
+清理順序與停止條件：上述遠端核對已通過；先把本次紀錄更新推送，再依明確路徑逐區清理。`_incoming/`、`_audit/`、`_staging/` 其他候選，以及未收錄舊美術目錄會有無法由遠端還原的內容；Mars 已明確表示 GitHub 能備份則備份，不能備份則刪除。絕不可把工作區根目錄或不明路徑當成遞迴刪除目標。`manifest.webmanifest` 有既存未提交修改，未進入遠端；刪除後無法依 GitHub 復原該修改。
 
-另已準備 `project_archive/governance/`（規則、正式包指標與歷史美術記憶）、`project_archive/current_v56/`（正式 v56 解包角色，10 檔）及 `project_archive/approved_portrait_mothers_v50/`（v50 1254px 母版等，375 檔）。目前只完成本機逐檔 SHA-256 複本核對，**推送與遠端核對仍未完成**。這些目錄在 GitHub 公開可讀；重啟前仍須重新檢查正式 ZIP 內的角色、manifest、SHA 與批准範圍。
+`project_archive/governance/`（規則、正式包指標與歷史美術記憶）、`project_archive/current_v56/`（正式 v56 解包角色，10 檔）及 `project_archive/approved_portrait_mothers_v50/`（v50 1254px 母版等，375 檔）已推送，並完成本機來源逐檔複本核對與遠端 Git tree 逐檔比對。這些目錄在 GitHub 公開可讀；重啟前仍須重新檢查正式 ZIP 內的角色、manifest、SHA 與批准範圍。
 
 本機 `_audit/`、`_incoming/`、`_staging/` 其他候選與歷史資料，以及未逐一收錄的舊美術目錄不在上述備份範圍。只有 ZIP 或明確收錄的檔案可由 GitHub 恢復；不能假定整個工作區已備份。若未來依 Mars 指示刪除未備份項目，須保留「已刪且無遠端副本」紀錄，不能寫成可回復。
 
