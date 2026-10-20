@@ -1,0 +1,11 @@
+{
+  "validationVersion": 1,
+  "scope": "T0-T4 portrait layer samples",
+  "teamCount": 5,
+  "assetCount": 15,
+  "checkCount": 150,
+  "passedCount": 150,
+  "failedCount": 0,
+  "passed": true,
+  "errors": []
+}

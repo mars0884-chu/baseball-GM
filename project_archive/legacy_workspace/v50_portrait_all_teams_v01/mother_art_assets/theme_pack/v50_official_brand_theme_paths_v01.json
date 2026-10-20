@@ -1,0 +1,147 @@
+{
+  "name": "Decisive GM v50 Official Brand Baseline (Path Version)",
+  "version": "v50-codex-brand-v01",
+  "description": "Development path version. Resolve paths from the root of v50_art_assets.zip.",
+  "teams": {
+    "T0": {
+      "logo": "production_assets/teams/T0/logo_128.png",
+      "primaryColor": "#1B3A6B",
+      "secondaryColor": "#C0C0C0",
+      "shortName": "靖安",
+      "brandKey": "jingan_guardians"
+    },
+    "T1": {
+      "logo": "production_assets/teams/T1/logo_128.png",
+      "primaryColor": "#005F73",
+      "secondaryColor": "#0A9396",
+      "shortName": "臨海",
+      "brandKey": "linhai_sharks"
+    },
+    "T2": {
+      "logo": "production_assets/teams/T2/logo_128.png",
+      "primaryColor": "#6B4226",
+      "secondaryColor": "#D4A373",
+      "shortName": "曲江",
+      "brandKey": "qujiang_buffalo"
+    },
+    "T3": {
+      "logo": "production_assets/teams/T3/logo_128.png",
+      "primaryColor": "#B8860B",
+      "secondaryColor": "#1C1C1C",
+      "shortName": "永昌",
+      "brandKey": "yongchang_lions"
+    },
+    "T4": {
+      "logo": "production_assets/teams/T4/logo_128.png",
+      "primaryColor": "#CC3311",
+      "secondaryColor": "#FF8800",
+      "shortName": "明陽",
+      "brandKey": "mingyang_blaze"
+    },
+    "T5": {
+      "logo": "production_assets/teams/T5/logo_128.png",
+      "primaryColor": "#2E4057",
+      "secondaryColor": "#D4AF37",
+      "shortName": "天啟",
+      "brandKey": "tianqi_eagles"
+    },
+    "T6": {
+      "logo": "production_assets/teams/T6/logo_128.png",
+      "primaryColor": "#4A4A4A",
+      "secondaryColor": "#E8C547",
+      "shortName": "龍城",
+      "brandKey": "longcheng_leopards"
+    },
+    "T7": {
+      "logo": "production_assets/teams/T7/logo_128.png",
+      "primaryColor": "#708090",
+      "secondaryColor": "#C0C0C0",
+      "shortName": "星野",
+      "brandKey": "xingye_foxes"
+    },
+    "T8": {
+      "logo": "production_assets/teams/T8/logo_128.png",
+      "primaryColor": "#F0F0F0",
+      "secondaryColor": "#4682B4",
+      "shortName": "雲夢",
+      "brandKey": "yunmeng_egrets"
+    },
+    "T9": {
+      "logo": "production_assets/teams/T9/logo_128.png",
+      "primaryColor": "#1C1C1C",
+      "secondaryColor": "#D4A017",
+      "shortName": "東寧",
+      "brandKey": "dongning_leopards"
+    },
+    "T10": {
+      "logo": "production_assets/teams/T10/logo_128.png",
+      "primaryColor": "#DAA520",
+      "secondaryColor": "#228B22",
+      "shortName": "嘉禾",
+      "brandKey": "jiahe_harvest"
+    },
+    "T11": {
+      "logo": "production_assets/teams/T11/logo_128.png",
+      "primaryColor": "#0077B6",
+      "secondaryColor": "#48CAE4",
+      "shortName": "瑞港",
+      "brandKey": "ruigang_dolphins"
+    },
+    "T12": {
+      "logo": "production_assets/teams/T12/logo_128.png",
+      "primaryColor": "#5C4033",
+      "secondaryColor": "#E8A838",
+      "shortName": "金川",
+      "brandKey": "jinchuan_miners"
+    },
+    "T13": {
+      "logo": "production_assets/teams/T13/logo_128.png",
+      "primaryColor": "#1C1C1C",
+      "secondaryColor": "#4B5320",
+      "shortName": "玄武",
+      "brandKey": "xuanwu_bears"
+    },
+    "T14": {
+      "logo": "production_assets/teams/T14/logo_128.png",
+      "primaryColor": "#B22222",
+      "secondaryColor": "#FFD700",
+      "shortName": "朝陽",
+      "brandKey": "chaoyang_redhawks"
+    },
+    "T15": {
+      "logo": "production_assets/teams/T15/logo_128.png",
+      "primaryColor": "#C41E3A",
+      "secondaryColor": "#FFFACD",
+      "shortName": "鳳鳴",
+      "brandKey": "fengming_redbirds"
+    },
+    "T16": {
+      "logo": "production_assets/teams/T16/logo_128.png",
+      "primaryColor": "#006994",
+      "secondaryColor": "#F5F5DC",
+      "shortName": "銀灘",
+      "brandKey": "yintan_breakers"
+    },
+    "T17": {
+      "logo": "production_assets/teams/T17/logo_128.png",
+      "primaryColor": "#2D6A4F",
+      "secondaryColor": "#B7E4C7",
+      "shortName": "青川",
+      "brandKey": "qingchuan_serows"
+    },
+    "T18": {
+      "logo": "production_assets/teams/T18/logo_128.png",
+      "primaryColor": "#E8E8E8",
+      "secondaryColor": "#1E3A5F",
+      "shortName": "望海",
+      "brandKey": "wanghai_whales"
+    },
+    "T19": {
+      "logo": "production_assets/teams/T19/logo_128.png",
+      "primaryColor": "#36454F",
+      "secondaryColor": "#A9A9A9",
+      "shortName": "磐石",
+      "brandKey": "panshi_ironguard"
+    }
+  }
+}

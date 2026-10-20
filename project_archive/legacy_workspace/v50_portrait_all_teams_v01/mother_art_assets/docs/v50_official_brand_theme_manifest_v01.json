@@ -1,0 +1,508 @@
+{
+  "schemaVersion": 1,
+  "packageVersion": "v50-codex-brand-v01",
+  "colorAuthority": "V50 TEAM_DEFS",
+  "sourceLogoSize": 128,
+  "teams": [
+    {
+      "id": "T0",
+      "name": "靖安盾衛",
+      "shortName": "靖安",
+      "brandKey": "jingan_guardians",
+      "primaryColor": "#1B3A6B",
+      "secondaryColor": "#C0C0C0",
+      "logo": "production_assets/teams/T0/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 22360,
+      "logoSha256": "cb989291285b589d4ecaaf24d3b6564c6e30537040c5b9525d35fab1beb7e15c",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T1",
+      "name": "臨海獵鯊",
+      "shortName": "臨海",
+      "brandKey": "linhai_sharks",
+      "primaryColor": "#005F73",
+      "secondaryColor": "#0A9396",
+      "logo": "production_assets/teams/T1/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 26400,
+      "logoSha256": "d1b0ac6368736276331e39865a6e1c893b01d6b20c5736411cfc6c810fe0f68c",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T2",
+      "name": "曲江水牛",
+      "shortName": "曲江",
+      "brandKey": "qujiang_buffalo",
+      "primaryColor": "#6B4226",
+      "secondaryColor": "#D4A373",
+      "logo": "production_assets/teams/T2/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 26496,
+      "logoSha256": "d5fcec4c0c96861747ebf67572ac79694c6b1796914535f534cf9ba302e47c1c",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T3",
+      "name": "永昌雄獅",
+      "shortName": "永昌",
+      "brandKey": "yongchang_lions",
+      "primaryColor": "#B8860B",
+      "secondaryColor": "#1C1C1C",
+      "logo": "production_assets/teams/T3/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 26032,
+      "logoSha256": "0cf0268e294495891924a29b1faf37131fe7758dcbb94d57d965021feb0f7a29",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T4",
+      "name": "明陽烈焰",
+      "shortName": "明陽",
+      "brandKey": "mingyang_blaze",
+      "primaryColor": "#CC3311",
+      "secondaryColor": "#FF8800",
+      "logo": "production_assets/teams/T4/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 23901,
+      "logoSha256": "2c5cec03e5cff0743eb85b6cb7e27eb375856e5df1ed84c57ed5152f95ab12af",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T5",
+      "name": "天啟鷹",
+      "shortName": "天啟",
+      "brandKey": "tianqi_eagles",
+      "primaryColor": "#2E4057",
+      "secondaryColor": "#D4AF37",
+      "logo": "production_assets/teams/T5/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 27520,
+      "logoSha256": "bb114037576e47000b6af563c0845b30e20bf2c3e6a56c34c655b49830c78a7a",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T6",
+      "name": "龍城雲豹",
+      "shortName": "龍城",
+      "brandKey": "longcheng_leopards",
+      "primaryColor": "#4A4A4A",
+      "secondaryColor": "#E8C547",
+      "logo": "production_assets/teams/T6/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 29562,
+      "logoSha256": "eac96c12a0ed0ecf1f3b57ad11aaf2b59bf717d6bd8ca6550159904e132cc7b4",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T7",
+      "name": "星野銀狐",
+      "shortName": "星野",
+      "brandKey": "xingye_foxes",
+      "primaryColor": "#708090",
+      "secondaryColor": "#C0C0C0",
+      "logo": "production_assets/teams/T7/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 26843,
+      "logoSha256": "1b2fbc7b34ae1a34fd32877e7ca062bac4250533c56cb6138a691d172535dc88",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T8",
+      "name": "雲夢白鷺",
+      "shortName": "雲夢",
+      "brandKey": "yunmeng_egrets",
+      "primaryColor": "#F0F0F0",
+      "secondaryColor": "#4682B4",
+      "logo": "production_assets/teams/T8/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 26620,
+      "logoSha256": "e80135eee6a1a4575f3bf0fbd22b9334c3ab0815a3706c78e45ad71d2173e357",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T9",
+      "name": "東寧豹",
+      "shortName": "東寧",
+      "brandKey": "dongning_leopards",
+      "primaryColor": "#1C1C1C",
+      "secondaryColor": "#D4A017",
+      "logo": "production_assets/teams/T9/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 25253,
+      "logoSha256": "4d7e6edf4617879235b6443ee2925bae8efd3fad80de4e29758cde00d3bff74d",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T10",
+      "name": "嘉禾金穗",
+      "shortName": "嘉禾",
+      "brandKey": "jiahe_harvest",
+      "primaryColor": "#DAA520",
+      "secondaryColor": "#228B22",
+      "logo": "production_assets/teams/T10/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 22728,
+      "logoSha256": "0766599be184e15bdf5dee8677cbb718ba97b0d7673564c1c280d42de050baeb",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T11",
+      "name": "瑞港海豚",
+      "shortName": "瑞港",
+      "brandKey": "ruigang_dolphins",
+      "primaryColor": "#0077B6",
+      "secondaryColor": "#48CAE4",
+      "logo": "production_assets/teams/T11/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 20528,
+      "logoSha256": "9b7c7819d66ff6797a9a3eaf8b2e2d101353e79b8f14128eee206cafd21f1475",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T12",
+      "name": "金川礦工",
+      "shortName": "金川",
+      "brandKey": "jinchuan_miners",
+      "primaryColor": "#5C4033",
+      "secondaryColor": "#E8A838",
+      "logo": "production_assets/teams/T12/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 24298,
+      "logoSha256": "a8e7386b5b1ecd63975b4760344d02f6d08aa1e261b0ecc8aabc51218d081b51",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T13",
+      "name": "玄武黑熊",
+      "shortName": "玄武",
+      "brandKey": "xuanwu_bears",
+      "primaryColor": "#1C1C1C",
+      "secondaryColor": "#4B5320",
+      "logo": "production_assets/teams/T13/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 25795,
+      "logoSha256": "4d2b1e5eaafdae52b1d5a7e79005c668c0444e78009e3f401fe9e13ed23cd8aa",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T14",
+      "name": "朝陽赤鷹",
+      "shortName": "朝陽",
+      "brandKey": "chaoyang_redhawks",
+      "primaryColor": "#B22222",
+      "secondaryColor": "#FFD700",
+      "logo": "production_assets/teams/T14/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 24384,
+      "logoSha256": "5be265b20744308ea727dbac113e6c48bf109a272720812c39c5a001a7357b85",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T15",
+      "name": "鳳鳴紅雀",
+      "shortName": "鳳鳴",
+      "brandKey": "fengming_redbirds",
+      "primaryColor": "#C41E3A",
+      "secondaryColor": "#FFFACD",
+      "logo": "production_assets/teams/T15/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 23768,
+      "logoSha256": "3f941f02d315034cddb881a06dc6f7cb9ac4cee695055a8ab7dcc5bf090c2b28",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T16",
+      "name": "銀灘破浪",
+      "shortName": "銀灘",
+      "brandKey": "yintan_breakers",
+      "primaryColor": "#006994",
+      "secondaryColor": "#F5F5DC",
+      "logo": "production_assets/teams/T16/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 24219,
+      "logoSha256": "e3fce81e524adfab6db05338233e41db1f16236992fbf465ea394c2f7c008d9b",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T17",
+      "name": "青川山羌",
+      "shortName": "青川",
+      "brandKey": "qingchuan_serows",
+      "primaryColor": "#2D6A4F",
+      "secondaryColor": "#B7E4C7",
+      "logo": "production_assets/teams/T17/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 27591,
+      "logoSha256": "26986dce5f45043fb5091d7666a15a3b1981e0b7e5fef2a42a7a7c95227ce2e6",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T18",
+      "name": "望海白鯨",
+      "shortName": "望海",
+      "brandKey": "wanghai_whales",
+      "primaryColor": "#E8E8E8",
+      "secondaryColor": "#1E3A5F",
+      "logo": "production_assets/teams/T18/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 25133,
+      "logoSha256": "d15b846968c66cd12cb1414b59745863b6a8c8e50162407c26daa02e501fb841",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    {
+      "id": "T19",
+      "name": "磐石鐵衛",
+      "shortName": "磐石",
+      "brandKey": "panshi_ironguard",
+      "primaryColor": "#36454F",
+      "secondaryColor": "#A9A9A9",
+      "logo": "production_assets/teams/T19/logo_128.png",
+      "logoWidth": 128,
+      "logoHeight": 128,
+      "logoBytes": 28572,
+      "logoSha256": "9467c4f8a55c1b17245391d3da8cdade2ea89a5b7776636a63a426df47f9eb34",
+      "mappedFields": [
+        "logo",
+        "primaryColor",
+        "secondaryColor",
+        "shortName",
+        "brandKey"
+      ],
+      "intentionallyUnmapped": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    }
+  ]
+}

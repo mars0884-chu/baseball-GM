@@ -1,0 +1,9 @@
+{
+  "validationVersion": 1,
+  "validatorSource": "00-theme.js",
+  "valid": true,
+  "warningCount": 0,
+  "warnings": [],
+  "consoleWarningCount": 0,
+  "passed": true
+}

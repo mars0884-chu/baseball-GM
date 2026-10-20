@@ -1,0 +1,42 @@
+{
+  "manifestVersion": 1,
+  "packageRole": "Full Codex return after Mars approval of T0-T4 portrait samples",
+  "sourcePackage": "v50_codex_portrait_samples_delivery_v01.zip",
+  "sourcePackageSha256": "6FA985F7A245DBA5CAAF1AD8E8DFBEB455E8416E65FDDE9964FCC78645E33B80",
+  "sourceOuterFileCount": 19,
+  "sourceFilesLost": 0,
+  "preservedOriginalFileCount": 17,
+  "modifiedOriginalFiles": [
+    {
+      "file": "v50_art_assets.zip",
+      "reason": "Preserves all 209 source art files and adds T5-T19 portrait layers, thumbnails, contact sheets, reproducible sources, tools, and validations."
+    },
+    {
+      "file": "SHA256SUMS.txt",
+      "reason": "Regenerated after the art ZIP rebuild and new outer handoff documents."
+    }
+  ],
+  "addedFiles": [
+    "v50_codex_all_20_portrait_context_restoration_v01.md",
+    "v50_codex_to_claude_all_20_portrait_handoff_v01.md",
+    "v50_codex_all_20_portrait_full_pending_items_v01.md",
+    "v50_codex_all_20_portrait_manifest_v01.json"
+  ],
+  "artAssets": {
+    "sourceFileCount": 209,
+    "returnedFileCount": 375,
+    "lostSourceFiles": 0,
+    "changedSourceFiles": 0,
+    "addedFileCount": 166,
+    "teamCount": 20,
+    "masterAssetCount": 60,
+    "thumbnailCount": 120,
+    "compositeCaseCount": 80
+  },
+  "invariants": {
+    "modularZipFileCount": 20,
+    "gameCodeModified": false,
+    "sourceOuterFilesLost": 0,
+    "sourceArtFilesLost": 0
+  }
+}

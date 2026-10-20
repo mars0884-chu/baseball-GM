@@ -1,0 +1,10 @@
+{
+  "validationVersion": 1,
+  "packageVersion": "v50-codex-brand-v01",
+  "passed": true,
+  "teamCount": 20,
+  "checkCount": 303,
+  "passedCount": 303,
+  "failedCount": 0,
+  "errors": []
+}

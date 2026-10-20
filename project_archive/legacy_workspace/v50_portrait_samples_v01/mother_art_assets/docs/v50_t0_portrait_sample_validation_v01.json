@@ -1,0 +1,14 @@
+{
+  "validationVersion": 1,
+  "packageVersion": "v50-codex-t0-portrait-sample-v01",
+  "passed": true,
+  "checkCount": 68,
+  "passedCount": 68,
+  "failedCount": 0,
+  "errors": [],
+  "gameValidation": {
+    "valid": true,
+    "warningCount": 0,
+    "consoleWarningCount": 0
+  }
+}

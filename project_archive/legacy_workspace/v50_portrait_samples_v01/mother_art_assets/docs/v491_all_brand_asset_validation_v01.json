@@ -1,0 +1,1935 @@
+{
+  "version": "v491-all-brand-asset-validation-v01",
+  "status": "pass",
+  "teamCount": 20,
+  "imageCount": 100,
+  "checks": [
+    "ordered team IDs T0-T19",
+    "RGBA PNG dimensions",
+    "non-empty alpha",
+    "transparent padding on every canvas edge",
+    "cityUniform remains null"
+  ],
+  "teams": {
+    "T0": {
+      "name": "靖安盾衛",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T0/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            72,
+            85,
+            439,
+            426
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T0/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            6,
+            10,
+            122,
+            118
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T0/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            3,
+            5,
+            61,
+            59
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T0/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            3,
+            4,
+            29,
+            28
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T0/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            28,
+            20,
+            227,
+            236
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T1": {
+      "name": "臨海獵鯊",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T1/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            59,
+            26,
+            452,
+            485
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T1/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            14,
+            6,
+            113,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T1/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            7,
+            3,
+            57,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T1/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            5,
+            3,
+            27,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T1/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            20,
+            35,
+            236,
+            221
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T2": {
+      "name": "曲江水牛",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T2/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            69,
+            38,
+            443,
+            473
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T2/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            14,
+            6,
+            114,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T2/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            7,
+            3,
+            57,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T2/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            5,
+            3,
+            27,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T2/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            20,
+            46,
+            236,
+            209
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T3": {
+      "name": "永昌雄獅",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T3/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            64,
+            36,
+            447,
+            476
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T3/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            13,
+            6,
+            114,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T3/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            7,
+            3,
+            57,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T3/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            4,
+            3,
+            27,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T3/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            30,
+            20,
+            226,
+            236
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T4": {
+      "name": "明陽烈焰",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T4/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            61,
+            39,
+            450,
+            472
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T4/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            12,
+            6,
+            116,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T4/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            6,
+            3,
+            58,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T4/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            4,
+            3,
+            27,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T4/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            20,
+            28,
+            236,
+            227
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T5": {
+      "name": "天啟鷹",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T5/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            63,
+            48,
+            449,
+            463
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T5/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            10,
+            6,
+            118,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T5/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            5,
+            3,
+            59,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T5/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            4,
+            3,
+            28,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T5/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            20,
+            22,
+            236,
+            233
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T6": {
+      "name": "龍城雲豹",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T6/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            46,
+            24,
+            465,
+            488
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T6/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            11,
+            6,
+            116,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T6/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            6,
+            3,
+            58,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T6/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            4,
+            3,
+            27,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T6/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            20,
+            22,
+            236,
+            234
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T7": {
+      "name": "星野銀狐",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T7/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            65,
+            39,
+            447,
+            473
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T7/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            13,
+            6,
+            115,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T7/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            6,
+            3,
+            57,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T7/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            4,
+            3,
+            27,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T7/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            31,
+            20,
+            225,
+            236
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T8": {
+      "name": "雲夢白鷺",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T8/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            62,
+            40,
+            450,
+            472
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T8/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            12,
+            6,
+            116,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T8/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            6,
+            3,
+            58,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T8/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            4,
+            3,
+            27,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T8/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            20,
+            55,
+            236,
+            200
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T9": {
+      "name": "東寧豹",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T9/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            63,
+            38,
+            448,
+            473
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T9/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            12,
+            6,
+            115,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T9/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            6,
+            3,
+            57,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T9/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            4,
+            3,
+            27,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T9/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            20,
+            34,
+            236,
+            222
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T10": {
+      "name": "嘉禾金穗",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T10/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            60,
+            25,
+            452,
+            487
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T10/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            15,
+            6,
+            113,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T10/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            7,
+            3,
+            56,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T10/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            5,
+            3,
+            27,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T10/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            31,
+            20,
+            224,
+            236
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T11": {
+      "name": "瑞港海豚",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T11/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            53,
+            31,
+            459,
+            481
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T11/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            11,
+            6,
+            116,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T11/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            6,
+            3,
+            58,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T11/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            4,
+            3,
+            27,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T11/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            20,
+            60,
+            236,
+            195
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T12": {
+      "name": "金川礦工",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T12/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            89,
+            48,
+            422,
+            463
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T12/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            17,
+            6,
+            110,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T12/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            8,
+            3,
+            55,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T12/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            5,
+            3,
+            26,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T12/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            20,
+            39,
+            236,
+            217
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T13": {
+      "name": "玄武黑熊",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T13/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            68,
+            43,
+            443,
+            469
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T13/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            13,
+            6,
+            115,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T13/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            6,
+            3,
+            57,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T13/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            4,
+            3,
+            27,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T13/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            42,
+            20,
+            214,
+            236
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T14": {
+      "name": "朝陽赤鷹",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T14/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            68,
+            43,
+            443,
+            468
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T14/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            13,
+            6,
+            115,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T14/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            6,
+            3,
+            57,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T14/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            4,
+            3,
+            27,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T14/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            20,
+            47,
+            236,
+            209
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T15": {
+      "name": "鳳鳴紅雀",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T15/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            83,
+            57,
+            428,
+            454
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T15/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            13,
+            6,
+            114,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T15/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            7,
+            3,
+            57,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T15/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            4,
+            3,
+            27,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T15/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            20,
+            33,
+            236,
+            223
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T16": {
+      "name": "銀灘破浪",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T16/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            77,
+            47,
+            434,
+            464
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T16/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            14,
+            6,
+            113,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T16/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            7,
+            3,
+            57,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T16/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            5,
+            3,
+            27,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T16/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            20,
+            49,
+            236,
+            206
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T17": {
+      "name": "青川山羌",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T17/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            64,
+            42,
+            448,
+            470
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T17/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            12,
+            6,
+            116,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T17/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            6,
+            3,
+            58,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T17/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            4,
+            3,
+            27,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T17/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            51,
+            20,
+            205,
+            236
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T18": {
+      "name": "望海白鯨",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T18/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            42,
+            24,
+            470,
+            488
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T18/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            10,
+            6,
+            117,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T18/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            5,
+            3,
+            58,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T18/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            4,
+            3,
+            28,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T18/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            20,
+            50,
+            236,
+            205
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    },
+    "T19": {
+      "name": "磐石鐵衛",
+      "status": "pass",
+      "images": [
+        {
+          "path": "production_assets/teams/T19/logo_512.png",
+          "size": [
+            512,
+            512
+          ],
+          "alphaBoundingBox": [
+            58,
+            44,
+            453,
+            467
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T19/logo_128.png",
+          "size": [
+            128,
+            128
+          ],
+          "alphaBoundingBox": [
+            10,
+            6,
+            118,
+            122
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T19/logo_64.png",
+          "size": [
+            64,
+            64
+          ],
+          "alphaBoundingBox": [
+            5,
+            3,
+            59,
+            61
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T19/logo_32.png",
+          "size": [
+            32,
+            32
+          ],
+          "alphaBoundingBox": [
+            4,
+            3,
+            28,
+            29
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "production_assets/teams/T19/cap_mark_reference_256.png",
+          "size": [
+            256,
+            256
+          ],
+          "alphaBoundingBox": [
+            20,
+            48,
+            236,
+            207
+          ],
+          "alphaExtrema": [
+            0,
+            255
+          ]
+        }
+      ],
+      "blockedFields": [
+        "capMark",
+        "homeUniform",
+        "awayUniform"
+      ]
+    }
+  }
+}

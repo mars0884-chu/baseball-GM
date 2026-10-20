@@ -1,0 +1,66 @@
+{
+  "manifestVersion": 1,
+  "package": "v50_codex_theme_integration_delivery_v01.zip",
+  "sourcePackage": "Claude v50_delivery.zip",
+  "sourcePackageSha256": "5498cf635812225d079059c6d7f236cb8aa67ed4d2dfe13d1c5ea612ff8a23d0",
+  "rule": "Claude mother package is preserved in full; Codex additions are additive.",
+  "outer": {
+    "sourceFileCount": 9,
+    "returnedFileCountIncludingManifest": 13,
+    "lostSourceFileCount": 0,
+    "lostSourceFiles": [],
+    "preservedUnmodified": [
+      "50_baseball_gm.html",
+      "50_baseball_gm_modular.zip",
+      "v50_art_interface_spec.md",
+      "v50_claude_handoff.md",
+      "v50_codex_handoff.md",
+      "v50_full_pending_items.md",
+      "v50_project_summary.md"
+    ],
+    "rebuiltOrRegenerated": [
+      {
+        "file": "v50_art_assets.zip",
+        "reason": "Preserves all original art files and adds the V50 official brand theme deliverables."
+      },
+      {
+        "file": "SHA256SUMS.txt",
+        "reason": "Regenerated after all Codex additions are finalized."
+      }
+    ],
+    "addedByCodex": [
+      "v50_codex_art_integration_summary_v01.md",
+      "v50_codex_mirror_manifest_v01.json",
+      "v50_codex_next_stage_v01.md",
+      "v50_codex_to_claude_handoff_v01.md"
+    ]
+  },
+  "artAssets": {
+    "sourceFileCount": 138,
+    "returnedFileCount": 147,
+    "lostSourceFileCount": 0,
+    "lostSourceFiles": [],
+    "preservedUnmodifiedCount": 136,
+    "modifiedOriginalFiles": [
+      "ART_PROJECT_MEMORY.md",
+      "FUTURE_DELIVERY_STANDARD.md"
+    ],
+    "addedFileCount": 9,
+    "addedFiles": [
+      "docs/v50_official_brand_theme_game_validation_v01.json",
+      "docs/v50_official_brand_theme_manifest_v01.json",
+      "docs/v50_official_brand_theme_readme_v01.md",
+      "docs/v50_official_brand_theme_validation_v01.json",
+      "theme_pack/v50_official_brand_theme_paths_v01.json",
+      "theme_pack/v50_official_brand_theme_v01.json",
+      "tools/build_v50_official_brand_theme_v01.mjs",
+      "tools/validate_v50_official_brand_theme_v01.mjs",
+      "tools/validate_v50_theme_against_game_v01.mjs"
+    ]
+  },
+  "invariants": {
+    "modularZipFileCount": 20,
+    "sourceOuterFilesLost": 0,
+    "sourceArtFilesLost": 0
+  }
+}
