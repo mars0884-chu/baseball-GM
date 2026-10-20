@@ -52,7 +52,7 @@
 
 清理前本機仍有未逐檔備份的工作資料：`_audit/` 約 753.8 MiB、`_incoming/` 約 239.3 MiB、`_staging/` 約 7,886.2 MiB（含已推送的 Git 工作庫、其本機物件與大量候選）、根目錄 `.git/` 約 7,408.9 MiB。Mars 明確授權「能備份在 GitHub 就備份，若不行就全部刪除」；若清理這些目錄，GitHub 只能還原已列出的正式包、原始碼與特定工作目錄，**不能還原其餘暫存候選、輸入與稽核檔**。大小是本機盤點值，目錄間有重複內容，不能相加當成獨立資料量。
 
-2026-10-20 清理執行紀錄：備份提交 `661816f4c5ec3eabefd48a7c5c5eb97f7674d8ac` 的 1,919 個 archive 檔已全數比對遠端；後續文件提交也已推送。最新 Pages 部署成功後，本機已刪除 `_audit/`、`_incoming/`、`current/`、`delivery_tools/`、`formal_overview_v03/`、`proposals/`、`v49_production/`、三個 v50 舊工作目錄、根目錄全部 10 份正式／歷史 ZIP 與其他 11 份根目錄檔案。這些刪除非資源回收筒；其中未逐檔備份的 `_audit/`／`_incoming/` 候選無法靠 GitHub 完整復原。根目錄 `.agents/` 刪除遭拒，`_staging/` 與 `.git/` 在本次文件更新時尚待清理；**不要把剩餘項目誤寫成已刪**。
+2026-10-20 清理執行紀錄：備份提交 `661816f4c5ec3eabefd48a7c5c5eb97f7674d8ac` 的 1,919 個 archive 檔已全數比對遠端；後續文件提交也已推送。最新 Pages 部署成功後，本機已刪除 `_audit/`、`_incoming/`、`current/`、`delivery_tools/`、`formal_overview_v03/`、`proposals/`、`v49_production/`、三個 v50 舊工作目錄、根目錄全部 10 份正式／歷史 ZIP 與其他 11 份根目錄檔案。這些刪除非資源回收筒；其中未逐檔備份的 `_audit/`／`_incoming/` 候選無法靠 GitHub 完整復原。其後 `_staging/` 已按驗證後的明確路徑永久刪除；`.agents/`（空目錄）與根目錄 `.git/` 經額外授權也已刪除。最終以包含隱藏項目的目錄盤點核對 `C:\Users\user\Documents\職棒GM美編` **剩餘項目為 0**。本機工作庫已不存在；重啟須從 GitHub 重新取得原始碼與 `project_archive/`，不可把未備份候選誤認為可恢復。全遊戲 56 路由及條件分支的同源前後量測、手機畫面與 Mars 個人驗收仍未結案。
 
 本機 `_audit/`、`_incoming/`、`_staging/` 其他候選與歷史資料，以及未逐一收錄的舊美術目錄不在上述備份範圍。只有 ZIP 或明確收錄的檔案可由 GitHub 恢復；不能假定整個工作區已備份。若未來依 Mars 指示刪除未備份項目，須保留「已刪且無遠端副本」紀錄，不能寫成可回復。
 
