@@ -1,0 +1,387 @@
+{
+  "version": "v491-all-brand-assets-v01",
+  "scope": "all teams T0-T19",
+  "status": "partial-theme-mapping; logo/colors ready; portrait layers blocked",
+  "teams": {
+    "T0": {
+      "name": "靖安盾衛",
+      "primaryColor": "#1769D2",
+      "secondaryColor": "#FFFFFF",
+      "logo": "production_assets/teams/T0/logo_512.png",
+      "logoSha256": "D42DB37D9FB187B4D0ED5EFB5475114B535C516221ACD7681826247F9AB1528B",
+      "capMarkReference": "production_assets/teams/T0/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "C833902E842E6C009B6B4744D7678D75800361EF809A6BCFFDD7CBCCF788C99D",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T1": {
+      "name": "臨海獵鯊",
+      "primaryColor": "#063B66",
+      "secondaryColor": "#20C6D7",
+      "logo": "production_assets/teams/T1/logo_512.png",
+      "logoSha256": "FE98D4016A3D332432C4E58F592DF0CA30A9F1BB5744131FF90C53AB1FA7E62C",
+      "capMarkReference": "production_assets/teams/T1/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "775C82A4A5C2E936CC44C49EC299861C9B67325433A3C56D51DFA8D8F98C606B",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T2": {
+      "name": "曲江水牛",
+      "primaryColor": "#6B3F24",
+      "secondaryColor": "#E7B84B",
+      "logo": "production_assets/teams/T2/logo_512.png",
+      "logoSha256": "6F41B0D50A0C5ABD40FC7F96A8CCD5F172855868FD706321DE3E6B4C2557B644",
+      "capMarkReference": "production_assets/teams/T2/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "2DA1A142AB3E4FFEA6BAF5A39EEAA3DFBBF3F9F5820D13F2A429B38250744C4E",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T3": {
+      "name": "永昌雄獅",
+      "primaryColor": "#A6232B",
+      "secondaryColor": "#F2C14E",
+      "logo": "production_assets/teams/T3/logo_512.png",
+      "logoSha256": "781BAA3EBBAB515CB26D45832DE4C440189C536B18CE1B5E198B3C84AE655DDA",
+      "capMarkReference": "production_assets/teams/T3/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "F49C5E1608B41BD4F07CA0539F25CCB2E5A42DE9FC2C9739CE92805BF78365D0",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T4": {
+      "name": "明陽烈焰",
+      "primaryColor": "#E0442E",
+      "secondaryColor": "#FFD166",
+      "logo": "production_assets/teams/T4/logo_512.png",
+      "logoSha256": "C333286E547FA5409677BBF0E73F3A0C3E129930270CFBCF2EE381E4DB29C929",
+      "capMarkReference": "production_assets/teams/T4/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "667EEBE727621B952DC58826244E4F24FF4381660B04D0DC302DFE6BF793E666",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T5": {
+      "name": "天啟鷹",
+      "primaryColor": "#182B49",
+      "secondaryColor": "#D6A84B",
+      "logo": "production_assets/teams/T5/logo_512.png",
+      "logoSha256": "B5541BE18E1EB1CAA963E08A89CDF0D9D1FA9D40C6915CDFE5B968D4E46DF9C3",
+      "capMarkReference": "production_assets/teams/T5/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "9FDCCE10113FBC7BE5ACED234681A234C9D79B2A544E3D9F660A793836935813",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T6": {
+      "name": "龍城雲豹",
+      "primaryColor": "#4A1F6F",
+      "secondaryColor": "#F0A34A",
+      "logo": "production_assets/teams/T6/logo_512.png",
+      "logoSha256": "21F9CD6590E4E41DF1829A3E07607F111FEF480A2ED2B481BA62B509D3082A30",
+      "capMarkReference": "production_assets/teams/T6/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "60D11C7492A5F3116573E5EB12F17A7ED93C65DB757B7CF2715809B73F98658F",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T7": {
+      "name": "星野銀狐",
+      "primaryColor": "#293241",
+      "secondaryColor": "#C8D5E1",
+      "logo": "production_assets/teams/T7/logo_512.png",
+      "logoSha256": "F05A368D7BF5CBBB4FF3A7A4F0D8C8096C4626B1F4798C5B2A78F0FB76738889",
+      "capMarkReference": "production_assets/teams/T7/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "7F7CEECC3159CD5AB859682896216282D2648FC4B86912D49DF1FECEC0FB609C",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T8": {
+      "name": "雲夢白鷺",
+      "primaryColor": "#2A7F62",
+      "secondaryColor": "#F6F1DF",
+      "logo": "production_assets/teams/T8/logo_512.png",
+      "logoSha256": "30C7FCD5A74D751011C1FB2FCAB0836817439DB7DBE1649C28851FFBC6FC635D",
+      "capMarkReference": "production_assets/teams/T8/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "531A09ABBC822277D454DE1D3A11581E878162DDE840C36A01B934C131CF391E",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T9": {
+      "name": "東寧豹",
+      "primaryColor": "#C24A22",
+      "secondaryColor": "#172A3A",
+      "logo": "production_assets/teams/T9/logo_512.png",
+      "logoSha256": "18C4578366A480B4A77E067F8801C76B48B0A83D83A8A9A555CF33C1A406C658",
+      "capMarkReference": "production_assets/teams/T9/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "3A411BB792EB2D9A072F84099B2D8A80661C25325FAFCE1912261F6D4F736070",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T10": {
+      "name": "嘉禾金穗",
+      "primaryColor": "#2F6B3C",
+      "secondaryColor": "#E9B949",
+      "logo": "production_assets/teams/T10/logo_512.png",
+      "logoSha256": "E5E6578CEFD17DD55DB9DE5BE42B20330B140A342473935041FC6413D2D619E9",
+      "capMarkReference": "production_assets/teams/T10/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "D6D8B14B6E42E6991ED2D3B7CD828DD318B89D308382FDFF09D5169318C0D5CB",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T11": {
+      "name": "瑞港海豚",
+      "primaryColor": "#0077A8",
+      "secondaryColor": "#7EE0D6",
+      "logo": "production_assets/teams/T11/logo_512.png",
+      "logoSha256": "D652BFB23E3945C0749B871D4DD5F29F8EC0E40F6CF6D8F6E4A8908097AF0E36",
+      "capMarkReference": "production_assets/teams/T11/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "14773D6CBEE7C4AF04CFE43C63DAD071FF48694C62741BE4D47B586D57BCC16F",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T12": {
+      "name": "金川礦工",
+      "primaryColor": "#343A40",
+      "secondaryColor": "#F28C28",
+      "logo": "production_assets/teams/T12/logo_512.png",
+      "logoSha256": "7264CF03332DD3C09A4925C406390A1CE52C2F3DF8EEDFA8460A3AAD2EF1C302",
+      "capMarkReference": "production_assets/teams/T12/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "081C320A405BE5C52DC87BA51582733F6592126CA3D8E8B62428E106AFC83BDA",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T13": {
+      "name": "玄武黑熊",
+      "primaryColor": "#173D2B",
+      "secondaryColor": "#D9C7A2",
+      "logo": "production_assets/teams/T13/logo_512.png",
+      "logoSha256": "339A9AE4E2D0459A2CB28D67174D0943BC3310D508C68CBB3C7AFE01CA6579D9",
+      "capMarkReference": "production_assets/teams/T13/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "3656BDB0F52BFBC059D4D01B5CD6D9A31651331F5BCDB8EFB2C724F75DDD0CA7",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T14": {
+      "name": "朝陽赤鷹",
+      "primaryColor": "#B32025",
+      "secondaryColor": "#F4D35E",
+      "logo": "production_assets/teams/T14/logo_512.png",
+      "logoSha256": "75C99CD0254DBAC27D1BDCCC589F11127F10DA6D2B33A143A5E64FFD55FC5541",
+      "capMarkReference": "production_assets/teams/T14/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "2E5A0FD8179FCA4237064715FF993D647D759EC040D57F018B5891060CB0EC29",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T15": {
+      "name": "鳳鳴紅雀",
+      "primaryColor": "#B3263E",
+      "secondaryColor": "#F4A6C1",
+      "logo": "production_assets/teams/T15/logo_512.png",
+      "logoSha256": "DFC00F89CE7F3F34B344D7D4DFC2E84940D8CCD3431DAD615B2930506A15BB3D",
+      "capMarkReference": "production_assets/teams/T15/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "794083A10630CCCB9CEBFBF0CE06331919C333857B22566B2C8BFBFAE4B9C637",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T16": {
+      "name": "銀灘破浪",
+      "primaryColor": "#00A6A6",
+      "secondaryColor": "#F25F5C",
+      "logo": "production_assets/teams/T16/logo_512.png",
+      "logoSha256": "3B48E01414D5081241F230A6BD4065EA03704CBF4A208AC0ED48923A772E262E",
+      "capMarkReference": "production_assets/teams/T16/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "9798F59C7F28363D5C2B6FADAE471055A407B3F2FBA251F60FBE7A0606834D2C",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T17": {
+      "name": "青川山羌",
+      "primaryColor": "#376B45",
+      "secondaryColor": "#D6B36A",
+      "logo": "production_assets/teams/T17/logo_512.png",
+      "logoSha256": "E493F706CF6594A57C1AC70717251D7BA19E334FEE201E157758B3884FCDCD1C",
+      "capMarkReference": "production_assets/teams/T17/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "EF88814D91913116E84C8CF424C35F257B85B2EEDCED3B18D170CABE9BE87AA2",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T18": {
+      "name": "望海白鯨",
+      "primaryColor": "#0B4F8A",
+      "secondaryColor": "#EAF6FF",
+      "logo": "production_assets/teams/T18/logo_512.png",
+      "logoSha256": "4857D3EA03DFB0BA43030903EC2DDD7E97FFB2367AA925EF5A3CEDEFA7375595",
+      "capMarkReference": "production_assets/teams/T18/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "F57AED0E21BB90FAC0BEFECBB751DB706444FBAD63C4AF6734F4BB43E19E6008",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    },
+    "T19": {
+      "name": "磐石鐵衛",
+      "primaryColor": "#33415C",
+      "secondaryColor": "#C6A15B",
+      "logo": "production_assets/teams/T19/logo_512.png",
+      "logoSha256": "DCA1C9326D066C3A8AC493564FC85B918C822DA58E05CA8EDAADF2533AEC10E1",
+      "capMarkReference": "production_assets/teams/T19/cap_mark_reference_256.png",
+      "capMarkReferenceSha256": "C8DB4CAE247D519F7B8BB1D86AEA5C80EEC573714DA9F3A5C5AF591E5E480D18",
+      "capMark": null,
+      "homeUniform": null,
+      "awayUniform": null,
+      "cityUniform": null,
+      "integrationStatus": "logo-and-colors-ready",
+      "blockedBy": [
+        "capMark full-cap-vs-insignia contract",
+        "portrait canvas and anchor specification",
+        "portrait layer z-order specification"
+      ]
+    }
+  }
+}

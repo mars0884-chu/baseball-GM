@@ -44,6 +44,8 @@
 
 `project_archive/governance/`（規則、正式包指標與歷史美術記憶）、`project_archive/current_v56/`（正式 v56 解包角色，10 檔）及 `project_archive/approved_portrait_mothers_v50/`（v50 1254px 母版等，375 檔）已推送，並完成本機來源逐檔複本核對與遠端 Git tree 逐檔比對。這些目錄在 GitHub 公開可讀；重啟前仍須重新檢查正式 ZIP 內的角色、manifest、SHA 與批准範圍。
 
+額外來源 `project_archive/extra_sources/` 收錄根目錄獨立 `00-theme.js`、五份 v49／v50 驗證及修正紀錄，以及 `delivery_tools/`、`formal_overview_v03/`、`proposals/`、`v49_production/`。這些檔案已在本機逐檔核對；本段是補充備份範圍，不代表未收錄的舊候選可復原。若清理前此批未推送或遠端核對不符，不得刪其原件。
+
 本機 `_audit/`、`_incoming/`、`_staging/` 其他候選與歷史資料，以及未逐一收錄的舊美術目錄不在上述備份範圍。只有 ZIP 或明確收錄的檔案可由 GitHub 恢復；不能假定整個工作區已備份。若未來依 Mars 指示刪除未備份項目，須保留「已刪且無遠端副本」紀錄，不能寫成可回復。
 
 ## 人員與安全邊界
